@@ -233,28 +233,28 @@ namespace Microsoft.CodeAnalysis.CSharp
             diagnostics.AddRange(entryPointAndDiagnostics.Diagnostics, allowMismatchInDependencyAccumulation: true);
             var entryPoint = entryPointAndDiagnostics.MethodSymbol;
 
-            if ((object)entryPoint == null)
+            if (entryPoint is null)
             {
                 return null;
             }
 
             // entryPoint can be a SynthesizedEntryPointSymbol if a script is being compiled.
             SynthesizedEntryPointSymbol synthesizedEntryPoint = entryPoint as SynthesizedEntryPointSymbol;
-            if ((object)synthesizedEntryPoint == null)
+            if (synthesizedEntryPoint is null)
             {
                 var returnType = entryPoint.ReturnType;
                 if (returnType.IsGenericTaskType(compilation) || returnType.IsNonGenericTaskType(compilation))
                 {
                     synthesizedEntryPoint = new SynthesizedEntryPointSymbol.AsyncForwardEntryPoint(compilation, entryPoint.ContainingType, entryPoint);
                     entryPoint = synthesizedEntryPoint;
-                    if ((object)moduleBeingBuilt != null)
+                    if (moduleBeingBuilt is not null)
                     {
                         moduleBeingBuilt.AddSynthesizedDefinition(entryPoint.ContainingType, synthesizedEntryPoint.GetCciAdapter());
                     }
                 }
             }
 
-            if (((object)synthesizedEntryPoint != null) &&
+            if ((synthesizedEntryPoint is not null) &&
                 (moduleBeingBuilt != null) &&
                 !hasDeclarationErrors &&
                 !moduleBeingBuilt.EmitOptions.EmitMetadataOnly &&
@@ -271,7 +271,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 var lambdaRuntimeRudeEditsBuilder = ArrayBuilder<LambdaRuntimeRudeEditInfo>.GetInstance();
                 var closureDebugInfoBuilder = ArrayBuilder<EncClosureInfo>.GetInstance();
                 var stateMachineStateDebugInfoBuilder = ArrayBuilder<StateMachineStateDebugInfo>.GetInstance();
-                StateMachineTypeSymbol stateMachineTypeOpt = null;
                 const int methodOrdinal = -1;
 
                 var loweredBody = LowerBodyOrInitializer(
@@ -290,7 +289,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     lambdaRuntimeRudeEditsBuilder,
                     closureDebugInfoBuilder,
                     stateMachineStateDebugInfoBuilder,
-                    out stateMachineTypeOpt);
+                    out StateMachineTypeSymbol stateMachineTypeOpt);
 
                 Debug.Assert(lazyVariableSlotAllocator is null);
                 Debug.Assert(stateMachineTypeOpt is null);
@@ -339,8 +338,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            Task curTask;
-            while (tasks.TryPop(out curTask))
+            while (tasks.TryPop(out Task curTask))
             {
                 curTask.GetAwaiter().GetResult();
             }
@@ -473,8 +471,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 scriptCtor = containingType.GetScriptConstructor();
                 scriptInitializer = containingType.GetScriptInitializer();
                 scriptEntryPoint = containingType.GetScriptEntryPoint();
-                Debug.Assert((object)scriptCtor != null);
-                Debug.Assert((object)scriptInitializer != null);
+                Debug.Assert(scriptCtor is not null);
+                Debug.Assert(scriptInitializer is not null);
             }
 
             var synthesizedSubmissionFields = containingType.IsSubmissionClass ? new SynthesizedSubmissionFields(_compilation, containingType) : null;
@@ -483,7 +481,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var sourceTypeSymbol = containingType as SourceMemberContainerTypeSymbol;
 
-            if ((object)sourceTypeSymbol != null)
+            if (sourceTypeSymbol is not null)
             {
                 _cancellationToken.ThrowIfCancellationRequested();
                 Binder.BindFieldInitializers(_compilation, scriptInitializer, sourceTypeSymbol.StaticInitializers, _diagnostics, ref processedStaticInitializers);
@@ -547,7 +545,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Binder.ProcessedFieldInitializers processedInitializers =
                                 (method.MethodKind == MethodKind.Constructor || method.IsScriptInitializer) ? processedInstanceInitializers :
                                 method.MethodKind == MethodKind.StaticConstructor ? processedStaticInitializers :
-                                default(Binder.ProcessedFieldInitializers);
+                                default;
 
                             // Compile extension methods without implementation normally, to bind the body and get errors.
                             // Also, extension marker method should always be compiled normally. 
@@ -566,7 +564,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case SymbolKind.Property:
                         {
                             var sourceProperty = member as SourcePropertySymbolBase;
-                            if ((object)sourceProperty != null && sourceProperty.IsSealed && compilationState.Emitting)
+                            if (sourceProperty is not null && sourceProperty.IsSealed && compilationState.Emitting)
                             {
                                 CompileSynthesizedSealedAccessors(sourceProperty, compilationState);
                             }
@@ -639,7 +637,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // warnings for any static non-nullable fields. (If there is no .cctor, there
                 // shouldn't be any initializers but for robustness, we check both.)
                 if (processedStaticInitializers.BoundInitializers.IsDefaultOrEmpty &&
-                    _compilation.LanguageVersion >= MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion() &&
                     containingType is { IsImplicitlyDeclared: false, TypeKind: TypeKind.Class or TypeKind.Struct or TypeKind.Interface } &&
                     ReportNullableDiagnostics)
                 {
@@ -757,7 +754,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     var method = methodWithBody.Method;
                     var lambda = method as SynthesizedClosureMethod;
-                    var variableSlotAllocatorOpt = ((object)lambda != null) ?
+                    var variableSlotAllocatorOpt = (lambda is not null) ?
                         _moduleBeingBuiltOpt.TryCreateVariableSlotAllocator(lambda, lambda.TopLevelMethod, diagnosticsThisMethod.DiagnosticBag) :
                         _moduleBeingBuiltOpt.TryCreateVariableSlotAllocator(method, method, diagnosticsThisMethod.DiagnosticBag);
 
@@ -770,8 +767,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     try
                     {
                         // Local functions can be iterators as well as be async (lambdas can only be async), so we need to lower both iterators and async
-                        IteratorStateMachine iteratorStateMachine;
-                        BoundStatement loweredBody = IteratorRewriter.Rewrite(methodWithBody.Body, method, methodOrdinal, stateMachineStateDebugInfoBuilder, variableSlotAllocatorOpt, compilationState, diagnosticsThisMethod, out iteratorStateMachine);
+                        BoundStatement loweredBody = IteratorRewriter.Rewrite(methodWithBody.Body, method, methodOrdinal, stateMachineStateDebugInfoBuilder, variableSlotAllocatorOpt, compilationState, diagnosticsThisMethod, out IteratorStateMachine iteratorStateMachine);
                         StateMachineTypeSymbol stateMachine = iteratorStateMachine;
 
                         if (!loweredBody.HasErrors)
@@ -786,7 +782,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 loweredBody = AsyncRewriter.Rewrite(loweredBody, method, methodOrdinal, stateMachineStateDebugInfoBuilder, variableSlotAllocatorOpt, compilationState, diagnosticsThisMethod, out asyncStateMachine);
                             }
 
-                            Debug.Assert((object)iteratorStateMachine == null || (object)asyncStateMachine == null);
+                            Debug.Assert(iteratorStateMachine is null || asyncStateMachine is null);
                             stateMachine = stateMachine ?? asyncStateMachine;
                         }
 
@@ -887,7 +883,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SynthesizedSealedPropertyAccessor synthesizedAccessor = sourceProperty.SynthesizedSealedAccessorOpt;
 
             // we are not generating any observable diagnostics here so it is ok to short-circuit on global errors.
-            if ((object)synthesizedAccessor != null && !_globalHasErrors)
+            if (synthesizedAccessor is not null && !_globalHasErrors)
             {
                 Debug.Assert(synthesizedAccessor.SynthesizesLoweredBoundBody);
                 var discardedDiagnostics = BindingDiagnosticBag.GetInstance(_diagnostics);
@@ -942,10 +938,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (methodSymbol.IsAbstract || methodSymbol.ContainingType?.IsDelegateType() == true)
             {
-                if ((object)sourceMethod != null)
+                if (sourceMethod is not null)
                 {
-                    bool diagsWritten;
-                    sourceMethod.SetDiagnostics(ImmutableArray<Diagnostic>.Empty, out diagsWritten);
+                    sourceMethod.SetDiagnostics(ImmutableArray<Diagnostic>.Empty, out bool diagsWritten);
                     if (diagsWritten && !methodSymbol.IsImplicitlyDeclared && _compilation.EventQueue != null)
                     {
                         _compilation.SymbolDeclaredEvent(methodSymbol);
@@ -956,7 +951,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // get cached diagnostics if not building and we have 'em
-            if (_moduleBeingBuiltOpt == null && (object)sourceMethod != null)
+            if (_moduleBeingBuiltOpt == null && sourceMethod is not null)
             {
                 var cachedDiagnostics = sourceMethod.Diagnostics;
 
@@ -1160,8 +1155,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     try
                     {
-                        bool diagsWritten;
-                        actualDiagnostics = new ReadOnlyBindingDiagnostic<AssemblySymbol>(sourceMethod.SetDiagnostics(actualDiagnostics.Diagnostics, out diagsWritten), actualDiagnostics.Dependencies);
+                        actualDiagnostics = new ReadOnlyBindingDiagnostic<AssemblySymbol>(sourceMethod.SetDiagnostics(actualDiagnostics.Diagnostics, out bool diagsWritten), actualDiagnostics.Dependencies);
 
                         if (diagsWritten && !methodSymbol.IsImplicitlyDeclared && _compilation.EventQueue != null)
                         {
@@ -1716,7 +1710,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     codeGen.Generate(out hasStackalloc);
 
-                    if ((object)kickoffMethod != null)
+                    if (kickoffMethod is not null)
                     {
                         moveNextBodyDebugInfoOpt = new IteratorMoveNextBodyDebugInfo(kickoffMethod.GetCciAdapter());
                     }
@@ -1724,8 +1718,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // Compiler-generated MoveNext methods have hoisted local scopes.
                 // These are built by call to CodeGen.Generate.
-                var stateMachineHoistedLocalScopes = ((object)kickoffMethod != null) ?
-                    builder.GetHoistedLocalScopes() : default(ImmutableArray<StateMachineHoistedLocalScope>);
+                var stateMachineHoistedLocalScopes = (kickoffMethod is not null) ?
+                    builder.GetHoistedLocalScopes() : default;
 
                 // Translate the imports even if we are not writing PDBs. The translation has an impact on generated metadata
                 // and we don't want to emit different metadata depending on whether or we emit with PDB stream.
@@ -1747,7 +1741,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 var stateMachineHoistedLocalSlots = default(ImmutableArray<EncHoistedLocalInfo>);
                 var stateMachineAwaiterSlots = default(ImmutableArray<Cci.ITypeReference>);
-                if (optimizations == OptimizationLevel.Debug && (object)stateMachineTypeOpt != null)
+                if (optimizations == OptimizationLevel.Debug && stateMachineTypeOpt is not null)
                 {
                     Debug.Assert(method.IsAsync || method.IsIterator);
                     GetStateMachineSlotDebugInfo(moduleBuilder, moduleBuilder.GetSynthesizedFields(stateMachineTypeOpt), variableSlotAllocatorOpt, diagnosticsForThisMethod, out stateMachineHoistedLocalSlots, out stateMachineAwaiterSlots);
@@ -1929,9 +1923,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     importChain = bodyBinder.ImportChain;
 
 #if DEBUG
-                    InMethodBinder? inMethodBinder;
-                    ConcurrentDictionary<IdentifierNameSyntax, int>? identifierMap;
-                    buildIdentifierMapOfBindIdentifierTargets(syntaxNode, bodyBinder, out inMethodBinder, out identifierMap);
+                    buildIdentifierMapOfBindIdentifierTargets(syntaxNode, bodyBinder, out InMethodBinder? inMethodBinder, out ConcurrentDictionary<IdentifierNameSyntax, int>? identifierMap);
 #endif
 
                     BoundNode methodBody = bodyBinder.BindWithLambdaBindingCountDiagnostics(
@@ -1956,8 +1948,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         Debug.Assert(diagnostics.DiagnosticBag != null);
                         if (compilation.IsNullableAnalysisEnabledIn(method))
                         {
-                            var isSufficientLangVersion = compilation.LanguageVersion >= MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion();
-
                             methodBodyForSemanticModel = NullableWalker.AnalyzeAndRewrite(
                                 compilation,
                                 method,
@@ -1966,7 +1956,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 nullableInitialState,
                                 // if language version is insufficient, we do not want to surface nullability diagnostics,
                                 // but we should still provide nullability information through the semantic model.
-                                isSufficientLangVersion ? diagnostics.DiagnosticBag : new DiagnosticBag(),
+                                diagnostics.DiagnosticBag,
                                 createSnapshots: true,
                                 out snapshotManager,
                                 ref remappedSymbols);
@@ -2068,7 +2058,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 nullableInitialState = getInitializerState(null);
             }
 
-            if (reportNullableDiagnostics && method.IsConstructor() && method.IsImplicitlyDeclared && nullableInitialState is object)
+            if (reportNullableDiagnostics && method.IsConstructor() && method.IsImplicitlyDeclared && nullableInitialState is not null)
             {
                 Debug.Assert(diagnostics.AccumulatesDiagnostics);
                 NullableWalker.AnalyzeIfNeeded(

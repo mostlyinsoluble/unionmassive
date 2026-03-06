@@ -51,38 +51,38 @@ namespace Microsoft.CodeAnalysis
     {
         internal static string ToParameterDisplayString(this RefKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case RefKind.Out: return "out";
-                case RefKind.Ref: return "ref";
-                case RefKind.In: return "in";
-                case RefKind.RefReadOnlyParameter: return "ref readonly";
-                default: throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                RefKind.Out => "out",
+                RefKind.Ref => "ref",
+                RefKind.In => "in",
+                RefKind.RefReadOnlyParameter => "ref readonly",
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         internal static string ToArgumentDisplayString(this RefKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case RefKind.Out: return "out";
-                case RefKind.Ref: return "ref";
-                case RefKind.In: return "in";
-                default: throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                RefKind.Out => "out",
+                RefKind.Ref => "ref",
+                RefKind.In => "in",
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         internal static string ToParameterPrefix(this RefKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case RefKind.Out: return "out ";
-                case RefKind.Ref: return "ref ";
-                case RefKind.In: return "in ";
-                case RefKind.RefReadOnlyParameter: return "ref readonly ";
-                case RefKind.None: return string.Empty;
-                default: throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                RefKind.Out => "out ",
+                RefKind.Ref => "ref ",
+                RefKind.In => "in ",
+                RefKind.RefReadOnlyParameter => "ref readonly ",
+                RefKind.None => string.Empty,
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         // Used internally to track `In` arguments that were specified with `In` modifier

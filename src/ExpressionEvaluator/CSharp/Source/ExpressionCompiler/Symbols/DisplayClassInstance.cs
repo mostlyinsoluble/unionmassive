@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal DisplayClassInstanceFromParameter(ParameterSymbol parameter)
         {
-            Debug.Assert((object)parameter != null);
+            Debug.Assert(parameter is not null);
             Debug.Assert(parameter.Name.EndsWith("this", StringComparison.Ordinal) ||
                 parameter.Name.Length == 0 || // unnamed
                 parameter.Name.Equals("value", StringComparison.Ordinal) || // display class instance passed to local function as parameter

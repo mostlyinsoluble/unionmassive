@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -191,43 +191,24 @@ internal abstract partial class AbstractNavigateToSearchService
 
     private static string GetItemKind(DeclaredSymbolInfo declaredSymbolInfo)
     {
-        switch (declaredSymbolInfo.Kind)
+        return declaredSymbolInfo.Kind switch
         {
-            case DeclaredSymbolInfoKind.Class:
-            case DeclaredSymbolInfoKind.Record:
-                return NavigateToItemKind.Class;
-            case DeclaredSymbolInfoKind.RecordStruct:
-                return NavigateToItemKind.Structure;
-            case DeclaredSymbolInfoKind.Constant:
-                return NavigateToItemKind.Constant;
-            case DeclaredSymbolInfoKind.Delegate:
-                return NavigateToItemKind.Delegate;
-            case DeclaredSymbolInfoKind.Enum:
-                return NavigateToItemKind.Enum;
-            case DeclaredSymbolInfoKind.EnumMember:
-                return NavigateToItemKind.EnumItem;
-            case DeclaredSymbolInfoKind.Event:
-                return NavigateToItemKind.Event;
-            case DeclaredSymbolInfoKind.Field:
-                return NavigateToItemKind.Field;
-            case DeclaredSymbolInfoKind.Interface:
-                return NavigateToItemKind.Interface;
-            case DeclaredSymbolInfoKind.Constructor:
-            case DeclaredSymbolInfoKind.ExtensionMethod:
-            case DeclaredSymbolInfoKind.Method:
-                return NavigateToItemKind.Method;
-            case DeclaredSymbolInfoKind.Module:
-                return NavigateToItemKind.Module;
-            case DeclaredSymbolInfoKind.Indexer:
-            case DeclaredSymbolInfoKind.Property:
-                return NavigateToItemKind.Property;
-            case DeclaredSymbolInfoKind.Struct:
-                return NavigateToItemKind.Structure;
-            case DeclaredSymbolInfoKind.Operator:
-                return NavigateToItemKind.OtherSymbol;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(declaredSymbolInfo.Kind);
-        }
+            DeclaredSymbolInfoKind.Class or DeclaredSymbolInfoKind.Record => NavigateToItemKind.Class,
+            DeclaredSymbolInfoKind.RecordStruct => NavigateToItemKind.Structure,
+            DeclaredSymbolInfoKind.Constant => NavigateToItemKind.Constant,
+            DeclaredSymbolInfoKind.Delegate => NavigateToItemKind.Delegate,
+            DeclaredSymbolInfoKind.Enum => NavigateToItemKind.Enum,
+            DeclaredSymbolInfoKind.EnumMember => NavigateToItemKind.EnumItem,
+            DeclaredSymbolInfoKind.Event => NavigateToItemKind.Event,
+            DeclaredSymbolInfoKind.Field => NavigateToItemKind.Field,
+            DeclaredSymbolInfoKind.Interface => NavigateToItemKind.Interface,
+            DeclaredSymbolInfoKind.Constructor or DeclaredSymbolInfoKind.ExtensionMethod or DeclaredSymbolInfoKind.Method => NavigateToItemKind.Method,
+            DeclaredSymbolInfoKind.Module => NavigateToItemKind.Module,
+            DeclaredSymbolInfoKind.Indexer or DeclaredSymbolInfoKind.Property => NavigateToItemKind.Property,
+            DeclaredSymbolInfoKind.Struct => NavigateToItemKind.Structure,
+            DeclaredSymbolInfoKind.Operator => NavigateToItemKind.OtherSymbol,
+            _ => throw ExceptionUtilities.UnexpectedValue(declaredSymbolInfo.Kind),
+        };
     }
 
     private static NavigateToMatchKind GetNavigateToMatchKind(in TemporaryArray<PatternMatch> nameMatches)

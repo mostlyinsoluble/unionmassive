@@ -41,14 +41,11 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
         /// </remarks>
         protected virtual bool IsValidRadix(int radix)
         {
-            switch (radix)
+            return radix switch
             {
-                case NumberRadixDecimal:
-                case NumberRadixHexadecimal:
-                    return true;
-                default:
-                    return false;
-            }
+                NumberRadixDecimal or NumberRadixHexadecimal => true,
+                _ => false,
+            };
         }
 
         public MemberDisplayFormat MemberDisplayFormat

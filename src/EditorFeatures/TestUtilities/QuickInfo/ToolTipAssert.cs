@@ -175,9 +175,9 @@ public static class ToolTipAssert
             result.Append($"""
                 {classification}, "{classifiedTextRun.Text.Replace("\"", "\"\"")}"
                 """);
-            if (classifiedTextRun.NavigationAction is object || !string.IsNullOrEmpty(classifiedTextRun.Tooltip))
+            if (classifiedTextRun.NavigationAction is not null || !string.IsNullOrEmpty(classifiedTextRun.Tooltip))
             {
-                var tooltip = classifiedTextRun.Tooltip is object ? $"""
+                var tooltip = classifiedTextRun.Tooltip is not null ? $"""
                     "{classifiedTextRun.Tooltip.Replace("\"", "\"\"")}"
                     """ : "Nothing";
                 if (classifiedTextRun.NavigationAction?.Target is QuickInfoHyperLink hyperLink)

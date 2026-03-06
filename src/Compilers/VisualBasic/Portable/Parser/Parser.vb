@@ -182,10 +182,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
 
                 result = SyntaxFactory.GlobalName(DirectCast(CurrentToken, KeywordSyntax))
 
-                If isNameInNamespaceDeclaration Then
-                    result = CheckFeatureAvailability(Feature.GlobalNamespace, result)
-                End If
-
                 GetNextToken()
 
                 If Not allowGlobalNameSpace Then
@@ -634,14 +630,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 Dim statementSyntax = ParseDeclarationStatementInternal()
 
                 Debug.Assert(Not _hadLineContinuationComment OrElse _hadImplicitLineContinuation)
-                If _hadImplicitLineContinuation Then
-                    Dim original = statementSyntax
-                    statementSyntax = CheckFeatureAvailability(Feature.LineContinuation, statementSyntax)
-
-                    If original Is statementSyntax AndAlso _hadLineContinuationComment Then
-                        statementSyntax = CheckFeatureAvailability(Feature.LineContinuationComments, statementSyntax)
-                    End If
-                End If
 
                 Return statementSyntax
             Finally
@@ -881,14 +869,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 Dim statementSyntax = ParseStatementInMethodBodyInternal()
 
                 Debug.Assert(Not _hadLineContinuationComment OrElse _hadImplicitLineContinuation)
-                If _hadImplicitLineContinuation Then
-                    Dim original = statementSyntax
-                    statementSyntax = CheckFeatureAvailability(Feature.LineContinuation, statementSyntax)
-
-                    If original Is statementSyntax AndAlso _hadLineContinuationComment Then
-                        statementSyntax = CheckFeatureAvailability(Feature.LineContinuationComments, statementSyntax)
-                    End If
-                End If
 
                 Return statementSyntax
             Finally
@@ -1600,13 +1580,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 End If
             End If
 
-            Dim statement As TypeStatementSyntax = InternalSyntaxFactory.TypeStatement(kind, attributes, modifiers, typeKeyword, ident, optionalTypeParameters)
-
-            If (kind = SyntaxKind.ModuleStatement OrElse kind = SyntaxKind.InterfaceStatement) AndAlso statement.Modifiers.Any(SyntaxKind.PartialKeyword) Then
-                statement = CheckFeatureAvailability(If(kind = SyntaxKind.ModuleStatement, Feature.PartialModules, Feature.PartialInterfaces), statement)
-            End If
-
-            Return statement
+            Return InternalSyntaxFactory.TypeStatement(kind, attributes, modifiers, typeKeyword, ident, optionalTypeParameters)
         End Function
 
         ' File:Parser.cpp
@@ -2009,7 +1983,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                                    SyntaxFacts.CanStartSpecifierDeclaration(nextToken.Kind) Then
 
                                     t = possibleKeyword
-                                    t = CheckFeatureAvailability(If(possibleKeyword.Kind = SyntaxKind.AsyncKeyword, Feature.AsyncExpressions, Feature.Iterators), t)
                                     Exit Select
                                 End If
 
@@ -2527,9 +2500,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
         ''' 
         Private Function ParseObjectCollectionInitializer(fromKeyword As KeywordSyntax) As ObjectCollectionInitializerSyntax
             Debug.Assert(fromKeyword IsNot Nothing)
-
-            fromKeyword = CheckFeatureAvailability(Feature.CollectionInitializers, fromKeyword)
-
             ' Allow implicit line continuation after FROM (dev10_508839) but only if followed by "{". 
             ' This is to avoid reporting an error at the beginning of then next line and then skipping the next statement.
             If CurrentToken.Kind = SyntaxKind.StatementTerminatorToken AndAlso PeekToken(1).Kind = SyntaxKind.OpenBraceToken Then
@@ -2989,11 +2959,7 @@ checkNullable:
 
             Dim tupleElements = elementBuilder.ToList
             _pool.Free(elementBuilder)
-
-            Dim tupleType = SyntaxFactory.TupleType(openParen, tupleElements, closeParen)
-
-            tupleType = CheckFeatureAvailability(Feature.Tuples, tupleType)
-            Return tupleType
+            Return SyntaxFactory.TupleType(openParen, tupleElements, closeParen)
         End Function
 
         Private Function ReportUnrecognizedTypeInGeneric(typeName As TypeSyntax) As TypeSyntax
@@ -4171,25 +4137,7 @@ checkNullable:
             ' Checks for expanded property (property block) have been moved into the ContextBlock.
 
             ' Build the tree for the property and do some simple semantics like making sure a regular property doesn't have an initializer, etc.
-            Dim propertyStatement As PropertyStatementSyntax = SyntaxFactory.PropertyStatement(attributes, modifiers, propertyKeyword, ident, optionalParameters, asClause, initializer, implementsClause)
-
-            ' Need to look ahead to the next token, after the statement terminator, to see if this is an
-            ' auto property or not.
-            If CurrentToken.Kind <> SyntaxKind.EndOfFileToken Then
-                Dim peek = PeekToken(1)
-                If peek.Kind <> SyntaxKind.GetKeyword AndAlso peek.Kind <> SyntaxKind.SetKeyword Then
-                    If Context.BlockKind <> SyntaxKind.InterfaceBlock AndAlso Not propertyStatement.Modifiers.Any(SyntaxKind.MustOverrideKeyword) Then
-                        Dim originalStatement = propertyStatement
-                        propertyStatement = CheckFeatureAvailability(Feature.AutoProperties, propertyStatement)
-
-                        If propertyStatement Is originalStatement AndAlso propertyStatement.Modifiers.Any(SyntaxKind.ReadOnlyKeyword) Then
-                            propertyStatement = CheckFeatureAvailability(Feature.ReadonlyAutoProperties, propertyStatement)
-                        End If
-                    End If
-                End If
-            End If
-
-            Return propertyStatement
+            Return SyntaxFactory.PropertyStatement(attributes, modifiers, propertyKeyword, ident, optionalParameters, asClause, initializer, implementsClause)
         End Function
 
         ' Parse a declaration of a delegate.
@@ -4303,7 +4251,6 @@ checkNullable:
 
                 If CurrentToken.Kind = SyntaxKind.InKeyword Then
                     optionalVarianceModifier = DirectCast(CurrentToken, KeywordSyntax)
-                    optionalVarianceModifier = CheckFeatureAvailability(Feature.CoContraVariance, optionalVarianceModifier)
                     GetNextToken()
 
                 Else
@@ -4321,7 +4268,6 @@ checkNullable:
                             name = id
                             optionalVarianceModifier = Nothing
                         Else
-                            outKeyword = CheckFeatureAvailability(Feature.CoContraVariance, outKeyword)
                             optionalVarianceModifier = outKeyword
                         End If
                     End If
@@ -6095,68 +6041,6 @@ checkNullable:
 
             Return node.AddTrailingSyntax(b.ToList(), ERRID.ERR_Syntax)
         End Function
-
-        ''' <summary>
-        ''' Check to see if the given <paramref name="feature"/> is available with the <see cref="LanguageVersion"/>
-        ''' of the parser.  If it is not available a diagnostic will be added to the returned value.
-        ''' </summary>
-        Private Function CheckFeatureAvailability(Of TNode As VisualBasicSyntaxNode)(feature As Feature, node As TNode) As TNode
-            Return CheckFeatureAvailability(feature, node, _scanner.Options.LanguageVersion)
-        End Function
-
-        Friend Shared Function CheckFeatureAvailability(Of TNode As VisualBasicSyntaxNode)(feature As Feature, node As TNode, languageVersion As LanguageVersion) As TNode
-            If CheckFeatureAvailability(languageVersion, feature) Then
-                Return node
-            End If
-
-            Return ReportFeatureUnavailable(feature, node, languageVersion)
-        End Function
-
-        Private Shared Function ReportFeatureUnavailable(Of TNode As VisualBasicSyntaxNode)(feature As Feature, node As TNode, languageVersion As LanguageVersion) As TNode
-            Dim featureName = ErrorFactory.ErrorInfo(feature.GetResourceId())
-            Dim requiredVersion = New VisualBasicRequiredLanguageVersion(feature.GetLanguageVersion())
-            Return ReportSyntaxError(node, ERRID.ERR_LanguageVersion, languageVersion.GetErrorName(), featureName, requiredVersion)
-        End Function
-
-        Friend Function ReportFeatureUnavailable(Of TNode As VisualBasicSyntaxNode)(feature As Feature, node As TNode) As TNode
-            Return ReportFeatureUnavailable(feature, node, _scanner.Options.LanguageVersion)
-        End Function
-
-        Friend Function CheckFeatureAvailability(feature As Feature) As Boolean
-            Return CheckFeatureAvailability(_scanner.Options.LanguageVersion, feature)
-        End Function
-
-        Friend Shared Function CheckFeatureAvailability(languageVersion As LanguageVersion, feature As Feature) As Boolean
-            Dim required = feature.GetLanguageVersion()
-            Return required <= languageVersion
-        End Function
-
-        ''' <summary>
-        ''' Returns false and reports an error if the feature is un-available
-        ''' </summary>
-        Friend Shared Function CheckFeatureAvailability(diagnosticsOpt As DiagnosticBag, location As Location, languageVersion As LanguageVersion, feature As Feature) As Boolean
-            If Not CheckFeatureAvailability(languageVersion, feature) Then
-                If diagnosticsOpt IsNot Nothing Then
-                    diagnosticsOpt.Add(GetFeatureAvailabilityError(feature, languageVersion), location)
-                End If
-
-                Return False
-            End If
-            Return True
-        End Function
-
-        Friend Shared Function GetFeatureAvailabilityError(feature As Feature, languageVersion As LanguageVersion) As DiagnosticInfo
-            Return ErrorFactory.ErrorInfo(
-                ERRID.ERR_LanguageVersion,
-                languageVersion.GetErrorName(),
-                ErrorFactory.ErrorInfo(feature.GetResourceId()),
-                New VisualBasicRequiredLanguageVersion(feature.GetLanguageVersion()))
-        End Function
-
-        Friend Shared Function CheckFeatureAvailability(diagnostics As BindingDiagnosticBag, location As Location, languageVersion As LanguageVersion, feature As Feature) As Boolean
-            Return CheckFeatureAvailability(diagnostics.DiagnosticBag, location, languageVersion, feature)
-        End Function
-
     End Class
 
     'TODO - These should be removed.  Checks should be in binding.

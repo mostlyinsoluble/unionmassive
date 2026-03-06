@@ -194,7 +194,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal DkmEvaluationAsyncResult FormatAsyncResult(string name, string fullName, DkmClrValue value, DkmClrType declaredType = null, DkmClrCustomTypeInfo declaredTypeInfo = null, DkmInspectionContext inspectionContext = null)
         {
-            DkmEvaluationAsyncResult asyncResult = default(DkmEvaluationAsyncResult);
+            DkmEvaluationAsyncResult asyncResult = default;
             var workList = new DkmWorkList();
             value.GetResult(
                 workList,
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal DkmEvaluationResult[] GetChildren(DkmEvaluationResult evalResult, int initialRequestSize, DkmInspectionContext inspectionContext, out DkmEvaluationResultEnumContext enumContext)
         {
-            DkmGetChildrenAsyncResult getChildrenResult = default(DkmGetChildrenAsyncResult);
+            DkmGetChildrenAsyncResult getChildrenResult = default;
             var workList = new DkmWorkList();
             evalResult.GetChildren(workList, initialRequestSize, inspectionContext ?? DefaultInspectionContext, r => { getChildrenResult = r; });
             workList.Execute();
@@ -264,7 +264,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal DkmEvaluationResult[] GetItems(DkmEvaluationResultEnumContext enumContext, int startIndex, int count)
         {
-            DkmEvaluationEnumAsyncResult getItemsResult = default(DkmEvaluationEnumAsyncResult);
+            DkmEvaluationEnumAsyncResult getItemsResult = default;
             var workList = new DkmWorkList();
             enumContext.GetItems(workList, startIndex, count, r => { getItemsResult = r; });
             workList.Execute();
@@ -302,8 +302,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 type,
                 category,
                 access,
-                default(DkmEvaluationResultStorageType),
-                default(DkmEvaluationResultTypeModifierFlags),
+                default,
+                default,
                 null,
                 (customUIVisualizerInfo != null) ? new ReadOnlyCollection<DkmCustomUIVisualizerInfo>(customUIVisualizerInfo) : null,
                 null,

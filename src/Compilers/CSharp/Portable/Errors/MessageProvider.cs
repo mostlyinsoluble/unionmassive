@@ -119,7 +119,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override ReportDiagnostic GetDiagnosticReport(DiagnosticInfo diagnosticInfo, CompilationOptions options)
         {
-            bool hasPragmaSuppression;
             return CSharpDiagnosticFilter.GetDiagnosticReport(diagnosticInfo.Severity,
                                                               true,
                                                               diagnosticInfo.Code,
@@ -133,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                               options.SpecificDiagnosticOptions,
                                                               options.SyntaxTreeOptionsProvider,
                                                               CancellationToken.None, // We don't have a tree so there's no need to pass cancellation to the SyntaxTreeOptionsProvider
-                                                              out hasPragmaSuppression);
+                                                              out bool hasPragmaSuppression);
         }
 
 #if DEBUG

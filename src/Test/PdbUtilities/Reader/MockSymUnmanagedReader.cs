@@ -34,8 +34,7 @@ namespace Roslyn.Test.Utilities
         {
             Assert.Equal(1, version);
 
-            MethodDebugInfoBytes info;
-            if (!_methodDebugInfoMap.TryGetValue(methodToken, out info))
+            if (!_methodDebugInfoMap.TryGetValue(methodToken, out var info))
             {
                 retVal = null;
                 return HResult.E_FAIL;
@@ -60,8 +59,7 @@ namespace Roslyn.Test.Utilities
 
             Assert.Equal("MD2", name);
 
-            MethodDebugInfoBytes info;
-            if (!_methodDebugInfoMap.TryGetValue(methodToken, out info))
+            if (!_methodDebugInfoMap.TryGetValue(methodToken, out var info))
             {
                 count = 0;
                 return HResult.S_FALSE; // This is a guess.  We're not consuming it, so it doesn't really matter.

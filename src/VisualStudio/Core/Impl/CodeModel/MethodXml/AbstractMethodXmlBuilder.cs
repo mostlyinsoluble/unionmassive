@@ -344,21 +344,14 @@ internal abstract partial class AbstractMethodXmlBuilder
             return VariableKind.Unknown;
         }
 
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Event:
-            case SymbolKind.Field:
-                return VariableKind.Field;
-            case SymbolKind.Local:
-            case SymbolKind.Parameter:
-                return VariableKind.Local;
-            case SymbolKind.Method:
-                return VariableKind.Method;
-            case SymbolKind.Property:
-                return VariableKind.Property;
-            default:
-                throw new InvalidOperationException("Invalid symbol kind: " + symbol.Kind.ToString());
-        }
+            SymbolKind.Event or SymbolKind.Field => VariableKind.Field,
+            SymbolKind.Local or SymbolKind.Parameter => VariableKind.Local,
+            SymbolKind.Method => VariableKind.Method,
+            SymbolKind.Property => VariableKind.Property,
+            _ => throw new InvalidOperationException("Invalid symbol kind: " + symbol.Kind.ToString()),
+        };
     }
 
     protected string GetTypeName(ITypeSymbol typeSymbol)

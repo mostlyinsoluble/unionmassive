@@ -21,11 +21,10 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ConvertTypeOfToNameOf
         Protected Overrides Function IsValidTypeofAction(context As OperationAnalysisContext) As Boolean
             Dim node = context.Operation.Syntax
             Dim compilation = context.Compilation
-            Dim isValidLanguage = DirectCast(compilation, VisualBasicCompilation).LanguageVersion >= LanguageVersion.VisualBasic14
             Dim isValidType = node.IsKind(SyntaxKind.GetTypeExpression)
             Dim isParentValid = node.Parent.GetType() Is GetType(MemberAccessExpressionSyntax)
 
-            Return isValidLanguage And isValidType And isParentValid
+            Return isValidType And isParentValid
         End Function
     End Class
 End Namespace

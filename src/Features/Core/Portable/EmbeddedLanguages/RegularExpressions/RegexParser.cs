@@ -687,16 +687,12 @@ internal partial struct RegexParser
 
     private RegexToken ParseGroupingCloseParen()
     {
-        switch (_currentToken.Kind)
+        return _currentToken.Kind switch
         {
-            case RegexKind.CloseParenToken:
-                // Grouping completed normally.  Allow trivia between it and the next sequence element.
-                return ConsumeCurrentToken(allowTrivia: true);
-
-            default:
-                return CreateMissingToken(RegexKind.CloseParenToken).AddDiagnosticIfNone(
-                    new EmbeddedDiagnostic(FeaturesResources.Not_enough_close_parens, GetTokenStartPositionSpan(_currentToken)));
-        }
+            RegexKind.CloseParenToken => ConsumeCurrentToken(allowTrivia: true),// Grouping completed normally.  Allow trivia between it and the next sequence element.
+            _ => CreateMissingToken(RegexKind.CloseParenToken).AddDiagnosticIfNone(
+                                new EmbeddedDiagnostic(FeaturesResources.Not_enough_close_parens, GetTokenStartPositionSpan(_currentToken))),
+        };
     }
 
     private RegexSimpleGroupingNode ParseSimpleGroup(RegexToken openParenToken)
@@ -1226,16 +1222,15 @@ internal partial struct RegexParser
 
     private static RegexOptions OptionFromCode(VirtualChar ch)
     {
-        switch (ch.Value)
+        return ch.Value switch
         {
-            case 'i': case 'I': return RegexOptions.IgnoreCase;
-            case 'm': case 'M': return RegexOptions.Multiline;
-            case 'n': case 'N': return RegexOptions.ExplicitCapture;
-            case 's': case 'S': return RegexOptions.Singleline;
-            case 'x': case 'X': return RegexOptions.IgnorePatternWhitespace;
-            default:
-                throw new InvalidOperationException();
-        }
+            'i' or 'I' => RegexOptions.IgnoreCase,
+            'm' or 'M' => RegexOptions.Multiline,
+            'n' or 'N' => RegexOptions.ExplicitCapture,
+            's' or 'S' => RegexOptions.Singleline,
+            'x' or 'X' => RegexOptions.IgnorePatternWhitespace,
+            _ => throw new InvalidOperationException(),
+        };
     }
 
     private RegexBaseCharacterClassNode ParseCharacterClass()

@@ -327,20 +327,12 @@ internal abstract class AbstractRemoveUnnecessaryInlineSuppressionsDiagnosticAna
 
     private static bool IsSupportedAnalyzerDiagnosticId(string id)
     {
-        switch (id)
+        return id switch
         {
-            case IDEDiagnosticIds.RemoveUnnecessarySuppressionDiagnosticId:
-                // Not supported as this would lead to recursion in computation.
-                return false;
-
-            case "format":
-            case IDEDiagnosticIds.FormattingDiagnosticId:
-                // Formatting analyzer is not supported as the analyzer does not seem to return suppressed IDE0055 diagnostics.
-                return false;
-
-            default:
-                return true;
-        }
+            IDEDiagnosticIds.RemoveUnnecessarySuppressionDiagnosticId => false,// Not supported as this would lead to recursion in computation.
+            "format" or IDEDiagnosticIds.FormattingDiagnosticId => false,// Formatting analyzer is not supported as the analyzer does not seem to return suppressed IDE0055 diagnostics.
+            _ => true,
+        };
     }
 
     private static (ImmutableArray<string> userIdExclusions, ImmutableArray<string> userCategoryExclusions, bool analyzerDisabled) ParseUserExclusions(string? userExclusions)

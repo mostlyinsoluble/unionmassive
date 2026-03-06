@@ -277,29 +277,14 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
 
     public bool IsQueryKeyword(SyntaxToken token)
     {
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.FromKeyword:
-            case SyntaxKind.JoinKeyword:
-            case SyntaxKind.LetKeyword:
-            case SyntaxKind.OrderByKeyword:
-            case SyntaxKind.WhereKeyword:
-            case SyntaxKind.OnKeyword:
-            case SyntaxKind.EqualsKeyword:
-            case SyntaxKind.InKeyword:
-                return token.Parent is QueryClauseSyntax;
-            case SyntaxKind.ByKeyword:
-            case SyntaxKind.GroupKeyword:
-            case SyntaxKind.SelectKeyword:
-                return token.Parent is SelectOrGroupClauseSyntax;
-            case SyntaxKind.AscendingKeyword:
-            case SyntaxKind.DescendingKeyword:
-                return token.Parent is OrderingSyntax;
-            case SyntaxKind.IntoKeyword:
-                return token.Parent is (kind: SyntaxKind.JoinIntoClause or SyntaxKind.QueryContinuation);
-            default:
-                return false;
-        }
+            SyntaxKind.FromKeyword or SyntaxKind.JoinKeyword or SyntaxKind.LetKeyword or SyntaxKind.OrderByKeyword or SyntaxKind.WhereKeyword or SyntaxKind.OnKeyword or SyntaxKind.EqualsKeyword or SyntaxKind.InKeyword => token.Parent is QueryClauseSyntax,
+            SyntaxKind.ByKeyword or SyntaxKind.GroupKeyword or SyntaxKind.SelectKeyword => token.Parent is SelectOrGroupClauseSyntax,
+            SyntaxKind.AscendingKeyword or SyntaxKind.DescendingKeyword => token.Parent is OrderingSyntax,
+            SyntaxKind.IntoKeyword => token.Parent is (kind: SyntaxKind.JoinIntoClause or SyntaxKind.QueryContinuation),
+            _ => false,
+        };
     }
 
     public bool IsPredefinedType(SyntaxToken token)
@@ -362,84 +347,32 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
 
     private static PredefinedOperator GetPredefinedOperator(SyntaxToken token)
     {
-        switch ((SyntaxKind)token.RawKind)
+        return (SyntaxKind)token.RawKind switch
         {
-            case SyntaxKind.PlusToken:
-            case SyntaxKind.PlusEqualsToken:
-                return PredefinedOperator.Addition;
-
-            case SyntaxKind.MinusToken:
-            case SyntaxKind.MinusEqualsToken:
-                return PredefinedOperator.Subtraction;
-
-            case SyntaxKind.AmpersandAmpersandToken: // overridden bitwise & can be accessed through &&
-            case SyntaxKind.AmpersandToken:
-            case SyntaxKind.AmpersandEqualsToken:
-                return PredefinedOperator.BitwiseAnd;
-
-            case SyntaxKind.BarBarToken: // overridden bitwise | can be accessed through ||
-            case SyntaxKind.BarToken:
-            case SyntaxKind.BarEqualsToken:
-                return PredefinedOperator.BitwiseOr;
-
-            case SyntaxKind.MinusMinusToken:
-                return PredefinedOperator.Decrement;
-
-            case SyntaxKind.PlusPlusToken:
-                return PredefinedOperator.Increment;
-
-            case SyntaxKind.SlashToken:
-            case SyntaxKind.SlashEqualsToken:
-                return PredefinedOperator.Division;
-
-            case SyntaxKind.EqualsEqualsToken:
-                return PredefinedOperator.Equality;
-
-            case SyntaxKind.CaretToken:
-            case SyntaxKind.CaretEqualsToken:
-                return PredefinedOperator.ExclusiveOr;
-
-            case SyntaxKind.GreaterThanToken:
-                return PredefinedOperator.GreaterThan;
-
-            case SyntaxKind.GreaterThanEqualsToken:
-                return PredefinedOperator.GreaterThanOrEqual;
-
-            case SyntaxKind.ExclamationEqualsToken:
-                return PredefinedOperator.Inequality;
-
-            case SyntaxKind.LessThanLessThanToken:
-            case SyntaxKind.LessThanLessThanEqualsToken:
-                return PredefinedOperator.LeftShift;
-
-            case SyntaxKind.LessThanToken:
-                return PredefinedOperator.LessThan;
-
-            case SyntaxKind.LessThanEqualsToken:
-                return PredefinedOperator.LessThanOrEqual;
-
-            case SyntaxKind.AsteriskToken:
-            case SyntaxKind.AsteriskEqualsToken:
-                return PredefinedOperator.Multiplication;
-
-            case SyntaxKind.PercentToken:
-            case SyntaxKind.PercentEqualsToken:
-                return PredefinedOperator.Modulus;
-
-            case SyntaxKind.ExclamationToken:
-            case SyntaxKind.TildeToken:
-                return PredefinedOperator.Complement;
-
-            case SyntaxKind.GreaterThanGreaterThanToken:
-            case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-                return PredefinedOperator.RightShift;
-
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
-                return PredefinedOperator.UnsignedRightShift;
-        }
-
-        return PredefinedOperator.None;
+            SyntaxKind.PlusToken or SyntaxKind.PlusEqualsToken => PredefinedOperator.Addition,
+            SyntaxKind.MinusToken or SyntaxKind.MinusEqualsToken => PredefinedOperator.Subtraction,
+            // overridden bitwise & can be accessed through &&
+            SyntaxKind.AmpersandAmpersandToken or SyntaxKind.AmpersandToken or SyntaxKind.AmpersandEqualsToken => PredefinedOperator.BitwiseAnd,
+            // overridden bitwise | can be accessed through ||
+            SyntaxKind.BarBarToken or SyntaxKind.BarToken or SyntaxKind.BarEqualsToken => PredefinedOperator.BitwiseOr,
+            SyntaxKind.MinusMinusToken => PredefinedOperator.Decrement,
+            SyntaxKind.PlusPlusToken => PredefinedOperator.Increment,
+            SyntaxKind.SlashToken or SyntaxKind.SlashEqualsToken => PredefinedOperator.Division,
+            SyntaxKind.EqualsEqualsToken => PredefinedOperator.Equality,
+            SyntaxKind.CaretToken or SyntaxKind.CaretEqualsToken => PredefinedOperator.ExclusiveOr,
+            SyntaxKind.GreaterThanToken => PredefinedOperator.GreaterThan,
+            SyntaxKind.GreaterThanEqualsToken => PredefinedOperator.GreaterThanOrEqual,
+            SyntaxKind.ExclamationEqualsToken => PredefinedOperator.Inequality,
+            SyntaxKind.LessThanLessThanToken or SyntaxKind.LessThanLessThanEqualsToken => PredefinedOperator.LeftShift,
+            SyntaxKind.LessThanToken => PredefinedOperator.LessThan,
+            SyntaxKind.LessThanEqualsToken => PredefinedOperator.LessThanOrEqual,
+            SyntaxKind.AsteriskToken or SyntaxKind.AsteriskEqualsToken => PredefinedOperator.Multiplication,
+            SyntaxKind.PercentToken or SyntaxKind.PercentEqualsToken => PredefinedOperator.Modulus,
+            SyntaxKind.ExclamationToken or SyntaxKind.TildeToken => PredefinedOperator.Complement,
+            SyntaxKind.GreaterThanGreaterThanToken or SyntaxKind.GreaterThanGreaterThanEqualsToken => PredefinedOperator.RightShift,
+            SyntaxKind.GreaterThanGreaterThanGreaterThanToken or SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken => PredefinedOperator.UnsignedRightShift,
+            _ => PredefinedOperator.None,
+        };
     }
 
     public string GetText(int kind)
@@ -473,30 +406,11 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
 
     public bool IsLiteral(SyntaxToken token)
     {
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.NumericLiteralToken:
-            case SyntaxKind.CharacterLiteralToken:
-            case SyntaxKind.StringLiteralToken:
-            case SyntaxKind.Utf8StringLiteralToken:
-            case SyntaxKind.SingleLineRawStringLiteralToken:
-            case SyntaxKind.Utf8SingleLineRawStringLiteralToken:
-            case SyntaxKind.MultiLineRawStringLiteralToken:
-            case SyntaxKind.Utf8MultiLineRawStringLiteralToken:
-            case SyntaxKind.NullKeyword:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
-            case SyntaxKind.InterpolatedStringStartToken:
-            case SyntaxKind.InterpolatedStringEndToken:
-            case SyntaxKind.InterpolatedRawStringEndToken:
-            case SyntaxKind.InterpolatedVerbatimStringStartToken:
-            case SyntaxKind.InterpolatedStringTextToken:
-            case SyntaxKind.InterpolatedSingleLineRawStringStartToken:
-            case SyntaxKind.InterpolatedMultiLineRawStringStartToken:
-                return true;
-            default:
-                return false;
-        }
+            SyntaxKind.NumericLiteralToken or SyntaxKind.CharacterLiteralToken or SyntaxKind.StringLiteralToken or SyntaxKind.Utf8StringLiteralToken or SyntaxKind.SingleLineRawStringLiteralToken or SyntaxKind.Utf8SingleLineRawStringLiteralToken or SyntaxKind.MultiLineRawStringLiteralToken or SyntaxKind.Utf8MultiLineRawStringLiteralToken or SyntaxKind.NullKeyword or SyntaxKind.TrueKeyword or SyntaxKind.FalseKeyword or SyntaxKind.InterpolatedStringStartToken or SyntaxKind.InterpolatedStringEndToken or SyntaxKind.InterpolatedRawStringEndToken or SyntaxKind.InterpolatedVerbatimStringStartToken or SyntaxKind.InterpolatedStringTextToken or SyntaxKind.InterpolatedSingleLineRawStringStartToken or SyntaxKind.InterpolatedMultiLineRawStringStartToken => true,
+            _ => false,
+        };
     }
 
     public bool IsStringLiteralOrInterpolatedStringLiteral(SyntaxToken token)
@@ -506,14 +420,11 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
     {
         if (this.IsWord(token) || this.IsLiteral(token) || this.IsOperator(token))
         {
-            switch (token.Kind())
+            return token.Kind() switch
             {
-                case SyntaxKind.DelegateKeyword:
-                case SyntaxKind.VoidKeyword:
-                    return false;
-            }
-
-            return true;
+                SyntaxKind.DelegateKeyword or SyntaxKind.VoidKeyword => false,
+                _ => true,
+            };
         }
 
         // In the order by clause a comma might be bound to ThenBy or ThenByDescending
@@ -1176,32 +1087,14 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
         //    destructor-declaration
         //    static-constructor-declaration
         //    type-declaration
-        switch (node.Kind())
+        return node.Kind() switch
         {
             // Because fields declarations can define multiple symbols "public int a, b;"
             // We want to get the VariableDeclarator node inside the field declaration to print out the symbol for the name.
-            case SyntaxKind.VariableDeclarator:
-                return node.Parent?.Parent?.Kind() is SyntaxKind.FieldDeclaration or SyntaxKind.EventFieldDeclaration;
-
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-            case SyntaxKind.AddAccessorDeclaration:
-            case SyntaxKind.RemoveAccessorDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.VariableDeclarator => node.Parent?.Parent?.Kind() is SyntaxKind.FieldDeclaration or SyntaxKind.EventFieldDeclaration,
+            SyntaxKind.FieldDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration or SyntaxKind.EventDeclaration or SyntaxKind.EventFieldDeclaration or SyntaxKind.AddAccessorDeclaration or SyntaxKind.RemoveAccessorDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration => true,
+            _ => false,
+        };
     }
 
     public bool IsTypeDeclaration(SyntaxNode node)

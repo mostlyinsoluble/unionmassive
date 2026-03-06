@@ -1371,13 +1371,12 @@ internal sealed class RegexOctalEscapeNode(RegexToken backslashToken, RegexToken
 
     internal override RegexNodeOrToken ChildAt(int index)
     {
-        switch (index)
+        return index switch
         {
-            case 0: return BackslashToken;
-            case 1: return OctalText;
-        }
-
-        throw new InvalidOperationException();
+            0 => (RegexNodeOrToken)BackslashToken,
+            1 => (RegexNodeOrToken)OctalText,
+            _ => throw new InvalidOperationException(),
+        };
     }
 
     public override void Accept(IRegexNodeVisitor visitor)

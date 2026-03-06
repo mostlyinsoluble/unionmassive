@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis
 
             if (publicKeyOrToken.IsEmpty)
             {
-                publicKeyOrToken = default(ImmutableArray<byte>);
+                publicKeyOrToken = default;
             }
 
             return new AssemblyIdentity(

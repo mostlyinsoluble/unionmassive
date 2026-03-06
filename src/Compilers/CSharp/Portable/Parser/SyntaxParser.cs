@@ -55,13 +55,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             IEnumerable<TextChangeRange> changes,
             bool allowModeReset,
             bool preLexIfNotIncremental = false,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             this.lexer = lexer;
             _mode = mode;
             _allowModeReset = allowModeReset;
             this.cancellationToken = cancellationToken;
-            _currentNode = default(BlendedNode);
+            _currentNode = default;
             _isIncremental = oldTree != null;
 
             if (this.IsIncremental || allowModeReset)
@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
             else
             {
-                _firstBlender = default(Blender);
+                _firstBlender = default;
                 _lexedTokens = s_lexedTokensPool.Allocate();
             }
 
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(offset >= 0 && offset < _tokenCount);
             _tokenOffset = offset;
             _currentToken = null;
-            _currentNode = default(BlendedNode);
+            _currentNode = default;
             _prevTokenTrailingTrivia = point.PrevTokenTrailingTrivia;
             if (_blendedTokens != null)
             {
@@ -241,7 +241,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                     _mode = value;
                     _currentToken = null;
-                    _currentNode = default(BlendedNode);
+                    _currentNode = default;
                     _tokenCount = _tokenOffset;
                 }
             }
@@ -307,7 +307,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             _tokenCount = _tokenOffset; // forget anything after this slot
 
             // erase current state
-            _currentNode = default(BlendedNode);
+            _currentNode = default;
             _currentToken = null;
 
             return result;
@@ -505,7 +505,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             if (_blendedTokens != null)
             {
-                _currentNode = default(BlendedNode);
+                _currentNode = default;
             }
 
             _tokenOffset++;
@@ -914,9 +914,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         protected TNode AddErrorToLastToken<TNode>(TNode node, ErrorCode code) where TNode : CSharpSyntaxNode
         {
-            int offset;
-            int width;
-            GetOffsetAndWidthForLastToken(node, out offset, out width);
+            GetOffsetAndWidthForLastToken(node, out int offset, out int width);
             return WithAdditionalDiagnostics(node, MakeError(offset, width, code));
         }
 
@@ -1134,37 +1132,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         internal DirectiveStack Directives
         {
             get { return lexer.Directives; }
-        }
-
-#nullable enable
-        /// <remarks>
-        /// NOTE: we are specifically diverging from dev11 to improve the user experience.
-        /// Since treating the "async" keyword as an identifier in older language
-        /// versions can never result in a correct program, we instead accept it as a
-        /// keyword regardless of the language version and produce an error if the version
-        /// is insufficient.
-        /// </remarks>
-        protected TNode CheckFeatureAvailability<TNode>(TNode node, MessageID feature, bool forceWarning = false)
-            where TNode : GreenNode
-        {
-            var info = feature.GetFeatureAvailabilityDiagnosticInfo(this.Options);
-            if (info != null)
-            {
-                if (forceWarning)
-                {
-                    return AddError(node, ErrorCode.WRN_ErrorOverride, info, (int)info.Code);
-                }
-
-                return AddError(node, info.Code, info.Arguments);
-            }
-
-            return node;
-        }
-#nullable disable
-
-        protected bool IsFeatureEnabled(MessageID feature)
-        {
-            return this.Options.IsFeatureEnabled(feature);
         }
 
         /// <summary>

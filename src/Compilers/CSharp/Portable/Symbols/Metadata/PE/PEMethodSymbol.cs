@@ -419,8 +419,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             PENamedTypeSymbol containingType,
             MethodDefinitionHandle methodDef)
         {
-            Debug.Assert((object)moduleSymbol != null);
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(moduleSymbol is not null);
+            Debug.Assert(containingType is not null);
             Debug.Assert(!methodDef.IsNil);
 
             _handle = methodDef;
@@ -430,15 +430,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             try
             {
-                int rva;
-                MethodImplAttributes implFlags;
-                moduleSymbol.Module.GetMethodDefPropsOrThrow(methodDef, out _name, out implFlags, out localflags, out rva);
+                moduleSymbol.Module.GetMethodDefPropsOrThrow(methodDef, out _name, out MethodImplAttributes implFlags, out localflags, out int rva);
                 Debug.Assert((uint)implFlags <= ushort.MaxValue);
                 _implFlags = (ushort)implFlags;
             }
             catch (BadImageFormatException)
             {
-                if ((object)_name == null)
+                if (_name is null)
                 {
                     _name = string.Empty;
                 }
@@ -511,30 +509,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                switch (Flags & MethodAttributes.MemberAccessMask)
+                return (Flags & MethodAttributes.MemberAccessMask) switch
                 {
-                    case MethodAttributes.Assembly:
-                        return Accessibility.Internal;
-
-                    case MethodAttributes.FamORAssem:
-                        return Accessibility.ProtectedOrInternal;
-
-                    case MethodAttributes.FamANDAssem:
-                        return Accessibility.ProtectedAndInternal;
-
-                    case MethodAttributes.Private:
-                    case MethodAttributes.PrivateScope:
-                        return Accessibility.Private;
-
-                    case MethodAttributes.Public:
-                        return Accessibility.Public;
-
-                    case MethodAttributes.Family:
-                        return Accessibility.Protected;
-
-                    default:
-                        return Accessibility.Private;
-                }
+                    MethodAttributes.Assembly => Accessibility.Internal,
+                    MethodAttributes.FamORAssem => Accessibility.ProtectedOrInternal,
+                    MethodAttributes.FamANDAssem => Accessibility.ProtectedAndInternal,
+                    MethodAttributes.Private or MethodAttributes.PrivateScope => Accessibility.Private,
+                    MethodAttributes.Public => Accessibility.Public,
+                    MethodAttributes.Family => Accessibility.Protected,
+                    _ => Accessibility.Private,
+                };
             }
         }
 
@@ -559,9 +543,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 try
                 {
-                    int parameterCount;
-                    int typeParameterCount;
-                    MetadataDecoder.GetSignatureCountsOrThrow(_containingType.ContainingPEModule.Module, _handle, out parameterCount, out typeParameterCount);
+                    MetadataDecoder.GetSignatureCountsOrThrow(_containingType.ContainingPEModule.Module, _handle, out int parameterCount, out int typeParameterCount);
                     return typeParameterCount;
                 }
                 catch (BadImageFormatException)
@@ -611,7 +593,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         public override bool IsOverride =>
             !this._containingType.IsInterface &&
             this.IsMetadataVirtual() && !this.IsDestructor &&
-            ((!this.IsMetadataNewSlot() && (object)_containingType.BaseTypeNoUseSiteDiagnostics != null) || this.IsExplicitClassOverride);
+            ((!this.IsMetadataNewSlot() && _containingType.BaseTypeNoUseSiteDiagnostics is not null) || this.IsExplicitClassOverride);
 
         public override bool IsStatic => HasFlag(MethodAttributes.Static);
 
@@ -662,10 +644,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 try
                 {
-                    int parameterCount;
-                    int typeParameterCount;
                     MetadataDecoder.GetSignatureCountsOrThrow(_containingType.ContainingPEModule.Module, _handle,
-                        out parameterCount, out typeParameterCount);
+                        out int parameterCount, out int typeParameterCount);
                     return parameterCount;
                 }
                 catch (BadImageFormatException)
@@ -819,7 +799,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private bool SetAssociatedPropertyOrEvent(Symbol propertyOrEventSymbol, MethodKind methodKind)
         {
-            if ((object)_associatedPropertyOrEventOpt == null)
+            if (_associatedPropertyOrEventOpt is null)
             {
                 Debug.Assert(TypeSymbol.Equals(propertyOrEventSymbol.ContainingType, _containingType, TypeCompareKind.ConsiderEverything2));
 
@@ -830,7 +810,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 // NOTE: may be overwriting an existing value.
                 Debug.Assert(
-                    _packedFlags.MethodKind == default(MethodKind) ||
+                    _packedFlags.MethodKind == default ||
                     _packedFlags.MethodKind == MethodKind.Ordinary ||
                     _packedFlags.MethodKind == MethodKind.ExplicitInterfaceImplementation);
 
@@ -850,9 +830,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             var moduleSymbol = _containingType.ContainingPEModule;
 
-            SignatureHeader signatureHeader;
-            BadImageFormatException mrEx;
-            ParamInfo<TypeSymbol>[] paramInfo = new MetadataDecoder(moduleSymbol, this).GetSignatureForMethod(_handle, out signatureHeader, out mrEx);
+            ParamInfo<TypeSymbol>[] paramInfo = new MetadataDecoder(moduleSymbol, this).GetSignatureForMethod(_handle, out SignatureHeader signatureHeader, out BadImageFormatException mrEx);
             bool makeBad = (mrEx != null);
 
             // If method is not generic, let's assign empty list for type parameters
@@ -1101,8 +1079,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         internal override byte? GetNullableContextValue()
         {
-            byte? value;
-            if (!_packedFlags.TryGetNullableContext(out value))
+            if (!_packedFlags.TryGetNullableContext(out byte? value))
             {
                 value = _containingType.ContainingPEModule.Module.HasNullableContextAttribute(_handle, out byte arg) ?
                     arg :
@@ -1143,16 +1120,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
 
             var parameter = parameters[0];
-            switch (parameter.RefKind)
+            return parameter.RefKind switch
             {
-                case RefKind.None:
-                case RefKind.Ref:
-                case RefKind.In:
-                case RefKind.RefReadOnlyParameter:
-                    return !parameter.IsParams;
-                default:
-                    return false;
-            }
+                RefKind.None or RefKind.Ref or RefKind.In or RefKind.RefReadOnlyParameter => !parameter.IsParams,
+                _ => false,
+            };
         }
 
         private bool IsValidStaticUserDefinedOperatorSignature(int parameterCount)
@@ -1499,7 +1471,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return PEDocumentationCommentUtils.GetDocumentationComment(this, _containingType.ContainingPEModule, preferredCulture, cancellationToken, ref AccessUncommonFields()._lazyDocComment);
         }
@@ -1618,7 +1590,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return GetCachedUseSiteInfo();
             }
 
-            if (useSiteInfo.DiagnosticInfo is object || !useSiteInfo.SecondaryDependencies.IsNullOrEmpty())
+            if (useSiteInfo.DiagnosticInfo is not null || !useSiteInfo.SecondaryDependencies.IsNullOrEmpty())
             {
                 useSiteInfo = AccessUncommonFields()._lazyCachedUseSiteInfo.InterlockedInitializeFromDefault(PrimaryDependency, useSiteInfo);
             }

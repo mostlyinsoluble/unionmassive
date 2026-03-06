@@ -259,30 +259,14 @@ internal sealed class CSharpChangeSignatureService : AbstractChangeSignatureServ
 
     private static SyntaxNode? GetNodeContainingTargetNode(SyntaxNode matchingNode)
     {
-        switch (matchingNode.Kind())
+        return matchingNode.Kind() switch
         {
-            case SyntaxKind.InvocationExpression:
-                return ((InvocationExpressionSyntax)matchingNode).Expression;
-
-            case SyntaxKind.ElementAccessExpression:
-                return ((ElementAccessExpressionSyntax)matchingNode).ArgumentList;
-
-            case SyntaxKind.ObjectCreationExpression:
-                return ((ObjectCreationExpressionSyntax)matchingNode).Type;
-
-            case SyntaxKind.PrimaryConstructorBaseType:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.ThisConstructorInitializer:
-            case SyntaxKind.BaseConstructorInitializer:
-            case SyntaxKind.Attribute:
-            case SyntaxKind.DelegateDeclaration:
-            case SyntaxKind.NameMemberCref:
-                return matchingNode;
-
-            default:
-                return null;
-        }
+            SyntaxKind.InvocationExpression => ((InvocationExpressionSyntax)matchingNode).Expression,
+            SyntaxKind.ElementAccessExpression => ((ElementAccessExpressionSyntax)matchingNode).ArgumentList,
+            SyntaxKind.ObjectCreationExpression => ((ObjectCreationExpressionSyntax)matchingNode).Type,
+            SyntaxKind.PrimaryConstructorBaseType or SyntaxKind.ConstructorDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.ThisConstructorInitializer or SyntaxKind.BaseConstructorInitializer or SyntaxKind.Attribute or SyntaxKind.DelegateDeclaration or SyntaxKind.NameMemberCref => matchingNode,
+            _ => null,
+        };
     }
 
     public override SyntaxNode ChangeSignature(

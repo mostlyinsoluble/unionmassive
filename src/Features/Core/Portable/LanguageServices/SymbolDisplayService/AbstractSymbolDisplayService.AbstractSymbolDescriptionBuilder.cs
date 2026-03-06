@@ -482,30 +482,14 @@ internal abstract partial class AbstractSymbolDisplayService
 
         private static int GetPrecedingNewLineCount(SymbolDescriptionGroups group)
         {
-            switch (group)
+            return group switch
             {
-                case SymbolDescriptionGroups.MainDescription:
-                    // these parts are continuations of whatever text came before them
-                    return 0;
-
-                case SymbolDescriptionGroups.Documentation:
-                case SymbolDescriptionGroups.RemarksDocumentation:
-                case SymbolDescriptionGroups.ReturnsDocumentation:
-                case SymbolDescriptionGroups.ValueDocumentation:
-                    return 1;
-
-                case SymbolDescriptionGroups.StructuralTypes:
-                    return 0;
-
-                case SymbolDescriptionGroups.Exceptions:
-                case SymbolDescriptionGroups.TypeParameterMap:
-                case SymbolDescriptionGroups.Captures:
-                    // Everything else is in a group on its own
-                    return 2;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(group);
-            }
+                SymbolDescriptionGroups.MainDescription => 0,// these parts are continuations of whatever text came before them
+                SymbolDescriptionGroups.Documentation or SymbolDescriptionGroups.RemarksDocumentation or SymbolDescriptionGroups.ReturnsDocumentation or SymbolDescriptionGroups.ValueDocumentation => 1,
+                SymbolDescriptionGroups.StructuralTypes => 0,
+                SymbolDescriptionGroups.Exceptions or SymbolDescriptionGroups.TypeParameterMap or SymbolDescriptionGroups.Captures => 2,// Everything else is in a group on its own
+                _ => throw ExceptionUtilities.UnexpectedValue(group),
+            };
         }
 
         private Dictionary<SymbolDescriptionGroups, ImmutableArray<TaggedText>> BuildDescriptionSections()

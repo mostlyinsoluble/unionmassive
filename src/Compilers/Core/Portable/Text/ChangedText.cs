@@ -81,8 +81,7 @@ namespace Microsoft.CodeAnalysis.Text
                 ChangeInfo? lastInfo = this;
                 for (ChangeInfo? info = this; info != null; info = info.Previous)
                 {
-                    SourceText? tmp;
-                    if (info.WeakOldText.TryGetTarget(out tmp))
+                    if (info.WeakOldText.TryGetTarget(out SourceText? tmp))
                     {
                         lastInfo = info;
                     }
@@ -179,8 +178,7 @@ namespace Microsoft.CodeAnalysis.Text
             }
 
             // try this quick check first
-            SourceText? actualOldText;
-            if (_info.WeakOldText.TryGetTarget(out actualOldText) && actualOldText == oldText)
+            if (_info.WeakOldText.TryGetTarget(out SourceText? actualOldText) && actualOldText == oldText)
             {
                 // the supplied old text is the one we directly reference, so the changes must be the ones we have.
                 return _info.ChangeRanges;
@@ -210,8 +208,7 @@ namespace Microsoft.CodeAnalysis.Text
         {
             for (ChangeInfo? info = _info; info != null; info = info.Previous)
             {
-                SourceText? text;
-                if (info.WeakOldText.TryGetTarget(out text) && text == oldText)
+                if (info.WeakOldText.TryGetTarget(out SourceText? text) && text == oldText)
                 {
                     return true;
                 }
@@ -229,8 +226,7 @@ namespace Microsoft.CodeAnalysis.Text
 
             while (change != null)
             {
-                SourceText? actualOldText;
-                change.WeakOldText.TryGetTarget(out actualOldText);
+                change.WeakOldText.TryGetTarget(out SourceText? actualOldText);
 
                 if (actualOldText == oldText)
                 {

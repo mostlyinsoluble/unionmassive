@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
             {
                 _text = text;
                 _offset = 0;
-                _currentToken = default(Token);
+                _currentToken = default;
             }
 
             internal Token CurrentToken

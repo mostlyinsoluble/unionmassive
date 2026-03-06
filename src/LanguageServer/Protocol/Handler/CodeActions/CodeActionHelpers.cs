@@ -447,7 +447,7 @@ internal static class CodeActionHelpers
                 // Otherwise, we are likely at the end of the path and need to retrieve
                 // the FixAllCodeAction if we are in that state or just the regular CodeAction
                 // since they have the same title path.
-                matchingAction = matchingActions.Single(action => isFixAllAction ? action is RefactorOrFixAllCodeAction : action is CodeAction);
+                matchingAction = matchingActions.Single(action => isFixAllAction ? action is RefactorOrFixAllCodeAction : action is not null);
             }
 
             Contract.ThrowIfNull(matchingAction);

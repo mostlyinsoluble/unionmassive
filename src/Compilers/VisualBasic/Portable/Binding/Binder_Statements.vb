@@ -1960,13 +1960,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                     '       and the writing is happening in the corresponding constructor or initializer
                     If setMethod IsNot Nothing Then
 
-                        If propertyAccess.IsWriteable AndAlso setMethod.IsInitOnly Then
-                            InternalSyntax.Parser.CheckFeatureAvailability(diagnostics,
-                                                                   node.Location,
-                                                                   DirectCast(node.SyntaxTree.Options, VisualBasicParseOptions).LanguageVersion,
-                                                                   InternalSyntax.Feature.InitOnlySettersUsage)
-                        End If
-
                         ReportDiagnosticsIfObsoleteOrNotSupported(diagnostics, setMethod, node)
 
                         If ReportUseSite(diagnostics, op1.Syntax, setMethod) Then

@@ -529,28 +529,15 @@ internal sealed partial class SolutionExplorerInProcess
     public async Task AddStandaloneFileAsync(string fileName, CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-        string itemTemplate;
-
         var extension = Path.GetExtension(fileName).ToLowerInvariant();
-        switch (extension)
+        var itemTemplate = extension switch
         {
-            case ".cs":
-                itemTemplate = @"General\C# Class";
-                break;
-            case ".csx":
-                itemTemplate = @"Script\Visual C# Script";
-                break;
-            case ".vb":
-                itemTemplate = @"General\Visual Basic Class";
-                break;
-            case ".txt":
-                itemTemplate = @"General\Text File";
-                break;
-            default:
-                throw new NotSupportedException($"File type '{extension}' is not yet supported.");
-        }
-
+            ".cs" => @"General\C# Class",
+            ".csx" => @"Script\Visual C# Script",
+            ".vb" => @"General\Visual Basic Class",
+            ".txt" => @"General\Text File",
+            _ => throw new NotSupportedException($"File type '{extension}' is not yet supported."),
+        };
         var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
         dte.ItemOperations.NewFile(itemTemplate, fileName);
     }

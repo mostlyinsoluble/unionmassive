@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -72,7 +72,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
             } is SynthesizedLocal
         );
         Debug.Assert(local.SynthesizedKind == SynthesizedLocalKind.Spill ||
-                     (local.SynthesizedKind == SynthesizedLocalKind.ForEachArray && local.Type.HasInlineArrayAttribute(out _) && local.Type.TryGetInlineArrayElementField() is object));
+                     (local.SynthesizedKind == SynthesizedLocalKind.ForEachArray && local.Type.HasInlineArrayAttribute(out _) && local.Type.TryGetInlineArrayElementField() is not null));
         Debug.Assert(local.GetDeclaratorSyntax() != null);
 #pragma warning disable format
         Debug.Assert(local.SynthesizedKind switch

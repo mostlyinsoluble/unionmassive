@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis
                     return true;
                 }
 
-                if ((object)value == null || (object)possibleEnd == null)
+                if (value is null || possibleEnd is null)
                 {
                     return false;
                 }
@@ -230,7 +230,7 @@ namespace Microsoft.CodeAnalysis
                     return true;
                 }
 
-                if ((object)value == null || (object)possibleStart == null)
+                if (value is null || possibleStart is null)
                 {
                     return false;
                 }

@@ -17,15 +17,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private static BoundObjectInitializerExpressionBase UpdateInitializers(BoundObjectInitializerExpressionBase initializerExpression, ImmutableArray<BoundExpression> newInitializers)
         {
-            switch (initializerExpression)
+            return initializerExpression switch
             {
-                case BoundObjectInitializerExpression objectInitializer:
-                    return objectInitializer.Update(objectInitializer.Placeholder, newInitializers, initializerExpression.Type);
-                case BoundCollectionInitializerExpression collectionInitializer:
-                    return collectionInitializer.Update(collectionInitializer.Placeholder, newInitializers, initializerExpression.Type);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(initializerExpression.Kind);
-            }
+                BoundObjectInitializerExpression objectInitializer => objectInitializer.Update(objectInitializer.Placeholder, newInitializers, initializerExpression.Type),
+                BoundCollectionInitializerExpression collectionInitializer => collectionInitializer.Update(collectionInitializer.Placeholder, newInitializers, initializerExpression.Type),
+                _ => throw ExceptionUtilities.UnexpectedValue(initializerExpression.Kind),
+            };
         }
 
         private void AddObjectOrCollectionInitializers(
@@ -167,8 +164,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 rewrittenReceiver,
                 ImmutableArray<TypeWithAnnotations>.Empty,
                 rewrittenArguments,
-                default(ImmutableArray<string?>),
-                default(ImmutableArray<RefKind>),
+                default,
+                default,
                 hasImplicitReceiver: false,
                 resultDiscarded: true).ToExpression();
         }
@@ -337,7 +334,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                             var args = EvaluateSideEffectingArgumentsToTemps(
                                 memberInit.Arguments,
-                                memberInit.MemberSymbol?.GetParameterRefKinds() ?? default(ImmutableArray<RefKind>),
+                                memberInit.MemberSymbol?.GetParameterRefKinds() ?? default,
                                 result,
                                 ref temps);
 
@@ -484,8 +481,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         if (CanChangeValueBetweenReads(rewrittenIndex))
                         {
-                            BoundAssignmentOperator store;
-                            var temp = _factory.StoreToTemp(rewrittenIndex, out store);
+                            var temp = _factory.StoreToTemp(rewrittenIndex, out BoundAssignmentOperator store);
                             rewrittenIndex = temp;
 
                             if (temps == null)
@@ -671,8 +667,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (CanChangeValueBetweenReads(arg))
             {
-                BoundAssignmentOperator store;
-                var temp = _factory.StoreToTemp(arg, out store, refKind);
+                var temp = _factory.StoreToTemp(arg, out BoundAssignmentOperator store, refKind);
 
                 if (temps == null)
                 {
@@ -693,7 +688,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isRhsNestedInitializer)
         {
             var memberSymbol = rewrittenLeft.MemberSymbol;
-            Debug.Assert(memberSymbol is object);
+            Debug.Assert(memberSymbol is not null);
 
 #if DEBUG
             var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;

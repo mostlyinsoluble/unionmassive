@@ -2,15 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
@@ -33,10 +27,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private int _cachedSpecialTypes;
 
-        private NativeIntegerTypeSymbol[] _lazyNativeIntegerTypes;
-
-#nullable enable 
-
         /// <summary>
         /// Lookup declaration for predefined CorLib type in this Assembly.
         /// </summary>
@@ -51,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 #endif
 
-            if (_lazySpecialTypes == null || (object)_lazySpecialTypes[(int)type] == null)
+            if (_lazySpecialTypes == null || _lazySpecialTypes[(int)type] is null)
             {
                 MetadataTypeName emittedName = MetadataTypeName.FromFullName(type.GetMetadataName(), useCLSCompliantNameArityEncoding: true);
                 ModuleSymbol module = this.Modules[0];
@@ -91,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     new NamedTypeSymbol[(int)InternalSpecialType.NextAvailable], null);
             }
 
-            if ((object)Interlocked.CompareExchange(ref _lazySpecialTypes[(int)typeId], corType, null) != null)
+            if (Interlocked.CompareExchange(ref _lazySpecialTypes[(int)typeId], corType, null) is not null)
             {
                 Debug.Assert(ReferenceEquals(corType, _lazySpecialTypes[(int)typeId]) ||
                                         (corType.Kind == SymbolKind.ErrorType &&
@@ -130,30 +120,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 return _lazyTypeNames;
             }
-        }
-
-        internal sealed override NamedTypeSymbol GetNativeIntegerType(NamedTypeSymbol underlyingType)
-        {
-            Debug.Assert(!underlyingType.IsNativeIntegerType);
-
-            if (_lazyNativeIntegerTypes == null)
-            {
-                Interlocked.CompareExchange(ref _lazyNativeIntegerTypes, new NativeIntegerTypeSymbol[2], null);
-            }
-
-            int index = underlyingType.SpecialType switch
-            {
-                SpecialType.System_IntPtr => 0,
-                SpecialType.System_UIntPtr => 1,
-                _ => throw ExceptionUtilities.UnexpectedValue(underlyingType.SpecialType),
-            };
-
-            if (_lazyNativeIntegerTypes[index] is null)
-            {
-                Interlocked.CompareExchange(ref _lazyNativeIntegerTypes[index], new NativeIntegerTypeSymbol(underlyingType), null);
-            }
-
-            return _lazyNativeIntegerTypes[index];
         }
 
         public override ICollection<string> NamespaceNames

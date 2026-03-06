@@ -41,8 +41,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isGetMethod = (syntax.Kind() == SyntaxKind.GetAccessorDeclaration);
             var methodKind = isGetMethod ? MethodKind.PropertyGet : MethodKind.PropertySet;
 
-            bool hasBody = syntax.Body is object;
-            bool hasExpressionBody = syntax.ExpressionBody is object;
+            bool hasBody = syntax.Body is not null;
+            bool hasExpressionBody = syntax.ExpressionBody is not null;
             bool isNullableAnalysisEnabled = containingType.DeclaringCompilation.IsNullableAnalysisEnabledIn(syntax);
             CheckForBlockAndExpressionBody(syntax.Body, syntax.ExpressionBody, syntax, diagnostics);
 
@@ -162,7 +162,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _property = property;
             _isAutoPropertyAccessor = false;
 
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasBody: true, diagnostics: diagnostics);
             CheckModifiersForBody(location, diagnostics);
 
             ModifierUtils.CheckAccessibility(this.DeclarationModifiers, this, property.IsExplicitInterfaceImplementation, diagnostics, location);
@@ -197,12 +196,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!_property.IsExpressionBodied, "Cannot have accessors in expression bodied lightweight properties");
             var hasAnyBody = hasBlockBody || hasExpressionBody;
             _usesInit = usesInit;
-            if (_usesInit)
-            {
-                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeatureInitOnlySetters, diagnostics, location);
-            }
-
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasBody: hasAnyBody || isAutoPropertyAccessor, diagnostics);
 
             if (hasAnyBody)
             {
@@ -215,9 +208,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 this.CheckModifiers(location, hasAnyBody, isAutoPropertyAccessor, diagnostics);
             }
-
-            if (modifiers.Count > 0)
-                MessageID.IDS_FeaturePropertyAccessorMods.CheckFeatureAvailability(diagnostics, modifiers[0]);
         }
 
         private static (DeclarationModifiers, Flags) MakeModifiersAndFlags(
@@ -279,7 +269,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // This will cause another call to SourceMethodSymbol.LazyMethodChecks,
                 // but that method already handles reentrancy for exactly this case.
                 MethodSymbol overriddenMethod = this.OverriddenMethod;
-                if ((object)overriddenMethod != null)
+                if (overriddenMethod is not null)
                 {
                     CustomModifierUtils.CopyMethodCustomModifiers(overriddenMethod, this, out _lazyReturnType,
                                                                   out _lazyRefCustomModifiers,
@@ -460,14 +450,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // The above program will fail PEVerify if the 'S.Value.get' accessor is made implicitly readonly because
                 // we won't emit an implicit copy of 'S.StaticField' to pass to 'S.Value.get'.
 
-                // Code emitted in C# 7.0 and before must be PEVerify compatible, so we will only make
-                // members implicitly readonly in language versions which support the readonly members feature.
-                var options = (CSharpParseOptions)SyntaxTree.Options;
-                if (!options.IsFeatureEnabled(MessageID.IDS_FeatureReadOnlyMembers))
-                {
-                    return false;
-                }
-
                 // If we have IsReadOnly..ctor, we can use the attribute. Otherwise, we need to NOT be a netmodule and the type must not already exist in order to synthesize it.
                 var isReadOnlyAttributeUsable = DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_Runtime_CompilerServices_IsReadOnlyAttribute__ctor) != null ||
                     (DeclaringCompilation.Options.OutputKind != OutputKind.NetModule &&
@@ -624,7 +606,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             ? explicitlyImplementedPropertyOpt.GetMethod
                             : explicitlyImplementedPropertyOpt.SetMethod;
 
-                        explicitInterfaceImplementations = (object)implementedAccessor == null
+                        explicitInterfaceImplementations = implementedAccessor is null
                             ? ImmutableArray<MethodSymbol>.Empty
                             : ImmutableArray.Create<MethodSymbol>(implementedAccessor);
                     }
@@ -690,13 +672,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         PropertySymbol? explicitlyImplementedPropertyOpt = _property.ExplicitInterfaceImplementations.FirstOrDefault();
 
-                        if (explicitlyImplementedPropertyOpt is object)
+                        if (explicitlyImplementedPropertyOpt is not null)
                         {
                             MethodSymbol? implementedAccessor = isGetMethod
                                 ? explicitlyImplementedPropertyOpt.GetMethod
                                 : explicitlyImplementedPropertyOpt.SetMethod;
 
-                            string accessorName = (object)implementedAccessor != null
+                            string accessorName = implementedAccessor is not null
                                 ? implementedAccessor.Name
                                 : GetAccessorName(explicitlyImplementedPropertyOpt.MetadataName,
                                     isGetMethod, isWinMdOutput: _property.IsCompilationOutputWinMdObj()); //Not name - could be indexer placeholder
@@ -708,7 +690,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     else if (IsOverride)
                     {
                         MethodSymbol overriddenMethod = this.OverriddenMethod;
-                        if ((object)overriddenMethod != null)
+                        if (overriddenMethod is not null)
                         {
                             // If this accessor is overriding a method from metadata, it is possible that
                             // the name of the overridden method doesn't follow the C# get_X/set_X pattern.
@@ -736,16 +718,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 // Per design meeting resolution [see bug 11253], no source accessor is implicitly declared in C#,
                 // if there is "get", "set", or expression-body syntax.
-                switch (GetSyntax().Kind())
+                return GetSyntax().Kind() switch
                 {
-                    case SyntaxKind.GetAccessorDeclaration:
-                    case SyntaxKind.SetAccessorDeclaration:
-                    case SyntaxKind.InitAccessorDeclaration:
-                    case SyntaxKind.ArrowExpressionClause:
-                        return false;
-                }
-
-                return true;
+                    SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration or SyntaxKind.InitAccessorDeclaration or SyntaxKind.ArrowExpressionClause => false,
+                    _ => true,
+                };
             }
         }
 

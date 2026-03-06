@@ -32,8 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         public override IParameterSymbol GetThisParameter(IMethodSymbol method)
         {
-            ParameterSymbol thisParameter;
-            return method.GetSymbol().TryGetThisParameter(out thisParameter)
+            return method.GetSymbol().TryGetThisParameter(out var thisParameter)
                 ? thisParameter.GetPublicSymbol()
                 : null;
         }

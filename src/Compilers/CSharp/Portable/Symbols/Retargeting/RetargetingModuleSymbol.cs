@@ -79,8 +79,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         /// </param>
         public RetargetingModuleSymbol(RetargetingAssemblySymbol retargetingAssembly, SourceModuleSymbol underlyingModule)
         {
-            Debug.Assert((object)retargetingAssembly != null);
-            Debug.Assert((object)underlyingModule != null);
+            Debug.Assert(retargetingAssembly is not null);
+            Debug.Assert(underlyingModule is not null);
 
             _retargetingAssembly = retargetingAssembly;
             _underlyingModule = underlyingModule;
@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return _underlyingModule.GetDocumentationCommentXml(preferredCulture, expandIncludes, cancellationToken);
         }
@@ -219,9 +219,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
                 if (!ReferenceEquals(referencedAssemblySymbols[i], underlyingBoundReferences[j]))
                 {
-                    DestinationData destinationData;
 
-                    if (!_retargetingAssemblyMap.TryGetValue(underlyingBoundReferences[j], out destinationData))
+                    if (!_retargetingAssemblyMap.TryGetValue(underlyingBoundReferences[j], out DestinationData destinationData))
                     {
                         _retargetingAssemblyMap.Add(underlyingBoundReferences[j],
                             new DestinationData { To = referencedAssemblySymbols[i] });
@@ -245,9 +244,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         internal bool RetargetingDefinitions(AssemblySymbol from, out AssemblySymbol to)
         {
-            DestinationData destination;
 
-            if (!_retargetingAssemblyMap.TryGetValue(from, out destination))
+            if (!_retargetingAssemblyMap.TryGetValue(from, out DestinationData destination))
             {
                 to = null;
                 return false;

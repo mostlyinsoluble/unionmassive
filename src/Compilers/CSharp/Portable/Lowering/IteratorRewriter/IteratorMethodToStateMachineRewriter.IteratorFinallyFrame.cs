@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 HashSet<LabelSymbol> labels)
             {
                 Debug.Assert(parent != null, "non root frame must have a parent");
-                Debug.Assert((object)handler != null, "non root frame must have a handler");
+                Debug.Assert(handler is not null, "non root frame must have a handler");
 
                 this.parent = parent;
                 this.finalizeState = finalizeState;
@@ -109,8 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     this.proxyLabels = proxyLabels = new Dictionary<LabelSymbol, LabelSymbol>();
                 }
 
-                LabelSymbol proxy;
-                if (!proxyLabels.TryGetValue(label, out proxy))
+                if (!proxyLabels.TryGetValue(label, out LabelSymbol proxy))
                 {
                     proxy = new GeneratedLabelSymbol("proxy" + label.Name);
                     proxyLabels.Add(label, proxy);

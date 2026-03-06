@@ -16,25 +16,11 @@ namespace Microsoft.CodeAnalysis
     {
         public static bool IsValidSwitchCaseLabelConstant(ConstantValue constant)
         {
-            switch (constant.Discriminator)
+            return constant.Discriminator switch
             {
-                case ConstantValueTypeDiscriminator.Null:
-                case ConstantValueTypeDiscriminator.SByte:
-                case ConstantValueTypeDiscriminator.Byte:
-                case ConstantValueTypeDiscriminator.Int16:
-                case ConstantValueTypeDiscriminator.UInt16:
-                case ConstantValueTypeDiscriminator.Int32:
-                case ConstantValueTypeDiscriminator.UInt32:
-                case ConstantValueTypeDiscriminator.Int64:
-                case ConstantValueTypeDiscriminator.UInt64:
-                case ConstantValueTypeDiscriminator.Char:
-                case ConstantValueTypeDiscriminator.Boolean:
-                case ConstantValueTypeDiscriminator.String:
-                    return true;
-
-                default:
-                    return false;
-            }
+                ConstantValueTypeDiscriminator.Null or ConstantValueTypeDiscriminator.SByte or ConstantValueTypeDiscriminator.Byte or ConstantValueTypeDiscriminator.Int16 or ConstantValueTypeDiscriminator.UInt16 or ConstantValueTypeDiscriminator.Int32 or ConstantValueTypeDiscriminator.UInt32 or ConstantValueTypeDiscriminator.Int64 or ConstantValueTypeDiscriminator.UInt64 or ConstantValueTypeDiscriminator.Char or ConstantValueTypeDiscriminator.Boolean or ConstantValueTypeDiscriminator.String => true,
+                _ => false,
+            };
         }
 
         /// <summary>

@@ -586,7 +586,7 @@ oneMoreTime:
                     var isOp = (BoundIsOperator)condition;
                     var operand = isOp.Operand;
                     EmitExpression(operand, true);
-                    Debug.Assert((object)operand.Type != null);
+                    Debug.Assert(operand.Type is not null);
                     if (!operand.Type.IsVerifierReference())
                     {
                         // box the operand for isinst if it is not a verifier reference
@@ -1067,7 +1067,7 @@ oneMoreTime:
             // converts to what we want.
             if (catchBlock.ExceptionFilterOpt == null)
             {
-                var exceptionType = ((object)catchBlock.ExceptionTypeOpt != null) ?
+                var exceptionType = (catchBlock.ExceptionTypeOpt is not null) ?
                     _module.Translate(catchBlock.ExceptionTypeOpt, catchBlock.Syntax, _diagnostics.DiagnosticBag) :
                     _module.GetSpecialType(SpecialType.System_Object, catchBlock.Syntax, _diagnostics.DiagnosticBag);
 
@@ -1114,7 +1114,7 @@ oneMoreTime:
                 var typeCheckPassedLabel = new object();
                 typeCheckFailedLabel = new object();
 
-                if ((object)catchBlock.ExceptionTypeOpt != null)
+                if (catchBlock.ExceptionTypeOpt is not null)
                 {
                     var exceptionType = _module.Translate(catchBlock.ExceptionTypeOpt, catchBlock.Syntax, _diagnostics.DiagnosticBag);
 
@@ -1182,7 +1182,7 @@ oneMoreTime:
                         Debug.Assert(left.FieldSymbol.RefKind == RefKind.None);
 
                         var stateMachineField = left.FieldSymbol as StateMachineFieldSymbol;
-                        if (((object)stateMachineField != null) && (stateMachineField.SlotIndex >= 0))
+                        if ((stateMachineField is not null) && (stateMachineField.SlotIndex >= 0))
                         {
                             _builder.DefineUserDefinedStateMachineHoistedLocal(stateMachineField.SlotIndex);
                         }
@@ -1256,7 +1256,7 @@ oneMoreTime:
         private void EmitSwitchDispatch(BoundSwitchDispatch dispatch)
         {
             // Switch expression must have a valid switch governing type
-            Debug.Assert((object)dispatch.Expression.Type != null);
+            Debug.Assert(dispatch.Expression.Type is not null);
             Debug.Assert(dispatch.Expression.Type.IsValidV6SwitchGoverningType() || dispatch.Expression.Type.IsSpanOrReadOnlySpanChar());
 
             // We must have rewritten nullable switch expression into non-nullable constructs.
@@ -1279,7 +1279,7 @@ oneMoreTime:
             LengthBasedStringSwitchData lengthBasedSwitchStringJumpTableOpt)
         {
             Debug.Assert(expression.ConstantValueOpt == null);
-            Debug.Assert((object)expression.Type != null &&
+            Debug.Assert(expression.Type is not null &&
                 (expression.Type.IsValidV6SwitchGoverningType() || expression.Type.IsSpanOrReadOnlySpanChar()));
             Debug.Assert(switchCaseLabels.Length > 0);
 
@@ -1844,8 +1844,7 @@ oneMoreTime:
             // Also, requesting the token has side-effect of registering types used, which is critical for embedded types (NoPia, VBCore, etc).
             _module.GetFakeSymbolTokenForIL(translatedType, syntaxNode, _diagnostics.DiagnosticBag);
 
-            LocalDebugId localId;
-            var name = GetLocalDebugName(local, out localId);
+            var name = GetLocalDebugName(local, out LocalDebugId localId);
 
             var localDef = _builder.LocalSlotManager.DeclareLocal(
                 type: translatedType,
@@ -2041,8 +2040,7 @@ oneMoreTime:
                     _labelClones = labelClones = new Dictionary<LabelSymbol, GeneratedLabelSymbol>();
                 }
 
-                GeneratedLabelSymbol clone;
-                if (!labelClones.TryGetValue(label, out clone))
+                if (!labelClones.TryGetValue(label, out GeneratedLabelSymbol clone))
                 {
                     clone = new GeneratedLabelSymbol("cloned_" + label.Name);
                     labelClones.Add(label, clone);

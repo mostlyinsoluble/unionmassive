@@ -220,85 +220,37 @@ internal sealed partial class CSharpCodeModelService
 
         private static VirtualTreePoint GetStartPoint(SourceText text, ArrowExpressionClauseSyntax node, EnvDTE.vsCMPart part)
         {
-            int startPosition;
-
-            switch (part)
+            var startPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                    startPosition = node.SpanStart;
-                    break;
-
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    startPosition = node.Expression.SpanStart;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowENotImpl();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartWhole => node.SpanStart,
+                EnvDTE.vsCMPart.vsCMPartBody => node.Expression.SpanStart,
+                _ => throw Exceptions.ThrowENotImpl(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, startPosition);
         }
 
         private static VirtualTreePoint GetStartPoint(SourceText text, AttributeSyntax node, EnvDTE.vsCMPart part)
         {
-            int startPosition;
-
-            switch (part)
+            var startPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    startPosition = node.GetFirstToken().SpanStart;
-                    break;
-
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    startPosition = node.Name.SpanStart;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.GetFirstToken().SpanStart,
+                EnvDTE.vsCMPart.vsCMPartNavigate => node.Name.SpanStart,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, startPosition);
         }
 
         private static VirtualTreePoint GetStartPoint(SourceText text, AttributeArgumentSyntax node, EnvDTE.vsCMPart part)
         {
-            int startPosition;
-
-            switch (part)
+            var startPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    startPosition = node.SpanStart;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody or EnvDTE.vsCMPart.vsCMPartNavigate => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.SpanStart,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, startPosition);
         }
 
@@ -389,27 +341,15 @@ internal sealed partial class CSharpCodeModelService
                     }
                     else
                     {
-                        switch (node.Kind())
+                        startPosition = node.Kind() switch
                         {
-                            case SyntaxKind.MethodDeclaration:
-                                startPosition = ((MethodDeclarationSyntax)node).Identifier.SpanStart;
-                                break;
-                            case SyntaxKind.ConstructorDeclaration:
-                                startPosition = ((ConstructorDeclarationSyntax)node).Identifier.SpanStart;
-                                break;
-                            case SyntaxKind.DestructorDeclaration:
-                                startPosition = ((DestructorDeclarationSyntax)node).Identifier.SpanStart;
-                                break;
-                            case SyntaxKind.ConversionOperatorDeclaration:
-                                startPosition = ((ConversionOperatorDeclarationSyntax)node).ImplicitOrExplicitKeyword.SpanStart;
-                                break;
-                            case SyntaxKind.OperatorDeclaration:
-                                startPosition = ((OperatorDeclarationSyntax)node).OperatorToken.SpanStart;
-                                break;
-                            default:
-                                startPosition = node.GetFirstTokenAfterAttributes().SpanStart;
-                                break;
-                        }
+                            SyntaxKind.MethodDeclaration => ((MethodDeclarationSyntax)node).Identifier.SpanStart,
+                            SyntaxKind.ConstructorDeclaration => ((ConstructorDeclarationSyntax)node).Identifier.SpanStart,
+                            SyntaxKind.DestructorDeclaration => ((DestructorDeclarationSyntax)node).Identifier.SpanStart,
+                            SyntaxKind.ConversionOperatorDeclaration => ((ConversionOperatorDeclarationSyntax)node).ImplicitOrExplicitKeyword.SpanStart,
+                            SyntaxKind.OperatorDeclaration => ((OperatorDeclarationSyntax)node).OperatorToken.SpanStart,
+                            _ => node.GetFirstTokenAfterAttributes().SpanStart,
+                        };
                     }
 
                     break;
@@ -644,34 +584,14 @@ internal sealed partial class CSharpCodeModelService
 
         private static VirtualTreePoint GetStartPoint(SourceText text, UsingDirectiveSyntax node, EnvDTE.vsCMPart part)
         {
-            int startPosition;
-
-            switch (part)
+            var startPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    startPosition = node.SpanStart;
-                    break;
-
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    startPosition = node.Name.SpanStart;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.SpanStart,
+                EnvDTE.vsCMPart.vsCMPartNavigate => node.Name.SpanStart,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, startPosition);
         }
 
@@ -798,82 +718,36 @@ internal sealed partial class CSharpCodeModelService
 
         private static VirtualTreePoint GetEndPoint(SourceText text, ArrowExpressionClauseSyntax node, EnvDTE.vsCMPart part)
         {
-            int endPosition;
-
-            switch (part)
+            var endPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    endPosition = node.Span.End;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowENotImpl();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBody => node.Span.End,
+                _ => throw Exceptions.ThrowENotImpl(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, endPosition);
         }
 
         private static VirtualTreePoint GetEndPoint(SourceText text, AttributeSyntax node, EnvDTE.vsCMPart part)
         {
-            int endPosition;
-
-            switch (part)
+            var endPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    endPosition = node.Span.End;
-                    break;
-
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    endPosition = node.Name.Span.End;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.Span.End,
+                EnvDTE.vsCMPart.vsCMPartNavigate => node.Name.Span.End,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, endPosition);
         }
 
         private static VirtualTreePoint GetEndPoint(SourceText text, AttributeArgumentSyntax node, EnvDTE.vsCMPart part)
         {
-            int endPosition;
-
-            switch (part)
+            var endPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    endPosition = node.Span.End;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody or EnvDTE.vsCMPart.vsCMPartNavigate => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.Span.End,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, endPosition);
         }
 
@@ -952,27 +826,15 @@ internal sealed partial class CSharpCodeModelService
                     }
                     else
                     {
-                        switch (node.Kind())
+                        endPosition = node.Kind() switch
                         {
-                            case SyntaxKind.MethodDeclaration:
-                                endPosition = ((MethodDeclarationSyntax)node).Identifier.Span.End;
-                                break;
-                            case SyntaxKind.ConstructorDeclaration:
-                                endPosition = ((ConstructorDeclarationSyntax)node).Identifier.Span.End;
-                                break;
-                            case SyntaxKind.DestructorDeclaration:
-                                endPosition = ((DestructorDeclarationSyntax)node).Identifier.Span.End;
-                                break;
-                            case SyntaxKind.ConversionOperatorDeclaration:
-                                endPosition = ((ConversionOperatorDeclarationSyntax)node).ImplicitOrExplicitKeyword.Span.End;
-                                break;
-                            case SyntaxKind.OperatorDeclaration:
-                                endPosition = ((OperatorDeclarationSyntax)node).OperatorToken.Span.End;
-                                break;
-                            default:
-                                endPosition = node.GetFirstTokenAfterAttributes().Span.End;
-                                break;
-                        }
+                            SyntaxKind.MethodDeclaration => ((MethodDeclarationSyntax)node).Identifier.Span.End,
+                            SyntaxKind.ConstructorDeclaration => ((ConstructorDeclarationSyntax)node).Identifier.Span.End,
+                            SyntaxKind.DestructorDeclaration => ((DestructorDeclarationSyntax)node).Identifier.Span.End,
+                            SyntaxKind.ConversionOperatorDeclaration => ((ConversionOperatorDeclarationSyntax)node).ImplicitOrExplicitKeyword.Span.End,
+                            SyntaxKind.OperatorDeclaration => ((OperatorDeclarationSyntax)node).OperatorToken.Span.End,
+                            _ => node.GetFirstTokenAfterAttributes().Span.End,
+                        };
                     }
 
                     break;
@@ -1183,34 +1045,14 @@ internal sealed partial class CSharpCodeModelService
 
         private static VirtualTreePoint GetEndPoint(SourceText text, UsingDirectiveSyntax node, EnvDTE.vsCMPart part)
         {
-            int endPosition;
-
-            switch (part)
+            var endPosition = part switch
             {
-                case EnvDTE.vsCMPart.vsCMPartName:
-                case EnvDTE.vsCMPart.vsCMPartAttributes:
-                case EnvDTE.vsCMPart.vsCMPartHeader:
-                case EnvDTE.vsCMPart.vsCMPartWhole:
-                case EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes:
-                    throw Exceptions.ThrowENotImpl();
-
-                case EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter:
-                case EnvDTE.vsCMPart.vsCMPartBody:
-                    throw Exceptions.ThrowEFail();
-
-                case EnvDTE.vsCMPart.vsCMPartWholeWithAttributes:
-                    endPosition = node.Span.End;
-                    break;
-
-                case EnvDTE.vsCMPart.vsCMPartNavigate:
-                    endPosition = node.Name.Span.End;
-                    break;
-
-                default:
-                    throw Exceptions.ThrowEInvalidArg();
-            }
-
+                EnvDTE.vsCMPart.vsCMPartName or EnvDTE.vsCMPart.vsCMPartAttributes or EnvDTE.vsCMPart.vsCMPartHeader or EnvDTE.vsCMPart.vsCMPartWhole or EnvDTE.vsCMPart.vsCMPartBodyWithDelimiter or EnvDTE.vsCMPart.vsCMPartHeaderWithAttributes => throw Exceptions.ThrowENotImpl(),
+                EnvDTE.vsCMPart.vsCMPartAttributesWithDelimiter or EnvDTE.vsCMPart.vsCMPartBody => throw Exceptions.ThrowEFail(),
+                EnvDTE.vsCMPart.vsCMPartWholeWithAttributes => node.Span.End,
+                EnvDTE.vsCMPart.vsCMPartNavigate => node.Name.Span.End,
+                _ => throw Exceptions.ThrowEInvalidArg(),
+            };
             return new VirtualTreePoint(node.SyntaxTree, text, endPosition);
         }
 

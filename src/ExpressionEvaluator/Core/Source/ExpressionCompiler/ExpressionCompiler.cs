@@ -492,8 +492,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static DkmClrLocalVariableInfo ToLocalVariableInfo(LocalAndMethod local)
         {
-            ReadOnlyCollection<byte>? customTypeInfo;
-            Guid customTypeInfoId = local.GetCustomTypeInfo(out customTypeInfo);
+            Guid customTypeInfoId = local.GetCustomTypeInfo(out var customTypeInfo);
             return DkmClrLocalVariableInfo.Create(
                 local.LocalDisplayName,
                 local.LocalName,

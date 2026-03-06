@@ -32,8 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             SyntaxToken nameToken = syntax.Identifier;
             bool isExplicitInterfaceImplementation = interfaceSpecifier != null;
 
-            string? aliasQualifierOpt;
-            _name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out _explicitInterfaceType, out aliasQualifierOpt);
+            _name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out _explicitInterfaceType, out string? aliasQualifierOpt);
 
             _type = BindEventType(binder, syntax.Type, diagnostics);
 
@@ -62,13 +61,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (this.IsOverride)
                 {
                     EventSymbol? overriddenEvent = this.OverriddenEvent;
-                    if ((object?)overriddenEvent != null)
+                    if (overriddenEvent is not null)
                     {
                         CopyEventCustomModifiers(overriddenEvent, ref _type, ContainingAssembly);
                     }
                 }
             }
-            else if ((object)explicitlyImplementedEvent != null)
+            else if (explicitlyImplementedEvent is not null)
             {
                 CopyEventCustomModifiers(explicitlyImplementedEvent, ref _type, ContainingAssembly);
             }
@@ -147,14 +146,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (isExplicitInterfaceImplementation && IsAbstract && syntax.AccessorList == null)
             {
                 Debug.Assert(containingType.IsInterface);
-
-                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, this.GetFirstLocation());
-
-                if (!ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, this.GetFirstLocation());
-                }
-
                 _addMethod = new SynthesizedEventAccessorSymbol(this, isAdder: true, isExpressionBodied: false, explicitlyImplementedEvent, aliasQualifierOpt);
                 _removeMethod = new SynthesizedEventAccessorSymbol(this, isAdder: false, isExpressionBodied: false, explicitlyImplementedEvent, aliasQualifierOpt);
             }
@@ -165,7 +156,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             _explicitInterfaceImplementations =
-                (object?)explicitlyImplementedEvent == null ?
+                explicitlyImplementedEvent is null ?
                     ImmutableArray<EventSymbol>.Empty :
                     ImmutableArray.Create<EventSymbol>(explicitlyImplementedEvent);
         }
@@ -216,7 +207,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AfterAddingTypeMembersChecks(conversions, diagnostics);
 
-            if ((object)_explicitInterfaceType != null)
+            if (_explicitInterfaceType is not null)
             {
                 var explicitInterfaceSpecifier = this.ExplicitInterfaceSpecifier;
                 RoslynDebug.Assert(explicitInterfaceSpecifier != null);

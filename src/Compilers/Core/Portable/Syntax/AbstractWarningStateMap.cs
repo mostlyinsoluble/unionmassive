@@ -39,8 +39,7 @@ namespace Microsoft.CodeAnalysis.Syntax
         {
             var entry = GetEntryAtOrBeforePosition(position);
 
-            TWarningState state;
-            if (entry.SpecificWarningOption.TryGetValue(id, out state))
+            if (entry.SpecificWarningOption.TryGetValue(id, out TWarningState state))
             {
                 return state;
             }

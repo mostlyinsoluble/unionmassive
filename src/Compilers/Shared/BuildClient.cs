@@ -125,17 +125,13 @@ namespace Microsoft.CodeAnalysis.CommandLine
 
             var args = originalArguments.Select(arg => arg.Trim()).ToArray();
 
-            List<string>? parsedArgs;
-            bool hasShared;
-            string? keepAliveOpt;
-            string? errorMessageOpt;
             if (CommandLineParser.TryParseClientArgs(
                     args,
-                    out parsedArgs,
-                    out hasShared,
-                    out keepAliveOpt,
+                    out List<string>? parsedArgs,
+                    out bool hasShared,
+                    out string? keepAliveOpt,
                     out string? commandLinePipeName,
-                    out errorMessageOpt))
+                    out string? errorMessageOpt))
             {
                 pipeName ??= commandLinePipeName;
             }

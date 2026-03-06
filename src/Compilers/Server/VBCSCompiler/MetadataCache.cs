@@ -58,8 +58,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
             // Check if we have an entry in the dictionary.
             FileKey? fileKey = GetUniqueFileKey(fullPath);
 
-            Metadata? metadata;
-            if (fileKey.HasValue && _metadataCache.TryGetValue(fileKey.Value, out metadata) && metadata != null)
+            if (fileKey.HasValue && _metadataCache.TryGetValue(fileKey.Value, out Metadata? metadata) && metadata != null)
             {
                 return metadata;
             }

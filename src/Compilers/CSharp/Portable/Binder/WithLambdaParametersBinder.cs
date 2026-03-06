@@ -123,7 +123,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Quirk of the way we represent lambda parameters.                
-            SymbolKind newSymbolKind = (object)newSymbol == null ? SymbolKind.Parameter : newSymbol.Kind;
+            SymbolKind newSymbolKind = newSymbol is null ? SymbolKind.Parameter : newSymbol.Kind;
 
             switch (newSymbolKind)
             {
@@ -157,9 +157,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override bool EnsureSingleDefinition(Symbol symbol, string name, Location location, BindingDiagnosticBag diagnostics)
         {
-            ParameterSymbol existingDeclaration;
             var map = _definitionMap;
-            if (map != null && map.TryGetValue(name, out existingDeclaration))
+            if (map != null && map.TryGetValue(name, out ParameterSymbol existingDeclaration))
             {
                 return ReportConflictWithParameter(existingDeclaration, symbol, name, location, diagnostics);
             }

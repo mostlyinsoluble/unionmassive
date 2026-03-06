@@ -36,32 +36,11 @@ internal sealed class CSharpDocumentationCommentSnippetService() : AbstractDocum
 
     protected override bool SupportsDocumentationComments(MemberDeclarationSyntax member)
     {
-        switch (member.Kind())
+        return member.Kind() switch
         {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.RecordDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-            case SyntaxKind.DelegateDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.EnumMemberDeclaration:
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.ExtensionBlockDeclaration:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.ClassDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.DelegateDeclaration or SyntaxKind.EnumDeclaration or SyntaxKind.EnumMemberDeclaration or SyntaxKind.FieldDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.EventDeclaration or SyntaxKind.EventFieldDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.ExtensionBlockDeclaration => true,
+            _ => false,
+        };
     }
 
     protected override bool HasDocumentationComment(MemberDeclarationSyntax member)

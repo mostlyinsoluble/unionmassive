@@ -286,14 +286,13 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             out ImmutableArray<ImmutableArray<ImportRecord>> importRecordGroups,
             out ImmutableArray<ExternAliasRecord> externAliasRecords)
         {
-            ImmutableArray<string> externAliasStrings;
 
             var importStringGroups = CustomDebugInfoReader.GetCSharpGroupedImportStrings(
                 methodToken,
                 KeyValuePair.Create(reader, methodVersion),
                 getMethodCustomDebugInfo: (token, arg) => GetCustomDebugInfoBytes(arg.Key, token, arg.Value),
                 getMethodImportStrings: (token, arg) => GetImportStrings(arg.Key, token, arg.Value),
-                externAliasStrings: out externAliasStrings);
+                externAliasStrings: out var externAliasStrings);
 
             Debug.Assert(importStringGroups.IsDefault == externAliasStrings.IsDefault);
 
@@ -352,8 +351,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static bool TryCreateImportRecordFromCSharpImportString(EESymbolProvider<TTypeSymbol, TLocalSymbol> symbolProvider, string importString, out ImportRecord record)
         {
-            string? targetString;
-            if (CustomDebugInfoReader.TryParseCSharpImportString(importString, out var alias, out var externAlias, out targetString, out var targetKind))
+            if (CustomDebugInfoReader.TryParseCSharpImportString(importString, out var alias, out var externAlias, out var targetString, out var targetKind))
             {
                 ITypeSymbolInternal? type = null;
                 if (targetKind == ImportTargetKind.Type)
@@ -407,9 +405,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 var flags = dynamicLocal.Flags;
                 if (slot == 0)
                 {
-                    LocalKind kind;
                     var name = dynamicLocal.LocalName;
-                    localKindsByName.TryGetValue(name, out kind);
+                    localKindsByName.TryGetValue(name, out var kind);
                     switch (kind)
                     {
                         case LocalKind.DuplicateName:
@@ -544,10 +541,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
                 if (importString is ['*', ..])
                 {
-                    string? alias = null;
-                    string? target = null;
 
-                    if (!CustomDebugInfoReader.TryParseVisualBasicImportString(importString, out alias, out target, out var kind, out var scope))
+                    if (!CustomDebugInfoReader.TryParseVisualBasicImportString(importString, out var alias, out var target, out var kind, out var scope))
                     {
                         Debug.WriteLine($"Unable to parse import string '{importString}'");
                         continue;
@@ -569,10 +564,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 }
                 else
                 {
-                    ImportRecord importRecord;
-                    VBImportScopeKind scope = 0;
 
-                    if (TryCreateImportRecordFromVisualBasicImportString(importString, out importRecord, out scope))
+                    if (TryCreateImportRecordFromVisualBasicImportString(importString, out var importRecord, out var scope))
                     {
                         if (scope == VBImportScopeKind.Project)
                         {

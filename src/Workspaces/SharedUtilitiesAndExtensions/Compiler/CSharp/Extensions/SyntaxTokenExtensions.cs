@@ -123,18 +123,11 @@ internal static partial class SyntaxTokenExtensions
 
     public static bool IsLiteral(this SyntaxToken token)
     {
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.CharacterLiteralToken:
-            case SyntaxKind.FalseKeyword:
-            case SyntaxKind.NumericLiteralToken:
-            case SyntaxKind.StringLiteralToken:
-            case SyntaxKind.TrueKeyword:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.CharacterLiteralToken or SyntaxKind.FalseKeyword or SyntaxKind.NumericLiteralToken or SyntaxKind.StringLiteralToken or SyntaxKind.TrueKeyword => true,
+            _ => false,
+        };
     }
 
     public static bool IntersectsWith(this SyntaxToken token, int position)
@@ -196,22 +189,11 @@ internal static partial class SyntaxTokenExtensions
 
     public static bool IsValidAttributeTarget(this SyntaxToken token)
     {
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.AssemblyKeyword:
-            case SyntaxKind.ModuleKeyword:
-            case SyntaxKind.FieldKeyword:
-            case SyntaxKind.EventKeyword:
-            case SyntaxKind.MethodKeyword:
-            case SyntaxKind.ParamKeyword:
-            case SyntaxKind.PropertyKeyword:
-            case SyntaxKind.ReturnKeyword:
-            case SyntaxKind.TypeKeyword:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.AssemblyKeyword or SyntaxKind.ModuleKeyword or SyntaxKind.FieldKeyword or SyntaxKind.EventKeyword or SyntaxKind.MethodKeyword or SyntaxKind.ParamKeyword or SyntaxKind.PropertyKeyword or SyntaxKind.ReturnKeyword or SyntaxKind.TypeKeyword => true,
+            _ => false,
+        };
     }
 
     public static SyntaxToken WithCommentsFrom(

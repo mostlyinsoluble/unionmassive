@@ -53,16 +53,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case SymbolKind.Method:
                     var method = (MethodSymbol)this;
-                    switch (method.MethodKind)
+                    return method.MethodKind switch
                     {
-                        case MethodKind.Constructor:
-                        case MethodKind.StaticConstructor:
-                            return AttributeTargets.Constructor;
-
-                        default:
-                            return AttributeTargets.Method;
-                    }
-
+                        MethodKind.Constructor or MethodKind.StaticConstructor => AttributeTargets.Constructor,
+                        _ => AttributeTargets.Method,
+                    };
                 case SymbolKind.NamedType:
                     var namedType = (NamedTypeSymbol)this;
                     switch (namedType.TypeKind)
@@ -178,8 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            bool hasAnyDiagnostics;
-            (attributeData, boundAttribute) = arguments.Binder.GetAttribute(syntax, type, beforeAttributePartBound: null, afterAttributePartBound: null, out hasAnyDiagnostics);
+            (attributeData, boundAttribute) = arguments.Binder.GetAttribute(syntax, type, beforeAttributePartBound: null, afterAttributePartBound: null, out bool hasAnyDiagnostics);
             if (!attributeData.HasErrors)
             {
                 obsoleteData = attributeData.DecodeObsoleteAttribute(kind);
@@ -313,9 +307,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             var diagnostics = BindingDiagnosticBag.GetInstance();
             var compilation = this.DeclaringCompilation;
 
-            ImmutableArray<Binder> binders;
             BoundAttribute[]? boundAttributeArray;
-            ImmutableArray<AttributeSyntax> attributesToBind = this.GetAttributesToBind(attributesSyntaxLists, symbolPart, diagnostics, compilation, attributeMatchesOpt, binderOpt, out binders);
+            ImmutableArray<AttributeSyntax> attributesToBind = this.GetAttributesToBind(attributesSyntaxLists, symbolPart, diagnostics, compilation, attributeMatchesOpt, binderOpt, out ImmutableArray<Binder> binders);
             int totalAttributesCount = attributesToBind.Length;
             Debug.Assert(!attributesToBind.IsDefault);
 
@@ -339,17 +332,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Binder.BindAttributeTypes(binders, attributesToBind, this, attributeTypesBuilder, beforeAttributePartBound, afterAttributePartBound, diagnostics);
 
                 bool interestedInDiagnostics = !earlyDecodingOnly && attributeMatchesOpt is null;
-                if (interestedInDiagnostics)
-                {
-                    for (var i = 0; i < totalAttributesCount; i++)
-                    {
-                        if (attributeTypesBuilder[i].IsGenericType)
-                        {
-                            MessageID.IDS_FeatureGenericAttributes.CheckFeatureAvailability(diagnostics, attributesToBind[i]);
-                        }
-                    }
-                }
-
                 ImmutableArray<NamedTypeSymbol> boundAttributeTypes = attributeTypesBuilder.AsImmutableOrNull();
 
                 this.EarlyDecodeWellKnownAttributeTypes(boundAttributeTypes, attributesToBind);
@@ -700,15 +682,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // only attributes with an explicit target match if the symbol doesn't own the attributes:
                 return isOwner;
-            }
-
-            // Special error code for this case.
-            if (isOwner &&
-                targetOpt.Identifier.ToAttributeLocation() == AttributeLocation.Module)
-            {
-                var parseOptions = (CSharpParseOptions)targetOpt.SyntaxTree.Options;
-                if (parseOptions.LanguageVersion == LanguageVersion.CSharp1)
-                    diagnostics.Add(ErrorCode.WRN_NonECMAFeature, targetOpt.GetLocation(), MessageID.IDS_FeatureModuleAttrLoc);
             }
 
             AttributeLocation allowedTargets = attributesOwner.AllowedAttributeLocations;

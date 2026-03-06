@@ -139,17 +139,12 @@ internal abstract partial class AbstractConvertIfToSwitchCodeRefactoringProvider
 
         static OperationKind GetSwitchArmKind(IOperation op)
         {
-            switch (op)
+            return op switch
             {
-                case IReturnOperation { ReturnedValue: { } }:
-                case IThrowOperation { Exception: { } }:
-                    return op.Kind;
-
-                case IBlockOperation { Operations: { Length: 1 } statements }:
-                    return GetSwitchArmKind(statements[0]);
-            }
-
-            return default;
+                IReturnOperation { ReturnedValue: { } } or IThrowOperation { Exception: { } } => op.Kind,
+                IBlockOperation { Operations: { Length: 1 } statements } => GetSwitchArmKind(statements[0]),
+                _ => default,
+            };
         }
 
         static bool CanConvertSectionForSwitchExpression(bool supportsOrPattern, AnalyzedSwitchSection section)

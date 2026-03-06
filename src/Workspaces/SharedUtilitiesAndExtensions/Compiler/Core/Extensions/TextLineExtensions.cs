@@ -65,7 +65,7 @@ internal static class TextLineExtensions
     public static bool IsEmptyOrWhitespace(this TextLine line)
     {
         var text = line.Text;
-        RoslynDebug.Assert(text is object);
+        RoslynDebug.Assert(text is not null);
         for (var i = line.Span.Start; i < line.Span.End; i++)
         {
             if (!char.IsWhiteSpace(text[i]))

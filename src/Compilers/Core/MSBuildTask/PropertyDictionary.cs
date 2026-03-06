@@ -10,8 +10,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
     {
         public T GetOrDefault<T>(string name, T @default)
         {
-            object? value;
-            if (this.TryGetValue(name, out value))
+            if (this.TryGetValue(name, out object? value))
             {
                 return (T)value!;
             }
@@ -22,8 +21,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         {
             get
             {
-                object? value;
-                return this.TryGetValue(name, out value)
+                return this.TryGetValue(name, out object? value)
                     ? value : null;
             }
             set { base[name] = value; }

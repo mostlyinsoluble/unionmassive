@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -30,8 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
             var nameToken = syntax.Identifier;
 
-            TypeSymbol explicitInterfaceType;
-            var name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
+            var name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out TypeSymbol explicitInterfaceType, aliasQualifierOpt: out _);
             var location = new SourceLocation(nameToken);
 
             var methodKind = interfaceSpecifier == null
@@ -60,13 +57,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                  isIterator: SyntaxFacts.HasYieldOperations(syntax.Body),
                  MakeModifiersAndFlags(containingType, location, syntax, methodKind, isNullableAnalysisEnabled, diagnostics))
         {
-            Debug.Assert(diagnostics.DiagnosticBag is object);
+            Debug.Assert(diagnostics.DiagnosticBag is not null);
 
             this.CheckUnsafeModifier(DeclarationModifiers, diagnostics);
 
             bool hasAnyBody = syntax.HasAnyBody();
-
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasAnyBody, diagnostics);
 
             if (hasAnyBody)
             {
@@ -165,9 +160,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // implemented.
                 if (syntax.ConstraintClauses.Count > 0)
                 {
-                    Binder.CheckFeatureAvailability(
-                        syntax.ConstraintClauses[0].WhereKeyword, MessageID.IDS_OverrideWithConstraints, diagnostics);
-
                     declaredConstraints = signatureBinder.WithAdditionalFlags(BinderFlags.GenericConstraintsClause | BinderFlags.SuppressConstraintChecks).
                                               BindTypeParameterConstraintClauses(this, TypeParameters, syntax.TypeParameterList, syntax.ConstraintClauses,
                                                                                  diagnostics, performOnlyCycleSafeValidation: false, isForOverride: true);
@@ -227,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     diagnostics.Add(ErrorCode.ERR_InExtensionMustBeValueType, _location, Name);
                 }
-                else if ((object)ContainingType.ContainingType != null)
+                else if (ContainingType.ContainingType is not null)
                 {
                     diagnostics.Add(ErrorCode.ERR_ExtensionMethodsDecl, _location, ContainingType.Name);
                 }
@@ -260,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             var attributeConstructor = Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor, out var useSiteInfo);
 
-            if ((object)attributeConstructor == null)
+            if (attributeConstructor is null)
             {
                 var memberDescriptor = WellKnownMembers.GetDescriptor(WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor);
                 // do not use Binder.ReportUseSiteErrorForAttributeCtor in this case, because we'll need to report a special error id, not a generic use site error.
@@ -389,7 +381,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        public sealed override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             ref var lazyDocComment = ref expandIncludes ? ref this.lazyExpandedDocComment : ref this.lazyDocComment;
             return SourceDocumentationCommentUtils.GetAndCacheDocumentationComment(this, expandIncludes, ref lazyDocComment);
@@ -409,7 +401,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // If this symbol has a non-null PartialDefinitionPart, we should have accessed this method through that definition symbol instead
             Debug.Assert(PartialDefinitionPart is null);
 
-            if ((object)this.SourcePartialImplementation != null)
+            if (this.SourcePartialImplementation is not null)
             {
                 return OneOrMany.Create(ImmutableArray.Create(AttributeDeclarationSyntaxList, this.SourcePartialImplementation.AttributeDeclarationSyntaxList));
             }
@@ -424,12 +416,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 var sourceContainer = this.ContainingType as SourceMemberContainerTypeSymbol;
-                if ((object)sourceContainer != null && sourceContainer.AnyMemberHasAttributes)
+                if (sourceContainer is not null && sourceContainer.AnyMemberHasAttributes)
                 {
                     return this.GetSyntax().AttributeLists;
                 }
 
-                return default(SyntaxList<AttributeListSyntax>);
+                return default;
             }
         }
 
@@ -442,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal sealed override void ForceComplete(SourceLocation locationOpt, Predicate<Symbol> filter, CancellationToken cancellationToken)
         {
             var implementingPart = this.SourcePartialImplementation;
-            if ((object)implementingPart != null)
+            if (implementingPart is not null)
             {
                 implementingPart.ForceComplete(locationOpt, filter, cancellationToken);
             }
@@ -453,7 +445,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public sealed override bool IsDefinedInSourceTree(
             SyntaxTree tree,
             TextSpan? definedWithinSpan,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             // Since only the declaring (and not the implementing) part of a partial method appears in the member
             // list, we need to ensure we complete the implementation part when needed.
@@ -468,7 +460,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected sealed override void PartialMethodChecks(BindingDiagnosticBag diagnostics)
         {
             var implementingPart = this.SourcePartialImplementation;
-            if ((object)implementingPart != null)
+            if (implementingPart is not null)
             {
                 PartialMethodChecks(this, implementingPart, diagnostics);
             }
@@ -668,7 +660,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             MethodSymbol? overriddenOrExplicitlyImplementedMethod = MethodChecks(returnType, parameters, diagnostics);
 
-            if (!declaredConstraints.IsDefault && overriddenOrExplicitlyImplementedMethod is object)
+            if (!declaredConstraints.IsDefault && overriddenOrExplicitlyImplementedMethod is not null)
             {
                 for (int i = 0; i < declaredConstraints.Length; i++)
                 {
@@ -716,11 +708,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (this.ReturnType?.IsErrorType() == true && GetSyntax().ReturnType is IdentifierNameSyntax { Identifier.RawContextualKind: (int)SyntaxKind.PartialKeyword })
             {
-                var available = MessageID.IDS_FeaturePartialEventsAndConstructors.CheckFeatureAvailability(diagnostics, DeclaringCompilation, ReturnTypeLocation);
-                Debug.Assert(!available, "Should have been parsed as partial constructor.");
+                Debug.Assert(false, "Should have been parsed as partial constructor.");
             }
         }
-#nullable disable
 
         internal bool HasExplicitAccessModifier => flags.HasExplicitAccessModifier;
 
@@ -800,8 +790,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 hasExplicitAccessMod = true;
             }
 
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, isExplicitInterfaceImplementation, location, diagnostics);
-
             ModifierUtils.ReportDefaultInterfaceImplementationModifiers(hasBody, mods,
                                                                         defaultInterfaceImplementationModifiers,
                                                                         location, diagnostics);
@@ -844,11 +832,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!IsStatic || ContainingType.IsInterface || (!IsAbstract && !IsVirtual)); // Otherwise should have been reported and cleared earlier.
 
             bool isExplicitInterfaceImplementationInInterface = isExplicitInterfaceImplementation && ContainingType.IsInterface;
-
-            if (IsPartial && HasExplicitAccessModifier)
-            {
-                Binder.CheckFeatureAvailability(SyntaxNode, MessageID.IDS_FeatureExtendedPartialMethods, diagnostics, location);
-            }
 
             if (IsPartial && IsAbstract)
             {
@@ -1126,7 +1109,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected sealed override void CheckConstraintsForExplicitInterfaceType(ConversionsBase conversions, BindingDiagnosticBag diagnostics)
             {
-                if ((object)_explicitInterfaceType != null)
+                if (_explicitInterfaceType is not null)
                 {
                     var syntax = this.GetSyntax();
                     Debug.Assert(syntax.ExplicitInterfaceSpecifier != null);
@@ -1140,11 +1123,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     return ImmutableArray<TypeParameterSymbol>.Empty;
                 }
-
                 Debug.Assert(syntax.TypeParameterList != null);
-
-                MessageID.IDS_FeatureGenerics.CheckFeatureAvailability(diagnostics, syntax.TypeParameterList.LessThanToken);
-
                 OverriddenMethodTypeParameterMapBase typeMap = null;
                 if (this.IsOverride)
                 {
@@ -1175,7 +1154,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     var tpEnclosing = ContainingType.FindEnclosingTypeParameter(name);
                     bool checkForDuplicates = true;
 
-                    if ((object)tpEnclosing != null)
+                    if (tpEnclosing is not null)
                     {
                         if (tpEnclosing.ContainingSymbol is NamedTypeSymbol { IsExtension: true })
                         {

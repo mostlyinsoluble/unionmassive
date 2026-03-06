@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                 return true;
             }
 
-            return other is object &&
+            return other is not null &&
                 ReferenceEquals(_assemblyLoader, other._assemblyLoader) &&
                 FullPath == other.FullPath;
         }
@@ -318,14 +318,12 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                 // Arguments are present--check prologue.
                 if (argsReader.ReadByte() == 1 && argsReader.ReadByte() == 0)
                 {
-                    string firstLanguageName;
-                    if (!PEModule.CrackStringInAttributeValue(out firstLanguageName, ref argsReader))
+                    if (!PEModule.CrackStringInAttributeValue(out string firstLanguageName, ref argsReader))
                     {
                         return [];
                     }
 
-                    ImmutableArray<string> additionalLanguageNames;
-                    if (PEModule.CrackStringArrayInAttributeValue(out additionalLanguageNames, ref argsReader))
+                    if (PEModule.CrackStringArrayInAttributeValue(out ImmutableArray<string> additionalLanguageNames, ref argsReader))
                     {
                         if (additionalLanguageNames.Length == 0)
                         {
@@ -578,8 +576,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
             private ImmutableArray<TExtension> GetLanguageSpecificAnalyzers(Assembly analyzerAssembly, ImmutableSortedDictionary<string, ImmutableHashSet<string>> analyzerTypeNameMap, string language, ref bool reportedError)
             {
-                ImmutableHashSet<string>? languageSpecificAnalyzerTypeNames;
-                if (!analyzerTypeNameMap.TryGetValue(language, out languageSpecificAnalyzerTypeNames))
+                if (!analyzerTypeNameMap.TryGetValue(language, out ImmutableHashSet<string>? languageSpecificAnalyzerTypeNames))
                 {
                     return ImmutableArray<TExtension>.Empty;
                 }
@@ -613,7 +610,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                     if (!_allowNetFramework)
                     {
                         var targetFrameworkAttribute = analyzerAssembly.GetCustomAttribute<TargetFrameworkAttribute>();
-                        if (targetFrameworkAttribute is object && targetFrameworkAttribute.FrameworkName.StartsWith(".NETFramework", StringComparison.OrdinalIgnoreCase))
+                        if (targetFrameworkAttribute is not null && targetFrameworkAttribute.FrameworkName.StartsWith(".NETFramework", StringComparison.OrdinalIgnoreCase))
                         {
                             _reference.AnalyzerLoadFailed?.Invoke(_reference, new AnalyzerLoadFailureEventArgs(
                                 AnalyzerLoadFailureEventArgs.FailureErrorCode.ReferencesFramework,

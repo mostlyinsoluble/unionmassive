@@ -73,15 +73,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 modifiers &= ~DeclarationModifiers.AccessibilityMask;
 
-                switch (modifiers)
+                return modifiers switch
                 {
-                    case DeclarationModifiers.None:
-                    case DeclarationModifiers.Override:
-                    case DeclarationModifiers.Virtual:
-                        return true;
-                    default:
-                        return false;
-                }
+                    DeclarationModifiers.None or DeclarationModifiers.Override or DeclarationModifiers.Virtual => true,
+                    _ => false,
+                };
             }
 #endif
         }
@@ -106,7 +102,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             var overridden = OverriddenMethod;
 
-            if (overridden is object &&
+            if (overridden is not null &&
                 !overridden.ContainingType.Equals(ContainingType.BaseTypeNoUseSiteDiagnostics, TypeCompareKind.AllIgnoreOptions))
             {
                 diagnostics.Add(ErrorCode.ERR_DoesNotOverrideBaseMethod, GetFirstLocation(), this, ContainingType.BaseTypeNoUseSiteDiagnostics);
@@ -289,7 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 var overridden = overriding.OverriddenMethod;
 
-                if (overridden is object &&
+                if (overridden is not null &&
                     !overridden.ContainingType.Equals(baseType, TypeCompareKind.AllIgnoreOptions))
                 {
                     reportAnError = true;

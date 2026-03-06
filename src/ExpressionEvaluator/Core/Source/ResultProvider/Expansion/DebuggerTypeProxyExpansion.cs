@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 _proxyItem = new EvalResult(
                     ExpansionKind.Default,
                     name: string.Empty,
-                    typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                    typeDeclaringMemberAndInfo: default,
                     declaredTypeAndInfo: proxyTypeAndInfo,
                     useDebuggerDisplay: false,
                     value: proxyValue,
@@ -148,8 +148,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                     fullName: null,
                     childFullNamePrefixOpt: proxyMemberFullNamePrefix,
                     formatSpecifiers: Formatter.NoFormatSpecifiers,
-                    category: default(DkmEvaluationResultCategory),
-                    flags: default(DkmEvaluationResultFlags),
+                    category: default,
+                    flags: default,
                     editableValue: null,
                     inspectionContext: inspectionContext);
             }

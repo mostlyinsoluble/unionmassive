@@ -30,16 +30,12 @@ internal partial class StreamingFindUsagesPresenter
 
         private object? GetValue(string keyName)
         {
-            switch (keyName)
+            return keyName switch
             {
-                case StandardTableKeyNames2.Definition:
-                    return DefinitionBucket;
-
-                case StandardTableKeyNames2.DefinitionIcon:
-                    return DefinitionBucket?.DefinitionItem.Tags.GetFirstGlyph().GetImageMoniker();
-            }
-
-            return GetValueWorker(keyName);
+                StandardTableKeyNames2.Definition => DefinitionBucket,
+                StandardTableKeyNames2.DefinitionIcon => DefinitionBucket?.DefinitionItem.Tags.GetFirstGlyph().GetImageMoniker(),
+                _ => GetValueWorker(keyName),
+            };
         }
 
         protected abstract object? GetValueWorker(string keyName);

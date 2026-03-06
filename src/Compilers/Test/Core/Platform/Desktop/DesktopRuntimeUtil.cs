@@ -38,7 +38,7 @@ namespace Roslyn.Test.Utilities.Desktop
         /// <param name="filePath">Optional path that describes the location of the metadata. The file doesn't need to exist on disk. The path is opaque to the compiler.</param>
         internal static PortableExecutableReference CreateMetadataReferenceFromHexGZipImage(
             string image,
-            MetadataReferenceProperties properties = default(MetadataReferenceProperties),
+            MetadataReferenceProperties properties = default,
             DocumentationProvider documentation = null,
             string filePath = null)
         {

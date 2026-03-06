@@ -798,24 +798,19 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public BoundExpression MakeIsNotANumberTest(BoundExpression input)
         {
-            switch (input.Type)
+            return input.Type switch
             {
-                case { SpecialType: CodeAnalysis.SpecialType.System_Double }:
-                    // produce double.IsNaN(input)
-                    return StaticCall(CodeAnalysis.SpecialMember.System_Double__IsNaN, input);
-                case { SpecialType: CodeAnalysis.SpecialType.System_Single }:
-                    // produce float.IsNaN(input)
-                    return StaticCall(CodeAnalysis.SpecialMember.System_Single__IsNaN, input);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(input.Type);
-            }
+                { SpecialType: CodeAnalysis.SpecialType.System_Double } => StaticCall(CodeAnalysis.SpecialMember.System_Double__IsNaN, input),// produce double.IsNaN(input)
+                { SpecialType: CodeAnalysis.SpecialType.System_Single } => StaticCall(CodeAnalysis.SpecialMember.System_Single__IsNaN, input),// produce float.IsNaN(input)
+                _ => throw ExceptionUtilities.UnexpectedValue(input.Type),
+            };
         }
 
         public BoundExpression StaticCall(TypeSymbol receiver, MethodSymbol method, params BoundExpression[] args)
         {
             if (method is null)
             {
-                return new BoundBadExpression(Syntax, default(LookupResultKind), ImmutableArray<Symbol?>.Empty, args.AsImmutable(), receiver);
+                return new BoundBadExpression(Syntax, default, ImmutableArray<Symbol?>.Empty, args.AsImmutable(), receiver);
             }
 
             return Call(null, method, args);
@@ -879,8 +874,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             return new BoundCall(
                 Syntax, receiver, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, args,
-                argumentNamesOpt: default(ImmutableArray<string?>), argumentRefKindsOpt: ArgumentRefKindsFromParameterRefKinds(method, useStrictArgumentRefKinds), isDelegateCall: false, expanded: false,
-                invokedAsExtensionMethod: false, argsToParamsOpt: default(ImmutableArray<int>), defaultArguments: default(BitVector), resultKind: LookupResultKind.Viable,
+                argumentNamesOpt: default, argumentRefKindsOpt: ArgumentRefKindsFromParameterRefKinds(method, useStrictArgumentRefKinds), isDelegateCall: false, expanded: false,
+                invokedAsExtensionMethod: false, argsToParamsOpt: default, defaultArguments: default, resultKind: LookupResultKind.Viable,
                 type: method.ReturnType, hasErrors: method.OriginalDefinition is ErrorMethodSymbol)
             { WasCompilerGenerated = true };
         }
@@ -920,8 +915,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(method.ParameterCount == args.Length);
             return new BoundCall(
                 Syntax, receiver, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, args,
-                argumentNamesOpt: default(ImmutableArray<String?>), argumentRefKindsOpt: refKinds, isDelegateCall: false, expanded: false, invokedAsExtensionMethod: false,
-                argsToParamsOpt: ImmutableArray<int>.Empty, defaultArguments: default(BitVector), resultKind: LookupResultKind.Viable, type: method.ReturnType)
+                argumentNamesOpt: default, argumentRefKindsOpt: refKinds, isDelegateCall: false, expanded: false, invokedAsExtensionMethod: false,
+                argsToParamsOpt: ImmutableArray<int>.Empty, defaultArguments: default, resultKind: LookupResultKind.Viable, type: method.ReturnType)
             { WasCompilerGenerated = true };
         }
 
@@ -1723,8 +1718,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal BoundLocal MakeTempForDiscard(BoundDiscardExpression node, ArrayBuilder<LocalSymbol> temps)
         {
-            LocalSymbol temp;
-            BoundLocal result = MakeTempForDiscard(node, out temp);
+            BoundLocal result = MakeTempForDiscard(node, out LocalSymbol temp);
             temps.Add(temp);
             return result;
         }
@@ -1761,7 +1755,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Don't even call this method if the expression cannot be nullable.
             Debug.Assert(
-                (object)exprType == null ||
+                exprType is null ||
                 exprType.IsNullableTypeOrTypeParameter() ||
                 !exprType.IsValueType ||
                 exprType.IsPointerOrFunctionPointer());
@@ -1782,7 +1776,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             TypeSymbol objectType = SpecialType(CodeAnalysis.SpecialType.System_Object);
 
-            if ((object)exprType != null)
+            if (exprType is not null)
             {
                 if (exprType.Kind == SymbolKind.TypeParameter)
                 {
@@ -1832,7 +1826,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(loweredLeft != null);
             Debug.Assert(loweredRight != null);
-            Debug.Assert((object)returnType != null);
+            Debug.Assert(returnType is not null);
             Debug.Assert(returnType.SpecialType == CodeAnalysis.SpecialType.System_Boolean);
             Debug.Assert(loweredLeft.IsLiteralNull() != loweredRight.IsLiteralNull());
 

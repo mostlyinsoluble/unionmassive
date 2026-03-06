@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_locals.IsDefault)
                 {
-                    ImmutableInterlocked.InterlockedCompareExchange(ref _locals, BuildLocals(), default(ImmutableArray<LocalSymbol>));
+                    ImmutableInterlocked.InterlockedCompareExchange(ref _locals, BuildLocals(), default);
                 }
 
                 return _locals;
@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_localFunctions.IsDefault)
                 {
-                    ImmutableInterlocked.InterlockedCompareExchange(ref _localFunctions, BuildLocalFunctions(), default(ImmutableArray<LocalFunctionSymbol>));
+                    ImmutableInterlocked.InterlockedCompareExchange(ref _localFunctions, BuildLocalFunctions(), default);
                 }
 
                 return _localFunctions;
@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_labels.IsDefault)
                 {
-                    ImmutableInterlocked.InterlockedCompareExchange(ref _labels, BuildLabels(), default(ImmutableArray<LabelSymbol>));
+                    ImmutableInterlocked.InterlockedCompareExchange(ref _labels, BuildLabels(), default);
                 }
 
                 return _labels;
@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         {
                             kind = LocalDeclarationKind.Constant;
                         }
-                        else if (decl.UsingKeyword != default(SyntaxToken))
+                        else if (decl.UsingKeyword != default)
                         {
                             kind = LocalDeclarationKind.UsingVariable;
                         }
@@ -380,8 +380,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         protected override SourceLocalSymbol LookupLocal(SyntaxToken nameToken)
         {
-            LocalSymbol result = null;
-            if (LocalsMap != null && LocalsMap.TryGetValue(nameToken.ValueText, out result))
+            if (LocalsMap != null && LocalsMap.TryGetValue(nameToken.ValueText, out LocalSymbol result))
             {
                 if (result.IdentifierToken == nameToken) return (SourceLocalSymbol)result;
 
@@ -400,8 +399,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override LocalFunctionSymbol LookupLocalFunction(SyntaxToken nameToken)
         {
-            LocalFunctionSymbol result = null;
-            if (LocalFunctionsMap != null && LocalFunctionsMap.TryGetValue(nameToken.ValueText, out result))
+            if (LocalFunctionsMap != null && LocalFunctionsMap.TryGetValue(nameToken.ValueText, out LocalFunctionSymbol result))
             {
                 if (result.NameToken == nameToken) return result;
 
@@ -429,8 +427,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 var labelsMap = this.LabelsMap;
                 if (labelsMap != null)
                 {
-                    LabelSymbol labelSymbol;
-                    if (labelsMap.TryGetValue(name, out labelSymbol))
+                    if (labelsMap.TryGetValue(name, out LabelSymbol labelSymbol))
                     {
                         result.MergeEqual(LookupResult.Good(labelSymbol));
                     }
@@ -441,8 +438,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var localsMap = this.LocalsMap;
             if (localsMap != null && (options & LookupOptions.NamespaceAliasesOnly) == 0)
             {
-                LocalSymbol localSymbol;
-                if (localsMap.TryGetValue(name, out localSymbol))
+                if (localsMap.TryGetValue(name, out LocalSymbol localSymbol))
                 {
                     result.MergeEqual(originalBinder.CheckViability(localSymbol, arity, options, null, diagnose, ref useSiteInfo, basesBeingResolved));
                 }
@@ -451,8 +447,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var localFunctionsMap = this.LocalFunctionsMap;
             if (localFunctionsMap != null && options.CanConsiderLocals())
             {
-                LocalFunctionSymbol localSymbol;
-                if (localFunctionsMap.TryGetValue(name, out localSymbol))
+                if (localFunctionsMap.TryGetValue(name, out LocalFunctionSymbol localSymbol))
                 {
                     result.MergeEqual(originalBinder.CheckViability(localSymbol, arity, options, null, diagnose, ref useSiteInfo, basesBeingResolved));
                 }
@@ -501,7 +496,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool ReportConflictWithLocal(Symbol local, Symbol newSymbol, string name, Location newLocation, BindingDiagnosticBag diagnostics)
         {
             // Quirk of the way we represent lambda parameters.
-            SymbolKind newSymbolKind = (object)newSymbol == null ? SymbolKind.Parameter : newSymbol.Kind;
+            SymbolKind newSymbolKind = newSymbol is null ? SymbolKind.Parameter : newSymbol.Kind;
 
             if (newSymbolKind == SymbolKind.ErrorType) return true;
 

@@ -57,7 +57,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (isCompoundAssignmentOrIncrementAssignment)
             {
                 Debug.Assert(!this.IsStatic);
-                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeatureUserDefinedCompoundAssignmentOperators, diagnostics, ((OperatorDeclarationSyntax)syntax).OperatorToken.GetLocation());
             }
 
             if (this.ContainingType.IsInterface &&
@@ -243,36 +242,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         result &= ~DeclarationModifiers.Sealed;
                     }
 
-                    LanguageVersion availableVersion = ((CSharpParseOptions)location.SourceTree.Options).LanguageVersion;
-                    LanguageVersion requiredVersion = MessageID.IDS_FeatureStaticAbstractMembersInInterfaces.RequiredVersion();
-
-                    if (availableVersion < requiredVersion)
-                    {
-                        var requiredVersionArgument = new CSharpRequiredLanguageVersion(requiredVersion);
-                        var availableVersionArgument = availableVersion.ToDisplayString();
-
-                        if ((result & DeclarationModifiers.Abstract) != 0)
-                        {
-                            reportModifierIfPresent(result, DeclarationModifiers.Abstract, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                        }
-                        else
-                        {
-                            reportModifierIfPresent(result, DeclarationModifiers.Virtual, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                        }
-
-                        reportModifierIfPresent(result, DeclarationModifiers.Sealed, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                    }
-
                     result &= ~DeclarationModifiers.Sealed;
                 }
-                else if ((result & DeclarationModifiers.Static) != 0)
-                {
-                    if (syntax is OperatorDeclarationSyntax { OperatorToken: var opToken } && opToken.Kind() is not (SyntaxKind.EqualsEqualsToken or SyntaxKind.ExclamationEqualsToken))
-                    {
-                        Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, location);
-                    }
-                }
-                else if (!isExplicitInterfaceImplementation && isCompoundAssignmentOrIncrementAssignment)
+                else if ((result & DeclarationModifiers.Static) == 0 && !isExplicitInterfaceImplementation && isCompoundAssignmentOrIncrementAssignment)
                 {
                     if (syntax.HasAnyBody())
                     {
@@ -294,17 +266,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             return result;
-
-            static void reportModifierIfPresent(DeclarationModifiers result, DeclarationModifiers errorModifier, Location location, BindingDiagnosticBag diagnostics, CSharpRequiredLanguageVersion requiredVersionArgument, string availableVersionArgument)
-            {
-                if ((result & errorModifier) != 0)
-                {
-                    diagnostics.Add(ErrorCode.ERR_InvalidModifierForLanguageVersion, location,
-                                    ModifierUtils.ConvertSingleModifierToSyntaxText(errorModifier),
-                                    availableVersionArgument,
-                                    requiredVersionArgument);
-                }
-            }
         }
 
         protected (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BaseMethodDeclarationSyntax declarationSyntax, TypeSyntax returnTypeSyntax, BindingDiagnosticBag diagnostics)
@@ -315,15 +276,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var binder = this.DeclaringCompilation.
                 GetBinderFactory(declarationSyntax.SyntaxTree).GetBinder(returnTypeSyntax, declarationSyntax, this);
 
-            SyntaxToken arglistToken;
-
             var signatureBinder = binder.WithAdditionalFlags(BinderFlags.SuppressConstraintChecks);
 
             parameters = ParameterHelpers.MakeParameters(
                 signatureBinder,
                 this,
                 declarationSyntax.ParameterList,
-                out arglistToken,
+                out SyntaxToken arglistToken,
                 allowRefOrOut: true,
                 allowThis: false,
                 addRefReadOnlyModifier: IsVirtual || IsAbstract,
@@ -434,7 +393,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override MethodSymbol FindExplicitlyImplementedMethod(BindingDiagnosticBag diagnostics)
         {
-            if (_explicitInterfaceType is object)
+            if (_explicitInterfaceType is not null)
             {
                 string interfaceMethodName;
                 ExplicitInterfaceSpecifierSyntax explicitInterfaceSpecifier;
@@ -579,49 +538,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static bool DoesOperatorHaveCorrectArity(string name, int parameterCount)
         {
-            switch (name)
+            return name switch
             {
-                case WellKnownMemberNames.CheckedIncrementOperatorName:
-                case WellKnownMemberNames.IncrementOperatorName:
-                case WellKnownMemberNames.CheckedDecrementOperatorName:
-                case WellKnownMemberNames.DecrementOperatorName:
-                    return parameterCount == 1;
-
-                case WellKnownMemberNames.CheckedUnaryNegationOperatorName:
-                case WellKnownMemberNames.UnaryNegationOperatorName:
-                case WellKnownMemberNames.UnaryPlusOperatorName:
-                case WellKnownMemberNames.LogicalNotOperatorName:
-                case WellKnownMemberNames.OnesComplementOperatorName:
-                case WellKnownMemberNames.TrueOperatorName:
-                case WellKnownMemberNames.FalseOperatorName:
-                case WellKnownMemberNames.ImplicitConversionName:
-                case WellKnownMemberNames.ExplicitConversionName:
-                case WellKnownMemberNames.CheckedExplicitConversionName:
-                case WellKnownMemberNames.CheckedAdditionAssignmentOperatorName:
-                case WellKnownMemberNames.AdditionAssignmentOperatorName:
-                case WellKnownMemberNames.CheckedDivisionAssignmentOperatorName:
-                case WellKnownMemberNames.DivisionAssignmentOperatorName:
-                case WellKnownMemberNames.CheckedMultiplicationAssignmentOperatorName:
-                case WellKnownMemberNames.MultiplicationAssignmentOperatorName:
-                case WellKnownMemberNames.CheckedSubtractionAssignmentOperatorName:
-                case WellKnownMemberNames.SubtractionAssignmentOperatorName:
-                case WellKnownMemberNames.ModulusAssignmentOperatorName:
-                case WellKnownMemberNames.BitwiseAndAssignmentOperatorName:
-                case WellKnownMemberNames.BitwiseOrAssignmentOperatorName:
-                case WellKnownMemberNames.ExclusiveOrAssignmentOperatorName:
-                case WellKnownMemberNames.LeftShiftAssignmentOperatorName:
-                case WellKnownMemberNames.RightShiftAssignmentOperatorName:
-                case WellKnownMemberNames.UnsignedRightShiftAssignmentOperatorName:
-                    return parameterCount == 1;
-
-                case WellKnownMemberNames.CheckedIncrementAssignmentOperatorName:
-                case WellKnownMemberNames.IncrementAssignmentOperatorName:
-                case WellKnownMemberNames.CheckedDecrementAssignmentOperatorName:
-                case WellKnownMemberNames.DecrementAssignmentOperatorName:
-                    return parameterCount == 0;
-                default:
-                    return parameterCount == 2;
-            }
+                WellKnownMemberNames.CheckedIncrementOperatorName or WellKnownMemberNames.IncrementOperatorName or WellKnownMemberNames.CheckedDecrementOperatorName or WellKnownMemberNames.DecrementOperatorName => parameterCount == 1,
+                WellKnownMemberNames.CheckedUnaryNegationOperatorName or WellKnownMemberNames.UnaryNegationOperatorName or WellKnownMemberNames.UnaryPlusOperatorName or WellKnownMemberNames.LogicalNotOperatorName or WellKnownMemberNames.OnesComplementOperatorName or WellKnownMemberNames.TrueOperatorName or WellKnownMemberNames.FalseOperatorName or WellKnownMemberNames.ImplicitConversionName or WellKnownMemberNames.ExplicitConversionName or WellKnownMemberNames.CheckedExplicitConversionName or WellKnownMemberNames.CheckedAdditionAssignmentOperatorName or WellKnownMemberNames.AdditionAssignmentOperatorName or WellKnownMemberNames.CheckedDivisionAssignmentOperatorName or WellKnownMemberNames.DivisionAssignmentOperatorName or WellKnownMemberNames.CheckedMultiplicationAssignmentOperatorName or WellKnownMemberNames.MultiplicationAssignmentOperatorName or WellKnownMemberNames.CheckedSubtractionAssignmentOperatorName or WellKnownMemberNames.SubtractionAssignmentOperatorName or WellKnownMemberNames.ModulusAssignmentOperatorName or WellKnownMemberNames.BitwiseAndAssignmentOperatorName or WellKnownMemberNames.BitwiseOrAssignmentOperatorName or WellKnownMemberNames.ExclusiveOrAssignmentOperatorName or WellKnownMemberNames.LeftShiftAssignmentOperatorName or WellKnownMemberNames.RightShiftAssignmentOperatorName or WellKnownMemberNames.UnsignedRightShiftAssignmentOperatorName => parameterCount == 1,
+                WellKnownMemberNames.CheckedIncrementAssignmentOperatorName or WellKnownMemberNames.IncrementAssignmentOperatorName or WellKnownMemberNames.CheckedDecrementAssignmentOperatorName or WellKnownMemberNames.DecrementAssignmentOperatorName => parameterCount == 0,
+                _ => parameterCount == 2,
+            };
         }
 
         private void CheckUserDefinedConversionSignature(BindingDiagnosticBag diagnostics)
@@ -950,11 +873,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     (ContainingType.IsExtension ? ErrorCode.ERR_BadExtensionShiftOperatorSignature : ErrorCode.ERR_BadShiftOperatorSignature),
                                 this.GetFirstLocation());
             }
-            else if (this.GetParameterType(1).StrippedType().SpecialType != SpecialType.System_Int32)
-            {
-                var location = this.GetFirstLocation();
-                Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_FeatureRelaxedShiftOperator, diagnostics, location);
-            }
 
             CheckReturnIsNotVoid(diagnostics);
         }
@@ -1008,7 +926,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override void CheckConstraintsForExplicitInterfaceType(ConversionsBase conversions, BindingDiagnosticBag diagnostics)
         {
-            if ((object)_explicitInterfaceType != null)
+            if (_explicitInterfaceType is not null)
             {
                 NameSyntax name;
 

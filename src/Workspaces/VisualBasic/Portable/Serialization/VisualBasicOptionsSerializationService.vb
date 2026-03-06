@@ -43,8 +43,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Serialization
             WriteParseOptionsTo(options, writer)
 
             Dim vbOptions = DirectCast(options, VisualBasicParseOptions)
-            writer.WriteInt32(vbOptions.SpecifiedLanguageVersion)
-
             writer.WriteInt32(vbOptions.PreprocessorSymbols.Length)
             For Each kv In vbOptions.PreprocessorSymbols
                 writer.WriteString(kv.Key)
@@ -108,8 +106,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Serialization
             Dim documentationMode = tuple.documentationMode
             Dim features = tuple.features
 
-            Dim languageVersion = DirectCast(reader.ReadInt32(), LanguageVersion)
-
             Dim count = reader.ReadInt32()
             Dim builder = ImmutableArray.CreateBuilder(Of KeyValuePair(Of String, Object))(count)
             For i = 0 To count - 1
@@ -118,7 +114,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Serialization
                 builder.Add(KeyValuePair.Create(key, value))
             Next
 
-            Dim options = New VisualBasicParseOptions(languageVersion, documentationMode, kind, builder.MoveToImmutable())
+            Dim options = New VisualBasicParseOptions(documentationMode, kind, builder.MoveToImmutable())
             Return options.WithFeatures(features)
         End Function
     End Class

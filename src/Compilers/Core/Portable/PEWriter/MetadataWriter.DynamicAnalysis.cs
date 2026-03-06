@@ -58,7 +58,7 @@ namespace Microsoft.Cci
             _documentIndex = new Dictionary<DebugSourceDocument, int>(documentCountEstimate);
             _methodTable = new List<MethodRow>(methodCountEstimate);
 
-            _blobs.Add(ImmutableArray<byte>.Empty, default(BlobHandle));
+            _blobs.Add(ImmutableArray<byte>.Empty, default);
             _blobHeapSize = 1;
         }
 
@@ -81,8 +81,7 @@ namespace Microsoft.Cci
 
         private BlobHandle GetOrAddBlob(ImmutableArray<byte> blob)
         {
-            BlobHandle index;
-            if (!_blobs.TryGetValue(blob, out index))
+            if (!_blobs.TryGetValue(blob, out BlobHandle index))
             {
                 index = MetadataTokens.BlobHandle(_blobHeapSize);
                 _blobs.Add(blob, index);
@@ -102,11 +101,10 @@ namespace Microsoft.Cci
         {
             if (guid == Guid.Empty)
             {
-                return default(GuidHandle);
+                return default;
             }
 
-            GuidHandle result;
-            if (_guids.TryGetValue(guid, out result))
+            if (_guids.TryGetValue(guid, out GuidHandle result))
             {
                 return result;
             }
@@ -127,7 +125,7 @@ namespace Microsoft.Cci
         {
             if (spans.Length == 0)
             {
-                return default(BlobHandle);
+                return default;
             }
 
             // 4 bytes per span plus a header, the builder expands by the same amount.
@@ -204,8 +202,7 @@ namespace Microsoft.Cci
 
         private int GetOrAddDocument(DebugSourceDocument document, Dictionary<DebugSourceDocument, int> index)
         {
-            int documentRowId;
-            if (!index.TryGetValue(document, out documentRowId))
+            if (!index.TryGetValue(document, out int documentRowId))
             {
                 documentRowId = _documentTable.Count + 1;
                 index.Add(document, documentRowId);
@@ -214,8 +211,8 @@ namespace Microsoft.Cci
                 _documentTable.Add(new DocumentRow
                 {
                     Name = SerializeDocumentName(document.Location),
-                    HashAlgorithm = (sourceInfo.Checksum.IsDefault ? default(GuidHandle) : GetOrAddGuid(sourceInfo.ChecksumAlgorithmId)),
-                    Hash = (sourceInfo.Checksum.IsDefault) ? default(BlobHandle) : GetOrAddBlob(sourceInfo.Checksum)
+                    HashAlgorithm = (sourceInfo.Checksum.IsDefault ? default : GetOrAddGuid(sourceInfo.ChecksumAlgorithmId)),
+                    Hash = (sourceInfo.Checksum.IsDefault) ? default : GetOrAddBlob(sourceInfo.Checksum)
                 });
             }
 

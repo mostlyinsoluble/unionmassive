@@ -56,9 +56,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             bool visitAll,
             ref int index)
         {
-            int startIndex2;
-            int count2;
-            GetIntersection(startIndex, count, index, _count, out startIndex2, out count2);
+            GetIntersection(startIndex, count, index, _count, out var startIndex2, out var count2);
 
             int offset = startIndex2 - index;
             for (int i = 0; i < count2; i++)
@@ -84,7 +82,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return resultProvider.CreateDataItem(
                 inspectionContext,
                 name,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: _elementTypeAndInfo,
                 value: element,
                 useDebuggerDisplay: parent != null,

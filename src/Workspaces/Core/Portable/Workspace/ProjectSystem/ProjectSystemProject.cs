@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.Workspaces.ProjectSystem;
 
 internal sealed partial class ProjectSystemProject
 {
-    private static readonly ImmutableArray<MetadataReferenceProperties> s_defaultMetadataReferenceProperties = [default(MetadataReferenceProperties)];
+    private static readonly ImmutableArray<MetadataReferenceProperties> s_defaultMetadataReferenceProperties = [default];
 
     private readonly ProjectSystemProjectFactory _projectSystemProjectFactory;
     private readonly ProjectSystemHostInfo _hostInfo;

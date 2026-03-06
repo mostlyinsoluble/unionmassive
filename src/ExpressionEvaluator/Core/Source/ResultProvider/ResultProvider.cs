@@ -73,8 +73,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             formatSpecifiers ??= Formatter.NoFormatSpecifiers;
             if (resultFullName != null)
             {
-                ReadOnlyCollection<string> otherSpecifiers;
-                resultFullName = FullNameProvider.GetClrExpressionAndFormatSpecifiers(inspectionContext, resultFullName, out otherSpecifiers);
+                resultFullName = FullNameProvider.GetClrExpressionAndFormatSpecifiers(inspectionContext, resultFullName, out var otherSpecifiers);
                 foreach (var formatSpecifier in otherSpecifiers)
                 {
                     formatSpecifiers = Formatter.AddFormatSpecifier(formatSpecifiers, formatSpecifier);
@@ -660,7 +659,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 var dataItem = new EvalResult(
                     ExpansionKind.Default,
                     name,
-                    typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                    typeDeclaringMemberAndInfo: default,
                     declaredTypeAndInfo: declaredTypeAndInfo,
                     useDebuggerDisplay: false,
                     value: value,
@@ -759,7 +758,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                     dataItem = CreateDataItem(
                         inspectionContext,
                         name,
-                        typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                        typeDeclaringMemberAndInfo: default,
                         declaredTypeAndInfo: new TypeAndCustomInfo(declaredType, declaredTypeInfo),
                         value: value,
                         useDebuggerDisplay: useDebuggerDisplay,
@@ -837,7 +836,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             }
             if (displayInfo == null)
             {
-                completionRoutine(default(DkmEvaluateDebuggerDisplayStringAsyncResult));
+                completionRoutine(default);
             }
             else
             {
@@ -1006,15 +1005,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 flags &= ~ExpansionFlags.IncludeBaseMembers;
             }
 
-            int cardinality;
-            if (runtimeType.IsTupleCompatible(out cardinality))
+            if (runtimeType.IsTupleCompatible(out var cardinality))
             {
                 return TupleExpansion.CreateExpansion(inspectionContext, declaredTypeAndInfo, value, cardinality);
             }
 
-            int inlineArrayLength;
-            Type inlineArrayElementType;
-            if (InlineArrayHelpers.TryGetInlineArrayInfo(runtimeType, out inlineArrayLength, out inlineArrayElementType) ||
+            if (InlineArrayHelpers.TryGetInlineArrayInfo(runtimeType, out var inlineArrayLength, out var inlineArrayElementType) ||
                 InlineArrayHelpers.TryGetFixedBufferInfo(runtimeType, out inlineArrayLength, out inlineArrayElementType))
             {
                 // Inline arrays are always 1D, zero-based arrays.

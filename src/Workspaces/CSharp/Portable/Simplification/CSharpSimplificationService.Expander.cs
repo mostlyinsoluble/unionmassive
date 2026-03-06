@@ -606,16 +606,11 @@ internal partial class CSharpSimplificationService
             identifier = TryEscapeIdentifierToken(identifier, originalSimpleName).WithAdditionalAnnotations(Simplifier.Annotation);
             if (identifier != rewrittenSimpleName.Identifier)
             {
-                switch (newNode.Kind())
+                newNode = newNode.Kind() switch
                 {
-                    case SyntaxKind.IdentifierName:
-                    case SyntaxKind.GenericName:
-                        newNode = ((SimpleNameSyntax)newNode).WithIdentifier(identifier);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
+                    SyntaxKind.IdentifierName or SyntaxKind.GenericName => ((SimpleNameSyntax)newNode).WithIdentifier(identifier),
+                    _ => throw new NotImplementedException(),
+                };
             }
 
             var parent = originalSimpleName.Parent;

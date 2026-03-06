@@ -2153,14 +2153,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
 
         private static bool IsConditional(IBinaryOperation operation)
         {
-            switch (operation.OperatorKind)
+            return operation.OperatorKind switch
             {
-                case BinaryOperatorKind.ConditionalOr:
-                case BinaryOperatorKind.ConditionalAnd:
-                    return true;
-            }
-
-            return false;
+                BinaryOperatorKind.ConditionalOr or BinaryOperatorKind.ConditionalAnd => true,
+                _ => false,
+            };
         }
 
         public override IOperation VisitBinaryOperator(IBinaryOperation operation, int? captureIdForResult)
@@ -2270,18 +2267,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
 
         private static bool CalculateAndOrSense(IBinaryOperation binOp, bool sense)
         {
-            switch (binOp.OperatorKind)
+            return binOp.OperatorKind switch
             {
-                case BinaryOperatorKind.ConditionalOr:
-                    // Rewrite (a || b) as ~(~a && ~b)
-                    return !sense;
-
-                case BinaryOperatorKind.ConditionalAnd:
-                    return sense;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(binOp.OperatorKind);
-            }
+                BinaryOperatorKind.ConditionalOr => !sense,// Rewrite (a || b) as ~(~a && ~b)
+                BinaryOperatorKind.ConditionalAnd => sense,
+                _ => throw ExceptionUtilities.UnexpectedValue(binOp.OperatorKind),
+            };
         }
 
         private IOperation VisitBinaryConditionalOperator(IBinaryOperation binOp, bool sense, int? captureIdForResult,

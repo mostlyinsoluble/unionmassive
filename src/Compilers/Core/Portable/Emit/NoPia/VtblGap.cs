@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
 
         ImmutableArray<byte> Cci.IMethodDefinition.ReturnValueMarshallingDescriptor
         {
-            get { return default(ImmutableArray<byte>); }
+            get { return default; }
         }
 
         IEnumerable<Cci.SecurityAttribute> Cci.IMethodDefinition.SecurityAttributes

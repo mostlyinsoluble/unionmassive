@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static bool IsSynthesizedLambda(this MethodSymbol method)
         {
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             return method.IsImplicitlyDeclared && method.MethodKind == MethodKind.AnonymousFunction;
         }
 
@@ -42,13 +42,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // to runtime-finalizer (since it will also be marked newslot), so it is safe to use
             // IsMetadataVirtualIgnoringInterfaceImplementationChanges.  This also has the advantage of making
             // this method safe to call before declaration diagnostics have been computed.
-            if ((object)method == null || method.Name != WellKnownMemberNames.DestructorName ||
+            if (method is null || method.Name != WellKnownMemberNames.DestructorName ||
                 method.ParameterCount != 0 || method.Arity != 0 || !method.IsMetadataVirtual(MethodSymbol.IsMetadataVirtualOption.IgnoreInterfaceImplementationChanges))
             {
                 return false;
             }
 
-            while ((object)method != null)
+            while (method is not null)
             {
                 if (!skipFirstMethodKindCheck && method.MethodKind == MethodKind.Destructor)
                 {
@@ -94,7 +94,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         public static bool CanBeHiddenByMember(this MethodSymbol hiddenMethod, Symbol hidingMember)
         {
-            Debug.Assert((object)hiddenMethod != null);
+            Debug.Assert(hiddenMethod is not null);
 
             // Nothing can hide a destructor (see SymbolPreparer::ReportHiding)
             if (hiddenMethod.MethodKind == MethodKind.Destructor)
@@ -102,19 +102,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            switch (hidingMember.Kind)
+            return hidingMember.Kind switch
             {
-                case SymbolKind.ErrorType:
-                case SymbolKind.NamedType:
-                case SymbolKind.Method:
-                case SymbolKind.Property:
-                    return CanBeHiddenByMethodPropertyOrType(hiddenMethod, hidingMember);
-                case SymbolKind.Field:
-                case SymbolKind.Event: // Events are not covered by CSemanticChecker::FindSymHiddenByMethPropAgg.
-                    return true;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(hidingMember.Kind);
-            }
+                SymbolKind.ErrorType or SymbolKind.NamedType or SymbolKind.Method or SymbolKind.Property => CanBeHiddenByMethodPropertyOrType(hiddenMethod, hidingMember),
+                SymbolKind.Field or SymbolKind.Event => true,
+                _ => throw ExceptionUtilities.UnexpectedValue(hidingMember.Kind),
+            };
         }
 
         /// <summary>
@@ -123,25 +116,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private static bool CanBeHiddenByMethodPropertyOrType(MethodSymbol method, Symbol hidingMember)
         {
-            switch (method.MethodKind)
+            return method.MethodKind switch
             {
                 // See CSemanticChecker::FindSymHiddenByMethPropAgg.
-                case MethodKind.Destructor:
-                case MethodKind.Constructor:
-                case MethodKind.StaticConstructor:
-                case MethodKind.Conversion:
-                    return false;
-                case MethodKind.UserDefinedOperator:
-                    return !method.IsStatic && hidingMember is MethodSymbol { IsStatic: false, MethodKind: MethodKind.UserDefinedOperator };
-
-                case MethodKind.EventAdd:
-                case MethodKind.EventRemove:
-                case MethodKind.PropertyGet:
-                case MethodKind.PropertySet:
-                    return method.IsIndexedPropertyAccessor();
-                default:
-                    return true;
-            }
+                MethodKind.Destructor or MethodKind.Constructor or MethodKind.StaticConstructor or MethodKind.Conversion => false,
+                MethodKind.UserDefinedOperator => !method.IsStatic && hidingMember is MethodSymbol { IsStatic: false, MethodKind: MethodKind.UserDefinedOperator },
+                MethodKind.EventAdd or MethodKind.EventRemove or MethodKind.PropertyGet or MethodKind.PropertySet => method.IsIndexedPropertyAccessor(),
+                _ => true,
+            };
         }
 
 #nullable enable

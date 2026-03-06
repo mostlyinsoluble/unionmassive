@@ -300,8 +300,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // If LHS isLocal, then genAddr is a noop so regular case works fine.
 
                 SyntheticBoundNodeFactory factory = new SyntheticBoundNodeFactory(this.CurrentMethod, rewrittenLeft.Syntax, this.CompilationState, this.Diagnostics);
-                BoundAssignmentOperator tempAssignment;
-                BoundLocal tempLocal = factory.StoreToTemp(rewrittenRight, out tempAssignment);
+                BoundLocal tempLocal = factory.StoreToTemp(rewrittenRight, out BoundAssignmentOperator tempAssignment);
 
                 Debug.Assert(!node.IsRef);
                 BoundAssignmentOperator rewrittenAssignment = node.Update(rewrittenLeft, tempLocal, node.IsRef, rewrittenType);

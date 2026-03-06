@@ -38,18 +38,12 @@ internal static partial class ModifiersOrganizer
 
         private static Ordering GetOrdering(SyntaxToken token)
         {
-            switch (token.Kind())
+            return token.Kind() switch
             {
-                case SyntaxKind.StaticKeyword:
-                    return Ordering.StaticInstance;
-                case SyntaxKind.PrivateKeyword:
-                case SyntaxKind.ProtectedKeyword:
-                case SyntaxKind.InternalKeyword:
-                case SyntaxKind.PublicKeyword:
-                    return Ordering.Accessibility;
-                default:
-                    return Ordering.Remainder;
-            }
+                SyntaxKind.StaticKeyword => Ordering.StaticInstance,
+                SyntaxKind.PrivateKeyword or SyntaxKind.ProtectedKeyword or SyntaxKind.InternalKeyword or SyntaxKind.PublicKeyword => Ordering.Accessibility,
+                _ => Ordering.Remainder,
+            };
         }
     }
 }

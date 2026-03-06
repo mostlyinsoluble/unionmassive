@@ -97,7 +97,7 @@ internal sealed class CSharpImplementExplicitlyCodeRefactoringProvider() : Abstr
             ? identifierName.Parent
             : identifierName;
 
-        RoslynDebug.Assert(node is object);
+        RoslynDebug.Assert(node is not null);
         if (syntaxFacts.IsInvocationExpression(node.Parent))
             node = node.Parent;
 

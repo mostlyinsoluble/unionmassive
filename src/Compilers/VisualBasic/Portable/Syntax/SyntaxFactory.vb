@@ -1069,8 +1069,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Throw New ArgumentException(VBResources.SyntaxTreeIsNotASubmission)
             End If
 
-            Dim languageVersion As LanguageVersion = options.LanguageVersion
-
             If Not tree.HasCompilationUnitRoot Then
                 Return False
             End If
@@ -1112,9 +1110,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             For Each err In lastToken.GetDiagnostics()
                 Select Case DirectCast(err.Code, ERRID)
                     Case ERRID.ERR_UnterminatedStringLiteral
-                        If Parser.CheckFeatureAvailability(languageVersion, Syntax.InternalSyntax.Feature.MultilineStringLiterals) Then
-                            Return False
-                        End If
+                        Return False
                 End Select
             Next
 

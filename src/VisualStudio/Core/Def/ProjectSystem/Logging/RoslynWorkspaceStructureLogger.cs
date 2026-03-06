@@ -317,8 +317,7 @@ internal static class RoslynWorkspaceStructureLogger
 
     private static XElement CreateElementForCompilation(Compilation compilation)
     {
-        StrongBox<int> compilationId;
-        if (!s_CompilationIds.TryGetValue(compilation, out compilationId))
+        if (!s_CompilationIds.TryGetValue(compilation, out var compilationId))
         {
             compilationId = new StrongBox<int>(s_NextCompilationId++);
             s_CompilationIds.Add(compilation, compilationId);

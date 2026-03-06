@@ -44,22 +44,13 @@ internal static class SuppressionHelpers
             return false;
         }
 
-        switch (diagnostic.Severity)
+        return diagnostic.Severity switch
         {
-            case DiagnosticSeverity.Hidden:
-                // Hidden diagnostics should never show up.
-                return false;
-
-            case DiagnosticSeverity.Error:
-            case DiagnosticSeverity.Warning:
-            case DiagnosticSeverity.Info:
-                // We allow suppressions for all the remaining configurable, non-hidden diagnostics.
-                // Note that compiler errors are not configurable by default, so only analyzer errors are suppressable.
-                return true;
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(diagnostic.Severity);
-        }
+            DiagnosticSeverity.Hidden => false,// Hidden diagnostics should never show up.
+            DiagnosticSeverity.Error or DiagnosticSeverity.Warning or DiagnosticSeverity.Info => true,// We allow suppressions for all the remaining configurable, non-hidden diagnostics.
+                                                                                                      // Note that compiler errors are not configurable by default, so only analyzer errors are suppressable.
+            _ => throw ExceptionUtilities.UnexpectedValue(diagnostic.Severity),
+        };
     }
 
     public static bool IsNotConfigurableDiagnostic(DiagnosticData diagnostic)

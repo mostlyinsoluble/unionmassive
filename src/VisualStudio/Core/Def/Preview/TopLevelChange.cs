@@ -123,23 +123,13 @@ internal sealed class TopLevelChange : AbstractChange
                 // If unchecked, then remove this added document from new solution.
                 if (applyingChanges && checkState == __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Unchecked)
                 {
-                    switch (changedDocumentKind)
+                    solution = changedDocumentKind switch
                     {
-                        case TextDocumentKind.Document:
-                            solution = solution.RemoveDocument(updatedDocumentIdOpt);
-                            break;
-
-                        case TextDocumentKind.AnalyzerConfigDocument:
-                            solution = solution.RemoveAnalyzerConfigDocument(updatedDocumentIdOpt);
-                            break;
-
-                        case TextDocumentKind.AdditionalDocument:
-                            solution = solution.RemoveAdditionalDocument(updatedDocumentIdOpt);
-                            break;
-
-                        default:
-                            throw ExceptionUtilities.UnexpectedValue(changedDocumentKind);
-                    }
+                        TextDocumentKind.Document => solution.RemoveDocument(updatedDocumentIdOpt),
+                        TextDocumentKind.AnalyzerConfigDocument => solution.RemoveAnalyzerConfigDocument(updatedDocumentIdOpt),
+                        TextDocumentKind.AdditionalDocument => solution.RemoveAdditionalDocument(updatedDocumentIdOpt),
+                        _ => throw ExceptionUtilities.UnexpectedValue(changedDocumentKind),
+                    };
                 }
             }
             else if (updatedDocumentIdOpt == null)
@@ -150,23 +140,13 @@ internal sealed class TopLevelChange : AbstractChange
                 {
                     var oldText = oldDocument.GetTextSynchronously(CancellationToken.None).ToString();
 
-                    switch (changedDocumentKind)
+                    solution = changedDocumentKind switch
                     {
-                        case TextDocumentKind.Document:
-                            solution = solution.AddDocument(oldDocument.Id, oldDocument.Name, oldText, oldDocument.Folders, oldDocument.FilePath);
-                            break;
-
-                        case TextDocumentKind.AnalyzerConfigDocument:
-                            solution = solution.AddAnalyzerConfigDocument(oldDocument.Id, oldDocument.Name, SourceText.From(oldText), oldDocument.Folders, oldDocument.FilePath);
-                            break;
-
-                        case TextDocumentKind.AdditionalDocument:
-                            solution = solution.AddAdditionalDocument(oldDocument.Id, oldDocument.Name, oldText, oldDocument.Folders, oldDocument.FilePath);
-                            break;
-
-                        default:
-                            throw ExceptionUtilities.UnexpectedValue(changedDocumentKind);
-                    }
+                        TextDocumentKind.Document => solution.AddDocument(oldDocument.Id, oldDocument.Name, oldText, oldDocument.Folders, oldDocument.FilePath),
+                        TextDocumentKind.AnalyzerConfigDocument => solution.AddAnalyzerConfigDocument(oldDocument.Id, oldDocument.Name, SourceText.From(oldText), oldDocument.Folders, oldDocument.FilePath),
+                        TextDocumentKind.AdditionalDocument => solution.AddAdditionalDocument(oldDocument.Id, oldDocument.Name, oldText, oldDocument.Folders, oldDocument.FilePath),
+                        _ => throw ExceptionUtilities.UnexpectedValue(changedDocumentKind),
+                    };
                 }
             }
             else

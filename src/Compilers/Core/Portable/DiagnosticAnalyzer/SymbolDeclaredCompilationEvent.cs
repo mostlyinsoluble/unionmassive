@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         {
             SymbolInternal = symbolInternal;
             SemanticModelWithCachedBoundNodes = semanticModelWithCachedBoundNodes;
-            _lazyCachedDeclaringReferences = default(ImmutableArray<SyntaxReference>);
+            _lazyCachedDeclaringReferences = default;
         }
 
         public ISymbol Symbol => SymbolInternal.GetISymbol();

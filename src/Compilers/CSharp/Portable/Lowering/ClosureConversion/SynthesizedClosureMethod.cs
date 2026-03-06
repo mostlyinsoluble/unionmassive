@@ -125,15 +125,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             ParameterHelpers.EnsureParamCollectionAttributeExists(moduleBuilder, Parameters);
 
-            if (moduleBuilder.Compilation.ShouldEmitNativeIntegerAttributes())
-            {
-                if (ReturnType.ContainsNativeIntegerWrapperType())
-                {
-                    moduleBuilder.EnsureNativeIntegerAttributeExists();
-                }
+            if (ReturnType.ContainsNativeIntegerWrapperType())
+                moduleBuilder.EnsureNativeIntegerAttributeExists();
 
-                ParameterHelpers.EnsureNativeIntegerAttributeExists(moduleBuilder, Parameters);
-            }
+            ParameterHelpers.EnsureNativeIntegerAttributeExists(moduleBuilder, Parameters);
 
             ParameterHelpers.EnsureScopedRefAttributeExists(moduleBuilder, Parameters);
 

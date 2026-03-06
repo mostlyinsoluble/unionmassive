@@ -204,19 +204,12 @@ internal sealed partial class ReferenceHighlightingViewTaggerProvider(TaggerHost
 
     private static NavigableHighlightTag GetTag(HighlightSpan span)
     {
-        switch (span.Kind)
+        return span.Kind switch
         {
-            case HighlightSpanKind.WrittenReference:
-                return WrittenReferenceHighlightTag.Instance;
-
-            case HighlightSpanKind.Definition:
-                return DefinitionHighlightTag.Instance;
-
-            case HighlightSpanKind.Reference:
-            case HighlightSpanKind.None:
-            default:
-                return ReferenceHighlightTag.Instance;
-        }
+            HighlightSpanKind.WrittenReference => WrittenReferenceHighlightTag.Instance,
+            HighlightSpanKind.Definition => DefinitionHighlightTag.Instance,
+            _ => ReferenceHighlightTag.Instance,
+        };
     }
 
     private static bool IsSupportedContentType(IContentType contentType)

@@ -146,7 +146,7 @@ namespace Microsoft.Cci
                     _debugMetadataOpt.AddCustomDebugInformation(
                         parent: methodHandle,
                         kind: _debugMetadataOpt.GetOrAddGuid(PortableCustomDebugInfoKinds.PrimaryConstructorInformationBlob),
-                        value: default(BlobHandle));
+                        value: default);
                 }
 
                 SerializeStateMachineLocalScopes(bodyOpt, methodHandle);
@@ -427,7 +427,7 @@ namespace Microsoft.Cci
             }
 
             var rid = _debugMetadataOpt.AddImportScope(
-                parentScope: default(ImportScopeHandle),
+                parentScope: default,
                 imports: _debugMetadataOpt.GetOrAddBlob(writer));
 
             Debug.Assert(rid == ModuleImportScopeHandle);
@@ -435,8 +435,7 @@ namespace Microsoft.Cci
 
         private ImportScopeHandle GetImportScopeIndex(IImportScope scope, Dictionary<IImportScope, ImportScopeHandle> scopeIndex)
         {
-            ImportScopeHandle scopeHandle;
-            if (scopeIndex.TryGetValue(scope, out scopeHandle))
+            if (scopeIndex.TryGetValue(scope, out ImportScopeHandle scopeHandle))
             {
                 // scope is already indexed:
                 return scopeHandle;
@@ -631,8 +630,8 @@ namespace Microsoft.Cci
         {
             if (sequencePoints.Length == 0)
             {
-                singleDocumentHandle = default(DocumentHandle);
-                return default(BlobHandle);
+                singleDocumentHandle = default;
+                return default;
             }
 
             var writer = PooledBlobBuilder.GetInstance();
@@ -644,7 +643,7 @@ namespace Microsoft.Cci
             writer.WriteCompressedInteger(MetadataTokens.GetRowNumber(localSignatureHandleOpt));
 
             var previousDocument = TryGetSingleDocument(sequencePoints);
-            singleDocumentHandle = (previousDocument != null) ? GetOrAddDocument(previousDocument, documentIndex) : default(DocumentHandle);
+            singleDocumentHandle = (previousDocument != null) ? GetOrAddDocument(previousDocument, documentIndex) : default;
 
             for (int i = 0; i < sequencePoints.Length; i++)
             {
@@ -765,8 +764,8 @@ namespace Microsoft.Cci
 
             documentHandle = _debugMetadataOpt.AddDocument(
                 name: _debugMetadataOpt.GetOrAddDocumentName(name),
-                hashAlgorithm: info.Checksum.IsDefault ? default(GuidHandle) : _debugMetadataOpt.GetOrAddGuid(info.ChecksumAlgorithmId),
-                hash: info.Checksum.IsDefault ? default(BlobHandle) : _debugMetadataOpt.GetOrAddBlob(info.Checksum),
+                hashAlgorithm: info.Checksum.IsDefault ? default : _debugMetadataOpt.GetOrAddGuid(info.ChecksumAlgorithmId),
+                hash: info.Checksum.IsDefault ? default : _debugMetadataOpt.GetOrAddBlob(info.Checksum),
                 language: _debugMetadataOpt.GetOrAddGuid(document.Language));
 
             index.Add(document, documentHandle);

@@ -42,11 +42,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             Debug.Assert(typeName.Length > 0);
 
             var type = typeNameDecoder.GetTypeSymbolForSerializedType(typeName);
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
 
-            ReadOnlyCollection<byte> dynamicFlags;
-            ReadOnlyCollection<string> tupleElementNames;
-            CustomTypeInfo.Decode(alias.CustomTypeInfoId, alias.CustomTypeInfo, out dynamicFlags, out tupleElementNames);
+            CustomTypeInfo.Decode(alias.CustomTypeInfoId, alias.CustomTypeInfo, out var dynamicFlags, out var tupleElementNames);
 
             if (dynamicFlags != null)
             {
@@ -65,8 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                     return new ExceptionLocalSymbol(containingMethod, name, displayName, type, ExpressionCompilerConstants.GetStowedExceptionMethodName);
                 case DkmClrAliasKind.ReturnValue:
                     {
-                        int index;
-                        PseudoVariableUtilities.TryParseReturnValueIndex(name, out index);
+                        PseudoVariableUtilities.TryParseReturnValueIndex(name, out var index);
                         Debug.Assert(index >= 0);
                         return new ReturnValueLocalSymbol(containingMethod, name, displayName, type, index);
                     }
@@ -157,8 +154,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 var syntax = expr.Syntax;
                 var intPtrType = compilation.GetSpecialType(SpecialType.System_IntPtr);
                 Binder.ReportUseSite(intPtrType, bindingDiagnostics, syntax);
-                MethodSymbol conversionMethod;
-                if (Binder.TryGetSpecialTypeMember(compilation, SpecialMember.System_IntPtr__op_Explicit_ToPointer, syntax, bindingDiagnostics, out conversionMethod))
+                if (Binder.TryGetSpecialTypeMember(compilation, SpecialMember.System_IntPtr__op_Explicit_ToPointer, syntax, bindingDiagnostics, out MethodSymbol conversionMethod))
                 {
                     var temp = ConvertToLocalTypeHelper(compilation, expr, intPtrType, bindingDiagnostics);
                     expr = BoundCall.Synthesized(
@@ -216,7 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         internal static MethodSymbol GetIntrinsicMethod(CSharpCompilation compilation, string methodName)
         {
             var type = compilation.GetTypeByMetadataName(ExpressionCompilerConstants.IntrinsicAssemblyTypeMetadataName);
-            if ((object)type == null)
+            if (type is null)
             {
                 return null;
             }
@@ -235,7 +231,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 RefKind.None,
                 builder.ToImmutableAndFree(),
                 checkLength: false);
-            Debug.Assert((object)dynamicType != null);
+            Debug.Assert(dynamicType is not null);
             Debug.Assert(!TypeSymbol.Equals(dynamicType, type, TypeCompareKind.ConsiderEverything2));
             return dynamicType;
         }

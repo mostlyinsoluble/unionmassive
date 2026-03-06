@@ -254,19 +254,14 @@ namespace Microsoft.CodeAnalysis
 
         internal ObsoleteAttributeData DecodeObsoleteAttribute(ObsoleteAttributeKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case ObsoleteAttributeKind.Obsolete:
-                    return DecodeObsoleteAttribute();
-                case ObsoleteAttributeKind.Deprecated:
-                    return DecodeDeprecatedAttribute();
-                case ObsoleteAttributeKind.WindowsExperimental:
-                    return DecodeWindowsExperimentalAttribute();
-                case ObsoleteAttributeKind.Experimental:
-                    return DecodeExperimentalAttribute();
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                ObsoleteAttributeKind.Obsolete => DecodeObsoleteAttribute(),
+                ObsoleteAttributeKind.Deprecated => DecodeDeprecatedAttribute(),
+                ObsoleteAttributeKind.WindowsExperimental => DecodeWindowsExperimentalAttribute(),
+                ObsoleteAttributeKind.Experimental => DecodeExperimentalAttribute(),
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         internal ObsoleteAttributeData DecodeExperimentalAttribute()
@@ -325,7 +320,7 @@ namespace Microsoft.CodeAnalysis
 
                 if (args.Length == 2)
                 {
-                    Debug.Assert(args[1].ValueInternal is object);
+                    Debug.Assert(args[1].ValueInternal is not null);
                     isError = (bool)args[1].ValueInternal!;
                 }
             }
@@ -343,7 +338,7 @@ namespace Microsoft.CodeAnalysis
                     urlFormat = value.ValueInternal as string;
                 }
 
-                if (diagnosticId is object && urlFormat is object)
+                if (diagnosticId is not null && urlFormat is not null)
                 {
                     break;
                 }
@@ -378,7 +373,7 @@ namespace Microsoft.CodeAnalysis
                 // DeprecatedAttribute(String, DeprecationType, UInt32, Platform) 
                 // DeprecatedAttribute(String, DeprecationType, UInt32, String) 
 
-                Debug.Assert(args[1].ValueInternal is object);
+                Debug.Assert(args[1].ValueInternal is not null);
                 message = (string?)args[0].ValueInternal;
                 isError = ((int)args[1].ValueInternal! == 1);
             }
@@ -588,7 +583,7 @@ namespace Microsoft.CodeAnalysis
             //   
             //   See Roslyn Bug 8603: ETA crashes with InvalidOperationException on duplicate attributes for details.
 
-            Debug.Assert(positionalArg.ValueInternal is object);
+            Debug.Assert(positionalArg.ValueInternal is not null);
             var validOn = (AttributeTargets)positionalArg.ValueInternal;
             bool allowMultiple = DecodeNamedArgument(namedArgs, "AllowMultiple", SpecialType.System_Boolean, false);
             bool inherited = DecodeNamedArgument(namedArgs, "Inherited", SpecialType.System_Boolean, true);

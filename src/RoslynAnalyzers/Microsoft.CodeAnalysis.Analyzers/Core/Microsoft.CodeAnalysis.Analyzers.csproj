@@ -11,12 +11,7 @@
     <RootNamespace>Microsoft.CodeAnalysis</RootNamespace>
   </PropertyGroup>
   <Choose>
-    <When Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-      </ItemGroup>
-    </When>
+    <When Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <Otherwise>
       <ItemGroup>
         <ProjectReference Include="..\..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
@@ -39,6 +34,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ReleaseTrackingAnalyzers.Help.md" Link="ReleaseTrackingAnalyzers.Help.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\..\..\Workspaces\Core\Portable\Microsoft.CodeAnalysis.Workspaces.csproj" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
   <Import Project="..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />

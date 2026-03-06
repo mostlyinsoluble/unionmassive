@@ -51,8 +51,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                     isExplicitInterfaceImplementation: false,
                                                     hasThisInitializer: false)))
         {
-            Debug.Assert((object)containingType != null);
-            Debug.Assert((object)baseMethod != null);
+            Debug.Assert(containingType is not null);
+            Debug.Assert(baseMethod is not null);
 
             this.BaseMethod = baseMethod;
             _name = name;
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected virtual ImmutableArray<TypeSymbol> ExtraSynthesizedRefParameters
         {
-            get { return default(ImmutableArray<TypeSymbol>); }
+            get { return default; }
         }
 
         protected virtual ImmutableArray<ParameterSymbol> BaseMethodParameters

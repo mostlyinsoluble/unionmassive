@@ -46,8 +46,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Scripting
 
             var tree = SyntaxFactory.ParseSyntaxTree(script.SourceText, script.Options.ParseOptions ?? DefaultParseOptions, script.Options.FilePath);
 
-            string assemblyName, submissionTypeName;
-            script.Builder.GenerateSubmissionId(out assemblyName, out submissionTypeName);
+            script.Builder.GenerateSubmissionId(out var assemblyName, out var submissionTypeName);
 
             var compilation = CSharpCompilation.CreateScriptCompilation(
                 assemblyName,

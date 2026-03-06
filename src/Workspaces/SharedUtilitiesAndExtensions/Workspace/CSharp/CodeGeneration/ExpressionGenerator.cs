@@ -24,27 +24,19 @@ internal static class ExpressionGenerator
     public static ExpressionSyntax GenerateExpression(
         TypedConstant typedConstant)
     {
-        switch (typedConstant.Kind)
+        return typedConstant.Kind switch
         {
-            case TypedConstantKind.Primitive:
-            case TypedConstantKind.Enum:
-                return GenerateExpression(typedConstant.Type, typedConstant.Value, canUseFieldReference: true);
-
-            case TypedConstantKind.Type:
-                return typedConstant.Value is ITypeSymbol typeSymbol
-                    ? TypeOfExpression(typeSymbol.GenerateTypeSyntax())
-                    : GenerateNullLiteral();
-
-            case TypedConstantKind.Array:
-                return typedConstant.IsNull
-                    ? GenerateNullLiteral()
-                    : ImplicitArrayCreationExpression(
-                        InitializerExpression(SyntaxKind.ArrayInitializerExpression,
-                            [.. typedConstant.Values.Select(v => GenerateExpression(v))]));
-
-            default:
-                return GenerateNullLiteral();
-        }
+            TypedConstantKind.Primitive or TypedConstantKind.Enum => GenerateExpression(typedConstant.Type, typedConstant.Value, canUseFieldReference: true),
+            TypedConstantKind.Type => typedConstant.Value is ITypeSymbol typeSymbol
+                                ? TypeOfExpression(typeSymbol.GenerateTypeSyntax())
+                                : GenerateNullLiteral(),
+            TypedConstantKind.Array => typedConstant.IsNull
+                                ? GenerateNullLiteral()
+                                : ImplicitArrayCreationExpression(
+                                    InitializerExpression(SyntaxKind.ArrayInitializerExpression,
+                                        [.. typedConstant.Values.Select(v => GenerateExpression(v))])),
+            _ => GenerateNullLiteral(),
+        };
     }
 
     private static ExpressionSyntax GenerateNullLiteral()

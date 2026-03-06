@@ -126,10 +126,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(_sealed);
 #endif
             string name = attr.Name.GetUnqualifiedName().Identifier.ValueText;
-            QuickAttributes foundAttributes;
 
             // We allow "Name" to bind to "NameAttribute"
-            if (_nameToAttributeMap.TryGetValue(name, out foundAttributes) ||
+            if (_nameToAttributeMap.TryGetValue(name, out QuickAttributes foundAttributes) ||
                 _nameToAttributeMap.TryGetValue(name + "Attribute", out foundAttributes))
             {
                 return (foundAttributes & pattern) != 0;

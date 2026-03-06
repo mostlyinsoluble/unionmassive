@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.Rebuild
             {
                 preprocessorSymbols = VisualBasicCommandLineParser.ParseConditionalCompilationSymbols(defineString, out var diagnostics);
                 var diagnostic = diagnostics?.FirstOrDefault(x => x.IsUnsuppressedError);
-                if (diagnostic is object)
+                if (diagnostic is not null)
                 {
                     throw new Exception(string.Format(RebuildResources.Cannot_create_compilation_options_0, diagnostic));
                 }

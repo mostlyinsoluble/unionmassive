@@ -238,10 +238,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Return
             End If
 
-            If Not Compilation.LanguageVersion.AllowNonTrailingNamedArguments() Then
-                Return
-            End If
-
             Dim seenName As Boolean = False
             For i As Integer = 0 To argumentNames.Length - 1
 

@@ -56,7 +56,7 @@ namespace Roslyn.Test.Utilities
                 }
             }
 
-            return default(CustomAttributeHandle);
+            return default;
         }
 
         /// <summary>

@@ -31,8 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <remarks></remarks>
         internal IVTConclusion MakeFinalIVTDetermination(AssemblySymbol potentialGiverOfAccess, bool assertUnexpectedGiver)
         {
-            IVTConclusion result;
-            if (AssembliesToWhichInternalAccessHasBeenDetermined.TryGetValue(potentialGiverOfAccess, out result))
+            if (AssembliesToWhichInternalAccessHasBeenDetermined.TryGetValue(potentialGiverOfAccess, out IVTConclusion result))
                 return result;
 
             result = IVTConclusion.NoRelationshipClaimed;

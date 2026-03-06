@@ -135,21 +135,15 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             // string output isn't guaranteed to be one or the other. So standardize manually.
             string GetKindText(OperationKind kind)
             {
-                switch (kind)
+                return kind switch
                 {
-                    case OperationKind.Unary:
-                        return "Unary";
-                    case OperationKind.Binary:
-                        return "Binary";
-                    case OperationKind.TupleBinary:
-                        return "TupleBinary";
-                    case OperationKind.MethodBody:
-                        return "MethodBody";
-                    case OperationKind.ConstructorBody:
-                        return "ConstructorBody";
-                    default:
-                        return kind.ToString();
-                }
+                    OperationKind.Unary => "Unary",
+                    OperationKind.Binary => "Binary",
+                    OperationKind.TupleBinary => "TupleBinary",
+                    OperationKind.MethodBody => "MethodBody",
+                    OperationKind.ConstructorBody => "ConstructorBody",
+                    _ => kind.ToString(),
+                };
             }
         }
 

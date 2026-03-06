@@ -64,23 +64,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Figure out what kind of iterator we are generating.
-            bool isEnumerable;
-            switch (method.ReturnType.OriginalDefinition.SpecialType)
+            var isEnumerable = method.ReturnType.OriginalDefinition.SpecialType switch
             {
-                case SpecialType.System_Collections_IEnumerable:
-                case SpecialType.System_Collections_Generic_IEnumerable_T:
-                    isEnumerable = true;
-                    break;
-
-                case SpecialType.System_Collections_IEnumerator:
-                case SpecialType.System_Collections_Generic_IEnumerator_T:
-                    isEnumerable = false;
-                    break;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(method.ReturnType.OriginalDefinition.SpecialType);
-            }
-
+                SpecialType.System_Collections_IEnumerable or SpecialType.System_Collections_Generic_IEnumerable_T => true,
+                SpecialType.System_Collections_IEnumerator or SpecialType.System_Collections_Generic_IEnumerator_T => false,
+                _ => throw ExceptionUtilities.UnexpectedValue(method.ReturnType.OriginalDefinition.SpecialType),
+            };
             stateMachineType = new IteratorStateMachine(slotAllocatorOpt, compilationState, method, methodOrdinal, isEnumerable, elementType);
             compilationState.ModuleBuilderOpt.CompilationState.SetStateMachineType(method, stateMachineType);
             var rewriter = new IteratorRewriter(body, method, isEnumerable, stateMachineType, stateMachineStateDebugInfoBuilder, slotAllocatorOpt, compilationState, diagnostics);
@@ -138,8 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private Symbol EnsureSpecialMember(SpecialMember member, BindingDiagnosticBag bag)
         {
-            Symbol symbol;
-            Binder.TryGetSpecialTypeMember(F.Compilation, member, body.Syntax, bag, out symbol);
+            Binder.TryGetSpecialTypeMember(F.Compilation, member, body.Syntax, bag, out Symbol symbol);
             return symbol;
         }
 
@@ -154,10 +142,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         private void EnsureSpecialPropertyGetter(SpecialMember member, BindingDiagnosticBag bag)
         {
             PropertySymbol symbol = (PropertySymbol)EnsureSpecialMember(member, bag);
-            if ((object)symbol != null)
+            if (symbol is not null)
             {
                 var getter = symbol.GetMethod;
-                if ((object)getter == null)
+                if (getter is null)
                 {
                     Binder.Error(bag, ErrorCode.ERR_PropertyLacksGet, body.Syntax, symbol);
                     return;

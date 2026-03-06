@@ -100,7 +100,7 @@ namespace Microsoft.CodeAnalysis
             var builder = SyntaxTokenListBuilder.Create();
             foreach (var token in tokens)
             {
-                Debug.Assert(token.Node is object);
+                Debug.Assert(token.Node is not null);
                 builder.Add(token.Node);
             }
 
@@ -155,7 +155,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (Node == null)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
 
                 return new TextSpan(this.Position, Node.FullWidth);
@@ -171,7 +171,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (Node == null)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
 
                 return TextSpan.FromBounds(Position + Node.GetLeadingTriviaWidth(),
@@ -268,7 +268,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         private GreenNode? GetGreenNodeAt(int i)
         {
-            Debug.Assert(Node is object);
+            Debug.Assert(Node is not null);
             return GetGreenNodeAt(Node, i);
         }
 
@@ -333,7 +333,7 @@ namespace Microsoft.CodeAnalysis
         /// <param name="token">The token to insert.</param>
         public SyntaxTokenList Insert(int index, SyntaxToken token)
         {
-            if (token == default(SyntaxToken))
+            if (token == default)
             {
                 throw new ArgumentOutOfRangeException(nameof(token));
             }
@@ -413,7 +413,7 @@ namespace Microsoft.CodeAnalysis
         /// <param name="newToken">The new token.</param>
         public SyntaxTokenList Replace(SyntaxToken tokenInList, SyntaxToken newToken)
         {
-            if (newToken == default(SyntaxToken))
+            if (newToken == default)
             {
                 throw new ArgumentOutOfRangeException(nameof(newToken));
             }

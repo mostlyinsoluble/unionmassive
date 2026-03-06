@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         /// <summary>Creates a new ParameterSyntax instance.</summary>
         public static ParameterSyntax Parameter(SyntaxToken identifier)
-            => SyntaxFactory.Parameter(default, default(SyntaxTokenList), null, identifier, null);
+            => SyntaxFactory.Parameter(default, default, null, identifier, null);
     }
 }
 

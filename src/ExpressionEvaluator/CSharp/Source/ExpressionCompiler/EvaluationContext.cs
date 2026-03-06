@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             Debug.Assert(MetadataTokens.Handle(typeToken).Kind == HandleKind.TypeDefinition);
 
             var currentType = compilation.GetType(moduleId, typeToken);
-            RoslynDebug.Assert(currentType is object);
+            RoslynDebug.Assert(currentType is not null);
             var currentFrame = new SynthesizedContextMethodSymbol(currentType);
             return new EvaluationContext(
                 null,
@@ -462,16 +462,11 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override bool HasDuplicateTypesOrAssemblies(Diagnostic diagnostic)
         {
-            switch ((ErrorCode)diagnostic.Code)
+            return (ErrorCode)diagnostic.Code switch
             {
-                case ErrorCode.ERR_DuplicateImport:
-                case ErrorCode.ERR_DuplicateImportSimple:
-                case ErrorCode.ERR_SameFullNameAggAgg:
-                case ErrorCode.ERR_AmbigCall:
-                    return true;
-                default:
-                    return false;
-            }
+                ErrorCode.ERR_DuplicateImport or ErrorCode.ERR_DuplicateImportSimple or ErrorCode.ERR_SameFullNameAggAgg or ErrorCode.ERR_AmbigCall => true,
+                _ => false,
+            };
         }
 
         internal override ImmutableArray<AssemblyIdentity> GetMissingAssemblyIdentities(Diagnostic diagnostic, AssemblyIdentity linqLibrary)

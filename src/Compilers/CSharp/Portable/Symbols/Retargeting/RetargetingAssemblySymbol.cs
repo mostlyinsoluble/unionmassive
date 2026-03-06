@@ -101,7 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         /// </param>
         public RetargetingAssemblySymbol(SourceAssemblySymbol underlyingAssembly, bool isLinked)
         {
-            Debug.Assert((object)underlyingAssembly != null);
+            Debug.Assert(underlyingAssembly is not null);
 
             _underlyingAssembly = underlyingAssembly;
 
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             get { return _underlyingAssembly.PublicKey; }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return _underlyingAssembly.GetDocumentationCommentXml(preferredCulture, expandIncludes, cancellationToken);
         }
@@ -204,8 +204,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         internal override bool AreInternalsVisibleToThisAssembly(AssemblySymbol potentialGiverOfAccess)
         {
-            IVTConclusion conclusion;
-            if (!AssembliesToWhichInternalAccessHasBeenDetermined.TryGetValue(potentialGiverOfAccess, out conclusion))
+            if (!AssembliesToWhichInternalAccessHasBeenDetermined.TryGetValue(potentialGiverOfAccess, out IVTConclusion conclusion))
             {
                 conclusion = _underlyingAssembly.MakeFinalIVTDetermination(potentialGiverOfAccess, assertUnexpectedGiver: false);
 
@@ -312,7 +311,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             NamedTypeSymbol? underlying = _underlyingAssembly.TryLookupForwardedMetadataTypeWithCycleDetection(ref emittedName, visitedAssemblies: null);
 
-            if ((object?)underlying == null)
+            if (underlying is null)
             {
                 return null;
             }

@@ -57,8 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             foreach (T item in items)
             {
-                T current;
-                if (!_dictionary.TryGetValue(item, out current) || IsMoreCanonical(item, current))
+                if (!_dictionary.TryGetValue(item, out T current) || IsMoreCanonical(item, current))
                 {
                     _dictionary[item] = item;
                 }
@@ -98,8 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (var item in _hashSet)
             {
-                T current;
-                if (_dictionary.TryGetValue(item, out current) && IsMoreCanonical(item, current))
+                if (_dictionary.TryGetValue(item, out T current) && IsMoreCanonical(item, current))
                 {
                     _dictionary[item] = item;
                 }

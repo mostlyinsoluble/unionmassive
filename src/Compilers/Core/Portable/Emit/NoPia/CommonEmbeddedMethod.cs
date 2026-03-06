@@ -149,21 +149,21 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
                 Cci.IImportScope Cci.IMethodBody.ImportScope => null;
 
                 ImmutableArray<StateMachineHoistedLocalScope> Cci.IMethodBody.StateMachineHoistedLocalScopes =>
-                    default(ImmutableArray<StateMachineHoistedLocalScope>);
+                    default;
 
                 string Cci.IMethodBody.StateMachineTypeName => null;
 
                 ImmutableArray<EncHoistedLocalInfo> Cci.IMethodBody.StateMachineHoistedLocalSlots =>
-                    default(ImmutableArray<EncHoistedLocalInfo>);
+                    default;
 
                 ImmutableArray<Cci.ITypeReference> Cci.IMethodBody.StateMachineAwaiterSlots =>
-                    default(ImmutableArray<Cci.ITypeReference>);
+                    default;
 
                 ImmutableArray<EncClosureInfo> Cci.IMethodBody.ClosureDebugInfo =>
-                    default(ImmutableArray<EncClosureInfo>);
+                    default;
 
                 ImmutableArray<EncLambdaInfo> Cci.IMethodBody.LambdaDebugInfo =>
-                    default(ImmutableArray<EncLambdaInfo>);
+                    default;
 
                 ImmutableArray<LambdaRuntimeRudeEditInfo> Cci.IMethodBody.OrderedLambdaRuntimeRudeEdits =>
                     ImmutableArray<LambdaRuntimeRudeEditInfo>.Empty;
@@ -171,7 +171,7 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
                 public StateMachineStatesDebugInfo StateMachineStatesDebugInfo
                     => default;
 
-                public DebugId MethodId => default(DebugId);
+                public DebugId MethodId => default;
 
                 public bool IsPrimaryConstructor => false;
             }

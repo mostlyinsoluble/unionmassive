@@ -23,20 +23,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ImmutableDictionary<string, string> _features;
         private ImmutableArray<ImmutableArray<string>> _interceptorsNamespaces;
-
-        /// <summary>
-        /// Gets the effective language version, which the compiler uses to select the
-        /// language rules to apply to the program.
-        /// </summary>
-        public LanguageVersion LanguageVersion { get; private set; }
-
-        /// <summary>
-        /// Gets the specified language version, which is the value that was specified in
-        /// the call to the constructor, or modified using the <see cref="WithLanguageVersion"/> method,
-        /// or provided on the command line.
-        /// </summary>
-        public LanguageVersion SpecifiedLanguageVersion { get; private set; }
-
         internal ImmutableArray<string> PreprocessorSymbols { get; private set; }
 
         /// <summary>
@@ -48,12 +34,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         public CSharpParseOptions(
-            LanguageVersion languageVersion = LanguageVersion.Default,
             DocumentationMode documentationMode = DocumentationMode.Parse,
             SourceCodeKind kind = SourceCodeKind.Regular,
             IEnumerable<string>? preprocessorSymbols = null)
-            : this(languageVersion,
-                  documentationMode,
+            : this(documentationMode,
                   kind,
                   preprocessorSymbols.ToImmutableArrayOrEmpty(),
                   ImmutableDictionary<string, string>.Empty)
@@ -61,21 +45,17 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         internal CSharpParseOptions(
-            LanguageVersion languageVersion,
             DocumentationMode documentationMode,
             SourceCodeKind kind,
             ImmutableArray<string> preprocessorSymbols,
             IReadOnlyDictionary<string, string>? features)
             : base(kind, documentationMode)
         {
-            this.SpecifiedLanguageVersion = languageVersion;
-            this.LanguageVersion = languageVersion.MapSpecifiedToEffectiveVersion();
             this.PreprocessorSymbols = preprocessorSymbols.ToImmutableArrayOrEmpty();
             _features = features?.ToImmutableDictionary() ?? ImmutableDictionary<string, string>.Empty;
         }
 
         private CSharpParseOptions(CSharpParseOptions other) : this(
-            languageVersion: other.SpecifiedLanguageVersion,
             documentationMode: other.DocumentationMode,
             kind: other.Kind,
             preprocessorSymbols: other.PreprocessorSymbols,
@@ -94,17 +74,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var effectiveKind = kind.MapSpecifiedToEffectiveKind();
             return new CSharpParseOptions(this) { SpecifiedKind = kind, Kind = effectiveKind };
-        }
-
-        public CSharpParseOptions WithLanguageVersion(LanguageVersion version)
-        {
-            if (version == this.SpecifiedLanguageVersion)
-            {
-                return this;
-            }
-
-            var effectiveLanguageVersion = version.MapSpecifiedToEffectiveVersion();
-            return new CSharpParseOptions(this) { SpecifiedLanguageVersion = version, LanguageVersion = effectiveLanguageVersion };
         }
 
         public CSharpParseOptions WithPreprocessorSymbols(IEnumerable<string>? preprocessorSymbols)
@@ -248,12 +217,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ValidateOptions(builder, MessageProvider.Instance);
 
-            // Validate LanguageVersion not SpecifiedLanguageVersion, after Latest/Default has been converted:
-            if (!LanguageVersion.IsValid())
-            {
-                builder.Add(Diagnostic.Create(MessageProvider.Instance, (int)ErrorCode.ERR_BadLanguageVersion, LanguageVersion.ToString()));
-            }
-
             if (!PreprocessorSymbols.IsDefaultOrEmpty)
             {
                 foreach (var symbol in PreprocessorSymbols)
@@ -270,18 +233,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        internal bool IsFeatureEnabled(MessageID feature)
-        {
-            string? featureFlag = feature.RequiredFeature();
-            if (featureFlag != null)
-            {
-                return HasFeature(featureFlag);
-            }
-            LanguageVersion availableVersion = LanguageVersion;
-            LanguageVersion requiredVersion = feature.RequiredVersion();
-            return availableVersion >= requiredVersion;
-        }
-
         public override bool Equals(object? obj)
         {
             return this.Equals(obj as CSharpParseOptions);
@@ -289,24 +240,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public bool Equals(CSharpParseOptions? other)
         {
-            if (object.ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (!base.EqualsHelper(other))
-            {
-                return false;
-            }
-
-            return this.SpecifiedLanguageVersion == other.SpecifiedLanguageVersion;
+            return object.ReferenceEquals(this, other) || base.EqualsHelper(other);
         }
 
         public override int GetHashCode()
         {
             return
                 Hash.Combine(base.GetHashCodeHelper(),
-                Hash.Combine((int)this.SpecifiedLanguageVersion, 0));
+                Hash.Combine((int)this.Kind, 0));
         }
     }
 }

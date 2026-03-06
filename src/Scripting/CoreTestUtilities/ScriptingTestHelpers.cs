@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Test
 
         public static T EvaluateScriptWithOutput<T>(Script<T> script, string expectedOutput)
         {
-            T result = default(T);
+            T result = default;
             var (output, errorOutput) = RuntimeUtilities.CaptureOutput(() =>
             {
                 var task = script.EvaluateAsync();

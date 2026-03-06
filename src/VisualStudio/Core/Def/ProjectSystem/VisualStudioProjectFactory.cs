@@ -103,7 +103,7 @@ internal sealed class VisualStudioProjectFactory : IVsTypeScriptVisualStudioProj
         {
             var dataModelTelemetrySession = TelemetryService.DefaultSession;
             var solutionContext = dataModelTelemetrySession.GetContext(SolutionContextName);
-            var sessionIdProperty = solutionContext is object
+            var sessionIdProperty = solutionContext is not null
                 ? (string)solutionContext.SharedProperties[SolutionSessionIdPropertyName]
                 : "";
             _ = Guid.TryParse(sessionIdProperty, out var solutionSessionId);

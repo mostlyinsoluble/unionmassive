@@ -47,12 +47,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected SubstitutedMethodSymbol(Symbol containingSymbol, TypeMap map, MethodSymbol originalDefinition, MethodSymbol constructedFrom)
         {
-            Debug.Assert((object)originalDefinition != null);
+            Debug.Assert(originalDefinition is not null);
             Debug.Assert(originalDefinition.IsDefinition);
             _containingSymbol = containingSymbol;
             _underlyingMethod = originalDefinition;
             _inputMap = map;
-            if ((object)constructedFrom != null)
+            if (constructedFrom is not null)
             {
                 _constructedFrom = constructedFrom;
                 Debug.Assert(ReferenceEquals(constructedFrom.ConstructedFrom, constructedFrom));
@@ -106,11 +106,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            ImmutableArray<TypeParameterSymbol> typeParameters;
             Debug.Assert(ReferenceEquals(_constructedFrom, this));
 
             // We're creating a new unconstructed Method from another; alpha-rename type parameters.
-            var newMap = _inputMap.WithAlphaRename(this.OriginalDefinition, this, propagateAttributes: false, out typeParameters);
+            var newMap = _inputMap.WithAlphaRename(this.OriginalDefinition, this, propagateAttributes: false, out ImmutableArray<TypeParameterSymbol> typeParameters);
 
             var prevMap = Interlocked.CompareExchange(ref _lazyMap, newMap, null);
             if (prevMap != null)
@@ -120,7 +119,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 typeParameters = prevMap.SubstituteTypeParameters(this.OriginalDefinition.TypeParameters);
             }
 
-            ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters, typeParameters, default(ImmutableArray<TypeParameterSymbol>));
+            ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters, typeParameters, default);
             Debug.Assert(_lazyTypeParameters != null);
         }
 
@@ -153,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 var method = OriginalDefinition.ReducedFrom;
-                return ((object)method == null) ? null : method.Construct(this.TypeArgumentsWithAnnotations);
+                return (method is null) ? null : method.Construct(this.TypeArgumentsWithAnnotations);
             }
         }
 
@@ -162,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 var reduced = this.CallsiteReducedFromMethod;
-                if ((object)reduced == null)
+                if (reduced is null)
                 {
                     return this.ContainingType;
                 }
@@ -224,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 Symbol underlying = OriginalDefinition.AssociatedSymbol;
-                return ((object)underlying == null) ? null : underlying.SymbolAsMember(ContainingType);
+                return (underlying is null) ? null : underlying.SymbolAsMember(ContainingType);
             }
         }
 
@@ -281,7 +280,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ImmutableInterlocked.InterlockedCompareExchange(
                         ref _lazyExplicitInterfaceImplementations,
                         ExplicitInterfaceHelpers.SubstituteExplicitInterfaceImplementations(this.OriginalDefinition.ExplicitInterfaceImplementations, Map),
-                        default(ImmutableArray<MethodSymbol>));
+                        default);
                 }
                 return _lazyExplicitInterfaceImplementations;
             }
@@ -321,8 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // context of an original definition.  
             // There should never be any reason to call this in normal compilation
             // scenarios, but the behavior should be sensible if it does occur.
-            ParameterSymbol? originalThisParameter;
-            if (!OriginalDefinition.TryGetThisParameter(out originalThisParameter))
+            if (!OriginalDefinition.TryGetThisParameter(out ParameterSymbol? originalThisParameter))
             {
                 thisParameter = null;
                 return false;
@@ -436,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public sealed override bool Equals(Symbol obj, TypeCompareKind compareKind)
         {
             MethodSymbol other = obj as MethodSymbol;
-            if ((object)other == null) return false;
+            if (other is null) return false;
 
             if ((object)this.OriginalDefinition != (object)other.OriginalDefinition &&
                 this.OriginalDefinition != other.OriginalDefinition)

@@ -236,7 +236,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             }
             else
             {
-                pdbBytes = default(ImmutableArray<byte>);
+                pdbBytes = default;
             }
         }
 
@@ -512,7 +512,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         internal static Cci.ModulePropertiesForSerialization GetDefaultModulePropertiesForSerialization()
         {
             return new Cci.ModulePropertiesForSerialization(
-                persistentIdentifier: default(Guid),
+                persistentIdentifier: default,
                 corFlags: CorFlags.ILOnly,
                 fileAlignment: Cci.ModulePropertiesForSerialization.DefaultFileAlignment32Bit,
                 sectionAlignment: Cci.ModulePropertiesForSerialization.DefaultSectionAlignment,

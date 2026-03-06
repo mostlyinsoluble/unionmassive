@@ -150,8 +150,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             }
             else
             {
-                int cardinality;
-                if (lmrType.IsTupleCompatible(out cardinality) && (cardinality > 1))
+                if (lmrType.IsTupleCompatible(out var cardinality) && (cardinality > 1))
                 {
                     var values = ArrayBuilder<string>.GetInstance();
                     if (value.TryGetTupleFieldValues(cardinality, values, inspectionContext))
@@ -379,27 +378,18 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
             unchecked
             {
-                switch (typeCode)
+                return typeCode switch
                 {
-                    case TypeCode.SByte:
-                        return (ulong)(sbyte)value;
-                    case TypeCode.Int16:
-                        return (ulong)(short)value;
-                    case TypeCode.Int32:
-                        return (ulong)(int)value;
-                    case TypeCode.Int64:
-                        return (ulong)(long)value;
-                    case TypeCode.Byte:
-                        return (byte)value;
-                    case TypeCode.UInt16:
-                        return (ushort)value;
-                    case TypeCode.UInt32:
-                        return (uint)value;
-                    case TypeCode.UInt64:
-                        return (ulong)value;
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(typeCode);
-                }
+                    TypeCode.SByte => (ulong)(sbyte)value,
+                    TypeCode.Int16 => (ulong)(short)value,
+                    TypeCode.Int32 => (ulong)(int)value,
+                    TypeCode.Int64 => (ulong)(long)value,
+                    TypeCode.Byte => (byte)value,
+                    TypeCode.UInt16 => (ushort)value,
+                    TypeCode.UInt32 => (uint)value,
+                    TypeCode.UInt64 => (ulong)value,
+                    _ => throw ExceptionUtilities.UnexpectedValue(typeCode),
+                };
             }
         }
 

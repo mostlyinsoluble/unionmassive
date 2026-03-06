@@ -10,7 +10,6 @@
     <RootNamespace>Microsoft.CodeAnalysis</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
     <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />
     <PackageReference Include="System.Threading.Channels" />
@@ -25,6 +24,9 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
   </ItemGroup>
   <Import Project="..\..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 

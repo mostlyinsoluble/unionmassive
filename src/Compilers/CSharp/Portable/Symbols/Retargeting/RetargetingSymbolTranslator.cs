@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             public RetargetingSymbolTranslator(RetargetingModuleSymbol retargetingModule)
             {
-                Debug.Assert((object)retargetingModule != null);
+                Debug.Assert(retargetingModule is not null);
                 _retargetingModule = retargetingModule;
             }
 
@@ -181,13 +181,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             {
                 var newTypeSymbol = Retarget(underlyingType.Type, options);
 
-                if ((object)asDynamicIfNoPiaContainingType != null)
+                if (asDynamicIfNoPiaContainingType is not null)
                 {
                     newTypeSymbol = newTypeSymbol.AsDynamicIfNoPia(asDynamicIfNoPiaContainingType);
                 }
 
-                bool modifiersHaveChanged;
-                var newModifiers = RetargetModifiers(underlyingType.CustomModifiers, out modifiersHaveChanged);
+                var newModifiers = RetargetModifiers(underlyingType.CustomModifiers, out bool modifiersHaveChanged);
 
                 if (modifiersHaveChanged || !TypeSymbol.Equals(underlyingType.Type, newTypeSymbol, TypeCompareKind.ConsiderEverything2))
                 {
@@ -259,9 +258,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 }
 
                 // Does this type come from one of the retargeted assemblies?
-                DestinationData destination;
 
-                if (!this.RetargetingAssemblyMap.TryGetValue(retargetFrom, out destination))
+                if (!this.RetargetingAssemblyMap.TryGetValue(retargetFrom, out DestinationData destination))
                 {
                     // No need to retarget
                     return type;
@@ -284,7 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     Debug.Assert(!type.IsExplicitDefinitionOfNoPiaLocalType);
                     var container = type.ContainingType;
 
-                    while ((object)container != null)
+                    while (container is not null)
                     {
                         if (container.IsExplicitDefinitionOfNoPiaLocalType)
                         {
@@ -309,10 +307,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             private NamedTypeSymbol RetargetNoPiaLocalType(NamedTypeSymbol type)
             {
-                NamedTypeSymbol cached;
 
                 var map = this.RetargetingAssembly.NoPiaUnificationMap;
-                if (map.TryGetValue(type, out cached))
+                if (map.TryGetValue(type, out NamedTypeSymbol cached))
                 {
                     return cached;
                 }
@@ -383,7 +380,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                         identifier,
                         RetargetingAssembly);
 
-                    Debug.Assert((object)result != null);
+                    Debug.Assert(result is not null);
                 }
                 else
                 {
@@ -403,9 +400,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 Debug.Assert(!type.ContainingModule.Equals(addedModule) &&
                              ReferenceEquals(((PEModuleSymbol)type.ContainingModule).Module, addedModule.Module));
 
-                TypeSymbol? cached;
 
-                if (addedModule.TypeHandleToTypeMap.TryGetValue(type.Handle, out cached))
+                if (addedModule.TypeHandleToTypeMap.TryGetValue(type.Handle, out TypeSymbol? cached))
                 {
                     return (NamedTypeSymbol)cached;
                 }
@@ -415,7 +411,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 NamedTypeSymbol containingType = type.ContainingType;
                 MetadataTypeName mdName;
 
-                if ((object)containingType != null)
+                if (containingType is not null)
                 {
                     // Nested type.  We need to retarget 
                     // the enclosing type and then go back and get the type we are interested in.
@@ -441,16 +437,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 ref DestinationData destination,
                 NamedTypeSymbol type)
             {
-                NamedTypeSymbol? result;
 
-                if (!destination.SymbolMap.TryGetValue(type, out result))
+                if (!destination.SymbolMap.TryGetValue(type, out NamedTypeSymbol? result))
                 {
                     // Lookup by name as a TypeRef.
                     NamedTypeSymbol containingType = type.ContainingType;
                     NamedTypeSymbol? result1;
                     MetadataTypeName mdName;
 
-                    if ((object)containingType != null)
+                    if (containingType is not null)
                     {
                         // This happens if type is a nested class.  We need to retarget 
                         // the enclosing class and then go back and get the type we are interested in.
@@ -507,7 +502,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     return newDefinition.AsUnboundGenericType();
                 }
 
-                Debug.Assert((object)type.ContainingType == null || !type.ContainingType.IsUnboundGenericType());
+                Debug.Assert(type.ContainingType is null || !type.ContainingType.IsUnboundGenericType());
 
                 // This must be a generic instantiation (i.e. constructed type).
 
@@ -516,7 +511,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 int startOfNonInterfaceArguments = int.MaxValue;
 
                 // Collect generic arguments for the type and its containers.
-                while ((object)genericType != null)
+                while (genericType is not null)
                 {
                     if (startOfNonInterfaceArguments == int.MaxValue &&
                         !genericType.IsInterface)
@@ -565,7 +560,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     ArrayBuilder<TypeParameterSymbol> newParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance(newArguments.Count);
 
                     // Collect generic arguments for the type and its containers.
-                    while ((object)genericType != null)
+                    while (genericType is not null)
                     {
                         if (genericType.Arity > 0)
                         {
@@ -678,7 +673,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
                             namedType = namedType.ContainingType;
                         }
-                        while ((object)namedType != null);
+                        while (namedType is not null);
 
                         return false;
 
@@ -1065,7 +1060,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                         containingType = containingType.ContainingType;
                         retargetedContainingType = retargetedContainingType.ContainingType;
                     }
-                    while (containingType is object);
+                    while (containingType is not null);
 
                     throw ExceptionUtilities.Unreachable();
                 }
@@ -1132,9 +1127,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             {
                 if (lazyCustomModifiers.IsDefault)
                 {
-                    bool modifiersHaveChanged;
-                    ImmutableArray<CustomModifier> newModifiers = this.RetargetModifiers(oldModifiers, out modifiersHaveChanged);
-                    ImmutableInterlocked.InterlockedCompareExchange(ref lazyCustomModifiers, newModifiers, default(ImmutableArray<CustomModifier>));
+                    ImmutableArray<CustomModifier> newModifiers = this.RetargetModifiers(oldModifiers, out bool modifiersHaveChanged);
+                    ImmutableInterlocked.InterlockedCompareExchange(ref lazyCustomModifiers, newModifiers, default);
                 }
 
                 return lazyCustomModifiers;
@@ -1156,17 +1150,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             private CSharpAttributeData RetargetAttributeData(CSharpAttributeData oldAttributeData)
             {
                 MethodSymbol oldAttributeCtor = oldAttributeData.AttributeConstructor;
-                MethodSymbol newAttributeCtor = (object)oldAttributeCtor == null ?
+                MethodSymbol newAttributeCtor = oldAttributeCtor is null ?
                     null :
                     Retarget(oldAttributeCtor, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
 
                 NamedTypeSymbol oldAttributeType = oldAttributeData.AttributeClass;
                 NamedTypeSymbol newAttributeType;
-                if ((object)newAttributeCtor != null)
+                if (newAttributeCtor is not null)
                 {
                     newAttributeType = newAttributeCtor.ContainingType;
                 }
-                else if ((object)oldAttributeType != null)
+                else if (oldAttributeType is not null)
                 {
                     newAttributeType = Retarget(oldAttributeType, RetargetOptions.RetargetPrimitiveTypesByTypeCode);
                 }
@@ -1221,7 +1215,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             private TypedConstant RetargetTypedConstant(TypedConstant oldConstant, ref bool typedConstantChanged)
             {
                 TypeSymbol oldConstantType = (TypeSymbol)oldConstant.TypeInternal;
-                TypeSymbol newConstantType = (object)oldConstantType == null ?
+                TypeSymbol newConstantType = oldConstantType is null ?
                     null :
                     Retarget(oldConstantType, RetargetOptions.RetargetPrimitiveTypesByTypeCode);
 
@@ -1308,7 +1302,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     // Retarget the attributes
                     ImmutableArray<CSharpAttributeData> retargetedAttributes = this.RetargetAttributes(underlyingAttributes);
 
-                    ImmutableInterlocked.InterlockedCompareExchange(ref lazyCustomAttributes, retargetedAttributes, default(ImmutableArray<CSharpAttributeData>));
+                    ImmutableInterlocked.InterlockedCompareExchange(ref lazyCustomAttributes, retargetedAttributes, default);
                 }
 
                 return lazyCustomAttributes;

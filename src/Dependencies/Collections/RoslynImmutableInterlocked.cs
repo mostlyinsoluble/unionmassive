@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.Collections
         /// <see langword="false"/> if it was previously initialized.</returns>
         public static bool InterlockedInitialize<T>(ref ImmutableSegmentedList<T> location, ImmutableSegmentedList<T> value)
         {
-            return InterlockedCompareExchange(ref location, value, default(ImmutableSegmentedList<T>)).IsDefault;
+            return InterlockedCompareExchange(ref location, value, default).IsDefault;
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Microsoft.CodeAnalysis.Collections
         /// <see langword="false"/> if it was previously initialized.</returns>
         public static bool InterlockedInitialize<T>(ref ImmutableSegmentedHashSet<T> location, ImmutableSegmentedHashSet<T> value)
         {
-            return InterlockedCompareExchange(ref location, value, default(ImmutableSegmentedHashSet<T>)).IsDefault;
+            return InterlockedCompareExchange(ref location, value, default).IsDefault;
         }
 
         /// <summary>
@@ -384,7 +384,7 @@ namespace Microsoft.CodeAnalysis.Collections
         public static bool InterlockedInitialize<TKey, TValue>(ref ImmutableSegmentedDictionary<TKey, TValue> location, ImmutableSegmentedDictionary<TKey, TValue> value)
             where TKey : notnull
         {
-            return InterlockedCompareExchange(ref location, value, default(ImmutableSegmentedDictionary<TKey, TValue>)).IsDefault;
+            return InterlockedCompareExchange(ref location, value, default).IsDefault;
         }
 
         /// <inheritdoc cref="ImmutableInterlocked.GetOrAdd{TKey, TValue, TArg}(ref ImmutableDictionary{TKey, TValue}, TKey, Func{TKey, TArg, TValue}, TArg)"/>

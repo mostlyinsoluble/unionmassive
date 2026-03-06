@@ -395,7 +395,7 @@ internal sealed class HelixTestRunner
         static string GetGlobalJsonPath(string artifactsDir)
         {
             var path = artifactsDir;
-            while (path is object)
+            while (path is not null)
             {
                 var globalJsonPath = Path.Join(path, "global.json");
                 if (File.Exists(globalJsonPath))

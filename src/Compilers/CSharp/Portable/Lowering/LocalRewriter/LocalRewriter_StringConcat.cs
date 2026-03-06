@@ -607,7 +607,7 @@ fallbackStrings:
                 var method = UnsafeGetSpecialTypeMethod(current.Syntax, member);
                 Debug.Assert(method is not null);
 
-                currentResult = new BoundBinaryOperator(current.Syntax, current.OperatorKind, constantValueOpt: null, method, constrainedToTypeOpt: null, default(LookupResultKind), currentResult, right, current.Type);
+                currentResult = new BoundBinaryOperator(current.Syntax, current.OperatorKind, constantValueOpt: null, method, constrainedToTypeOpt: null, default, currentResult, right, current.Type);
             }
 
             stack.Free();

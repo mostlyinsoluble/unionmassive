@@ -284,8 +284,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                ParameterSymbol? thisParameter;
-                if (!TryGetThisParameter(out thisParameter))
+                if (!TryGetThisParameter(out ParameterSymbol? thisParameter))
                 {
                     throw ExceptionUtilities.Unreachable();
                 }
@@ -456,7 +455,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // See InternalsVisibleToAndStrongNameTests: IvtVirtualCall1, IvtVirtualCall2, IvtVirtual_ParamsAndDynamic.
                 MethodSymbol overridden = m.OverriddenMethod;
                 var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
-                if ((object)overridden == null ||
+                if (overridden is null ||
                     (accessingTypeOpt is { } && !AccessCheck.IsSymbolAccessible(overridden, accessingTypeOpt, ref discardedUseSiteInfo)) ||
                     (requireSameReturnType && !this.ReturnType.Equals(overridden.ReturnType, TypeCompareKind.AllIgnoreOptions)))
                 {
@@ -541,7 +540,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (this.IsOverride)
                 {
                     var overriddenMethod = this.OverriddenMethod;
-                    if ((object)overriddenMethod != null && overriddenMethod.IsConditional)
+                    if (overriddenMethod is not null && overriddenMethod.IsConditional)
                     {
                         return overriddenMethod.CallsAreConditionallyOmitted(syntaxTree);
                     }
@@ -579,7 +578,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (this.IsOverride)
                 {
                     var overriddenMethod = this.OverriddenMethod;
-                    if ((object)overriddenMethod != null)
+                    if (overriddenMethod is not null)
                     {
                         return overriddenMethod.IsConditional;
                     }
@@ -605,28 +604,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static bool CanOverrideOrHide(MethodKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case MethodKind.AnonymousFunction:
-                case MethodKind.Constructor:
-                case MethodKind.Destructor:
-                case MethodKind.ExplicitInterfaceImplementation:
-                case MethodKind.StaticConstructor:
-                case MethodKind.ReducedExtension:
-                    return false;
-                case MethodKind.Conversion:
-                case MethodKind.DelegateInvoke:
-                case MethodKind.EventAdd:
-                case MethodKind.EventRemove:
-                case MethodKind.LocalFunction:
-                case MethodKind.UserDefinedOperator:
-                case MethodKind.Ordinary:
-                case MethodKind.PropertyGet:
-                case MethodKind.PropertySet:
-                    return true;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                MethodKind.AnonymousFunction or MethodKind.Constructor or MethodKind.Destructor or MethodKind.ExplicitInterfaceImplementation or MethodKind.StaticConstructor or MethodKind.ReducedExtension => false,
+                MethodKind.Conversion or MethodKind.DelegateInvoke or MethodKind.EventAdd or MethodKind.EventRemove or MethodKind.LocalFunction or MethodKind.UserDefinedOperator or MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet => true,
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         internal virtual OverriddenOrHiddenMembersResult OverriddenOrHiddenMembers
@@ -758,7 +741,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// language version.</param>
         public MethodSymbol? ReduceExtensionMethod(TypeSymbol receiverType, CSharpCompilation? compilation, out bool wasFullyInferred)
         {
-            if ((object)receiverType == null)
+            if (receiverType is null)
             {
                 throw new ArgumentNullException(nameof(receiverType));
             }
@@ -1089,7 +1072,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 DiagnosticInfo info = GetUseSiteInfo().DiagnosticInfo;
-                return (object)info != null && info.Code is (int)ErrorCode.ERR_BindToBogus or (int)ErrorCode.ERR_UnsupportedCompilerFeature;
+                return info is not null && info.Code is (int)ErrorCode.ERR_BindToBogus or (int)ErrorCode.ERR_UnsupportedCompilerFeature;
             }
         }
 
@@ -1173,7 +1156,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, compilation.SynthesizeDynamicAttribute(type.Type, type.CustomModifiers.Length + this.RefCustomModifiers.Length, this.RefKind));
             }
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(type.Type))
+            if (type.Type.ContainsNativeIntegerWrapperType())
             {
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeNativeIntegerAttribute(this, type.Type));
             }
@@ -1260,11 +1243,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (other is SubstitutedMethodSymbol sms)
             {
                 return sms.Equals(this, compareKind);
-            }
-
-            if (other is NativeIntegerMethodSymbol nms)
-            {
-                return nms.Equals(this, compareKind);
             }
 
             return base.Equals(other, compareKind);

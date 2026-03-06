@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // wrap all global statements in a compilation unit into a simple program type:
-            if (firstGlobalStatement is object)
+            if (firstGlobalStatement is not null)
             {
                 var diagnostics = ImmutableArray<Diagnostic>.Empty;
 
@@ -458,9 +458,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var globalAliasedQuickAttributes = GetQuickAttributes(compilationUnit.Usings, global: true);
 
-            CheckFeatureAvailabilityForUsings(diagnostics, compilationUnit.Usings);
-            CheckFeatureAvailabilityForExterns(diagnostics, compilationUnit.Externs);
-
             return new RootSingleNamespaceDeclaration(
                 hasGlobalUsings: hasGlobalUsings,
                 hasUsings: hasUsings,
@@ -471,24 +468,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 hasAssemblyAttributes: compilationUnit.AttributeLists.Any(),
                 diagnostics: diagnostics.ToReadOnlyAndFree(),
                 globalAliasedQuickAttributes);
-        }
-
-        private static void CheckFeatureAvailabilityForUsings(DiagnosticBag diagnostics, SyntaxList<UsingDirectiveSyntax> usings)
-        {
-            foreach (var usingDirective in usings)
-            {
-                if (usingDirective.StaticKeyword != default)
-                    MessageID.IDS_FeatureUsingStatic.CheckFeatureAvailability(diagnostics, usingDirective, usingDirective.StaticKeyword.GetLocation());
-
-                if (usingDirective.GlobalKeyword != default)
-                    MessageID.IDS_FeatureGlobalUsing.CheckFeatureAvailability(diagnostics, usingDirective, usingDirective.GlobalKeyword.GetLocation());
-            }
-        }
-
-        private static void CheckFeatureAvailabilityForExterns(DiagnosticBag diagnostics, SyntaxList<ExternAliasDirectiveSyntax> externs)
-        {
-            foreach (var externAlias in externs)
-                MessageID.IDS_FeatureExternAlias.CheckFeatureAvailability(diagnostics, externAlias, externAlias.ExternKeyword.GetLocation());
         }
 
         public override SingleNamespaceOrTypeDeclaration VisitFileScopedNamespaceDeclaration(FileScopedNamespaceDeclarationSyntax node)
@@ -526,8 +505,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (node is FileScopedNamespaceDeclarationSyntax)
             {
-                MessageID.IDS_FeatureFileScopedNamespace.CheckFeatureAvailability(diagnostics, node, node.NamespaceKeyword.GetLocation());
-
                 if (node.Parent is FileScopedNamespaceDeclarationSyntax)
                 {
                     // Happens when user writes:
@@ -605,9 +582,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
                 }
             }
-
-            CheckFeatureAvailabilityForUsings(diagnostics, node.Usings);
-            CheckFeatureAvailabilityForExterns(diagnostics, node.Externs);
 
             // NOTE: *Something* has to happen for alias-qualified names.  It turns out that we
             // just grab the part after the colons (via GetUnqualifiedName, below).  This logic
@@ -727,14 +701,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // have to do any check for the simple `record` case as the parser itself would never produce such a node
             // unless the language version was sufficient (since it actually will not produce the node at all on
             // previous versions).
-            if (node is RecordDeclarationSyntax record)
-            {
-                if (record.ClassOrStructKeyword.Kind() != SyntaxKind.None)
-                {
-                    MessageID.IDS_FeatureRecordStructs.CheckFeatureAvailability(diagnostics, record, record.ClassOrStructKeyword.GetLocation());
-                }
-            }
-            else if (node.Kind() is SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.InterfaceDeclaration)
+            if (node is not RecordDeclarationSyntax && node.Kind() is SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.InterfaceDeclaration)
             {
                 if (node.ParameterList != null)
                 {
@@ -742,35 +709,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         diagnostics.Add(ErrorCode.ERR_UnexpectedParameterList, node.ParameterList.GetLocation());
                     }
-                    else
-                    {
-                        MessageID.IDS_FeaturePrimaryConstructors.CheckFeatureAvailability(diagnostics, node.ParameterList);
-                    }
-                }
-                else if (node.OpenBraceToken == default && node.CloseBraceToken == default && node.SemicolonToken != default)
-                {
-                    MessageID.IDS_FeaturePrimaryConstructors.CheckFeatureAvailability(diagnostics, node, node.SemicolonToken.GetLocation());
                 }
             }
 
             var modifiers = node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
             var quickAttributes = GetQuickAttributes(node.AttributeLists);
-
-            foreach (var modifier in node.Modifiers)
-            {
-                if (modifier.IsKind(SyntaxKind.StaticKeyword) && kind == DeclarationKind.Class)
-                {
-                    MessageID.IDS_FeatureStaticClasses.CheckFeatureAvailability(diagnostics, node, modifier.GetLocation());
-                }
-                else if (modifier.IsKind(SyntaxKind.ReadOnlyKeyword) && kind is DeclarationKind.Struct or DeclarationKind.RecordStruct)
-                {
-                    MessageID.IDS_FeatureReadOnlyStructs.CheckFeatureAvailability(diagnostics, node, modifier.GetLocation());
-                }
-                else if (modifier.IsKind(SyntaxKind.RefKeyword) && kind is DeclarationKind.Struct or DeclarationKind.RecordStruct)
-                {
-                    MessageID.IDS_FeatureRefStructs.CheckFeatureAvailability(diagnostics, node, modifier.GetLocation());
-                }
-            }
 
             bool isExtension = kind == DeclarationKind.Extension;
             return new SingleTypeDeclaration(
@@ -853,11 +796,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             var diagnostics = DiagnosticBag.GetInstance();
             var modifiers = node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
             var quickAttributes = DeclarationTreeBuilder.GetQuickAttributes(node.AttributeLists);
-
-            if (node.OpenBraceToken == default && node.CloseBraceToken == default && node.SemicolonToken != default)
-            {
-                MessageID.IDS_FeaturePrimaryConstructors.CheckFeatureAvailability(diagnostics, node, node.SemicolonToken.GetLocation());
-            }
 
             return new SingleTypeDeclaration(
                 kind: DeclarationKind.Enum,
@@ -1245,25 +1183,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static bool HasAnyNonTypeMemberNames(
             Syntax.InternalSyntax.CSharpSyntaxNode member, bool skipGlobalStatements)
         {
-            switch (member.Kind)
+            return member.Kind switch
             {
-                case SyntaxKind.FieldDeclaration:
-                case SyntaxKind.EventFieldDeclaration:
-                case SyntaxKind.MethodDeclaration:
-                case SyntaxKind.PropertyDeclaration:
-                case SyntaxKind.EventDeclaration:
-                case SyntaxKind.ConstructorDeclaration:
-                case SyntaxKind.DestructorDeclaration:
-                case SyntaxKind.IndexerDeclaration:
-                case SyntaxKind.OperatorDeclaration:
-                case SyntaxKind.ConversionOperatorDeclaration:
-                    return true;
-
-                case SyntaxKind.GlobalStatement:
-                    return !skipGlobalStatements;
-            }
-
-            return false;
+                SyntaxKind.FieldDeclaration or SyntaxKind.EventFieldDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.EventDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration => true,
+                SyntaxKind.GlobalStatement => !skipGlobalStatements,
+                _ => false,
+            };
         }
     }
 }

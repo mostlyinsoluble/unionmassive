@@ -109,8 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 field = pending.Pop();
 
-                Node<SourceFieldSymbolWithSyntaxReference> node;
-                if (graph.TryGetValue(field, out node))
+                if (graph.TryGetValue(field, out Node<SourceFieldSymbolWithSyntaxReference> node))
                 {
                     if (node.Dependencies != null)
                     {
@@ -168,8 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 var set = ArrayBuilder<SourceFieldSymbolWithSyntaxReference>.GetInstance();
                 foreach (var field in search)
                 {
-                    Node<SourceFieldSymbolWithSyntaxReference> node;
-                    if (graph.TryGetValue(field, out node))
+                    if (graph.TryGetValue(field, out Node<SourceFieldSymbolWithSyntaxReference> node))
                     {
                         if (node.Dependencies.Count == 0)
                         {
@@ -341,16 +339,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 foreach (var dependency in node.Dependencies)
                 {
-                    Node<SourceFieldSymbolWithSyntaxReference> n;
-                    var ok = graph.TryGetValue(dependency, out n);
+                    var ok = graph.TryGetValue(dependency, out Node<SourceFieldSymbolWithSyntaxReference> n);
                     Debug.Assert(ok);
                     Debug.Assert(n.DependedOnBy.Contains(field));
                 }
 
                 foreach (var dependedOnBy in node.DependedOnBy)
                 {
-                    Node<SourceFieldSymbolWithSyntaxReference> n;
-                    var ok = graph.TryGetValue(dependedOnBy, out n);
+                    var ok = graph.TryGetValue(dependedOnBy, out Node<SourceFieldSymbolWithSyntaxReference> n);
                     Debug.Assert(ok);
                     Debug.Assert(n.Dependencies.Contains(field));
                 }

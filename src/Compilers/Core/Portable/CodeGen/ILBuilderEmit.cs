@@ -121,8 +121,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
             //evaluation stack at X, clearly, cannot be derived from existing information. In this case, the CLI demands that
             //the evaluation stack at X be empty.          
 
-            LabelInfo labelInfo;
-            if (_labelInfos.TryGetValue(label, out labelInfo))
+            if (_labelInfos.TryGetValue(label, out LabelInfo labelInfo))
             {
                 Debug.Assert(labelInfo.bb == null, "duplicate use of a label");
                 int labelStack = labelInfo.stack;
@@ -174,8 +173,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
             bool isConditional = code.IsConditionalBranch();
 
-            LabelInfo labelInfo;
-            if (!_labelInfos.TryGetValue(label, out labelInfo))
+            if (!_labelInfos.TryGetValue(label, out LabelInfo labelInfo))
             {
                 _labelInfos.Add(label, new LabelInfo(_emitState.CurStack, isConditional));
             }
@@ -279,8 +277,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
             foreach (object label in labels)
             {
-                LabelInfo ld;
-                if (!_labelInfos.TryGetValue(label, out ld))
+                if (!_labelInfos.TryGetValue(label, out LabelInfo ld))
                 {
                     _labelInfos.Add(label, new LabelInfo(curStack, true));
                 }

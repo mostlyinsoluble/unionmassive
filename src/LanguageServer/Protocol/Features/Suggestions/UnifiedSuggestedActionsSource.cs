@@ -395,17 +395,12 @@ internal sealed class UnifiedSuggestedActionsSource
 
     private static string GetFixCategory(DiagnosticSeverity severity)
     {
-        switch (severity)
+        return severity switch
         {
-            case DiagnosticSeverity.Hidden:
-            case DiagnosticSeverity.Info:
-            case DiagnosticSeverity.Warning:
-                return UnifiedPredefinedSuggestedActionCategoryNames.CodeFix;
-            case DiagnosticSeverity.Error:
-                return UnifiedPredefinedSuggestedActionCategoryNames.ErrorFix;
-            default:
-                throw ExceptionUtilities.Unreachable();
-        }
+            DiagnosticSeverity.Hidden or DiagnosticSeverity.Info or DiagnosticSeverity.Warning => UnifiedPredefinedSuggestedActionCategoryNames.CodeFix,
+            DiagnosticSeverity.Error => UnifiedPredefinedSuggestedActionCategoryNames.ErrorFix,
+            _ => throw ExceptionUtilities.Unreachable(),
+        };
     }
 
     private static bool IsTopLevelSuppressionAction(CodeAction action)

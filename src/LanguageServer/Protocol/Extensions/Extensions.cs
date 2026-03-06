@@ -252,19 +252,14 @@ internal static partial class Extensions
 
     public static string GetMarkdownLanguageName(this Document document)
     {
-        switch (document.Project.Language)
+        return document.Project.Language switch
         {
-            case LanguageNames.CSharp:
-                return "csharp";
-            case LanguageNames.VisualBasic:
-                return "vb";
-            case LanguageNames.FSharp:
-                return "fsharp";
-            case InternalLanguageNames.TypeScript:
-                return "typescript";
-            default:
-                throw new ArgumentException(string.Format("Document project language {0} is not valid", document.Project.Language));
-        }
+            LanguageNames.CSharp => "csharp",
+            LanguageNames.VisualBasic => "vb",
+            LanguageNames.FSharp => "fsharp",
+            InternalLanguageNames.TypeScript => "typescript",
+            _ => throw new ArgumentException(string.Format("Document project language {0} is not valid", document.Project.Language)),
+        };
     }
 
     public static ClassifiedTextElement GetClassifiedText(this DefinitionItem definition)

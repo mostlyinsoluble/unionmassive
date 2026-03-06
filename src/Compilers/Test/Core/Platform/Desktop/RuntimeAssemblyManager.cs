@@ -227,7 +227,7 @@ namespace Roslyn.Test.Utilities.Desktop
                 return true;
             }
 
-            assemblyData = default(AssemblyData);
+            assemblyData = default;
             fullMatch = false;
             return false;
         }
@@ -240,7 +240,7 @@ namespace Roslyn.Test.Utilities.Desktop
                 return true;
             }
 
-            assemblyData = default(AssemblyData);
+            assemblyData = default;
             fullMatch = false;
             return false;
         }

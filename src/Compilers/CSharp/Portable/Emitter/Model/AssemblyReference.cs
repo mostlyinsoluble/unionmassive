@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         internal AssemblyReference(AssemblySymbol assemblySymbol)
         {
-            Debug.Assert((object)assemblySymbol != null);
+            Debug.Assert(assemblySymbol is not null);
             _targetAssembly = assemblySymbol;
         }
 

@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.ResultsView,
                 Resources.ResultsView,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: proxyTypeAndInfo,
                 useDebuggerDisplay: false,
                 value: _proxyValue,
@@ -277,7 +277,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.Default,
                 name,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: declaredTypeAndInfo,
                 useDebuggerDisplay: false,
                 value: value,

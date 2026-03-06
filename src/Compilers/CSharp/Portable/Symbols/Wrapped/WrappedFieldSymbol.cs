@@ -29,7 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public WrappedFieldSymbol(FieldSymbol underlyingField)
         {
-            Debug.Assert((object)underlyingField != null);
+            Debug.Assert(underlyingField is not null);
             _underlyingField = underlyingField;
         }
 
@@ -83,7 +83,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return _underlyingField.GetDocumentationCommentXml(preferredCulture, expandIncludes, cancellationToken);
         }

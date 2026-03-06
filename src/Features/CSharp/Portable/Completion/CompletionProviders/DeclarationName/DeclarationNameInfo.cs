@@ -699,18 +699,14 @@ internal readonly struct NameDeclarationInfo(
 
     private static SyntaxNode? GetNodeDenotingTheTypeOfTupleArgument(ArgumentSyntax argumentSyntax)
     {
-        switch (argumentSyntax.Expression?.Kind())
+        return (argumentSyntax.Expression?.Kind()) switch
         {
-            case SyntaxKind.DeclarationExpression:
-                // The parser found a declaration as in (System.Action action, System.Array a$$)
-                // we need the type part of the declaration expression.
-                return ((DeclarationExpressionSyntax)argumentSyntax.Expression).Type;
-            default:
-                // We assume the parser found something that represents something named,
-                // e.g. a MemberAccessExpression as in (System.Action action, System.Array $$)
-                // We also assume that this name could be resolved to a type.
-                return argumentSyntax.Expression;
-        }
+            SyntaxKind.DeclarationExpression => ((DeclarationExpressionSyntax)argumentSyntax.Expression).Type,// The parser found a declaration as in (System.Action action, System.Array a$$)
+                                                                                                              // we need the type part of the declaration expression.
+            _ => argumentSyntax.Expression,// We assume the parser found something that represents something named,
+                                           // e.g. a MemberAccessExpression as in (System.Action action, System.Array $$)
+                                           // We also assume that this name could be resolved to a type.
+        };
     }
 
     public static Glyph GetGlyph(SymbolKind kind, Accessibility? declaredAccessibility)

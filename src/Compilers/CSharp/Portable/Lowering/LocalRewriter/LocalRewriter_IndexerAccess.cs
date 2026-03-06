@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node.AccessorKind != AccessorKind.Unknown);
             Debug.Assert(node.Indexer.IsIndexer || node.Indexer.IsIndexedProperty);
-            Debug.Assert((object?)node.Indexer.GetOwnOrInheritedGetMethod() != null);
+            Debug.Assert(node.Indexer.GetOwnOrInheritedGetMethod() is not null);
 
             return VisitIndexerAccess(node, isLeftOfAssignment: false);
         }
@@ -239,8 +239,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(_factory.ModuleBuilderOpt is { });
             Debug.Assert(_diagnostics.DiagnosticBag is { });
-            Debug.Assert(node.Expression.Type is object);
-            Debug.Assert(node.Argument.Type is object);
+            Debug.Assert(node.Expression.Type is not null);
+            Debug.Assert(node.Argument.Type is not null);
 
             var rewrittenReceiver = VisitExpression(node.Expression);
             BoundAssignmentOperator? receiverStore = null;
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var getItemOrSliceHelper = (MethodSymbol?)_compilation.GetWellKnownTypeMember(node.GetItemOrSliceHelper);
-            Debug.Assert(getItemOrSliceHelper is object);
+            Debug.Assert(getItemOrSliceHelper is not null);
 
             BoundExpression result;
             _ = node.Expression.Type.HasInlineArrayAttribute(out int length);
@@ -282,10 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     MethodSymbol createSpan = getCreateSpanHelper(node, spanType: getItemOrSliceHelper.ContainingType, intType: (NamedTypeSymbol)getItemOrSliceHelper.Parameters[0].Type);
                     getItemOrSliceHelper = getItemOrSliceHelper.AsMember((NamedTypeSymbol)createSpan.ReturnType);
 
-                    BoundRangeExpression? rangeExpr;
-                    BoundExpression? startMakeOffsetInput, endMakeOffsetInput, rewrittenRangeArg;
-                    PatternIndexOffsetLoweringStrategy startStrategy, endStrategy;
-                    RewriteRangeParts(node.Argument, out rangeExpr, out startMakeOffsetInput, out startStrategy, out endMakeOffsetInput, out endStrategy, out rewrittenRangeArg);
+                    RewriteRangeParts(node.Argument, out BoundRangeExpression? rangeExpr, out BoundExpression? startMakeOffsetInput, out PatternIndexOffsetLoweringStrategy startStrategy, out BoundExpression? endMakeOffsetInput, out PatternIndexOffsetLoweringStrategy endStrategy, out BoundExpression? rewrittenRangeArg);
 
                     var localsBuilder = ArrayBuilder<LocalSymbol>.GetInstance();
                     var sideEffectsBuilder = ArrayBuilder<BoundExpression>.GetInstance();
@@ -359,7 +356,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             MethodSymbol getCreateSpanHelper(BoundInlineArrayAccess node, NamedTypeSymbol spanType, NamedTypeSymbol intType)
             {
-                Debug.Assert(node.Expression.Type is object);
+                Debug.Assert(node.Expression.Type is not null);
 
                 MethodSymbol createSpan;
                 if (node.GetItemOrSliceHelper is WellKnownMember.System_ReadOnlySpan_T__Slice_Int_Int or WellKnownMember.System_ReadOnlySpan_T__get_Item)
@@ -376,7 +373,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression getElementRef(BoundInlineArrayAccess node, BoundExpression rewrittenReceiver, BoundExpression index, MethodSymbol getItemOrSliceHelper, int length)
             {
-                Debug.Assert(node.Expression.Type is object);
+                Debug.Assert(node.Expression.Type is not null);
                 Debug.Assert(index.Type?.SpecialType == SpecialType.System_Int32);
 
                 var intType = (NamedTypeSymbol)index.Type;
@@ -550,10 +547,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         ((isLeftOfAssignment && !isRegularAssignment) ||
                          !CodeGenerator.IsSafeToDereferenceReceiverRefAfterEvaluatingArguments(ImmutableArray.Create(makeOffsetInput))))
                     {
-                        BoundAssignmentOperator? extraRefInitialization;
-                        ReferToTempIfReferenceTypeReceiver(receiverLocal, ref receiverStore, out extraRefInitialization, locals);
+                        ReferToTempIfReferenceTypeReceiver(receiverLocal, ref receiverStore, out BoundAssignmentOperator? extraRefInitialization, locals);
 
-                        if (extraRefInitialization is object)
+                        if (extraRefInitialization is not null)
                         {
                             sideeffects.Add(extraRefInitialization);
                         }
@@ -829,10 +825,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var receiver = VisitExpression(node.Receiver);
             var rangeArg = node.Argument;
 
-            BoundRangeExpression? rangeExpr;
-            BoundExpression? startMakeOffsetInput, endMakeOffsetInput, rewrittenRangeArg;
-            PatternIndexOffsetLoweringStrategy startStrategy, endStrategy;
-            RewriteRangeParts(rangeArg, out rangeExpr, out startMakeOffsetInput, out startStrategy, out endMakeOffsetInput, out endStrategy, out rewrittenRangeArg);
+            RewriteRangeParts(rangeArg, out BoundRangeExpression? rangeExpr, out BoundExpression? startMakeOffsetInput, out PatternIndexOffsetLoweringStrategy startStrategy, out BoundExpression? endMakeOffsetInput, out PatternIndexOffsetLoweringStrategy endStrategy, out BoundExpression? rewrittenRangeArg);
 
             // Do not capture receiver if it is a local or parameter and we are evaluating a pattern
             // If length access is a local, then we are evaluating a pattern
@@ -871,10 +864,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (!CodeGenerator.IsSafeToDereferenceReceiverRefAfterEvaluatingArguments(argumentsBuilder.ToImmutableAndFree()))
                     {
-                        BoundAssignmentOperator? extraRefInitialization;
-                        ReferToTempIfReferenceTypeReceiver(receiverLocal, ref receiverStore, out extraRefInitialization, localsBuilder);
+                        ReferToTempIfReferenceTypeReceiver(receiverLocal, ref receiverStore, out BoundAssignmentOperator? extraRefInitialization, localsBuilder);
 
-                        if (extraRefInitialization is object)
+                        if (extraRefInitialization is not null)
                         {
                             sideEffectsBuilder.Add(extraRefInitialization);
                         }
@@ -908,50 +900,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                 const int captureEndOffset = 1 << 1;
                 const int useLength = 1 << 2;
                 const int captureLength = 1 << 3;
-
-                int rewriteFlags;
-
-                switch ((startStrategy, endStrategy))
+                var rewriteFlags = (startStrategy, endStrategy) switch
                 {
-                    case (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.Length):
-                    case (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI):
-                        rewriteFlags = useLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.SubtractFromLength):
-                        rewriteFlags = captureEndOffset | useLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.UseAsIs):
-                        rewriteFlags = 0;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.Length):
-                    case (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI):
-                        rewriteFlags = useLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.SubtractFromLength):
-                        rewriteFlags = captureStartOffset | captureEndOffset | useLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.UseAsIs):
-                        rewriteFlags = 0;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.Length):
-                    case (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.Length):
-                        rewriteFlags = captureStartOffset | useLength | captureLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.SubtractFromLength):
-                    case (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI):
-                    case (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.SubtractFromLength):
-                    case (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI):
-                        rewriteFlags = captureStartOffset | captureEndOffset | useLength | captureLength;
-                        break;
-                    case (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.UseAsIs):
-                    case (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.UseAsIs):
-                        rewriteFlags = captureStartOffset | captureEndOffset | useLength;
-                        break;
-
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(startStrategy);
-                }
-
+                    (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.Length) or (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI) => useLength,
+                    (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.SubtractFromLength) => captureEndOffset | useLength,
+                    (PatternIndexOffsetLoweringStrategy.Zero, PatternIndexOffsetLoweringStrategy.UseAsIs) => 0,
+                    (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.Length) or (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI) => useLength,
+                    (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.SubtractFromLength) => captureStartOffset | captureEndOffset | useLength,
+                    (PatternIndexOffsetLoweringStrategy.UseAsIs, PatternIndexOffsetLoweringStrategy.UseAsIs) => 0,
+                    (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.Length) or (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.Length) => captureStartOffset | useLength | captureLength,
+                    (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.SubtractFromLength) or (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI) or (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.SubtractFromLength) or (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI) => captureStartOffset | captureEndOffset | useLength | captureLength,
+                    (PatternIndexOffsetLoweringStrategy.SubtractFromLength, PatternIndexOffsetLoweringStrategy.UseAsIs) or (PatternIndexOffsetLoweringStrategy.UseGetOffsetAPI, PatternIndexOffsetLoweringStrategy.UseAsIs) => captureStartOffset | captureEndOffset | useLength,
+                    _ => throw ExceptionUtilities.UnexpectedValue(startStrategy),
+                };
                 Debug.Assert(startStrategy != PatternIndexOffsetLoweringStrategy.Zero || (rewriteFlags & captureStartOffset) == 0);
                 Debug.Assert((rewriteFlags & captureEndOffset) == 0 || (rewriteFlags & captureStartOffset) != 0 || startStrategy == PatternIndexOffsetLoweringStrategy.Zero);
                 Debug.Assert((rewriteFlags & captureStartOffset) == 0 || (rewriteFlags & captureEndOffset) != 0 || endStrategy == PatternIndexOffsetLoweringStrategy.Length);

@@ -68,8 +68,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             ushort ordinal,
             GenericParameterHandle handle)
         {
-            Debug.Assert((object)moduleSymbol != null);
-            Debug.Assert((object)definingSymbol != null);
+            Debug.Assert(moduleSymbol is not null);
+            Debug.Assert(definingSymbol is not null);
             Debug.Assert(ordinal >= 0);
             Debug.Assert(!handle.IsNil);
 
@@ -83,7 +83,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
             catch (BadImageFormatException)
             {
-                if ((object)_name == null)
+                if (_name is null)
                 {
                     _name = string.Empty;
                 }
@@ -416,7 +416,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
             catch (BadImageFormatException)
             {
-                constraints = default(GenericParameterConstraintHandleCollection);
+                constraints = default;
                 _lazyCachedConstraintsUseSiteInfo.InterlockedInitializeFromSentinel(primaryDependency: null, new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_BindToBogus, this)));
             }
 
@@ -490,15 +490,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return false;
                 }
 
-                switch (GetNullableAttributeValue())
+                return GetNullableAttributeValue() switch
                 {
-                    case NullableAnnotationExtensions.AnnotatedAttributeValue:
-                        return true;
-                    case NullableAnnotationExtensions.NotAnnotatedAttributeValue:
-                        return false;
-                }
-
-                return null;
+                    NullableAnnotationExtensions.AnnotatedAttributeValue => true,
+                    NullableAnnotationExtensions.NotAnnotatedAttributeValue => false,
+                    _ => null,
+                };
             }
         }
 

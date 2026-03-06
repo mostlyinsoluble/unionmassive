@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         public static int CustomModifierCount(this TypeSymbol type)
         {
-            if ((object)type == null)
+            if (type is null)
             {
                 return 0;
             }
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             var namedType = (NamedTypeSymbol)type;
                             int count = 0;
 
-                            while ((object)namedType != null)
+                            while (namedType is not null)
                             {
                                 ImmutableArray<TypeWithAnnotations> typeArgs = namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         public static bool HasCustomModifiers(this TypeSymbol type, bool flagNonDefaultArraySizesOrLowerBounds)
         {
-            if ((object)type == null)
+            if (type is null)
             {
                 return false;
             }
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         if (!isDefinition)
                         {
                             var namedType = (NamedTypeSymbol)type;
-                            while ((object)namedType != null)
+                            while (namedType is not null)
                             {
                                 ImmutableArray<TypeWithAnnotations> typeArgs = namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
@@ -178,33 +178,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <returns></returns>
         internal static TypeSymbol GetNextBaseTypeNoUseSiteDiagnostics(this TypeSymbol type, ConsList<TypeSymbol> basesBeingResolved, CSharpCompilation compilation, ref PooledHashSet<NamedTypeSymbol> visited)
         {
-            switch (type.TypeKind)
+            return type.TypeKind switch
             {
-                case TypeKind.TypeParameter:
-                    return ((TypeParameterSymbol)type).EffectiveBaseClassNoUseSiteDiagnostics;
-
-                case TypeKind.Class:
-                case TypeKind.Struct:
-                case TypeKind.Error:
-                case TypeKind.Interface:
-                    return GetNextDeclaredBase((NamedTypeSymbol)type, basesBeingResolved, compilation, ref visited);
-
-                case TypeKind.Dynamic:
-                case TypeKind.Enum:
-                case TypeKind.Delegate:
-                case TypeKind.Array:
-                case TypeKind.Submission:
-                case TypeKind.Pointer:
-                case TypeKind.FunctionPointer:
-                case TypeKind.Extension:
-                    // Enums, arrays, submissions, delegates and extensions know their own base types
-                    // intrinsically (and do not include interface lists)
-                    // so there is no possibility of a cycle.
-                    return type.BaseTypeNoUseSiteDiagnostics;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(type.TypeKind);
-            }
+                TypeKind.TypeParameter => ((TypeParameterSymbol)type).EffectiveBaseClassNoUseSiteDiagnostics,
+                TypeKind.Class or TypeKind.Struct or TypeKind.Error or TypeKind.Interface => GetNextDeclaredBase((NamedTypeSymbol)type, basesBeingResolved, compilation, ref visited),
+                TypeKind.Dynamic or TypeKind.Enum or TypeKind.Delegate or TypeKind.Array or TypeKind.Submission or TypeKind.Pointer or TypeKind.FunctionPointer or TypeKind.Extension => type.BaseTypeNoUseSiteDiagnostics,// Enums, arrays, submissions, delegates and extensions know their own base types
+                                                                                                                                                                                                                           // intrinsically (and do not include interface lists)
+                                                                                                                                                                                                                           // so there is no possibility of a cycle.
+                _ => throw ExceptionUtilities.UnexpectedValue(type.TypeKind),
+            };
         }
 
         private static TypeSymbol GetNextDeclaredBase(NamedTypeSymbol type, ConsList<TypeSymbol> basesBeingResolved, CSharpCompilation compilation, ref PooledHashSet<NamedTypeSymbol> visited)
@@ -226,7 +208,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var nextType = type.GetDeclaredBaseType(basesBeingResolved);
 
             // types with no declared bases inherit object's members
-            if ((object)nextType == null)
+            if (nextType is null)
             {
                 SetKnownToHaveNoDeclaredBaseCycles(ref visited);
                 return GetDefaultBaseOrNull(type, compilation);
@@ -273,18 +255,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            switch (type.TypeKind)
+            return type.TypeKind switch
             {
-                case TypeKind.Class:
-                case TypeKind.Error:
-                    return compilation.Assembly.GetSpecialType(SpecialType.System_Object);
-                case TypeKind.Interface:
-                    return null;
-                case TypeKind.Struct:
-                    return compilation.Assembly.GetSpecialType(SpecialType.System_ValueType);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(type.TypeKind);
-            }
+                TypeKind.Class or TypeKind.Error => compilation.Assembly.GetSpecialType(SpecialType.System_Object),
+                TypeKind.Interface => null,
+                TypeKind.Struct => compilation.Assembly.GetSpecialType(SpecialType.System_ValueType),
+                _ => throw ExceptionUtilities.UnexpectedValue(type.TypeKind),
+            };
         }
     }
 }

@@ -333,38 +333,15 @@ public abstract partial class TestWorkspace<TDocument, TProject, TSolution> : Wo
 
     public override bool CanApplyChange(ApplyChangesKind feature)
     {
-        switch (feature)
+        return feature switch
         {
-            case ApplyChangesKind.AddDocument:
-            case ApplyChangesKind.RemoveDocument:
-                return KindSupportsAddRemoveDocument();
-
-            case ApplyChangesKind.RemoveProject:
-                return KindSupportsRemoveProject();
-
-            case ApplyChangesKind.AddAdditionalDocument:
-            case ApplyChangesKind.RemoveAdditionalDocument:
-            case ApplyChangesKind.AddAnalyzerConfigDocument:
-            case ApplyChangesKind.RemoveAnalyzerConfigDocument:
-            case ApplyChangesKind.AddAnalyzerReference:
-            case ApplyChangesKind.RemoveAnalyzerReference:
-            case ApplyChangesKind.AddSolutionAnalyzerReference:
-            case ApplyChangesKind.RemoveSolutionAnalyzerReference:
-                return true;
-
-            case ApplyChangesKind.ChangeDocument:
-            case ApplyChangesKind.ChangeAdditionalDocument:
-            case ApplyChangesKind.ChangeAnalyzerConfigDocument:
-            case ApplyChangesKind.ChangeDocumentInfo:
-                return this.CanApplyChangeDocument;
-
-            case ApplyChangesKind.AddProjectReference:
-            case ApplyChangesKind.AddMetadataReference:
-                return true;
-
-            default:
-                return false;
-        }
+            ApplyChangesKind.AddDocument or ApplyChangesKind.RemoveDocument => KindSupportsAddRemoveDocument(),
+            ApplyChangesKind.RemoveProject => KindSupportsRemoveProject(),
+            ApplyChangesKind.AddAdditionalDocument or ApplyChangesKind.RemoveAdditionalDocument or ApplyChangesKind.AddAnalyzerConfigDocument or ApplyChangesKind.RemoveAnalyzerConfigDocument or ApplyChangesKind.AddAnalyzerReference or ApplyChangesKind.RemoveAnalyzerReference or ApplyChangesKind.AddSolutionAnalyzerReference or ApplyChangesKind.RemoveSolutionAnalyzerReference => true,
+            ApplyChangesKind.ChangeDocument or ApplyChangesKind.ChangeAdditionalDocument or ApplyChangesKind.ChangeAnalyzerConfigDocument or ApplyChangesKind.ChangeDocumentInfo => this.CanApplyChangeDocument,
+            ApplyChangesKind.AddProjectReference or ApplyChangesKind.AddMetadataReference => true,
+            _ => false,
+        };
     }
 
     private bool KindSupportsAddRemoveDocument()

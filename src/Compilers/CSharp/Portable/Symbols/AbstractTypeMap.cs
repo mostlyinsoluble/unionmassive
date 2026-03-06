@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)previous.ConstructedFrom == (object)previous);
 
             NamedTypeSymbol newContainingType = SubstituteNamedType(previous.ContainingType);
-            if ((object)newContainingType == null)
+            if (newContainingType is null)
             {
                 return previous;
             }
@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal TypeWithAnnotations SubstituteType(TypeSymbol previous)
         {
             if (ReferenceEquals(previous, null))
-                return default(TypeWithAnnotations);
+                return default;
 
             TypeSymbol result;
 
@@ -197,12 +197,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (interfaces.Length == 1)
                 {
-                    Debug.Assert(interfaces[0] is NamedTypeSymbol); // IList<T>
+                    Debug.Assert(interfaces[0] is not null); // IList<T>
                     interfaces = ImmutableArray.Create<NamedTypeSymbol>(SubstituteNamedType(interfaces[0]));
                 }
                 else if (interfaces.Length == 2)
                 {
-                    Debug.Assert(interfaces[0] is NamedTypeSymbol); // IList<T>
+                    Debug.Assert(interfaces[0] is not null); // IList<T>
                     interfaces = ImmutableArray.Create<NamedTypeSymbol>(SubstituteNamedType(interfaces[0]), SubstituteNamedType(interfaces[1]));
                 }
                 else if (interfaces.Length != 0)
@@ -321,7 +321,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (original.IsDefault)
             {
-                return default(ImmutableArray<TypeWithAnnotations>);
+                return default;
             }
 
             var result = ArrayBuilder<TypeWithAnnotations>.GetInstance(original.Length);

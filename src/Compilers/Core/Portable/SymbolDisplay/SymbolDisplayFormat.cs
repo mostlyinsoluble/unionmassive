@@ -371,17 +371,17 @@ namespace Microsoft.CodeAnalysis
         /// The settings that determine other characteristics of how symbols are displayed.
         /// </param>
         public SymbolDisplayFormat(
-            SymbolDisplayGlobalNamespaceStyle globalNamespaceStyle = default(SymbolDisplayGlobalNamespaceStyle),
-            SymbolDisplayTypeQualificationStyle typeQualificationStyle = default(SymbolDisplayTypeQualificationStyle),
-            SymbolDisplayGenericsOptions genericsOptions = default(SymbolDisplayGenericsOptions),
-            SymbolDisplayMemberOptions memberOptions = default(SymbolDisplayMemberOptions),
-            SymbolDisplayDelegateStyle delegateStyle = default(SymbolDisplayDelegateStyle),
-            SymbolDisplayExtensionMethodStyle extensionMethodStyle = default(SymbolDisplayExtensionMethodStyle),
-            SymbolDisplayParameterOptions parameterOptions = default(SymbolDisplayParameterOptions),
-            SymbolDisplayPropertyStyle propertyStyle = default(SymbolDisplayPropertyStyle),
-            SymbolDisplayLocalOptions localOptions = default(SymbolDisplayLocalOptions),
-            SymbolDisplayKindOptions kindOptions = default(SymbolDisplayKindOptions),
-            SymbolDisplayMiscellaneousOptions miscellaneousOptions = default(SymbolDisplayMiscellaneousOptions))
+            SymbolDisplayGlobalNamespaceStyle globalNamespaceStyle = default,
+            SymbolDisplayTypeQualificationStyle typeQualificationStyle = default,
+            SymbolDisplayGenericsOptions genericsOptions = default,
+            SymbolDisplayMemberOptions memberOptions = default,
+            SymbolDisplayDelegateStyle delegateStyle = default,
+            SymbolDisplayExtensionMethodStyle extensionMethodStyle = default,
+            SymbolDisplayParameterOptions parameterOptions = default,
+            SymbolDisplayPropertyStyle propertyStyle = default,
+            SymbolDisplayLocalOptions localOptions = default,
+            SymbolDisplayKindOptions kindOptions = default,
+            SymbolDisplayMiscellaneousOptions miscellaneousOptions = default)
             : this(
                 compilerInternalOptions: default,
                 globalNamespaceStyle,
@@ -403,17 +403,17 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         internal SymbolDisplayFormat(
             SymbolDisplayCompilerInternalOptions compilerInternalOptions,
-            SymbolDisplayGlobalNamespaceStyle globalNamespaceStyle = default(SymbolDisplayGlobalNamespaceStyle),
-            SymbolDisplayTypeQualificationStyle typeQualificationStyle = default(SymbolDisplayTypeQualificationStyle),
-            SymbolDisplayGenericsOptions genericsOptions = default(SymbolDisplayGenericsOptions),
-            SymbolDisplayMemberOptions memberOptions = default(SymbolDisplayMemberOptions),
-            SymbolDisplayParameterOptions parameterOptions = default(SymbolDisplayParameterOptions),
-            SymbolDisplayDelegateStyle delegateStyle = default(SymbolDisplayDelegateStyle),
-            SymbolDisplayExtensionMethodStyle extensionMethodStyle = default(SymbolDisplayExtensionMethodStyle),
-            SymbolDisplayPropertyStyle propertyStyle = default(SymbolDisplayPropertyStyle),
-            SymbolDisplayLocalOptions localOptions = default(SymbolDisplayLocalOptions),
-            SymbolDisplayKindOptions kindOptions = default(SymbolDisplayKindOptions),
-            SymbolDisplayMiscellaneousOptions miscellaneousOptions = default(SymbolDisplayMiscellaneousOptions))
+            SymbolDisplayGlobalNamespaceStyle globalNamespaceStyle = default,
+            SymbolDisplayTypeQualificationStyle typeQualificationStyle = default,
+            SymbolDisplayGenericsOptions genericsOptions = default,
+            SymbolDisplayMemberOptions memberOptions = default,
+            SymbolDisplayParameterOptions parameterOptions = default,
+            SymbolDisplayDelegateStyle delegateStyle = default,
+            SymbolDisplayExtensionMethodStyle extensionMethodStyle = default,
+            SymbolDisplayPropertyStyle propertyStyle = default,
+            SymbolDisplayLocalOptions localOptions = default,
+            SymbolDisplayKindOptions kindOptions = default,
+            SymbolDisplayMiscellaneousOptions miscellaneousOptions = default)
         {
             this.GlobalNamespaceStyle = globalNamespaceStyle;
             this.TypeQualificationStyle = typeQualificationStyle;

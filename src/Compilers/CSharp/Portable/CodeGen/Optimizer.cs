@@ -1839,8 +1839,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         // called on branches and labels
         private void RecordBranch(LabelSymbol label)
         {
-            DummyLocal dummy;
-            if (_dummyVariables.TryGetValue(label, out dummy))
+            if (_dummyVariables.TryGetValue(label, out DummyLocal dummy))
             {
                 RecordVarRead(dummy);
             }
@@ -1856,8 +1855,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private void RecordLabel(LabelSymbol label)
         {
-            DummyLocal dummy;
-            if (_dummyVariables.TryGetValue(label, out dummy))
+            if (_dummyVariables.TryGetValue(label, out DummyLocal dummy))
             {
                 RecordVarRead(dummy);
             }
@@ -1873,8 +1871,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private void ShouldNotSchedule(LocalSymbol localSymbol)
         {
-            LocalDefUseInfo localDefInfo;
-            if (_locals.TryGetValue(localSymbol, out localDefInfo))
+            if (_locals.TryGetValue(localSymbol, out LocalDefUseInfo localDefInfo))
             {
                 localDefInfo.ShouldNotSchedule();
             }
@@ -2007,12 +2004,11 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private void DeclareLocal(LocalSymbol local, int stack)
         {
-            if ((object)local != null)
+            if (local is not null)
             {
                 if (CanScheduleToStack(local))
                 {
-                    LocalDefUseInfo info;
-                    if (!_locals.TryGetValue(local, out info))
+                    if (!_locals.TryGetValue(local, out LocalDefUseInfo info))
                     {
                         _locals.Add(local, LocalDefUseInfo.GetInstance(stack));
                     }
@@ -2181,8 +2177,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         public override BoundNode VisitLocal(BoundLocal node)
         {
-            LocalDefUseInfo locInfo;
-            if (!_info.TryGetValue(node.LocalSymbol, out locInfo))
+            if (!_info.TryGetValue(node.LocalSymbol, out LocalDefUseInfo locInfo))
             {
                 return base.VisitLocal(node);
             }
@@ -2207,11 +2202,10 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         public override BoundNode VisitAssignmentOperator(BoundAssignmentOperator node)
         {
-            LocalDefUseInfo locInfo;
             var left = node.Left as BoundLocal;
 
             // store to something that is not special. (operands still could be rewritten)
-            if (left == null || !_info.TryGetValue(left.LocalSymbol, out locInfo))
+            if (left == null || !_info.TryGetValue(left.LocalSymbol, out LocalDefUseInfo locInfo))
             {
                 return base.VisitAssignmentOperator(node);
             }
@@ -2358,10 +2352,9 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 if (exceptionSource.Kind == BoundKind.Local)
                 {
                     var sourceLocal = ((BoundLocal)exceptionSource).LocalSymbol;
-                    LocalDefUseInfo locInfo;
 
                     // If catch is the last access, we do not need to store the exception object.
-                    if (_info.TryGetValue(sourceLocal, out locInfo) &&
+                    if (_info.TryGetValue(sourceLocal, out LocalDefUseInfo locInfo) &&
                         IsLastAccess(locInfo, _nodeCounter))
                     {
                         exceptionSource = null;
@@ -2429,7 +2422,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         internal override SyntaxToken IdentifierToken
         {
-            get { return default(SyntaxToken); }
+            get { return default; }
         }
 
         internal override bool IsPinned

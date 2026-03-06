@@ -222,11 +222,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 access = Accessibility.ProtectedOrFriend
             ElseIf (foundModifiers And (SourceMemberFlags.Private Or SourceMemberFlags.Protected)) = (SourceMemberFlags.Private Or SourceMemberFlags.Protected) Then
                 access = Accessibility.ProtectedAndFriend
-                InternalSyntax.Parser.CheckFeatureAvailability(
-                    diagBag,
-                    privateProtectedToken.GetLocation(),
-                    DirectCast(privateProtectedToken.SyntaxTree, VisualBasicSyntaxTree).Options.LanguageVersion,
-                    InternalSyntax.Feature.PrivateProtected)
             ElseIf (foundModifiers And SourceMemberFlags.Friend) <> 0 Then
                 access = Accessibility.Friend
             ElseIf (foundModifiers And SourceMemberFlags.Protected) <> 0 Then
@@ -301,7 +296,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             If ShouldCheckConstraints Then
                 Dim diagnosticsBuilder = ArrayBuilder(Of TypeParameterDiagnosticInfo).GetInstance()
                 Dim useSiteDiagnosticsBuilder As ArrayBuilder(Of TypeParameterDiagnosticInfo) = Nothing
-                constructedType.CheckConstraints(Compilation.LanguageVersion, diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=GetNewCompoundUseSiteInfo(diagBag))
+                constructedType.CheckConstraints(diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=GetNewCompoundUseSiteInfo(diagBag))
 
                 If useSiteDiagnosticsBuilder IsNot Nothing Then
                     diagnosticsBuilder.AddRange(useSiteDiagnosticsBuilder)

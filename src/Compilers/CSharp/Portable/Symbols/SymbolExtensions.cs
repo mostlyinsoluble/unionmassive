@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static bool IsNestedType([NotNullWhen(true)] this Symbol? symbol)
         {
-            return symbol is NamedTypeSymbol && (object?)symbol.ContainingType != null;
+            return symbol is NamedTypeSymbol && symbol.ContainingType is not null;
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // This text is missing in the current version of the spec, but we believe this is accidental.
             NamedTypeSymbol originalSuperType = superType.OriginalDefinition;
             for (NamedTypeSymbol? current = subType;
-                (object?)current != null;
+                current is not null;
                 current = current.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
             {
                 if (ReferenceEquals(current.OriginalDefinition, originalSuperType))
@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static NamespaceOrTypeSymbol? ContainingNamespaceOrType(this Symbol symbol)
         {
             var containingSymbol = symbol.ContainingSymbol;
-            if ((object?)containingSymbol != null)
+            if (containingSymbol is not null)
             {
                 switch (containingSymbol.Kind)
                 {
@@ -145,7 +145,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static Symbol? ContainingNonLambdaMember(this Symbol? containingMember)
         {
-            while (containingMember is object && containingMember.Kind == SymbolKind.Method)
+            while (containingMember is not null && containingMember.Kind == SymbolKind.Method)
             {
                 var method = (MethodSymbol)containingMember;
                 if (method.MethodKind != MethodKind.AnonymousFunction && method.MethodKind != MethodKind.LocalFunction) break;
@@ -199,18 +199,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static Symbol ConstructedFrom(this Symbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.NamedType:
-                case SymbolKind.ErrorType:
-                    return ((NamedTypeSymbol)symbol).ConstructedFrom;
-
-                case SymbolKind.Method:
-                    return ((MethodSymbol)symbol).ConstructedFrom;
-
-                default:
-                    return symbol;
-            }
+                SymbolKind.NamedType or SymbolKind.ErrorType => ((NamedTypeSymbol)symbol).ConstructedFrom,
+                SymbolKind.Method => ((MethodSymbol)symbol).ConstructedFrom,
+                _ => symbol,
+            };
         }
 
         /// <summary>
@@ -239,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (type.TypeKind == TypeKind.TypeParameter)
             {
                 var symbol = type.ContainingSymbol;
-                for (; ((object?)containingSymbol != null) && (containingSymbol.Kind != SymbolKind.Namespace); containingSymbol = containingSymbol.ContainingSymbol)
+                for (; (containingSymbol is not null) && (containingSymbol.Kind != SymbolKind.Namespace); containingSymbol = containingSymbol.ContainingSymbol)
                 {
                     if (containingSymbol == symbol)
                     {
@@ -302,12 +296,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             // Only upper-level types should be checked 
             var upperLevelType = symbol.Kind == SymbolKind.NamedType ? (NamedTypeSymbol)symbol : symbol.ContainingType;
-            if ((object?)upperLevelType == null)
+            if (upperLevelType is null)
             {
                 return false;
             }
 
-            while ((object?)upperLevelType.ContainingType != null)
+            while (upperLevelType.ContainingType is not null)
             {
                 upperLevelType = upperLevelType.ContainingType;
             }
@@ -317,20 +311,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static bool MustCallMethodsDirectly(this Symbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Property:
-                    return ((PropertySymbol)symbol).MustCallMethodsDirectly;
-                case SymbolKind.Event:
-                    return ((EventSymbol)symbol).MustCallMethodsDirectly;
-                default:
-                    return false;
-            }
+                SymbolKind.Property => ((PropertySymbol)symbol).MustCallMethodsDirectly,
+                SymbolKind.Event => ((EventSymbol)symbol).MustCallMethodsDirectly,
+                _ => false,
+            };
         }
 
         public static int GetArity(this Symbol? symbol)
         {
-            if (symbol is object)
+            if (symbol is not null)
             {
                 switch (symbol.Kind)
                 {
@@ -346,14 +337,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static CSharpSyntaxNode GetNonNullSyntaxNode(this Symbol? symbol)
         {
-            if (symbol is object)
+            if (symbol is not null)
             {
                 SyntaxReference? reference = symbol.DeclaringSyntaxReferences.FirstOrDefault();
 
                 if (reference == null && symbol.IsImplicitlyDeclared)
                 {
                     Symbol? containingSymbol = symbol.ContainingSymbol;
-                    if ((object?)containingSymbol != null)
+                    if (containingSymbol is not null)
                     {
                         reference = containingSymbol.DeclaringSyntaxReferences.FirstOrDefault();
                     }
@@ -430,8 +421,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static TypeWithAnnotations GetTypeOrReturnType(this Symbol symbol)
         {
-            TypeWithAnnotations returnType;
-            GetTypeOrReturnType(symbol, refKind: out _, out returnType, refCustomModifiers: out _);
+            GetTypeOrReturnType(symbol, refKind: out _, out TypeWithAnnotations returnType, refCustomModifiers: out _);
             return returnType;
         }
 

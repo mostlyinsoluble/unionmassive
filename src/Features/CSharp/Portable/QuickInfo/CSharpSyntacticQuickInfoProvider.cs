@@ -35,20 +35,12 @@ internal sealed class CSharpSyntacticQuickInfoProvider() : CommonQuickInfoProvid
 
     private static QuickInfoItem? BuildQuickInfo(SyntaxToken token, CancellationToken cancellationToken)
     {
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.CloseBraceToken:
-                return BuildQuickInfoCloseBrace(token);
-            case SyntaxKind.HashToken:
-            case SyntaxKind.EndRegionKeyword:
-            case SyntaxKind.EndIfKeyword:
-            case SyntaxKind.ElseKeyword:
-            case SyntaxKind.ElifKeyword:
-            case SyntaxKind.EndOfDirectiveToken:
-                return BuildQuickInfoDirectives(token, cancellationToken);
-            default:
-                return null;
-        }
+            SyntaxKind.CloseBraceToken => BuildQuickInfoCloseBrace(token),
+            SyntaxKind.HashToken or SyntaxKind.EndRegionKeyword or SyntaxKind.EndIfKeyword or SyntaxKind.ElseKeyword or SyntaxKind.ElifKeyword or SyntaxKind.EndOfDirectiveToken => BuildQuickInfoDirectives(token, cancellationToken),
+            _ => null,
+        };
     }
 
     private static QuickInfoItem? BuildQuickInfoCloseBrace(SyntaxToken token)

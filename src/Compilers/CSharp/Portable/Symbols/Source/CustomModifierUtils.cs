@@ -26,7 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             out ImmutableArray<ParameterSymbol> parameters,
             bool alsoCopyParamsModifier) // Last since always named.
         {
-            Debug.Assert((object)sourceMethod != null);
+            Debug.Assert(sourceMethod is not null);
 
             // Assert: none of the method's type parameters have been substituted
             Debug.Assert((object)sourceMethod == sourceMethod.ConstructedFrom);
@@ -77,13 +77,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // NOTE: refKind is irrelevant here since we are just encoding/decoding the type.
             ImmutableArray<bool> flags = CSharpCompilation.DynamicTransformsEncoder.EncodeWithoutCustomModifierFlags(destinationType, refKind);
             TypeSymbol resultType = DynamicTypeDecoder.TransformTypeWithoutCustomModifierFlags(sourceType, containingAssembly, refKind, flags);
-
-            if (!containingAssembly.RuntimeSupportsNumericIntPtr)
-            {
-                var builder = ArrayBuilder<bool>.GetInstance();
-                CSharpCompilation.NativeIntegerTransformsEncoder.Encode(builder, destinationType);
-                resultType = NativeIntegerTypeDecoder.TransformType(resultType, builder.ToImmutableAndFree());
-            }
 
             if (destinationType.ContainsTuple() && !sourceType.Equals(destinationType, TypeCompareKind.IgnoreCustomModifiersAndArraySizesAndLowerBounds | TypeCompareKind.IgnoreNullableModifiersForReferenceTypes | TypeCompareKind.IgnoreDynamic))
             {

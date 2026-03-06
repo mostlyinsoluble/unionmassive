@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.Emit
         {
             get
             {
-                return default(TypeDefinitionHandle);
+                return default;
             }
         }
 

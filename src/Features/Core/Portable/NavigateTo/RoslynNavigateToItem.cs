@@ -179,19 +179,11 @@ internal readonly struct RoslynNavigateToItem(
 
         private static bool IsNamedType(in RoslynNavigateToItem item)
         {
-            switch (item.DeclaredSymbolInfo.Kind)
+            return item.DeclaredSymbolInfo.Kind switch
             {
-                case DeclaredSymbolInfoKind.Class:
-                case DeclaredSymbolInfoKind.Record:
-                case DeclaredSymbolInfoKind.Enum:
-                case DeclaredSymbolInfoKind.Interface:
-                case DeclaredSymbolInfoKind.Module:
-                case DeclaredSymbolInfoKind.Struct:
-                case DeclaredSymbolInfoKind.RecordStruct:
-                    return true;
-                default:
-                    return false;
-            }
+                DeclaredSymbolInfoKind.Class or DeclaredSymbolInfoKind.Record or DeclaredSymbolInfoKind.Enum or DeclaredSymbolInfoKind.Interface or DeclaredSymbolInfoKind.Module or DeclaredSymbolInfoKind.Struct or DeclaredSymbolInfoKind.RecordStruct => true,
+                _ => false,
+            };
         }
 
         string INavigateToSearchResult.Kind => _item.Kind;

@@ -144,44 +144,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private XmlNodeSyntax ParseXmlNode()
         {
-            switch (this.CurrentToken.Kind)
+            return CurrentToken.Kind switch
             {
-                case SyntaxKind.XmlTextLiteralToken:
-                case SyntaxKind.XmlTextLiteralNewLineToken:
-                case SyntaxKind.XmlEntityLiteralToken:
-                    return this.ParseXmlText();
-                case SyntaxKind.LessThanToken:
-                    return this.ParseXmlElement();
-                case SyntaxKind.XmlCommentStartToken:
-                    return this.ParseXmlComment();
-                case SyntaxKind.XmlCDataStartToken:
-                    return this.ParseXmlCDataSection();
-                case SyntaxKind.XmlProcessingInstructionStartToken:
-                    return this.ParseXmlProcessingInstruction();
-                case SyntaxKind.EndOfDocumentationCommentToken:
-                    return null;
-                default:
-                    // This means we have some unrecognized token. We probably need to give an error.
-                    return null;
-            }
+                SyntaxKind.XmlTextLiteralToken or SyntaxKind.XmlTextLiteralNewLineToken or SyntaxKind.XmlEntityLiteralToken => this.ParseXmlText(),
+                SyntaxKind.LessThanToken => this.ParseXmlElement(),
+                SyntaxKind.XmlCommentStartToken => this.ParseXmlComment(),
+                SyntaxKind.XmlCDataStartToken => this.ParseXmlCDataSection(),
+                SyntaxKind.XmlProcessingInstructionStartToken => this.ParseXmlProcessingInstruction(),
+                SyntaxKind.EndOfDocumentationCommentToken => null,
+                _ => null,// This means we have some unrecognized token. We probably need to give an error.
+            };
         }
 
         private bool IsXmlNodeStartOrStop()
         {
-            switch (this.CurrentToken.Kind)
+            return CurrentToken.Kind switch
             {
-                case SyntaxKind.LessThanToken:
-                case SyntaxKind.LessThanSlashToken:
-                case SyntaxKind.XmlCommentStartToken:
-                case SyntaxKind.XmlCDataStartToken:
-                case SyntaxKind.XmlProcessingInstructionStartToken:
-                case SyntaxKind.GreaterThanToken:
-                case SyntaxKind.SlashGreaterThanToken:
-                case SyntaxKind.EndOfDocumentationCommentToken:
-                    return true;
-                default:
-                    return false;
-            }
+                SyntaxKind.LessThanToken or SyntaxKind.LessThanSlashToken or SyntaxKind.XmlCommentStartToken or SyntaxKind.XmlCDataStartToken or SyntaxKind.XmlProcessingInstructionStartToken or SyntaxKind.GreaterThanToken or SyntaxKind.SlashGreaterThanToken or SyntaxKind.EndOfDocumentationCommentToken => true,
+                _ => false,
+            };
         }
 
         private XmlNodeSyntax ParseXmlText()
@@ -461,7 +442,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             attrName,
                             equals,
                             SyntaxFactory.MissingToken(SyntaxKind.DoubleQuoteToken),
-                            default(SyntaxList<SyntaxToken>),
+                            default,
                             SyntaxFactory.MissingToken(SyntaxKind.DoubleQuoteToken));
                 }
             }
@@ -473,15 +454,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (hasNoPrefix && DocumentationCommentXmlNames.AttributeEquals(attrNameText, DocumentationCommentXmlNames.CrefAttributeName) &&
                 !IsVerbatimCref())
             {
-                CrefSyntax cref;
-                this.ParseCrefAttribute(out startQuote, out cref, out endQuote);
+                this.ParseCrefAttribute(out startQuote, out CrefSyntax cref, out endQuote);
                 return SyntaxFactory.XmlCrefAttribute(attrName, equals, startQuote, cref, endQuote);
             }
             else if (hasNoPrefix && DocumentationCommentXmlNames.AttributeEquals(attrNameText, DocumentationCommentXmlNames.NameAttributeName) &&
                 XmlElementSupportsNameAttribute(elementName))
             {
-                IdentifierNameSyntax identifier;
-                this.ParseNameAttribute(out startQuote, out identifier, out endQuote);
+                this.ParseNameAttribute(out startQuote, out IdentifierNameSyntax identifier, out endQuote);
                 return SyntaxFactory.XmlNameAttribute(attrName, equals, startQuote, identifier, endQuote);
             }
             else
@@ -797,14 +776,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 return crefInfo;
             }
 
-            switch (expected)
+            return expected switch
             {
-                case SyntaxKind.IdentifierToken:
-                    return new XmlSyntaxDiagnosticInfo(offset, length, XmlParseErrorCode.XML_ExpectedIdentifier);
-
-                default:
-                    return new XmlSyntaxDiagnosticInfo(offset, length, XmlParseErrorCode.XML_InvalidToken, SyntaxFacts.GetText(actual));
-            }
+                SyntaxKind.IdentifierToken => new XmlSyntaxDiagnosticInfo(offset, length, XmlParseErrorCode.XML_ExpectedIdentifier),
+                _ => new XmlSyntaxDiagnosticInfo(offset, length, XmlParseErrorCode.XML_InvalidToken, SyntaxFacts.GetText(actual)),
+            };
         }
 
         protected override SyntaxDiagnosticInfo GetExpectedMissingNodeOrTokenError(
@@ -818,14 +794,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 return base.GetExpectedMissingNodeOrTokenError(missingNodeOrToken, expected, actual);
             }
 
-            switch (expected)
+            return expected switch
             {
-                case SyntaxKind.IdentifierToken:
-                    return new XmlSyntaxDiagnosticInfo(XmlParseErrorCode.XML_ExpectedIdentifier);
-
-                default:
-                    return new XmlSyntaxDiagnosticInfo(XmlParseErrorCode.XML_InvalidToken, SyntaxFacts.GetText(actual));
-            }
+                SyntaxKind.IdentifierToken => new XmlSyntaxDiagnosticInfo(XmlParseErrorCode.XML_ExpectedIdentifier),
+                _ => new XmlSyntaxDiagnosticInfo(XmlParseErrorCode.XML_InvalidToken, SyntaxFacts.GetText(actual)),
+            };
         }
 
         private TNode WithXmlParseError<TNode>(TNode node, XmlParseErrorCode code) where TNode : CSharpSyntaxNode
@@ -937,20 +910,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// </summary>
         private MemberCrefSyntax ParseMemberCref()
         {
-            switch (CurrentToken.Kind)
+            return CurrentToken.Kind switch
             {
-                case SyntaxKind.ThisKeyword:
-                    return ParseIndexerMemberCref();
-                case SyntaxKind.OperatorKeyword:
-                    return ParseOperatorMemberCref();
-                case SyntaxKind.ExplicitKeyword:
-                case SyntaxKind.ImplicitKeyword:
-                    return ParseConversionOperatorMemberCref();
-                case SyntaxKind.IdentifierToken when CurrentToken.ContextualKind == SyntaxKind.ExtensionKeyword:
-                    return ParsePossibleExtensionMemberCref();
-                default:
-                    return ParseNameMemberCref();
-            }
+                SyntaxKind.ThisKeyword => ParseIndexerMemberCref(),
+                SyntaxKind.OperatorKeyword => ParseOperatorMemberCref(),
+                SyntaxKind.ExplicitKeyword or SyntaxKind.ImplicitKeyword => ParseConversionOperatorMemberCref(),
+                SyntaxKind.IdentifierToken when CurrentToken.ContextualKind == SyntaxKind.ExtensionKeyword => ParsePossibleExtensionMemberCref(),
+                _ => ParseNameMemberCref(),
+            };
         }
 
         /// <summary>
@@ -1064,8 +1031,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                                 operatorToken.Text + operatorToken2.Text + operatorToken3.Text,
                                 operatorToken.ValueText + operatorToken2.ValueText + operatorToken3.ValueText,
                                 operatorToken3.GetTrailingTrivia());
-
-                            operatorToken = CheckFeatureAvailability(operatorToken, MessageID.IDS_FeatureUnsignedRightShift, forceWarning: true);
                         }
                         else
                         {
@@ -1075,7 +1040,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                                 operatorToken.Text + operatorToken2.Text + operatorToken3.Text,
                                 operatorToken.ValueText + operatorToken2.ValueText + operatorToken3.ValueText,
                                 operatorToken3.GetTrailingTrivia());
-                            operatorToken = CheckFeatureAvailability(operatorToken, MessageID.IDS_FeatureUserDefinedCompoundAssignmentOperators, forceWarning: true);
                         }
                     }
                     else
@@ -1107,7 +1071,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         operatorToken.Text + operatorToken2.Text,
                         operatorToken.ValueText + operatorToken2.ValueText,
                         operatorToken2.GetTrailingTrivia());
-                    operatorToken = CheckFeatureAvailability(operatorToken, MessageID.IDS_FeatureUserDefinedCompoundAssignmentOperators, forceWarning: true);
                 }
             }
 
@@ -1166,7 +1129,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         operatorToken.Text + operatorToken2.Text,
                         operatorToken.ValueText + operatorToken2.ValueText,
                         operatorToken2.GetTrailingTrivia());
-                    operatorToken = CheckFeatureAvailability(operatorToken, MessageID.IDS_FeatureUserDefinedCompoundAssignmentOperators, forceWarning: true);
                 }
 
                 return operatorToken;
@@ -1175,28 +1137,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private SyntaxToken TryEatCheckedKeyword(bool isConversion, ref SyntaxToken operatorKeyword)
         {
-            SyntaxToken checkedKeyword = tryEatCheckedOrHandleUnchecked(ref operatorKeyword);
-
-            if (checkedKeyword is not null &&
-                (isConversion || SyntaxFacts.IsAnyOverloadableOperator(CurrentToken.Kind)))
+            if (CurrentToken.Kind == SyntaxKind.UncheckedKeyword)
             {
-                checkedKeyword = CheckFeatureAvailability(checkedKeyword, MessageID.IDS_FeatureCheckedUserDefinedOperators, forceWarning: true);
+                // if we encounter `operator unchecked`, we place the `unchecked` as skipped trivia on `operator`
+                var misplacedToken = AddErrorAsWarning(EatToken(), ErrorCode.ERR_MisplacedUnchecked);
+                operatorKeyword = AddTrailingSkippedSyntax(operatorKeyword, misplacedToken);
+                return null;
             }
 
-            return checkedKeyword;
-
-            SyntaxToken tryEatCheckedOrHandleUnchecked(ref SyntaxToken operatorKeyword)
-            {
-                if (CurrentToken.Kind == SyntaxKind.UncheckedKeyword)
-                {
-                    // if we encounter `operator unchecked`, we place the `unchecked` as skipped trivia on `operator`
-                    var misplacedToken = AddErrorAsWarning(EatToken(), ErrorCode.ERR_MisplacedUnchecked);
-                    operatorKeyword = AddTrailingSkippedSyntax(operatorKeyword, misplacedToken);
-                    return null;
-                }
-
-                return TryEatToken(SyntaxKind.CheckedKeyword);
-            }
+            return TryEatToken(SyntaxKind.CheckedKeyword);
         }
 
         /// <summary>
@@ -1293,16 +1242,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private bool IsPossibleCrefParameter()
         {
             SyntaxKind kind = this.CurrentToken.Kind;
-            switch (kind)
+            return kind switch
             {
-                case SyntaxKind.RefKeyword:
-                case SyntaxKind.OutKeyword:
-                case SyntaxKind.InKeyword:
-                case SyntaxKind.IdentifierToken:
-                    return true;
-                default:
-                    return SyntaxFacts.IsPredefinedType(kind);
-            }
+                SyntaxKind.RefKeyword or SyntaxKind.OutKeyword or SyntaxKind.InKeyword or SyntaxKind.IdentifierToken => true,
+                _ => SyntaxFacts.IsPredefinedType(kind),
+            };
         }
 
         /// <summary>
@@ -1395,8 +1339,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 SyntaxToken close = EatToken(SyntaxKind.GreaterThanToken);
 
-                open = CheckFeatureAvailability(open, MessageID.IDS_FeatureGenerics, forceWarning: true);
-
                 return SyntaxFactory.TypeArgumentList(open, list, close);
             }
             finally
@@ -1458,8 +1400,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 {
                     alias = ConvertToKeyword(alias);
                 }
-
-                alias = CheckFeatureAvailability(alias, MessageID.IDS_FeatureGlobalNamespace, forceWarning: true);
 
                 SyntaxToken colonColon = EatToken();
                 SimpleNameSyntax name = ParseCrefName(typeArgumentsMustBeIdentifiers);
@@ -1587,23 +1527,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             get
             {
-                switch (CurrentToken.Kind)
+                return CurrentToken.Kind switch
                 {
-                    case SyntaxKind.SingleQuoteToken:
-                        return (this.Mode & LexerMode.XmlCrefQuote) == LexerMode.XmlCrefQuote;
-                    case SyntaxKind.DoubleQuoteToken:
-                        return (this.Mode & LexerMode.XmlCrefDoubleQuote) == LexerMode.XmlCrefDoubleQuote;
-                    case SyntaxKind.EndOfFileToken:
-                    case SyntaxKind.EndOfDocumentationCommentToken:
-                        return true;
-                    case SyntaxKind.BadToken:
-                        // If it's a real '<' (not &lt;, etc), then we assume it's the beginning
-                        // of the next XML element.
-                        return CurrentToken.Text == SyntaxFacts.GetText(SyntaxKind.LessThanToken) ||
-                            IsNonAsciiQuotationMark(CurrentToken);
-                    default:
-                        return false;
-                }
+                    SyntaxKind.SingleQuoteToken => (this.Mode & LexerMode.XmlCrefQuote) == LexerMode.XmlCrefQuote,
+                    SyntaxKind.DoubleQuoteToken => (this.Mode & LexerMode.XmlCrefDoubleQuote) == LexerMode.XmlCrefDoubleQuote,
+                    SyntaxKind.EndOfFileToken or SyntaxKind.EndOfDocumentationCommentToken => true,
+                    SyntaxKind.BadToken => CurrentToken.Text == SyntaxFacts.GetText(SyntaxKind.LessThanToken) ||
+                                                IsNonAsciiQuotationMark(CurrentToken),// If it's a real '<' (not &lt;, etc), then we assume it's the beginning
+                                                                                      // of the next XML element.
+                    _ => false,
+                };
             }
         }
 
@@ -1614,14 +1547,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             get
             {
-                switch (this.Mode & (LexerMode.XmlCrefDoubleQuote | LexerMode.XmlCrefQuote))
+                return (this.Mode & (LexerMode.XmlCrefDoubleQuote | LexerMode.XmlCrefQuote)) switch
                 {
-                    case LexerMode.XmlCrefQuote:
-                    case LexerMode.XmlCrefDoubleQuote:
-                        return true;
-                    default:
-                        return false;
-                }
+                    LexerMode.XmlCrefQuote or LexerMode.XmlCrefDoubleQuote => true,
+                    _ => false,
+                };
             }
         }
 
@@ -1655,23 +1585,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             get
             {
-                switch (CurrentToken.Kind)
+                return CurrentToken.Kind switch
                 {
-                    case SyntaxKind.SingleQuoteToken:
-                        return (this.Mode & LexerMode.XmlNameQuote) == LexerMode.XmlNameQuote;
-                    case SyntaxKind.DoubleQuoteToken:
-                        return (this.Mode & LexerMode.XmlNameDoubleQuote) == LexerMode.XmlNameDoubleQuote;
-                    case SyntaxKind.EndOfFileToken:
-                    case SyntaxKind.EndOfDocumentationCommentToken:
-                        return true;
-                    case SyntaxKind.BadToken:
-                        // If it's a real '<' (not &lt;, etc), then we assume it's the beginning
-                        // of the next XML element.
-                        return CurrentToken.Text == SyntaxFacts.GetText(SyntaxKind.LessThanToken) ||
-                            IsNonAsciiQuotationMark(CurrentToken);
-                    default:
-                        return false;
-                }
+                    SyntaxKind.SingleQuoteToken => (this.Mode & LexerMode.XmlNameQuote) == LexerMode.XmlNameQuote,
+                    SyntaxKind.DoubleQuoteToken => (this.Mode & LexerMode.XmlNameDoubleQuote) == LexerMode.XmlNameDoubleQuote,
+                    SyntaxKind.EndOfFileToken or SyntaxKind.EndOfDocumentationCommentToken => true,
+                    SyntaxKind.BadToken => CurrentToken.Text == SyntaxFacts.GetText(SyntaxKind.LessThanToken) ||
+                                                IsNonAsciiQuotationMark(CurrentToken),// If it's a real '<' (not &lt;, etc), then we assume it's the beginning
+                                                                                      // of the next XML element.
+                    _ => false,
+                };
             }
         }
 

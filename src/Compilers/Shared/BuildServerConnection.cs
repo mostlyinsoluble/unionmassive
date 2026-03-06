@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// <summary>
         /// Determines if the compiler server is supported in this environment.
         /// </summary>
-        internal static bool IsCompilerServerSupported => GetPipeName("") is object;
+        internal static bool IsCompilerServerSupported => GetPipeName("") is not null;
 
         internal static bool IsBuiltinToolRunningOnCoreClr =>
 #if NETFRAMEWORK && SDK_TASK
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
             string? libDirectory,
             string? compilerHash = null)
         {
-            Debug.Assert(workingDirectory is object);
+            Debug.Assert(workingDirectory is not null);
 
             return BuildRequest.Create(
                 language,
@@ -187,7 +187,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
             ICompilerServerLogger logger,
             CancellationToken cancellationToken)
         {
-            Debug.Assert(pipeName is object);
+            Debug.Assert(pipeName is not null);
 
             using var pipe = await tryConnectToServerAsync(pipeName, timeoutOverride, logger, tryCreateServerFunc, cancellationToken).ConfigureAwait(false);
             if (pipe is null)
@@ -567,7 +567,6 @@ namespace Microsoft.CodeAnalysis.CommandLine
                 startInfo.dwFlags = STARTF_USESTDHANDLES;
                 uint dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW;
 
-                PROCESS_INFORMATION processInfo;
 
                 var builder = new StringBuilder($@"""{serverInfo.processFilePath}"" {serverInfo.commandLineArguments}");
 
@@ -591,7 +590,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
                         lpEnvironment: environmentBlockPtr,
                         lpCurrentDirectory: clientDirectory,
                         lpStartupInfo: ref startInfo,
-                        lpProcessInformation: out processInfo);
+                        lpProcessInformation: out PROCESS_INFORMATION processInfo);
 
                     if (success)
                     {

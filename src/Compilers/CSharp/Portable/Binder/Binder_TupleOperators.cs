@@ -85,7 +85,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol leftType = left.Type;
             TypeSymbol rightType = right.Type;
 
-            if ((object)leftType != null && leftType.IsDynamic() || (object)rightType != null && rightType.IsDynamic())
+            if (leftType is not null && leftType.IsDynamic() || rightType is not null && rightType.IsDynamic())
             {
                 return BindTupleDynamicBinaryOperatorSingleInfo(node, kind, left, right, diagnostics);
             }
@@ -106,7 +106,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     PrepareBoolConversionAndTruthOperator(binary.Type, node, kind, diagnostics,
                         out BoundExpression conversionIntoBoolOperator, out BoundValuePlaceholder conversionIntoBoolOperatorPlaceholder,
                         out UnaryOperatorSignature boolOperator);
-                    CheckConstraintLanguageVersionAndRuntimeSupportForOperator(node, boolOperator.Method, isUnsignedRightShift: false, boolOperator.ConstrainedToTypeOpt, diagnostics);
+                    CheckConstraintForOperator(node, boolOperator.Method, isUnsignedRightShift: false, boolOperator.ConstrainedToTypeOpt, diagnostics);
 
                     Debug.Assert(!binary.OperatorKind.IsDynamic());
                     return new TupleBinaryOperatorInfo.Single(binary.Left.Type, binary.Right.Type, binary.OperatorKind, binary.BinaryOperatorMethod, binary.ConstrainedToType,
@@ -143,24 +143,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // It was not. Does it implement operator true (or false)?
 
-            UnaryOperatorKind boolOpKind;
-            switch (binaryOperator)
+            var boolOpKind = binaryOperator switch
             {
-                case BinaryOperatorKind.Equal:
-                    boolOpKind = UnaryOperatorKind.False;
-                    break;
-                case BinaryOperatorKind.NotEqual:
-                    boolOpKind = UnaryOperatorKind.True;
-                    break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(binaryOperator);
-            }
-
-            LookupResultKind resultKind;
-            ImmutableArray<MethodSymbol> originalUserDefinedOperators;
+                BinaryOperatorKind.Equal => UnaryOperatorKind.False,
+                BinaryOperatorKind.NotEqual => UnaryOperatorKind.True,
+                _ => throw ExceptionUtilities.UnexpectedValue(binaryOperator),
+            };
             BoundExpression comparisonResult = new BoundTupleOperandPlaceholder(node, type);
             OperatorResolutionForReporting discardedOperatorResolutionForReporting = default;
-            UnaryOperatorAnalysisResult best = this.UnaryOperatorOverloadResolution(boolOpKind, comparisonResult, node, diagnostics, ref discardedOperatorResolutionForReporting, out resultKind, out originalUserDefinedOperators);
+            UnaryOperatorAnalysisResult best = this.UnaryOperatorOverloadResolution(boolOpKind, comparisonResult, node, diagnostics, ref discardedOperatorResolutionForReporting, out LookupResultKind resultKind, out ImmutableArray<MethodSymbol> originalUserDefinedOperators);
             discardedOperatorResolutionForReporting.Free();
 
             if (best.HasValue)
@@ -184,7 +175,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression left, BoundExpression right, BindingDiagnosticBag diagnostics)
         {
             // This method binds binary == and != operators where one or both of the operands are dynamic.
-            Debug.Assert((object)left.Type != null && left.Type.IsDynamic() || (object)right.Type != null && right.Type.IsDynamic());
+            Debug.Assert(left.Type is not null && left.Type.IsDynamic() || right.Type is not null && right.Type.IsDynamic());
 
             bool hasError = false;
             if (!IsLegalDynamicOperand(left) || !IsLegalDynamicOperand(right))
@@ -221,8 +212,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Aside from default (which we fixed or ruled out above) and tuple literals,
             // we must have typed expressions at this point
-            Debug.Assert((object)left.Type != null || left.Kind == BoundKind.TupleLiteral);
-            Debug.Assert((object)right.Type != null || right.Kind == BoundKind.TupleLiteral);
+            Debug.Assert(left.Type is not null || left.Kind == BoundKind.TupleLiteral);
+            Debug.Assert(right.Type is not null || right.Kind == BoundKind.TupleLiteral);
 
             int leftCardinality = GetTupleCardinality(left);
             int rightCardinality = GetTupleCardinality(right);

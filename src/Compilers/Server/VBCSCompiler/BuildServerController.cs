@@ -36,9 +36,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
 
         internal int Run(string[] args)
         {
-            string? pipeName;
-            bool shutdown;
-            if (!ParseCommandLine(args, out pipeName, out shutdown))
+            if (!ParseCommandLine(args, out string? pipeName, out bool shutdown))
             {
                 return CommonCompiler.Failed;
             }
@@ -117,9 +115,8 @@ namespace Microsoft.CodeAnalysis.CompilerServer
             // pipename and consuming excess resources. If someone else holds the mutex
             // exit immediately with a non-zero exit code
             var mutexName = BuildServerConnection.GetServerMutexName(pipeName);
-            bool createdNew;
             using (var serverMutex = BuildServerConnection.OpenOrCreateMutex(name: mutexName,
-                                                                             createdNew: out createdNew))
+                                                                             createdNew: out bool createdNew))
             {
                 if (!createdNew)
                 {

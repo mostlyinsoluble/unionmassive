@@ -84,7 +84,7 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 
         protected override async Task RunImplAsync(CancellationToken cancellationToken = default)
         {
-            if (DiagnosticSelector is object)
+            if (DiagnosticSelector is not null)
             {
                 Assert.True(CodeFixTestBehaviors.HasFlag(Testing.CodeFixTestBehaviors.FixOne), $"'{nameof(DiagnosticSelector)}' can only be used with '{nameof(Testing.CodeFixTestBehaviors)}.{nameof(Testing.CodeFixTestBehaviors.FixOne)}'");
             }

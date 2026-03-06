@@ -1615,7 +1615,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.LanguageService
         End Function
 
         Public Function SupportsIsNotTypeExpression(options As ParseOptions) As Boolean Implements ISyntaxFacts.SupportsIsNotTypeExpression
-            Return DirectCast(options, VisualBasicParseOptions).LanguageVersion >= LanguageVersion.VisualBasic14
+            Return True
         End Function
 
         Public Function IsAnyPattern(node As SyntaxNode) As Boolean Implements ISyntaxFacts.IsAnyPattern

@@ -49,8 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (syntax.Identifier.Text == "extension")
                 {
-                    bool reported = !MessageID.IDS_FeatureExtensions.CheckFeatureAvailability(diagnostics, syntax);
-                    Debug.Assert(reported);
+                    Debug.Assert(false);
                 }
                 else
                 {
@@ -77,11 +76,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (IsPartialDefinition && syntax.Initializer is { } initializer)
             {
                 diagnostics.Add(ErrorCode.ERR_PartialConstructorInitializer, initializer, this);
-            }
-
-            if (methodKind == MethodKind.StaticConstructor)
-            {
-                CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasAnyBody, diagnostics);
             }
 
             ModifierUtils.CheckAccessibility(this.DeclarationModifiers, this, isExplicitInterfaceImplementation: false, diagnostics, location);

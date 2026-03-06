@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 enclosing = new ExpressionVariableBinder(syntax, enclosing);
 
-                if ((object)binderUpdatedHandler != null)
+                if (binderUpdatedHandler is not null)
                 {
                     binderUpdatedHandler(enclosing, syntax);
                 }
@@ -92,10 +92,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (syntax.Kind() != SyntaxKind.Block && (statement = syntax as StatementSyntax) != null)
             {
-                CSharpSyntaxNode embeddedScopeDesignator;
-                enclosing = builder.GetBinderForPossibleEmbeddedStatement(statement, enclosing, out embeddedScopeDesignator);
+                enclosing = builder.GetBinderForPossibleEmbeddedStatement(statement, enclosing, out CSharpSyntaxNode embeddedScopeDesignator);
 
-                if ((object)binderUpdatedHandler != null)
+                if (binderUpdatedHandler is not null)
                 {
                     binderUpdatedHandler(enclosing, embeddedScopeDesignator);
                 }
@@ -109,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                if ((object)binderUpdatedHandler != null)
+                if (binderUpdatedHandler is not null)
                 {
                     binderUpdatedHandler(enclosing, null);
                 }
@@ -133,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private LocalBinderFactory(Symbol containingMemberOrLambda, SyntaxNode root, Binder enclosing)
         {
-            Debug.Assert((object)containingMemberOrLambda != null);
+            Debug.Assert(containingMemberOrLambda is not null);
             Debug.Assert(containingMemberOrLambda.Kind != SymbolKind.Local && containingMemberOrLambda.Kind != SymbolKind.RangeVariable && containingMemberOrLambda.Kind != SymbolKind.Parameter);
 
             _map = new SmallDictionary<SyntaxNode, Binder>(ReferenceEqualityComparer.Instance);
@@ -172,7 +171,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void VisitTypeDeclaration(TypeDeclarationSyntax node)
         {
-            Debug.Assert(node.ParameterList is object);
+            Debug.Assert(node.ParameterList is not null);
             Debug.Assert(node.Kind() is SyntaxKind.RecordDeclaration or SyntaxKind.ClassDeclaration);
 
             Visit(node.PrimaryConstructorBaseTypeIfClass);
@@ -407,7 +406,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Binder binder = _enclosing;
             LocalFunctionSymbol match = FindLocalFunction(node, _enclosing);
 
-            if ((object)match != null)
+            if (match is not null)
             {
                 _containingMemberOrLambda = match;
 
@@ -915,8 +914,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Visit(node.Block, _enclosing.WithAdditionalFlags(additionalFlags));
 
-            Binder finallyBinder;
-            Debug.Assert(_map.TryGetValue(node.Block, out finallyBinder) && finallyBinder.Flags.Includes(BinderFlags.InFinallyBlock));
+            Debug.Assert(_map.TryGetValue(node.Block, out Binder finallyBinder) && finallyBinder.Flags.Includes(BinderFlags.InFinallyBlock));
         }
 
         public override void VisitYieldStatement(YieldStatementSyntax node)
@@ -1019,9 +1017,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // the embedded statement immediately, and then overwriting it with one constructed
             // in the usual way, if there is such a binder.  That's why we're using update,
             // rather than add, semantics.
-            Binder existing;
             // Note that a lock statement has two outer binders (a second one for pattern variable scope)
-            Debug.Assert(!_map.TryGetValue(node, out existing) || existing == binder || existing == binder.Next || existing == binder.Next?.Next);
+            Debug.Assert(!_map.TryGetValue(node, out Binder existing) || existing == binder || existing == binder.Next || existing == binder.Next?.Next);
 
             _map[node] = binder;
         }
@@ -1067,13 +1064,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private Binder GetBinderForPossibleEmbeddedStatement(StatementSyntax statement, Binder enclosing)
         {
-            CSharpSyntaxNode embeddedScopeDesignator;
             // Some statements by default do not introduce its own scope for locals.
             // For example: Expression Statement, Return Statement, etc. However,
             // when a statement like that is an embedded statement (like IfStatementSyntax.Statement),
             // then it should introduce a scope for locals declared within it. Here we are detecting
             // such statements and creating a binder that should own the scope.
-            enclosing = GetBinderForPossibleEmbeddedStatement(statement, enclosing, out embeddedScopeDesignator);
+            enclosing = GetBinderForPossibleEmbeddedStatement(statement, enclosing, out CSharpSyntaxNode embeddedScopeDesignator);
 
             if (embeddedScopeDesignator != null)
             {

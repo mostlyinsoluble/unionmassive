@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isMethodGroupConversion,
             bool expanded)
         {
-            Debug.Assert((object)symbol != null);
+            Debug.Assert(symbol is not null);
             Debug.Assert(arguments != null);
 
             ImmutableArray<ParameterSymbol> parameters = symbol.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
@@ -95,9 +95,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             for (int argumentPosition = 0; argumentPosition < argumentCount; ++argumentPosition)
             {
                 // We use -1 as a sentinel to mean that no parameter was found that corresponded to this argument.
-                bool isNamedArgument;
                 int parameterPosition = CorrespondsToAnyParameter(parameters, expanded, arguments, argumentPosition,
-                    isVararg, out isNamedArgument, ref seenNamedParams, ref seenOutOfPositionNamedArgument) ?? -1;
+                    isVararg, out bool isNamedArgument, ref seenNamedParams, ref seenOutOfPositionNamedArgument) ?? -1;
 
                 if (parameterPosition == -1 && unmatchedArgumentIndex == null)
                 {
@@ -382,7 +381,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // A null map means that every argument in the argument list corresponds exactly to
             // the same position in the formal parameter list.
-            return ArgumentAnalysisResult.NormalForm(default(ImmutableArray<int>));
+            return ArgumentAnalysisResult.NormalForm(default);
         }
 
         private static bool CanBeOptional(ParameterSymbol parameter, bool isMethodGroupConversion)

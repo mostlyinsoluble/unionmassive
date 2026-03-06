@@ -42,7 +42,7 @@ namespace Roslyn.Test.Utilities
                     var pdbReader = new MetadataReader(metadata, size);
 
                     ImmutableArray<byte> GetCdiBytes(Guid kind)
-                        => TryGetCustomDebugInformation(pdbReader, handle, kind, out var info) ? pdbReader.GetBlobContent(info.Value) : default(ImmutableArray<byte>);
+                        => TryGetCustomDebugInformation(pdbReader, handle, kind, out var info) ? pdbReader.GetBlobContent(info.Value) : default;
 
                     return EditAndContinueMethodDebugInformation.Create(
                         compressedSlotMap: GetCdiBytes(PortableCustomDebugInfoKinds.EncLocalSlotMap),
@@ -54,7 +54,7 @@ namespace Roslyn.Test.Utilities
             var cdi = CustomDebugInfoUtilities.GetCustomDebugInfoBytes(symReader, handle, methodVersion: 1);
             if (cdi == null)
             {
-                return EditAndContinueMethodDebugInformation.Create(default(ImmutableArray<byte>), default(ImmutableArray<byte>));
+                return EditAndContinueMethodDebugInformation.Create(default, default);
             }
 
             return GetEncMethodDebugInfo(cdi);
@@ -64,7 +64,7 @@ namespace Roslyn.Test.Utilities
         private static bool TryGetCustomDebugInformation(MetadataReader reader, EntityHandle handle, Guid kind, out CustomDebugInformation customDebugInfo)
         {
             bool foundAny = false;
-            customDebugInfo = default(CustomDebugInformation);
+            customDebugInfo = default;
             foreach (var infoHandle in reader.GetCustomDebugInformation(handle))
             {
                 var info = reader.GetCustomDebugInformation(infoHandle);

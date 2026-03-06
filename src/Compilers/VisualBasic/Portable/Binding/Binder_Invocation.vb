@@ -2274,7 +2274,7 @@ ProduceBoundNode:
                     Dim method = DirectCast(candidate.UnderlyingSymbol, MethodSymbol)
                     ' TODO: Dev10 uses the location of the type parameter or argument that
                     ' violated the constraint, rather than  the entire invocation expression.
-                    Dim succeeded = method.CheckConstraints(Compilation.LanguageVersion, diagnosticLocation, diagnostics, template:=GetNewCompoundUseSiteInfo(diagnostics))
+                    Dim succeeded = method.CheckConstraints(diagnosticLocation, diagnostics, template:=GetNewCompoundUseSiteInfo(diagnostics))
                     Debug.Assert(Not succeeded)
                     Return
                 End If
@@ -2893,18 +2893,6 @@ ProduceBoundNode:
                                                           outConversion, outPlaceholder,
                                                           targetType, copyBackExpression.HasErrors).MakeCompilerGenerated()
             Else
-                Dim propertyAccess = TryCast(argument, BoundPropertyAccess)
-
-                If propertyAccess IsNot Nothing AndAlso propertyAccess.AccessKind <> PropertyAccessKind.Get AndAlso
-                   propertyAccess.PropertySymbol.SetMethod?.IsInitOnly Then
-
-                    Debug.Assert(Not propertyAccess.IsWriteable) ' Used to be writable prior to VB 16.9, which caused a use-site error while binding an assignment above.
-                    InternalSyntax.Parser.CheckFeatureAvailability(diagnostics,
-                                                                   argument.Syntax.Location,
-                                                                   DirectCast(argument.Syntax.SyntaxTree.Options, VisualBasicParseOptions).LanguageVersion,
-                                                                   InternalSyntax.Feature.InitOnlySettersUsage)
-                End If
-
                 ' Need to allocate a temp of the target type,
                 ' init it with argument's value,
                 ' pass it ByRef. Code gen will do this.

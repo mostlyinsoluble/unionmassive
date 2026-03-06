@@ -18,8 +18,6 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private BoundExpression BindIsPatternExpression(IsPatternExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeaturePatternMatching.CheckFeatureAvailability(diagnostics, node.IsKeyword);
-
             BoundExpression expression = BindRValueWithoutTargetType(node.Expression, diagnostics);
             bool hasErrors = IsOperandErrors(node, ref expression, diagnostics);
             TypeSymbol? expressionType = expression.Type;
@@ -64,7 +62,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!constantResult)
                 {
-                    Debug.Assert(expression.Type is object);
+                    Debug.Assert(expression.Type is not null);
                     diagnostics.Add(ErrorCode.ERR_IsPatternImpossible, node.Location, expression.Type);
                     hasErrors = true;
                     wasReported = true;
@@ -82,7 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         case BoundNegatedPattern _:
                         case BoundBinaryPattern _:
                         case BoundListPattern:
-                            Debug.Assert(expression.Type is object);
+                            Debug.Assert(expression.Type is not null);
                             diagnostics.Add(ErrorCode.WRN_IsPatternAlways, node.Location, expression.Type);
                             wasReported = true;
                             break;
@@ -128,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            if (!wasReported && diagnostics.AccumulatesDiagnostics && DecisionDagBuilder.EnableRedundantPatternsCheck(this.Compilation))
+            if (!wasReported && diagnostics.AccumulatesDiagnostics)
             {
                 DecisionDagBuilder.CheckRedundantPatternsForIsPattern(this.Compilation, pattern.Syntax, expression, pattern, diagnostics);
             }
@@ -155,8 +153,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundExpression BindSwitchExpression(SwitchExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
             RoslynDebug.Assert(node is not null);
-
-            MessageID.IDS_FeatureRecursivePatterns.CheckFeatureAvailability(diagnostics, node.SwitchKeyword);
 
             Binder? switchBinder = this.GetBinder(node);
             RoslynDebug.Assert(switchBinder is { });
@@ -206,7 +202,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool underIsPattern)
         {
-            MessageID.IDS_FeatureParenthesizedPattern.CheckFeatureAvailability(diagnostics, node.OpenParenToken);
             return BindPattern(node.Pattern, inputType, permitDesignations, hasErrors, diagnostics, underIsPattern);
         }
 
@@ -304,8 +299,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasErrors,
             BindingDiagnosticBag diagnostics)
         {
-            CheckFeatureAvailability(node, MessageID.IDS_FeatureListPattern, diagnostics);
-
             TypeSymbol elementType;
             BoundExpression? indexerAccess;
             BoundExpression? lengthAccess;
@@ -412,7 +405,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static BoundPattern BindDiscardPattern(DiscardPatternSyntax node, TypeSymbol inputType, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureRecursivePatterns.CheckFeatureAvailability(diagnostics, node);
             return new BoundDiscardPattern(node, inputType: inputType, narrowedType: inputType);
         }
 
@@ -453,9 +445,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                if (!hasErrors)
-                    CheckFeatureAvailability(innerExpression, MessageID.IDS_FeatureTypePattern, diagnostics);
-
                 var boundType = (BoundTypeExpression)convertedExpression;
                 bool isExplicitNotNullTest = boundType.Type.SpecialType == SpecialType.System_Object;
                 return new BoundTypePattern(node, boundType, isExplicitNotNullTest, inputType, boundType.Type, hasErrors);
@@ -581,10 +570,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     hasErrors = true;
                 }
-                else if (inputType.IsPointerType())
-                {
-                    CheckFeatureAvailability(patternExpression, MessageID.IDS_FeatureNullPointerConstantPattern, diagnostics);
-                }
             }
 
             if (convertedExpression.Type is null && constantValueOpt != ConstantValue.Null)
@@ -613,7 +598,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 convertedExpression = expression;
                 // If the expression does not have a constant value, an error will be reported in the caller
-                if (!hasErrors && expression.ConstantValueOpt is object)
+                if (!hasErrors && expression.ConstantValueOpt is not null)
                 {
                     CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
                     if (expression.ConstantValueOpt == ConstantValue.Null)
@@ -637,20 +622,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    if (!hasErrors)
-                    {
-                        var requiredVersion = MessageID.IDS_FeatureRecursivePatterns.RequiredVersion();
-                        patternExpressionConversion = this.Conversions.ClassifyConversionFromExpression(expression, inputType, isChecked: CheckOverflowAtRuntime, ref useSiteInfo);
-                        if (Compilation.LanguageVersion < requiredVersion && !patternExpressionConversion.IsImplicit)
-                        {
-                            diagnostics.Add(ErrorCode.ERR_ConstantPatternVsOpenType,
-                                expression.Syntax.Location, inputType, expression.Display, new CSharpRequiredLanguageVersion(requiredVersion));
-                        }
-                    }
-                    else
-                    {
-                        patternExpressionConversion = Conversion.NoConversion;
-                    }
+                    patternExpressionConversion = hasErrors ? Conversion.NoConversion
+                        : this.Conversions.ClassifyConversionFromExpression(expression, inputType, isChecked: CheckOverflowAtRuntime, ref useSiteInfo);
 
                     diagnostics.Add(node, useSiteInfo);
                 }
@@ -663,19 +636,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (expression.Type?.SpecialType == SpecialType.System_String && inputType.IsSpanOrReadOnlySpanChar())
                 {
-                    if (MessageID.IDS_FeatureSpanCharConstantPattern.CheckFeatureAvailability(diagnostics, Compilation, node.Location))
-                    {
-                        // report missing member and use site diagnostics
-                        bool isReadOnlySpan = inputType.IsReadOnlySpanChar();
-                        _ = GetWellKnownTypeMember(
-                            isReadOnlySpan ? WellKnownMember.System_MemoryExtensions__SequenceEqual_ReadOnlySpan_T : WellKnownMember.System_MemoryExtensions__SequenceEqual_Span_T,
-                            diagnostics,
-                            syntax: node);
-                        _ = GetWellKnownTypeMember(WellKnownMember.System_MemoryExtensions__AsSpan_String, diagnostics, syntax: node);
-                        _ = GetWellKnownTypeMember(isReadOnlySpan ? WellKnownMember.System_ReadOnlySpan_T__get_Length : WellKnownMember.System_Span_T__get_Length,
-                            diagnostics,
-                            syntax: node);
-                    }
+                    // report missing member and use site diagnostics
+                    bool isReadOnlySpan = inputType.IsReadOnlySpanChar();
+                    _ = GetWellKnownTypeMember(
+                        isReadOnlySpan ? WellKnownMember.System_MemoryExtensions__SequenceEqual_ReadOnlySpan_T : WellKnownMember.System_MemoryExtensions__SequenceEqual_Span_T,
+                        diagnostics,
+                        syntax: node);
+                    _ = GetWellKnownTypeMember(WellKnownMember.System_MemoryExtensions__AsSpan_String, diagnostics, syntax: node);
+                    _ = GetWellKnownTypeMember(isReadOnlySpan ? WellKnownMember.System_ReadOnlySpan_T__get_Length : WellKnownMember.System_Span_T__get_Length,
+                        diagnostics,
+                        syntax: node);
 
                     convertedExpression = BindToNaturalType(expression, diagnostics);
 
@@ -736,8 +706,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol patternType,
             BindingDiagnosticBag diagnostics)
         {
-            RoslynDebug.Assert((object)inputType != null);
-            RoslynDebug.Assert((object)patternType != null);
+            RoslynDebug.Assert(inputType is not null);
+            RoslynDebug.Assert(patternType is not null);
 
             if (inputType.IsErrorType() || patternType.IsErrorType())
             {
@@ -777,23 +747,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ConstantValue matchPossible = ExpressionOfTypeMatchesPatternType(
                     Conversions, inputType, patternType, ref useSiteInfo, out Conversion conversion, operandConstantValue: null, operandCouldBeNull: true);
                 diagnostics.Add(typeSyntax, useSiteInfo);
-                if (matchPossible != ConstantValue.False && matchPossible != ConstantValue.Bad)
-                {
-                    if (!conversion.Exists && (inputType.ContainsTypeParameter() || patternType.ContainsTypeParameter()))
-                    {
-                        // permit pattern-matching when one of the types is an open type in C# 7.1.
-                        LanguageVersion requiredVersion = MessageID.IDS_FeatureGenericPatternMatching.RequiredVersion();
-                        if (requiredVersion > Compilation.LanguageVersion)
-                        {
-                            Error(diagnostics, ErrorCode.ERR_PatternWrongGenericTypeInVersion, typeSyntax,
-                                inputType, patternType,
-                                Compilation.LanguageVersion.ToDisplayString(),
-                                new CSharpRequiredLanguageVersion(requiredVersion));
-                            return true;
-                        }
-                    }
-                }
-                else
+                if (matchPossible == ConstantValue.False || matchPossible == ConstantValue.Bad)
                 {
                     Error(diagnostics, ErrorCode.ERR_PatternWrongType, typeSyntax, inputType, patternType);
                     return true;
@@ -820,7 +774,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ConstantValue? operandConstantValue = null,
             bool operandCouldBeNull = false)
         {
-            RoslynDebug.Assert((object)expressionType != null);
+            RoslynDebug.Assert(expressionType is not null);
 
             // Short-circuit a common case.  This also improves recovery for some error
             // cases, e.g. when the type is void.
@@ -896,8 +850,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (localSymbol is { })
                     {
                         RoslynDebug.Assert(ContainingMemberOrLambda is { });
-                        if ((InConstructorInitializer || InFieldInitializer) && ContainingMemberOrLambda.ContainingSymbol.Kind == SymbolKind.NamedType)
-                            CheckFeatureAvailability(designation, MessageID.IDS_FeatureExpressionVariablesInQueriesAndInitializers, diagnostics);
 
                         localSymbol.SetTypeWithAnnotations(declType);
 
@@ -972,8 +924,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasErrors,
             BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureRecursivePatterns.CheckFeatureAvailability(diagnostics, node);
-
             if (inputType.IsPointerOrFunctionPointer())
             {
                 diagnostics.Add(ErrorCode.ERR_PointerTypeInPatternMatching, node.Location);
@@ -1100,8 +1050,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else if (subPattern.ExpressionColon != null)
                     {
-                        MessageID.IDS_FeatureExtendedPropertyPatterns.CheckFeatureAvailability(diagnostics, subPattern.ExpressionColon.ColonToken);
-
                         diagnostics.Add(ErrorCode.ERR_IdentifierExpected, subPattern.ExpressionColon.Expression.Location);
                     }
                 }
@@ -1255,11 +1203,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!declType.IsTupleType);
             Debug.Assert(!IsZeroElementTupleType(declType));
 
-            if (Compilation.LanguageVersion < MessageID.IDS_FeatureRecursivePatterns.RequiredVersion())
-            {
-                return false;
-            }
-
             iTupleType = Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_ITuple);
             if (iTupleType.TypeKind != TypeKind.Interface)
             {
@@ -1336,8 +1279,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasErrors,
             BindingDiagnosticBag diagnostics)
         {
-            if ((inputType.IsPointerOrFunctionPointer() && node.Designation.Kind() == SyntaxKind.ParenthesizedVariableDesignation)
-                || (inputType.IsPointerType() && Compilation.LanguageVersion < MessageID.IDS_FeatureRecursivePatterns.RequiredVersion()))
+            if (inputType.IsPointerOrFunctionPointer() && node.Designation.Kind() == SyntaxKind.ParenthesizedVariableDesignation)
             {
                 diagnostics.Add(ErrorCode.ERR_PointerTypeInPatternMatching, node.Location);
                 hasErrors = true;
@@ -1385,8 +1327,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.ParenthesizedVariableDesignation:
                     {
-                        MessageID.IDS_FeatureRecursivePatterns.CheckFeatureAvailability(diagnostics, node);
-
                         var tupleDesignation = (ParenthesizedVariableDesignationSyntax)node;
                         var subPatterns = ArrayBuilder<BoundPositionalSubpattern>.GetInstance(tupleDesignation.Variables.Count);
                         MethodSymbol? deconstructMethod = null;
@@ -1481,9 +1421,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             var builder = ArrayBuilder<BoundPropertySubpattern>.GetInstance(node.Subpatterns.Count);
             foreach (SubpatternSyntax p in node.Subpatterns)
             {
-                if (p.ExpressionColon is ExpressionColonSyntax)
-                    MessageID.IDS_FeatureExtendedPropertyPatterns.CheckFeatureAvailability(diagnostics, p.ExpressionColon.ColonToken);
-
                 ExpressionSyntax? expr = p.ExpressionColon?.Expression;
                 PatternSyntax pattern = p.Pattern;
                 BoundPropertySubpatternMember? member;
@@ -1568,8 +1505,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 boundLeft: implicitReceiver,
                 rightName: name,
                 rightArity: 0,
-                typeArgumentsSyntax: default(SeparatedSyntaxList<TypeSyntax>),
-                typeArgumentsWithAnnotations: default(ImmutableArray<TypeWithAnnotations>),
+                typeArgumentsSyntax: default,
+                typeArgumentsWithAnnotations: default,
                 invoked: false,
                 indexed: false,
                 diagnostics: diagnostics);
@@ -1629,8 +1566,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasErrors,
             BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureTypePattern.CheckFeatureAvailability(diagnostics, node);
-
             var patternType = BindTypeForPattern(node.Type, inputType, diagnostics, ref hasErrors);
             bool isExplicitNotNullTest = patternType.Type.SpecialType == SpecialType.System_Object;
             return new BoundTypePattern(node, patternType, isExplicitNotNullTest, inputType, patternType.Type, hasErrors);
@@ -1642,8 +1577,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasErrors,
             BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureRelationalPattern.CheckFeatureAvailability(diagnostics, node.OperatorToken);
-
             BoundExpression value = BindExpressionForPattern(inputType, node.Expression, ref hasErrors, diagnostics, out var constantValueOpt, out _, out Conversion patternConversion);
             ExpressionSyntax innerExpression = SkipParensAndNullSuppressions(node.Expression, diagnostics, ref hasErrors);
             var type = value.Type ?? inputType;
@@ -1736,8 +1669,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool underIsPattern)
         {
-            MessageID.IDS_FeatureNotPattern.CheckFeatureAvailability(diagnostics, node.OperatorToken);
-
             bool permitDesignations = underIsPattern; // prevent designators under 'not' except under an is-pattern
             var subPattern = BindPattern(node.Pattern, inputType, permitDesignations, hasErrors, diagnostics, underIsPattern);
             return new BoundNegatedPattern(node, subPattern, inputType: inputType, narrowedType: inputType, hasErrors);
@@ -1800,7 +1731,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (isDisjunction)
                 {
                     Debug.Assert(!permitDesignations);
-                    MessageID.IDS_FeatureOrPattern.CheckFeatureAvailability(diagnostics, node.OperatorToken);
 
                     var right = binder.BindPattern(node.Right, inputType, permitDesignations, hasErrors, diagnostics);
 
@@ -1867,8 +1797,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    MessageID.IDS_FeatureAndPattern.CheckFeatureAvailability(diagnostics, node.OperatorToken);
-
                     var right = binder.BindPattern(node.Right, preboundLeft.NarrowedType, permitDesignations, hasErrors, diagnostics);
                     narrowedTypeCandidates.Clear();
                     narrowedTypeCandidates.Add(right.NarrowedType);

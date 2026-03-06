@@ -30,7 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public WrappedTypeParameterSymbol(TypeParameterSymbol underlyingTypeParameter)
         {
-            Debug.Assert((object)underlyingTypeParameter != null);
+            Debug.Assert(underlyingTypeParameter is not null);
             _underlyingTypeParameter = underlyingTypeParameter;
         }
 
@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return _underlyingTypeParameter.GetDocumentationCommentXml(preferredCulture, expandIncludes, cancellationToken);
         }

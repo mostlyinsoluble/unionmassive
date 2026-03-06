@@ -338,7 +338,7 @@ public partial class Solution
                 Contract.ThrowIfNull(generatedDocument, "The call to GetDocumentState found a SourceGeneratedDocumentState, so we should have found it now.");
                 return generatedDocument;
             }
-            else if (documentState is DocumentState)
+            else if (documentState is not null)
             {
                 return GetDocument(documentState.Id);
             }

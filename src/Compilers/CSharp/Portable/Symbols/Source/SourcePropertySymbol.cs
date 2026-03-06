@@ -49,14 +49,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 out var getSyntax,
                 out var setSyntax);
 
-            Debug.Assert(!(getterUsesFieldKeyword || setterUsesFieldKeyword) ||
-                ((CSharpParseOptions)syntax.SyntaxTree.Options).IsFeatureEnabled(MessageID.IDS_FeatureFieldKeyword));
+            Debug.Assert(!(getterUsesFieldKeyword || setterUsesFieldKeyword));
 
             bool accessorsHaveImplementation = hasGetAccessorImplementation || hasSetAccessorImplementation;
 
             var explicitInterfaceSpecifier = GetExplicitInterfaceSpecifier(syntax);
             SyntaxTokenList modifiersTokenList = GetModifierTokensSyntax(syntax);
-            bool isExplicitInterfaceImplementation = explicitInterfaceSpecifier is object;
+            bool isExplicitInterfaceImplementation = explicitInterfaceSpecifier is not null;
             var (modifiers, hasExplicitAccessMod) = MakeModifiers(
                 containingType,
                 modifiersTokenList,
@@ -73,9 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool hasAutoPropertyGet = allowAutoPropertyAccessors && getSyntax != null && !hasGetAccessorImplementation;
             bool hasAutoPropertySet = allowAutoPropertyAccessors && setSyntax != null && !hasSetAccessorImplementation;
 
-            TypeSymbol? explicitInterfaceType;
-            string? aliasQualifierOpt;
-            string memberName = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, modifiersTokenList, explicitInterfaceSpecifier, name, diagnostics, out explicitInterfaceType, out aliasQualifierOpt);
+            string memberName = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, modifiersTokenList, explicitInterfaceSpecifier, name, diagnostics, out TypeSymbol? explicitInterfaceType, out string? aliasQualifierOpt);
 
             return new SourcePropertySymbol(
                 containingType,
@@ -142,25 +139,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(syntax.Type is not ScopedTypeSyntax);
 
-            if (hasAutoPropertyGet || hasAutoPropertySet)
-            {
-                Binder.CheckFeatureAvailability(
-                    syntax,
-                    hasGetAccessor && hasSetAccessor ?
-                        (hasAutoPropertyGet && hasAutoPropertySet ? MessageID.IDS_FeatureAutoImplementedProperties : MessageID.IDS_FeatureFieldKeyword) :
-                        (hasAutoPropertyGet ? MessageID.IDS_FeatureReadonlyAutoImplementedProperties : MessageID.IDS_FeatureAutoImplementedProperties),
-                    diagnostics,
-                    location);
-            }
-
             CheckForBlockAndExpressionBody(
                 syntax.AccessorList,
                 syntax.GetExpressionBodySyntax(),
                 syntax,
                 diagnostics);
-
-            if (syntax is PropertyDeclarationSyntax { Initializer: { } initializer })
-                MessageID.IDS_FeatureAutoPropertyInitializer.CheckFeatureAvailability(diagnostics, initializer.EqualsToken);
         }
 
         internal override void ForceComplete(SourceLocation? locationOpt, Predicate<Symbol>? filter, CancellationToken cancellationToken)
@@ -292,7 +275,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             else
             {
                 var body = GetArrowExpression(syntax);
-                hasGetAccessorImplementation = body is object;
+                hasGetAccessorImplementation = body is not null;
                 hasSetAccessorImplementation = false;
                 getterUsesFieldKeyword = body is { } && containsFieldExpressionInGreenNode(body.Green);
                 setterUsesFieldKeyword = false;
@@ -451,23 +434,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             allowedModifiers |= DeclarationModifiers.Extern;
 
-            bool hasExplicitAccessMod;
             var mods = ModifierUtils.MakeAndCheckNonTypeMemberModifiers(isOrdinaryMethod: false, isForInterfaceMember: isInterface,
-                                                                        modifiers, defaultAccess, allowedModifiers, location, diagnostics, out modifierErrors, out hasExplicitAccessMod);
-
-            if ((mods & DeclarationModifiers.Partial) != 0)
-            {
-                Debug.Assert(location.SourceTree is not null);
-
-                LanguageVersion availableVersion = ((CSharpParseOptions)location.SourceTree.Options).LanguageVersion;
-                LanguageVersion requiredVersion = MessageID.IDS_FeaturePartialProperties.RequiredVersion();
-                if (availableVersion < requiredVersion)
-                {
-                    ModifierUtils.ReportUnsupportedModifiersForLanguageVersion(mods, DeclarationModifiers.Partial, location, diagnostics, availableVersion, requiredVersion);
-                }
-            }
-
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, isExplicitInterfaceImplementation, location, diagnostics);
+                                                                        modifiers, defaultAccess, allowedModifiers, location, diagnostics, out modifierErrors, out bool hasExplicitAccessMod);
 
             containingType.CheckUnsafeModifier(mods, location, diagnostics);
 
@@ -628,9 +596,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_IndexerNeedsParam, parameterSyntaxOpt.GetLastToken().GetLocation());
             }
 
-            SyntaxToken arglistToken;
             var parameters = ParameterHelpers.MakeParameters(
-                binder, owner, parameterSyntaxOpt, out arglistToken,
+                binder, owner, parameterSyntaxOpt, out SyntaxToken arglistToken,
                 allowRefOrOut: false,
                 allowThis: false,
                 addRefReadOnlyModifier: addRefReadOnlyModifier,
@@ -685,7 +652,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     diagnostics.Add(ErrorCode.ERR_FileTypeDisallowedInSignature, Location, param.Type, containingTypeForFileTypeCheck);
                 }
-                else if (SetMethod is object && param.Name == ParameterSymbol.ValueParameterName)
+                else if (SetMethod is not null && param.Name == ParameterSymbol.ValueParameterName)
                 {
                     diagnostics.Add(ErrorCode.ERR_DuplicateGeneratedName, param.TryGetFirstLocation() ?? Location, param.Name);
                 }

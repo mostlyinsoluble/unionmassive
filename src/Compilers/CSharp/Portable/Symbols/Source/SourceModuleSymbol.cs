@@ -47,7 +47,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private bool _hasBadAttributes;
 
-        private ThreeState _lazyUseUpdatedEscapeRules;
         private ThreeState _lazyRequiresRefSafetyRulesAttribute;
 
         internal SourceModuleSymbol(
@@ -55,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             DeclarationTable declarations,
             string moduleName)
         {
-            Debug.Assert((object)assemblySymbol != null);
+            Debug.Assert(assemblySymbol is not null);
 
             _assemblySymbol = assemblySymbol;
             _sources = declarations;
@@ -87,19 +86,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                switch (DeclaringCompilation.Options.Platform)
+                return DeclaringCompilation.Options.Platform switch
                 {
-                    case Platform.Arm:
-                        return Machine.ArmThumb2;
-                    case Platform.X64:
-                        return Machine.Amd64;
-                    case Platform.Arm64:
-                        return Machine.Arm64;
-                    case Platform.Itanium:
-                        return Machine.IA64;
-                    default:
-                        return Machine.I386;
-                }
+                    Platform.Arm => Machine.ArmThumb2,
+                    Platform.X64 => Machine.Amd64,
+                    Platform.Arm64 => Machine.Arm64,
+                    Platform.Itanium => Machine.IA64,
+                    _ => Machine.I386,
+                };
             }
         }
 
@@ -142,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 ImmutableInterlocked.InterlockedCompareExchange(ref _lazyAssembliesToEmbedTypesFrom,
                                                     buffer.ToImmutableAndFree(),
-                                                    default(ImmutableArray<AssemblySymbol>));
+                                                    default);
             }
 
             Debug.Assert(!_lazyAssembliesToEmbedTypesFrom.IsDefault);
@@ -194,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                if ((object)_globalNamespace == null)
+                if (_globalNamespace is null)
                 {
                     var diagnostics = BindingDiagnosticBag.GetInstance();
                     var globalNS = new SourceNamespaceSymbol(
@@ -579,7 +573,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
+            Debug.Assert(arguments.AttributeSyntaxOpt is not null);
 
             var attribute = arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
@@ -727,33 +721,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override ModuleMetadata? GetMetadata() => null;
 
-        internal override bool UseUpdatedEscapeRules
-        {
-            get
-            {
-                if (_lazyUseUpdatedEscapeRules == ThreeState.Unknown)
-                {
-                    var compilation = _assemblySymbol.DeclaringCompilation;
-                    bool value = compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefFields) || _assemblySymbol.RuntimeSupportsByRefFields;
-                    _lazyUseUpdatedEscapeRules = value.ToThreeState();
-                }
-                return _lazyUseUpdatedEscapeRules == ThreeState.True;
-            }
-        }
+        internal override bool UseUpdatedEscapeRules => true;
 
         internal override bool UseUpdatedMemorySafetyRules
-        {
-            get
-            {
-                return _assemblySymbol.DeclaringCompilation.Options.UseUpdatedMemorySafetyRules ||
-                    // https://github.com/dotnet/roslyn/issues/82546: temporary way to opt in
-                    _assemblySymbol.DeclaringCompilation.Feature(Feature.UpdatedMemorySafetyRules) != null;
-            }
-        }
+            => _assemblySymbol.DeclaringCompilation.Options.UseUpdatedMemorySafetyRules ||
+               // https://github.com/dotnet/roslyn/issues/82546: temporary way to opt in
+               _assemblySymbol.DeclaringCompilation.Feature(Feature.UpdatedMemorySafetyRules) != null;
 
         /// <summary>
         /// Returns data decoded from <see cref="ObsoleteAttribute"/> attribute or null if there is no <see cref="ObsoleteAttribute"/> attribute.
-        /// This property returns <see cref="Microsoft.CodeAnalysis.ObsoleteAttributeData.Uninitialized"/> if attribute arguments haven't been decoded yet.
+        /// This property returns <see cref="ObsoleteAttributeData.Uninitialized"/> if attribute arguments haven't been decoded yet.
         /// </summary>
         internal sealed override ObsoleteAttributeData? ObsoleteAttributeData
         {

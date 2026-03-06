@@ -10,16 +10,12 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
     {
         public static bool MustHaveNullType(this IOperation operation)
         {
-            switch (operation.Kind)
+            return operation.Kind switch
             {
                 // TODO: Expand to cover all operations that must always have null type.
-                case OperationKind.ArrayInitializer:
-                case OperationKind.Argument:
-                    return true;
-
-                default:
-                    return false;
-            }
+                OperationKind.ArrayInitializer or OperationKind.Argument => true,
+                _ => false,
+            };
         }
     }
 }

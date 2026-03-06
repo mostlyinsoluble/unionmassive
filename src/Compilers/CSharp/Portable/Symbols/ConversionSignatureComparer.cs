@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public int GetHashCode(MethodSymbol member)
         {
-            if ((object)member == null)
+            if (member is null)
             {
                 return 0;
             }

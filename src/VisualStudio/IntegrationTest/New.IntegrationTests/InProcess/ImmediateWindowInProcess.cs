@@ -28,8 +28,7 @@ internal sealed partial class ImmediateWindowInProcess
     {
         var shell = await GetRequiredGlobalServiceAsync<SVsUIShell, IVsUIShell>(cancellationToken);
         var immediateWindowGuid = VSConstants.StandardToolWindows.Immediate;
-        IVsWindowFrame immediateWindowFrame;
-        ErrorHandler.ThrowOnFailure(shell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fForceCreate, ref immediateWindowGuid, out immediateWindowFrame));
+        ErrorHandler.ThrowOnFailure(shell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fForceCreate, ref immediateWindowGuid, out var immediateWindowFrame));
         ErrorHandler.ThrowOnFailure(immediateWindowFrame.Show());
         ErrorHandler.ThrowOnFailure(immediateWindowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_DocView, out var docView));
         var vsTextView = (IVsTextView)docView;

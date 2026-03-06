@@ -152,10 +152,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     ch = '\u0008';
                     break;
                 case 'e':
-                    var info = MessageID.IDS_FeatureStringEscapeCharacter.GetFeatureAvailabilityDiagnosticInfo(this.Options);
-                    if (info != null)
-                        this.AddError(start, TextWindow.Position - start, info.Code, info.Arguments);
-
                     ch = '\u001b';
                     break;
                 case 'f':
@@ -341,10 +337,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// recursing to process interpolated strings.
         /// </summary>
         [NonCopyable]
-        private ref struct InterpolatedOrRawStringScanner
+        private ref struct InterpolatedOrRawStringScanner(Lexer lexer, bool isInterpolatedString)
         {
-            private readonly Lexer _lexer;
-            private readonly bool _isInterpolatedString;
+            private readonly Lexer _lexer = lexer;
+            private readonly bool _isInterpolatedString = isInterpolatedString;
 
             /// <summary>
             /// Error encountered while scanning.  If we run into an error, then we'll attempt to stop parsing at the
@@ -352,18 +348,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             /// </summary>
             public SyntaxDiagnosticInfo? Error = null;
 
-            public InterpolatedOrRawStringScanner(Lexer lexer, bool isInterpolatedString)
-            {
-                _lexer = lexer;
-                _isInterpolatedString = isInterpolatedString;
-            }
-
-            private bool IsAtEnd(InterpolatedStringKind kind)
+            private readonly bool IsAtEnd(InterpolatedStringKind kind)
             {
                 return IsAtEnd(allowNewline: kind is InterpolatedStringKind.Verbatim or InterpolatedStringKind.MultiLineRaw);
             }
 
-            private bool IsAtEnd(bool allowNewline)
+            private readonly bool IsAtEnd(bool allowNewline)
             {
                 char ch = _lexer.TextWindow.PeekChar();
                 return
@@ -1055,7 +1045,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             // the first colon not nested within matching delimiters is the start of the format string
                             if (isHole)
                             {
-                                Debug.Assert(colonRange.Equals(default(Range)));
+                                Debug.Assert(colonRange.Equals(default));
                                 colonRange = new Range(_lexer.TextWindow.Position, _lexer.TextWindow.Position + 1);
                                 ScanFormatSpecifier(kind);
                                 return;

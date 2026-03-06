@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static PropertySymbol GetAnonymousTypeProperty(NamedTypeSymbol type, int index)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             Debug.Assert(type.IsAnonymousType);
 
             var anonymous = (AnonymousTypePublicSymbol)type;

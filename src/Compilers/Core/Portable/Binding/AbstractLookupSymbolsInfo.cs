@@ -241,8 +241,7 @@ namespace Microsoft.CodeAnalysis
 
         public void AddSymbol(TSymbol symbol, string name, int arity)
         {
-            UniqueSymbolOrArities pair;
-            if (!_nameMap.TryGetValue(name, out pair))
+            if (!_nameMap.TryGetValue(name, out UniqueSymbolOrArities pair))
             {
                 // First time seeing a symbol with this name.  Create a mapping for it from the name
                 // to the one arity we've seen, and also store around the symbol as it's currently
@@ -285,8 +284,7 @@ namespace Microsoft.CodeAnalysis
         {
             Debug.Assert(CanBeAdded(name));
 
-            UniqueSymbolOrArities pair;
-            if (!_nameMap.TryGetValue(name, out pair))
+            if (!_nameMap.TryGetValue(name, out UniqueSymbolOrArities pair))
             {
                 arities = null;
                 uniqueSymbol = null;

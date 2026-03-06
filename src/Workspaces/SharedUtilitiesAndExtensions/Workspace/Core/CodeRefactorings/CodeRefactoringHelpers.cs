@@ -80,8 +80,8 @@ internal static class CodeRefactoringHelpers
 
         var beginningNode = node.FindToken(node.Span.Start).Parent;
         var endNode = node.FindToken(node.Span.End - 1).Parent;
-        RoslynDebug.Assert(beginningNode is object);
-        RoslynDebug.Assert(endNode is object);
+        RoslynDebug.Assert(beginningNode is not null);
+        RoslynDebug.Assert(endNode is not null);
 
         // Node is under-selected if either the first (lowest) child doesn't contain start of selection
         // of the last child doesn't intersect with the end.

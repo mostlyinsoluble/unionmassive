@@ -65,7 +65,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // if we're substituting to create a new unconstructed type as a member of a constructed type,
             // then we must alpha rename the type parameters.
-            if ((object)constructedFrom != null)
+            if (constructedFrom is not null)
             {
                 Debug.Assert(ReferenceEquals(constructedFrom.ConstructedFrom, constructedFrom));
                 _lazyTypeParameters = constructedFrom.TypeParameters;
@@ -106,10 +106,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            ImmutableArray<TypeParameterSymbol> typeParameters;
 
             // We're creating a new unconstructed Method from another; alpha-rename type parameters.
-            var newMap = _inputMap.WithAlphaRename(OriginalDefinition, this, out typeParameters);
+            var newMap = _inputMap.WithAlphaRename(OriginalDefinition, this, out ImmutableArray<TypeParameterSymbol> typeParameters);
 
             var prevMap = Interlocked.CompareExchange(ref _lazyMap, newMap, null);
             if (prevMap != null)
@@ -119,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 typeParameters = prevMap.SubstituteTypeParameters(OriginalDefinition.TypeParameters);
             }
 
-            ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters, typeParameters, default(ImmutableArray<TypeParameterSymbol>));
+            ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters, typeParameters, default);
             Debug.Assert(_lazyTypeParameters != null);
         }
 
@@ -283,7 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         builder.Add(existingMember);
                     }
                 }
-                Debug.Assert(builder is object);
+                Debug.Assert(builder is not null);
             }
 
             return builder;
@@ -320,9 +319,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_unbound) return StaticCast<Symbol>.From(GetTypeMembers(name));
 
-            ImmutableArray<Symbol> result;
             var cache = _lazyMembersByNameCache;
-            if (cache != null && cache.TryGetValue(name, out result))
+            if (cache != null && cache.TryGetValue(name, out ImmutableArray<Symbol> result))
             {
                 return result;
             }

@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             CSharpSyntaxNode? syntax = null,
             BindingDiagnosticBag? diagnostics = null)
         {
-            Debug.Assert(!shouldCheckConstraints || syntax is object);
+            Debug.Assert(!shouldCheckConstraints || syntax is not null);
             Debug.Assert(elementNames.IsDefault || elementTypesWithAnnotations.Length == elementNames.Length);
             Debug.Assert(!includeNullability || shouldCheckConstraints);
 
@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             NamedTypeSymbol underlyingType = getTupleUnderlyingType(elementTypesWithAnnotations, syntax, compilation, diagnostics);
 
-            if (diagnostics?.DiagnosticBag is object && ((SourceModuleSymbol)compilation.SourceModule).AnyReferencedAssembliesAreLinked)
+            if (diagnostics?.DiagnosticBag is not null && ((SourceModuleSymbol)compilation.SourceModule).AnyReferencedAssembliesAreLinked)
             {
                 // Complain about unembeddable types from linked assemblies.
                 Emit.NoPia.EmbeddedTypesManager.IsValidEmbeddableType(underlyingType, syntax, diagnostics.DiagnosticBag);
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var constructedType = CreateTuple(underlyingType, elementNames, errorPositions, elementLocations, locations);
             if (shouldCheckConstraints && diagnostics != null)
             {
-                Debug.Assert(syntax is object);
+                Debug.Assert(syntax is not null);
                 constructedType.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, compilation.Conversions, includeNullability, syntax.Location, diagnostics),
                                                  syntax, elementLocations, nullabilityDiagnosticsOpt: includeNullability ? diagnostics : null);
             }
@@ -73,11 +73,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             static NamedTypeSymbol getTupleUnderlyingType(ImmutableArray<TypeWithAnnotations> elementTypes, CSharpSyntaxNode? syntax, CSharpCompilation compilation, BindingDiagnosticBag? diagnostics)
             {
                 int numElements = elementTypes.Length;
-                int remainder;
-                int chainLength = NumberOfValueTuples(numElements, out remainder);
+                int chainLength = NumberOfValueTuples(numElements, out int remainder);
 
                 NamedTypeSymbol firstTupleType = compilation.GetWellKnownType(GetTupleType(remainder));
-                if (diagnostics is object && syntax is object)
+                if (diagnostics is not null && syntax is not null)
                 {
                     ReportUseSiteAndObsoleteDiagnostics(syntax, diagnostics, firstTupleType);
                 }
@@ -86,7 +85,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (chainLength > 1)
                 {
                     chainedTupleType = compilation.GetWellKnownType(GetTupleType(ValueTupleRestPosition));
-                    if (diagnostics is object && syntax is object)
+                    if (diagnostics is not null && syntax is not null)
                     {
                         ReportUseSiteAndObsoleteDiagnostics(syntax, diagnostics, chainedTupleType);
                     }
@@ -233,8 +232,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(chainedTupleTypeOpt is null == elementTypes.Length < ValueTupleRestPosition);
 
             int numElements = elementTypes.Length;
-            int remainder;
-            int chainLength = NumberOfValueTuples(numElements, out remainder);
+            int chainLength = NumberOfValueTuples(numElements, out int remainder);
 
             NamedTypeSymbol currentSymbol = firstTupleType.Construct(ImmutableArray.Create(elementTypes, (chainLength - 1) * (ValueTupleRestPosition - 1), remainder));
             int loop = chainLength - 1;
@@ -259,10 +257,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static void VerifyTupleTypePresent(int cardinality, CSharpSyntaxNode? syntax, CSharpCompilation compilation, BindingDiagnosticBag diagnostics)
         {
-            RoslynDebug.Assert(diagnostics is object && syntax is object);
+            RoslynDebug.Assert(diagnostics is not null && syntax is not null);
 
-            int remainder;
-            int chainLength = NumberOfValueTuples(cardinality, out remainder);
+            int chainLength = NumberOfValueTuples(cardinality, out int remainder);
 
             NamedTypeSymbol firstTupleType = compilation.GetWellKnownType(GetTupleType(remainder));
             ReportUseSiteAndObsoleteDiagnostics(syntax, diagnostics, firstTupleType);
@@ -445,19 +442,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static bool isElementNameForbidden(string name)
             {
-                switch (name)
+                return name switch
                 {
-                    case "CompareTo":
-                    case WellKnownMemberNames.DeconstructMethodName:
-                    case "Equals":
-                    case "GetHashCode":
-                    case "Rest":
-                    case "ToString":
-                        return true;
-
-                    default:
-                        return false;
-                }
+                    "CompareTo" or WellKnownMemberNames.DeconstructMethodName or "Equals" or "GetHashCode" or "Rest" or "ToString" => true,
+                    _ => false,
+                };
             }
         }
 
@@ -732,8 +721,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (!elementsMatchedByFields[i])
                 {
                     // We couldn't find a backing field for this element. It will be an error to access it.
-                    int fieldRemainder; // one-based
-                    int fieldChainLength = NumberOfValueTuples(i + 1, out fieldRemainder);
+                    // one-based
+                    int fieldChainLength = NumberOfValueTuples(i + 1, out int fieldRemainder);
                     NamedTypeSymbol container = getNestedTupleUnderlyingType(this, fieldChainLength - 1).OriginalDefinition;
 
                     var diagnosticInfo = container.IsErrorType() ?
@@ -834,7 +823,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
                 }
 
-                Debug.Assert(fields.All(f => f is object));
+                Debug.Assert(fields.All(f => f is not null));
                 return fields.ToImmutableAndFree();
             }
 
@@ -918,7 +907,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal TupleExtraData(NamedTypeSymbol underlyingType)
             {
-                RoslynDebug.Assert(underlyingType is object);
+                RoslynDebug.Assert(underlyingType is not null);
                 Debug.Assert(underlyingType.IsTupleType);
                 Debug.Assert(underlyingType.TupleElementNames.IsDefault);
 
@@ -943,7 +932,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                return other is object
+                return other is not null
                     && areEqual(this.ElementNames, other.ElementNames)
                     && areEqual(this.ElementLocations, other.ElementLocations)
                     && areEqual(this.ErrorPositions, other.ErrorPositions);
@@ -1035,7 +1024,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                     }
 
-                    Debug.Assert(builder.All(f => f is object));
+                    Debug.Assert(builder.All(f => f is not null));
 
                     return builder.ToImmutableAndFree();
                 }
@@ -1067,7 +1056,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                                 case SymbolKind.Field:
                                     var tupleUnderlyingField = ((FieldSymbol)member).TupleUnderlyingField;
-                                    if (tupleUnderlyingField is object)
+                                    if (tupleUnderlyingField is not null)
                                     {
                                         map[tupleUnderlyingField.OriginalDefinition] = member;
                                     }
@@ -1077,7 +1066,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     var underlyingEvent = (EventSymbol)member;
                                     var underlyingAssociatedField = underlyingEvent.AssociatedField;
                                     // The field is not part of the members list
-                                    if (underlyingAssociatedField is object)
+                                    if (underlyingAssociatedField is not null)
                                     {
                                         Debug.Assert((object)underlyingAssociatedField.ContainingSymbol == TupleUnderlyingType);
                                         Debug.Assert(TupleUnderlyingType.GetMembers(underlyingAssociatedField.Name).IndexOf(underlyingAssociatedField) < 0);

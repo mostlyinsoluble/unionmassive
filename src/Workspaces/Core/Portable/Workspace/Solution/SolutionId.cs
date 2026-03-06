@@ -61,7 +61,7 @@ public sealed class SolutionId : IEquatable<SolutionId>
     public bool Equals(SolutionId other)
     {
         return
-            other is object &&
+            other is not null &&
             this.Id == other.Id;
     }
 

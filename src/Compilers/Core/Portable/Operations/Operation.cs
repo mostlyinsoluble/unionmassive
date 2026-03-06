@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (OperationConstantValue == null || OperationConstantValue.IsBad)
                 {
-                    return default(Optional<object?>);
+                    return default;
                 }
 
                 return new Optional<object?>(OperationConstantValue.Value);

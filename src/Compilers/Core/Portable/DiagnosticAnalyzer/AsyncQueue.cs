@@ -118,7 +118,7 @@ retry:
             {
                 if (_data.Count == 0)
                 {
-                    d = default(TElement);
+                    d = default;
                     return false;
                 }
 
@@ -229,7 +229,7 @@ retry:
         /// is called before an element becomes available, the returned task is cancelled.
         /// </summary>
         [PerformanceSensitive("https://github.com/dotnet/roslyn/issues/23582", OftenCompletesSynchronously = true)]
-        public Task<TElement> DequeueAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<TElement> DequeueAsync(CancellationToken cancellationToken = default)
         {
             var optionalResult = TryDequeueAsync(cancellationToken);
             if (optionalResult.IsCompletedSuccessfully)

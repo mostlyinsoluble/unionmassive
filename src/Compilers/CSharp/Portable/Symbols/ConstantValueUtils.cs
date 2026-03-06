@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             collisionDetector = new ExecutableCodeBinder(initializer, fieldSymbol, collisionDetector);
             BoundFieldEqualsValue result;
 
-            if ((object)enumConstant != null)
+            if (enumConstant is not null)
             {
                 result = collisionDetector.BindEnumConstantInitializer(enumConstant, initializer, diagnostics);
             }
@@ -155,7 +155,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             public override BoundNode VisitInterpolatedString(BoundInterpolatedString node)
             {
-                Binder.CheckFeatureAvailability(node.Syntax, MessageID.IDS_FeatureConstantInterpolatedStrings, diagnostics);
                 return null;
             }
         }

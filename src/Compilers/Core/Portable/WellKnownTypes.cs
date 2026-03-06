@@ -766,27 +766,14 @@ namespace Microsoft.CodeAnalysis
             {
                 var name = s_metadataNames[i];
                 var typeId = (WellKnownType)(i + WellKnownType.First);
-
-                string typeIdName;
-                switch (typeId)
+                string typeIdName = typeId switch
                 {
-                    case WellKnownType.First:
-                        typeIdName = "System.Math";
-                        break;
-                    case WellKnownType.Microsoft_VisualBasic_CompilerServices_ObjectFlowControl_ForLoopControl:
-                        typeIdName = "Microsoft.VisualBasic.CompilerServices.ObjectFlowControl+ForLoopControl";
-                        break;
-                    case WellKnownType.CSharp7Sentinel:
-                        typeIdName = "System.Runtime.GCLatencyMode";
-                        break;
-                    case WellKnownType.ExtSentinel:
-                        typeIdName = "";
-                        break;
-                    default:
-                        typeIdName = typeId.ToString().Replace("__", "+").Replace('_', '.');
-                        break;
-                }
-
+                    WellKnownType.First => "System.Math",
+                    WellKnownType.Microsoft_VisualBasic_CompilerServices_ObjectFlowControl_ForLoopControl => "Microsoft.VisualBasic.CompilerServices.ObjectFlowControl+ForLoopControl",
+                    WellKnownType.CSharp7Sentinel => "System.Runtime.GCLatencyMode",
+                    WellKnownType.ExtSentinel => "",
+                    _ => typeId.ToString().Replace("__", "+").Replace('_', '.'),
+                };
                 int separator = name.IndexOf('`');
                 if (separator >= 0)
                 {
@@ -848,9 +835,8 @@ namespace Microsoft.CodeAnalysis
 
         public static WellKnownType GetTypeFromMetadataName(string metadataName)
         {
-            WellKnownType id;
 
-            if (s_nameToTypeIdMap.TryGetValue(metadataName, out id))
+            if (s_nameToTypeIdMap.TryGetValue(metadataName, out WellKnownType id))
             {
                 return id;
             }

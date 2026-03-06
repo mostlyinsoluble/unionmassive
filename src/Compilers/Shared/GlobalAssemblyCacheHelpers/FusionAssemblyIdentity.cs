@@ -208,8 +208,7 @@ namespace Microsoft.CodeAnalysis
 
         internal static unsafe Version GetVersion(IAssemblyName nameObject)
         {
-            uint hi, lo;
-            int hr = nameObject.GetVersion(out hi, out lo);
+            int hr = nameObject.GetVersion(out uint hi, out uint lo);
             if (hr != 0)
             {
                 Debug.Assert(hr == FUSION_E_INVALID_NAME);
@@ -412,10 +411,9 @@ namespace Microsoft.CodeAnalysis
             byte[] publicKey = GetPublicKey(nameObject);
             bool hasPublicKey = publicKey != null && publicKey.Length != 0;
 
-            AssemblyIdentityParts versionParts;
             return new AssemblyIdentity(
                 GetName(nameObject),
-                GetVersion(nameObject, out versionParts),
+                GetVersion(nameObject, out AssemblyIdentityParts versionParts),
                 GetCulture(nameObject) ?? "",
                 (hasPublicKey ? publicKey : GetPublicKeyToken(nameObject)).AsImmutableOrNull(),
                 hasPublicKey: hasPublicKey,
@@ -433,8 +431,7 @@ namespace Microsoft.CodeAnalysis
                 return null;
             }
 
-            IAssemblyName result;
-            Marshal.ThrowExceptionForHR(CreateAssemblyNameObject(out result, null, 0, IntPtr.Zero));
+            Marshal.ThrowExceptionForHR(CreateAssemblyNameObject(out IAssemblyName result, null, 0, IntPtr.Zero));
 
             string assemblyName = name.Name;
             if (assemblyName != null)
@@ -505,8 +502,7 @@ namespace Microsoft.CodeAnalysis
             }
 
             Debug.Assert(displayName != null);
-            IAssemblyName result;
-            int hr = CreateAssemblyNameObject(out result, displayName, CANOF.PARSE_DISPLAY_NAME, IntPtr.Zero);
+            int hr = CreateAssemblyNameObject(out IAssemblyName result, displayName, CANOF.PARSE_DISPLAY_NAME, IntPtr.Zero);
             if (hr != 0)
             {
                 return null;

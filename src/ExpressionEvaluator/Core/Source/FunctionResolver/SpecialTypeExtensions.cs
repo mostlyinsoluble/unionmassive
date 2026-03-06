@@ -12,8 +12,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         internal static QualifiedTypeSignature GetTypeSignature(this SpecialType type)
         {
-            QualifiedTypeSignature signature;
-            s_typeSignatures.TryGetValue(type, out signature);
+            s_typeSignatures.TryGetValue(type, out var signature);
             return signature;
         }
 

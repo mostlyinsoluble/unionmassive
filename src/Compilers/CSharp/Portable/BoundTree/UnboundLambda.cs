@@ -425,7 +425,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(syntax.IsAnonymousFunction());
             bool hasErrors = !types.IsDefault && types.Any(static t => t.Type?.Kind == SymbolKind.ErrorType);
 
-            var functionType = FunctionTypeSymbol.CreateIfFeatureEnabled(syntax, binder, static (binder, expr) => ((UnboundLambda)expr).Data.InferDelegateType());
+            var functionType = new FunctionTypeSymbol(binder, static (binder, expr) => ((UnboundLambda)expr).Data.InferDelegateType());
             var data = new PlainUnboundLambdaState(binder, returnRefKind, refCustomModifiers, returnType, parameterAttributes, names, discardsOpt, types, refKinds, declaredScopes, defaultValues, syntaxList, isAsync: isAsync, isStatic: isStatic, includeCache: true);
             var lambda = new UnboundLambda(syntax, data, functionType, withDependencies, hasErrors: hasErrors);
             data.SetUnboundLambda(lambda);
@@ -875,7 +875,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (returnType.HasType)
             {
-                if (compilation.ShouldEmitNativeIntegerAttributes(returnType.Type))
+                if (returnType.Type.ContainsNativeIntegerWrapperType())
                 {
                     compilation.EnsureNativeIntegerAttributeExists(diagnostics, lambdaSymbol.DiagnosticLocation, modifyCompilation: false);
                 }
@@ -1070,8 +1070,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var cacheKey = ReturnInferenceCacheKey.Create(delegateType, IsAsync);
 
-            BoundLambda? result;
-            if (!_returnInferenceCache!.TryGetValue(cacheKey, out result))
+            if (!_returnInferenceCache!.TryGetValue(cacheKey, out BoundLambda? result))
             {
                 result = ReallyInferReturnType(delegateType, cacheKey.ParameterTypes, cacheKey.ParameterRefKinds);
                 result = ImmutableInterlocked.GetOrAdd(ref _returnInferenceCache, cacheKey, result);
@@ -1570,16 +1569,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(HasSignature && 0 <= index && index < ParameterCount);
             var syntax = UnboundLambda.Syntax;
-            switch (syntax.Kind())
+            return syntax.Kind() switch
             {
-                default:
-                case SyntaxKind.SimpleLambdaExpression:
-                    return ((SimpleLambdaExpressionSyntax)syntax).Parameter.Identifier.GetLocation();
-                case SyntaxKind.ParenthesizedLambdaExpression:
-                    return ((ParenthesizedLambdaExpressionSyntax)syntax).ParameterList.Parameters[index].Identifier.GetLocation();
-                case SyntaxKind.AnonymousMethodExpression:
-                    return ((AnonymousMethodExpressionSyntax)syntax).ParameterList!.Parameters[index].Identifier.GetLocation();
-            }
+                SyntaxKind.ParenthesizedLambdaExpression => ((ParenthesizedLambdaExpressionSyntax)syntax).ParameterList.Parameters[index].Identifier.GetLocation(),
+                SyntaxKind.AnonymousMethodExpression => ((AnonymousMethodExpressionSyntax)syntax).ParameterList!.Parameters[index].Identifier.GetLocation(),
+                _ => ((SimpleLambdaExpressionSyntax)syntax).Parameter.Identifier.GetLocation(),
+            };
         }
 
         private bool IsExpressionLambda { get { return Body.Kind() != SyntaxKind.Block; } }

@@ -22,23 +22,19 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         Private _features As ImmutableDictionary(Of String, String)
 
         Private _preprocessorSymbols As ImmutableArray(Of KeyValuePair(Of String, Object))
-        Private _specifiedLanguageVersion As LanguageVersion
-        Private _languageVersion As LanguageVersion
 
         ''' <summary>
         ''' Creates an instance of VisualBasicParseOptions.
         ''' </summary>
-        ''' <param name="languageVersion">The parser language version.</param>
         ''' <param name="documentationMode">The documentation mode.</param>
         ''' <param name="kind">The kind of source code.<see cref="SourceCodeKind"/></param>
         ''' <param name="preprocessorSymbols">An enumerable sequence of KeyValuePair representing preprocessor symbols.</param>
         Public Sub New(
-            Optional languageVersion As LanguageVersion = LanguageVersion.Default,
             Optional documentationMode As DocumentationMode = DocumentationMode.Parse,
             Optional kind As SourceCodeKind = SourceCodeKind.Regular,
             Optional preprocessorSymbols As IEnumerable(Of KeyValuePair(Of String, Object)) = Nothing)
 
-            MyClass.New(languageVersion,
+            MyClass.New(
                         documentationMode,
                         kind,
                         If(preprocessorSymbols Is Nothing, DefaultPreprocessorSymbols, ImmutableArray.CreateRange(preprocessorSymbols)),
@@ -46,7 +42,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         End Sub
 
         Friend Sub New(
-            languageVersion As LanguageVersion,
             documentationMode As DocumentationMode,
             kind As SourceCodeKind,
             preprocessorSymbols As ImmutableArray(Of KeyValuePair(Of String, Object)),
@@ -54,15 +49,12 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
 
             MyBase.New(kind, documentationMode)
 
-            _specifiedLanguageVersion = languageVersion
-            _languageVersion = languageVersion.MapSpecifiedToEffectiveVersion
             _preprocessorSymbols = preprocessorSymbols.ToImmutableArrayOrEmpty
             _features = If(features, ImmutableDictionary(Of String, String).Empty)
         End Sub
 
         Private Sub New(other As VisualBasicParseOptions)
             MyClass.New(
-                languageVersion:=other._specifiedLanguageVersion,
                 documentationMode:=other.DocumentationMode,
                 kind:=other.Kind,
                 preprocessorSymbols:=other._preprocessorSymbols,
@@ -86,26 +78,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         End Property
 
         ''' <summary>
-        ''' Returns the specified language version, which is the value that was specified in the call to the
-        ''' constructor, or modified using the <see cref="WithLanguageVersion"/> method, or provided on the command line.
-        ''' </summary>        
-        Public ReadOnly Property SpecifiedLanguageVersion As LanguageVersion
-            Get
-                Return _specifiedLanguageVersion
-            End Get
-        End Property
-
-        ''' <summary>
-        ''' Returns the effective language version, which the compiler uses to select the
-        ''' language rules to apply to the program.
-        ''' </summary>        
-        Public ReadOnly Property LanguageVersion As LanguageVersion
-            Get
-                Return _languageVersion
-            End Get
-        End Property
-
-        ''' <summary>
         ''' The preprocessor symbols to parse with. 
         ''' </summary>
         ''' <remarks>
@@ -125,20 +97,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Return _preprocessorSymbols.Select(Function(ps) ps.Key)
             End Get
         End Property
-
-        ''' <summary>
-        ''' Returns a VisualBasicParseOptions instance for a specified language version.
-        ''' </summary>
-        ''' <param name="version">The parser language version.</param>
-        ''' <returns>A new instance of VisualBasicParseOptions if different language version is different; otherwise current instance.</returns>
-        Public Shadows Function WithLanguageVersion(version As LanguageVersion) As VisualBasicParseOptions
-            If version = _specifiedLanguageVersion Then
-                Return Me
-            End If
-
-            Dim effectiveVersion = version.MapSpecifiedToEffectiveVersion()
-            Return New VisualBasicParseOptions(Me) With {._specifiedLanguageVersion = version, ._languageVersion = effectiveVersion}
-        End Function
 
         ''' <summary>
         ''' Returns a VisualBasicParseOptions instance for a specified source code kind.
@@ -245,11 +203,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         Friend Overrides Sub ValidateOptions(builder As ArrayBuilder(Of Diagnostic))
             ValidateOptions(builder, MessageProvider.Instance)
 
-            ' Validate LanguageVersion Not SpecifiedLanguageVersion, after Latest/Default has been converted
-            If Not LanguageVersion.IsValid Then
-                builder.Add(Diagnostic.Create(MessageProvider.Instance, ERRID.ERR_BadLanguageVersion, LanguageVersion.ToString))
-            End If
-
             If Not PreprocessorSymbols.IsDefaultOrEmpty Then
                 For Each symbol In PreprocessorSymbols
                     If Not IsValidIdentifier(symbol.Key) OrElse SyntaxFacts.GetKeywordKind(symbol.Key) <> SyntaxKind.None Then
@@ -281,10 +234,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Return False
             End If
 
-            If Me.SpecifiedLanguageVersion <> other.SpecifiedLanguageVersion Then
-                Return False
-            End If
-
             If Not Me.PreprocessorSymbols.SequenceEqual(other.PreprocessorSymbols) Then
                 Return False
             End If
@@ -306,7 +255,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         ''' </summary>
         ''' <returns>A hashcode representing this instance.</returns>
         Public Overrides Function GetHashCode() As Integer
-            Return Hash.Combine(MyBase.GetHashCodeHelper(), CInt(Me.SpecifiedLanguageVersion))
+            Return Hash.Combine(MyBase.GetHashCodeHelper(), CInt(Me.Kind))
         End Function
     End Class
 End Namespace

@@ -12,8 +12,6 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
     Friend Module SyntaxHelpers
-        Friend ReadOnly ParseOptions As VisualBasicParseOptions = VisualBasicParseOptions.Default.WithLanguageVersion(LanguageVersionFacts.CurrentVersion)
-
         ''' <summary>
         ''' Parse expression. Returns null if there are any errors.
         ''' </summary>
@@ -159,7 +157,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
         End Function
 
         Private Function ParseDebuggerExpressionInternal(source As SourceText, consumeFullText As Boolean) As InternalSyntax.ExpressionSyntax
-            Using scanner As New InternalSyntax.Scanner(source, ParseOptions, isScanningForExpressionCompiler:=True) ' NOTE: Default options should be enough
+            Using scanner As New InternalSyntax.Scanner(source, VisualBasicParseOptions.Default, isScanningForExpressionCompiler:=True) ' NOTE: Default options should be enough
                 Using p = New InternalSyntax.Parser(scanner)
                     p.GetNextToken()
                     Dim node = p.ParseExpression()
@@ -171,7 +169,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
 
         Private Function ParseDebuggerStatement(source As String) As StatementSyntax
             Dim text = SourceText.From(source, encoding:=Nothing, SourceHashAlgorithms.Default)
-            Using scanner As New InternalSyntax.Scanner(text, ParseOptions, isScanningForExpressionCompiler:=True) ' NOTE: Default options should be enough
+            Using scanner As New InternalSyntax.Scanner(text, VisualBasicParseOptions.Default, isScanningForExpressionCompiler:=True) ' NOTE: Default options should be enough
                 Using p = New InternalSyntax.Parser(scanner)
                     p.GetNextToken()
                     Dim node = p.ParseStatementInMethodBody()
@@ -183,7 +181,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
         End Function
 
         Private Function CreateSyntaxTree(root As InternalSyntax.VisualBasicSyntaxNode, text As SourceText) As SyntaxTree
-            Return VisualBasicSyntaxTree.CreateForDebugger(DirectCast(root.CreateRed(Nothing, 0), VisualBasicSyntaxNode), text, ParseOptions)
+            Return VisualBasicSyntaxTree.CreateForDebugger(DirectCast(root.CreateRed(Nothing, 0), VisualBasicSyntaxNode), text, VisualBasicParseOptions.Default)
         End Function
 
         <Extension>

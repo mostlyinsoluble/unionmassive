@@ -43,9 +43,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal void Resolve(TRequest request, RequestSignature signature)
         {
-            QualifiedName qualifiedTypeName;
-            ImmutableArray<string> memberTypeParameters;
-            GetNameAndTypeParameters(signature.MemberName, out qualifiedTypeName, out memberTypeParameters);
+            GetNameAndTypeParameters(signature.MemberName, out var qualifiedTypeName, out var memberTypeParameters);
 
             var typeName = qualifiedTypeName.Qualifier;
             var memberName = qualifiedTypeName.Name;
@@ -121,9 +119,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return typeDef.GetGenericParameters().Count;
             }
 
-            QualifiedName qualifiedName;
-            ImmutableArray<string> typeParameters;
-            GetNameAndTypeParameters(signature, out qualifiedName, out typeParameters);
+            GetNameAndTypeParameters(signature, out var qualifiedName, out var typeParameters);
 
             if (!MatchesTypeName(typeDef, qualifiedName.Name))
             {
@@ -312,9 +308,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return;
             }
 
-            QualifiedName qualifiedName;
-            ImmutableArray<string> typeParameters;
-            GetNameAndTypeParameters(typeName, out qualifiedName, out typeParameters);
+            GetNameAndTypeParameters(typeName, out var qualifiedName, out var typeParameters);
             GetAllGenericTypeParameters(qualifiedName.Qualifier, builder);
             builder.AddRange(typeParameters);
         }

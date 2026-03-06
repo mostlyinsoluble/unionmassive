@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.Rebuild
             DebugInformationFormat debugInformationFormat;
             if (OptionsReader.HasEmbeddedPdb)
             {
-                if (rebuildPdbStream is object)
+                if (rebuildPdbStream is not null)
                 {
                     throw new ArgumentException(RebuildResources.PDB_stream_must_be_null_because_the_compilation_has_an_embedded_PDB, nameof(rebuildPdbStream));
                 }

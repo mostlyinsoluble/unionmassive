@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool diagnose,
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            if ((object)qualifierOpt == null)
+            if (qualifierOpt is null)
             {
                 this.LookupSymbolsInternal(result, name, arity, basesBeingResolved, options, diagnose, ref useSiteInfo);
             }
@@ -272,7 +272,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (errorType.ResultKind == LookupResultKind.Inaccessible)
                 {
                     TypeSymbol candidateType = errorType.CandidateSymbols.First() as TypeSymbol;
-                    if ((object)candidateType != null)
+                    if (candidateType is not null)
                     {
                         LookupMembersInType(result, candidateType, name, arity, basesBeingResolved, options, originalBinder, diagnose, ref useSiteInfo);
                         return; // Bypass call to Clear()
@@ -334,7 +334,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // If a viable using alias and a matching member are both defined in the submission an error is reported elsewhere.
                 // Ignore the member in such case.
-                if ((options & LookupOptions.NamespaceAliasesOnly) == 0 && (object)submission.ScriptClass != null)
+                if ((options & LookupOptions.NamespaceAliasesOnly) == 0 && submission.ScriptClass is not null)
                 {
                     LookupMembersWithoutInheritance(submissionSymbols, submission.ScriptClass, name, arity, options, originalBinder, submissionClass, diagnose, ref useSiteInfo, basesBeingResolved);
 
@@ -417,8 +417,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected bool IsUsingAlias(ImmutableDictionary<string, AliasAndUsingDirective> usingAliases, string name, bool callerIsSemanticModel)
         {
-            AliasAndUsingDirective node;
-            if (usingAliases.TryGetValue(name, out node))
+            if (usingAliases.TryGetValue(name, out AliasAndUsingDirective node))
             {
                 // This method is called by InContainerBinder.LookupSymbolsInSingleBinder to see if
                 // there's a conflict between an alias and a member.  As a conflict may cause a
@@ -453,8 +452,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             bool callerIsSemanticModel = originalBinder.IsSemanticModelBinder;
 
-            AliasAndUsingDirective alias;
-            if (usingAliases.TryGetValue(name, out alias))
+            if (usingAliases.TryGetValue(name, out AliasAndUsingDirective alias))
             {
                 // Found a match in our list of normal aliases.  Mark the alias as being seen so that
                 // it won't be reported to the user as something that can be removed.
@@ -542,9 +540,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             LookupSymbolsOrMembersInternal(result, qualifierOpt, name, arity, basesBeingResolved, options, diagnose, ref useSiteInfo);
 
             // Result without 'Attribute' suffix added.
-            Symbol symbolWithoutSuffix;
             var attributeTypeWithoutSuffixViabilityUseSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(useSiteInfo);
-            bool resultWithoutSuffixIsViable = IsSingleViableAttributeType(result, out symbolWithoutSuffix, ref attributeTypeWithoutSuffixViabilityUseSiteInfo);
+            bool resultWithoutSuffixIsViable = IsSingleViableAttributeType(result, out Symbol symbolWithoutSuffix, ref attributeTypeWithoutSuffixViabilityUseSiteInfo);
 
             // Result with 'Attribute' suffix added.
             LookupResult resultWithSuffix = null;
@@ -585,7 +582,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (!result.IsClear)
                 {
-                    if ((object)symbolWithoutSuffix != null) // was not ambiguous, but not viable
+                    if (symbolWithoutSuffix is not null) // was not ambiguous, but not viable
                     {
                         result.SetFrom(GenerateNonViableAttributeTypeResult(symbolWithoutSuffix, result.Error, diagnose));
                     }
@@ -595,7 +592,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (!resultWithSuffix.IsClear)
                     {
-                        if ((object)symbolWithSuffix != null)
+                        if (symbolWithSuffix is not null)
                         {
                             resultWithSuffix.SetFrom(GenerateNonViableAttributeTypeResult(symbolWithSuffix, resultWithSuffix.Error, diagnose));
                         }
@@ -630,7 +627,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // CONSIDER: We may want to also generate CS0436 for this case.
 
                     resultSymbol = ResolveMultipleSymbolsInAttributeTypeLookup(symbols);
-                    return (object)resultSymbol == null;
+                    return resultSymbol is null;
             }
         }
 
@@ -645,8 +642,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 symbols[i] = UnwrapAliasNoDiagnostics(symbols[i]);
             }
 
-            BestSymbolInfo secondBest;
-            BestSymbolInfo best = GetBestSymbolInfo(symbols, out secondBest);
+            BestSymbolInfo best = GetBestSymbolInfo(symbols, out BestSymbolInfo secondBest);
 
             Debug.Assert(!best.IsNone);
             Debug.Assert(!secondBest.IsNone);
@@ -696,7 +692,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            if (result == null || result.Kind != LookupResultKind.Viable || (object)symbol == null)
+            if (result == null || result.Kind != LookupResultKind.Viable || symbol is null)
             {
                 return false;
             }
@@ -707,7 +703,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private SingleLookupResult GenerateNonViableAttributeTypeResult(Symbol symbol, DiagnosticInfo diagInfo, bool diagnose)
         {
-            Debug.Assert((object)symbol != null);
+            Debug.Assert(symbol is not null);
 
             symbol = UnwrapAliasNoDiagnostics(symbol);
             var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
@@ -717,7 +713,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool CheckAttributeTypeViability(Symbol symbol, bool diagnose, ref DiagnosticInfo diagInfo, ref CompoundUseSiteInfo<AssemblySymbol> attributeTypeViabilityUseSiteInfo)
         {
-            Debug.Assert((object)symbol != null);
+            Debug.Assert(symbol is not null);
 
             if (symbol.Kind == SymbolKind.NamedType)
             {
@@ -848,14 +844,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool diagnose,
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             Debug.Assert(!type.IsInterfaceType() && type.TypeKind != TypeKind.TypeParameter);
 
             TypeSymbol currentType = type;
 
             var tmp = LookupResult.GetInstance();
             PooledHashSet<NamedTypeSymbol> visited = null;
-            while ((object)currentType != null)
+            while (currentType is not null)
             {
                 tmp.Clear();
                 LookupMembersWithoutInheritance(tmp, currentType, name, arity, options, originalBinder, accessThroughType, diagnose, ref useSiteInfo, basesBeingResolved);
@@ -896,7 +892,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 currentType = currentType.GetNextBaseTypeNoUseSiteDiagnostics(basesBeingResolved, this.Compilation, ref visited);
-                if ((object)currentType != null)
+                if (currentType is not null)
                 {
                     currentType.OriginalDefinition.AddUseSiteInfo(ref useSiteInfo);
                 }
@@ -955,8 +951,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var tmp = LookupResult.GetInstance();
 
-            NamedTypeSymbol idictSymbol, iroDictSymbol, iListSymbol, iCollectionSymbol, inccSymbol, inpcSymbol;
-            GetWellKnownWinRTMemberInterfaces(out idictSymbol, out iroDictSymbol, out iListSymbol, out iCollectionSymbol, out inccSymbol, out inpcSymbol);
+            GetWellKnownWinRTMemberInterfaces(out NamedTypeSymbol idictSymbol, out NamedTypeSymbol iroDictSymbol, out NamedTypeSymbol iListSymbol, out NamedTypeSymbol iCollectionSymbol, out NamedTypeSymbol inccSymbol, out NamedTypeSymbol inpcSymbol);
 
             // Dev11 searches all declared and undeclared base interfaces
             foreach (var iface in type.AllInterfacesWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
@@ -1067,7 +1062,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool diagnose,
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             Debug.Assert(type.IsInterface);
 
             LookupMembersWithoutInheritance(current, type, name, arity, options, originalBinder, accessThroughType, diagnose, ref useSiteInfo, basesBeingResolved);
@@ -1195,7 +1190,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Lookup member in interface, and any base interfaces, and System.Object.
         private void LookupMembersInInterface(LookupResult current, NamedTypeSymbol type, string name, int arity, ConsList<TypeSymbol> basesBeingResolved, LookupOptions options, Binder originalBinder, bool diagnose, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             Debug.Assert(type.IsInterface);
 
             LookupMembersInInterfaceOnly(current, type, name, arity, basesBeingResolved, options, originalBinder, type, diagnose, ref useSiteInfo);
@@ -1213,7 +1208,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Lookup member in type parameter
         private void LookupMembersInTypeParameter(LookupResult current, TypeParameterSymbol typeParameter, string name, int arity, ConsList<TypeSymbol> basesBeingResolved, LookupOptions options, Binder originalBinder, bool diagnose, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)typeParameter != null);
+            Debug.Assert(typeParameter is not null);
 
             if ((options & (LookupOptions.NamespaceAliasesOnly | LookupOptions.NamespacesOrTypesOnly)) != 0)
             {
@@ -1236,7 +1231,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (basesBeingResolved?.Any() != true)
             {
-                for (NamedTypeSymbol b = derivedType.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo); (object)b != null; b = b.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
+                for (NamedTypeSymbol b = derivedType.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo); b is not null; b = b.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
                 {
                     if (TypeSymbol.Equals(b, baseType, TypeCompareKind.ConsiderEverything2)) return true;
                 }
@@ -1246,7 +1241,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 PooledHashSet<NamedTypeSymbol> visited = null;
 
                 for (var b = (NamedTypeSymbol)derivedType.GetNextBaseTypeNoUseSiteDiagnostics(basesBeingResolved, compilation, ref visited);
-                     (object)b != null;
+                     b is not null;
                      b = (NamedTypeSymbol)b.GetNextBaseTypeNoUseSiteDiagnostics(basesBeingResolved, compilation, ref visited))
                 {
                     b.OriginalDefinition.AddUseSiteInfo(ref useSiteInfo);
@@ -1431,8 +1426,6 @@ symIsHidden:;
         internal SingleLookupResult CheckViability(Symbol symbol, int arity, LookupOptions options, TypeSymbol accessThroughType, bool diagnose, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo, ConsList<TypeSymbol> basesBeingResolved = null)
         {
             Debug.Assert((options & LookupOptions.MustBeAbstractOrVirtual) == 0 || (options & LookupOptions.MustNotBeInstance) != 0);
-            bool inaccessibleViaQualifier;
-            DiagnosticInfo diagInfo;
 
             // General pattern: checks and diagnostics refer to unwrapped symbol,
             // but lookup results refer to symbol.
@@ -1463,7 +1456,7 @@ symIsHidden:;
             {
                 return LookupResult.Empty();
             }
-            else if (WrongArity(symbol, arity, diagnose, options, out diagInfo))
+            else if (WrongArity(symbol, arity, diagnose, options, out DiagnosticInfo diagInfo))
             {
                 return LookupResult.WrongArity(symbol, diagInfo);
             }
@@ -1495,7 +1488,7 @@ symIsHidden:;
             else if (!InCref &&
                      !this.IsAccessible(unwrappedSymbol,
                                         RefineAccessThroughType(options, accessThroughType),
-                                        out inaccessibleViaQualifier,
+                                        out bool inaccessibleViaQualifier,
                                         ref useSiteInfo,
                                         basesBeingResolved))
             {
@@ -1614,7 +1607,7 @@ symIsHidden:;
                     throw ExceptionUtilities.UnexpectedValue(symbol.Kind);
             }
 
-            return (((object)method1 != null) && ((object)method2 != null)) ?
+            return ((method1 is not null) && (method2 is not null)) ?
                 new CSDiagnosticInfo(ErrorCode.ERR_BindToBogusProp2, symbol, method1, method2) :
                 new CSDiagnosticInfo(ErrorCode.ERR_BindToBogusProp1, symbol, method1 ?? method2);
         }
@@ -1699,7 +1692,7 @@ symIsHidden:;
 
         private static bool IsEffectivelyPrivate(Symbol symbol)
         {
-            for (Symbol s = symbol; (object)s != null; s = s.ContainingSymbol)
+            for (Symbol s = symbol; s is not null; s = s.ContainingSymbol)
             {
                 if (s.DeclaredAccessibility == Accessibility.Private)
                 {
@@ -1716,8 +1709,7 @@ symIsHidden:;
         /// </summary>
         internal bool IsAccessible(Symbol symbol, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo, TypeSymbol accessThroughType = null, ConsList<TypeSymbol> basesBeingResolved = null)
         {
-            bool failedThroughTypeCheck;
-            return IsAccessible(symbol, accessThroughType, out failedThroughTypeCheck, ref useSiteInfo, basesBeingResolved);
+            return IsAccessible(symbol, accessThroughType, out bool failedThroughTypeCheck, ref useSiteInfo, basesBeingResolved);
         }
 
         internal bool IsAccessible(Symbol symbol, SyntaxNode syntax, BindingDiagnosticBag diagnostics)
@@ -1756,18 +1748,11 @@ symIsHidden:;
 
         internal bool IsNonInvocableMember(Symbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Method:
-                case SymbolKind.Field:
-                case SymbolKind.Property:
-                case SymbolKind.NamedType:
-                case SymbolKind.Event:
-                    return !IsInvocableMember(symbol, this.FieldsBeingBound);
-
-                default:
-                    return false;
-            }
+                SymbolKind.Method or SymbolKind.Field or SymbolKind.Property or SymbolKind.NamedType or SymbolKind.Event => !IsInvocableMember(symbol, this.FieldsBeingBound),
+                _ => false,
+            };
         }
 
         internal static bool IsInvocableMember(Symbol symbol, ConsList<FieldSymbol> fieldsBeingBound)
@@ -1792,21 +1777,16 @@ symIsHidden:;
                     break;
             }
 
-            return (object)type != null && (type.IsDelegateType() || type.IsDynamic() || type.IsFunctionPointer());
+            return type is not null && (type.IsDelegateType() || type.IsDynamic() || type.IsFunctionPointer());
         }
 
         private static bool IsInstance(Symbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Field:
-                case SymbolKind.Property:
-                case SymbolKind.Method:
-                case SymbolKind.Event:
-                    return symbol.RequiresInstanceReceiver();
-                default:
-                    return false;
-            }
+                SymbolKind.Field or SymbolKind.Property or SymbolKind.Method or SymbolKind.Event => symbol.RequiresInstanceReceiver(),
+                _ => false,
+            };
         }
 
         // Check if the given symbol can be accessed with the given arity. If OK, return false.
@@ -1940,7 +1920,7 @@ symIsHidden:;
             // TODO: optimize lookup (there might be many interactions in the chain)
             for (CSharpCompilation submission = Compilation; submission != null; submission = submission.PreviousSubmission)
             {
-                if ((object)submission.ScriptClass != null)
+                if (submission.ScriptClass is not null)
                 {
                     AddMemberLookupSymbolsInfoWithoutInheritance(result, submission.ScriptClass, options, originalBinder, scriptClass);
                 }
@@ -2021,8 +2001,7 @@ symIsHidden:;
 
         private void AddWinRTMembersLookupSymbolsInfo(LookupSymbolsInfo result, NamedTypeSymbol type, LookupOptions options, Binder originalBinder, TypeSymbol accessThroughType)
         {
-            NamedTypeSymbol idictSymbol, iroDictSymbol, iListSymbol, iCollectionSymbol, inccSymbol, inpcSymbol;
-            GetWellKnownWinRTMemberInterfaces(out idictSymbol, out iroDictSymbol, out iListSymbol, out iCollectionSymbol, out inccSymbol, out inpcSymbol);
+            GetWellKnownWinRTMemberInterfaces(out NamedTypeSymbol idictSymbol, out NamedTypeSymbol iroDictSymbol, out NamedTypeSymbol iListSymbol, out NamedTypeSymbol iCollectionSymbol, out NamedTypeSymbol inccSymbol, out NamedTypeSymbol inpcSymbol);
 
             // Dev11 searches all declared and undeclared base interfaces
             foreach (var iface in type.AllInterfacesNoUseSiteDiagnostics)
@@ -2039,14 +2018,14 @@ symIsHidden:;
             PooledHashSet<NamedTypeSymbol> visited = null;
             // We need a check for SpecialType.System_Void as its base type is
             // ValueType but we don't wish to return any members for void type
-            while ((object)type != null && !type.IsVoidType())
+            while (type is not null && !type.IsVoidType())
             {
                 AddMemberLookupSymbolsInfoWithoutInheritance(result, type, options, originalBinder, accessThroughType);
 
                 // If the type is from a winmd and implements any of the special WinRT collection
                 // projections then we may need to add underlying interface members. 
                 NamedTypeSymbol namedType = type as NamedTypeSymbol;
-                if ((object)namedType != null && namedType.ShouldAddWinRTMembers)
+                if (namedType is not null && namedType.ShouldAddWinRTMembers)
                 {
                     AddWinRTMembersLookupSymbolsInfo(result, namedType, options, originalBinder, accessThroughType);
                 }

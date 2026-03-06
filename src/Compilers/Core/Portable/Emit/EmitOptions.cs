@@ -385,18 +385,11 @@ namespace Microsoft.CodeAnalysis.Emit
 
         internal static bool IsValidFileAlignment(int value)
         {
-            switch (value)
+            return value switch
             {
-                case 512:
-                case 1024:
-                case 2048:
-                case 4096:
-                case 8192:
-                    return true;
-
-                default:
-                    return false;
-            }
+                512 or 1024 or 2048 or 4096 or 8192 => true,
+                _ => false,
+            };
         }
 
         public EmitOptions WithEmitMetadataOnly(bool value)

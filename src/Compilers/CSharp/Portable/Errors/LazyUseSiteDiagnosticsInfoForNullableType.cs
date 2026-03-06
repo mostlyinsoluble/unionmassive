@@ -6,20 +6,17 @@ using Microsoft.CodeAnalysis.CSharp.Symbols;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class LazyUseSiteDiagnosticsInfoForNullableType : LazyDiagnosticInfo
+    internal class LazyUseSiteDiagnosticsInfoForNullableType : LazyDiagnosticInfo
     {
-        private readonly LanguageVersion _languageVersion;
         private readonly TypeWithAnnotations _possiblyNullableTypeSymbol;
 
-        internal LazyUseSiteDiagnosticsInfoForNullableType(LanguageVersion languageVersion, TypeWithAnnotations possiblyNullableTypeSymbol)
+        internal LazyUseSiteDiagnosticsInfoForNullableType(TypeWithAnnotations possiblyNullableTypeSymbol)
         {
-            _languageVersion = languageVersion;
             _possiblyNullableTypeSymbol = possiblyNullableTypeSymbol;
         }
 
         private LazyUseSiteDiagnosticsInfoForNullableType(LazyUseSiteDiagnosticsInfoForNullableType original, DiagnosticSeverity severity) : base(original, severity)
         {
-            _languageVersion = original._languageVersion;
             _possiblyNullableTypeSymbol = original._possiblyNullableTypeSymbol;
         }
 
@@ -29,12 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         protected override DiagnosticInfo? ResolveInfo()
-        {
-            if (_possiblyNullableTypeSymbol.IsNullableType())
-            {
-                return _possiblyNullableTypeSymbol.Type.OriginalDefinition.GetUseSiteInfo().DiagnosticInfo;
-            }
-            return Binder.GetNullableUnconstrainedTypeParameterDiagnosticIfNecessary(_languageVersion, _possiblyNullableTypeSymbol);
-        }
+            => !_possiblyNullableTypeSymbol.IsNullableType() ? null :
+                _possiblyNullableTypeSymbol.Type.OriginalDefinition.GetUseSiteInfo().DiagnosticInfo;
     }
 }

@@ -273,15 +273,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Symbol symbol = enclosingBinder.GetSymbolOrMethodOrPropertyGroup(lookupResult, memberAccessNode, memberName, targetMemberArity, members, BindingDiagnosticBag.Discarded, wasError: out _,
                                                                                      qualifierOpt: null);
 
-                    if ((object)symbol == null)
+                    if (symbol is null)
                     {
                         Debug.Assert(members.Count > 0);
 
-                        bool haveInstanceCandidates;
                         lookupResult.Clear();
                         enclosingBinder.CheckWhatCandidatesWeHave(members, type, memberName, targetMemberArity, invoked,
                                                                   ref lookupResult, ref useSiteInfo,
-                                                                  out haveInstanceCandidates, out _);
+                                                                  out bool haveInstanceCandidates, out _);
 
                         treatAsInstanceMemberAccess = haveInstanceCandidates;
                     }
@@ -296,13 +295,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     // At this point this could only be an extension member access or an error
-                    bool haveInstanceCandidates;
                     lookupResult.Clear();
                     var members = ArrayBuilder<Symbol>.GetInstance();
 
                     enclosingBinder.CheckWhatCandidatesWeHave(members, type, memberName, targetMemberArity, invoked,
                                                               ref lookupResult, ref useSiteInfo,
-                                                              out haveInstanceCandidates, out _);
+                                                              out bool haveInstanceCandidates, out _);
 
                     members.Free();
                     treatAsInstanceMemberAccess = haveInstanceCandidates;
@@ -407,21 +405,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             private bool ReduceQuery(Binder enclosingBinder, QueryTranslationState state)
             {
                 var topClause = state.clauses.Pop();
-                switch (topClause.Kind())
+                return topClause.Kind() switch
                 {
-                    case SyntaxKind.WhereClause:
-                        return ReduceWhere(enclosingBinder, (WhereClauseSyntax)topClause, state);
-                    case SyntaxKind.JoinClause:
-                        return ReduceJoin(enclosingBinder, (JoinClauseSyntax)topClause, state);
-                    case SyntaxKind.OrderByClause:
-                        return ReduceOrderBy(enclosingBinder, (OrderByClauseSyntax)topClause, state);
-                    case SyntaxKind.FromClause:
-                        return ReduceFrom(enclosingBinder, (FromClauseSyntax)topClause, state);
-                    case SyntaxKind.LetClause:
-                        return ReduceLet(enclosingBinder, (LetClauseSyntax)topClause, state);
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(topClause.Kind());
-                }
+                    SyntaxKind.WhereClause => ReduceWhere(enclosingBinder, (WhereClauseSyntax)topClause, state),
+                    SyntaxKind.JoinClause => ReduceJoin(enclosingBinder, (JoinClauseSyntax)topClause, state),
+                    SyntaxKind.OrderByClause => ReduceOrderBy(enclosingBinder, (OrderByClauseSyntax)topClause, state),
+                    SyntaxKind.FromClause => ReduceFrom(enclosingBinder, (FromClauseSyntax)topClause, state),
+                    SyntaxKind.LetClause => ReduceLet(enclosingBinder, (LetClauseSyntax)topClause, state),
+                    _ => throw ExceptionUtilities.UnexpectedValue(topClause.Kind()),
+                };
             }
 
             /// <summary>

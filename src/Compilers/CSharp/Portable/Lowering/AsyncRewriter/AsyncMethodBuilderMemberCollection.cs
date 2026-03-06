@@ -114,7 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (method.IsIterator)
             {
                 var builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncIteratorMethodBuilder);
-                Debug.Assert((object)builderType != null);
+                Debug.Assert(builderType is not null);
 
                 TryGetBuilderMember<MethodSymbol>(
                     F,
@@ -148,16 +148,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (method.IsAsyncReturningVoid())
             {
                 var builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncVoidMethodBuilder);
-                Debug.Assert((object)builderType != null);
-                MethodSymbol createBuilderMethod;
+                Debug.Assert(builderType is not null);
                 bool customBuilder = false;
                 TryGetBuilderMember<MethodSymbol>(
                     F,
                     WellKnownMember.System_Runtime_CompilerServices_AsyncVoidMethodBuilder__Create,
                     builderType,
                     customBuilder,
-                    out createBuilderMethod);
-                if ((object)createBuilderMethod == null)
+                    out MethodSymbol createBuilderMethod);
+                if (createBuilderMethod is null)
                 {
                     collection = default;
                     return false;
@@ -202,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (customBuilder)
                 {
                     builderType = ValidateBuilderType(F, builderArgument, returnType.DeclaredAccessibility, isGeneric: false, useMethodLevelBuilder);
-                    if ((object)builderType != null)
+                    if (builderType is not null)
                     {
                         taskProperty = GetCustomTaskProperty(F, builderType, returnType);
                         createBuilderMethod = GetCustomCreateMethod(F, builderType);
@@ -211,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncTaskMethodBuilder);
-                    Debug.Assert((object)builderType != null);
+                    Debug.Assert(builderType is not null);
                     TryGetBuilderMember<MethodSymbol>(
                         F,
                         WellKnownMember.System_Runtime_CompilerServices_AsyncTaskMethodBuilder__Create,
@@ -226,9 +225,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         out taskProperty);
                 }
 
-                if ((object)builderType == null ||
-                    (object)createBuilderMethod == null ||
-                    (object)taskProperty == null)
+                if (builderType is null ||
+                    createBuilderMethod is null ||
+                    taskProperty is null)
                 {
                     collection = default;
                     return false;
@@ -283,7 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (customBuilder)
                 {
                     builderType = ValidateBuilderType(F, builderArgument, returnType.DeclaredAccessibility, isGeneric: true, useMethodLevelBuilder);
-                    if ((object)builderType != null)
+                    if (builderType is not null)
                     {
                         builderType = builderType.ConstructedFrom.Construct(resultType);
                         taskProperty = GetCustomTaskProperty(F, builderType, returnType);
@@ -293,7 +292,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncTaskMethodBuilder_T);
-                    Debug.Assert((object)builderType != null);
+                    Debug.Assert(builderType is not null);
                     builderType = builderType.Construct(resultType);
                     TryGetBuilderMember<MethodSymbol>(
                         F,
@@ -309,9 +308,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         out taskProperty);
                 }
 
-                if ((object)builderType == null ||
-                    (object)taskProperty == null ||
-                    (object)createBuilderMethod == null)
+                if (builderType is null ||
+                    taskProperty is null ||
+                    createBuilderMethod is null)
                 {
                     collection = default;
                     return false;
@@ -340,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var builderType = builderAttributeArgument as NamedTypeSymbol;
 
-            if ((object)builderType != null &&
+            if (builderType is not null &&
                  !builderType.IsErrorType() &&
                  !builderType.IsVoidType() &&
                  (forMethodLevelBuilder || builderType.DeclaredAccessibility == desiredAccessibility))
@@ -383,19 +382,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             WellKnownMember? setStateMachine,
             out AsyncMethodBuilderMemberCollection collection)
         {
-            MethodSymbol setExceptionMethod;
-            MethodSymbol setResultMethod;
-            MethodSymbol awaitOnCompletedMethod;
-            MethodSymbol awaitUnsafeOnCompletedMethod;
-            MethodSymbol startMethod;
-            MethodSymbol setStateMachineMethod;
 
-            if (TryGetBuilderMember(F, setException, builderType, customBuilder, out setExceptionMethod) &&
-                TryGetBuilderMember(F, setResult, builderType, customBuilder, out setResultMethod) &&
-                TryGetBuilderMember(F, awaitOnCompleted, builderType, customBuilder, out awaitOnCompletedMethod) &&
-                TryGetBuilderMember(F, awaitUnsafeOnCompleted, builderType, customBuilder, out awaitUnsafeOnCompletedMethod) &&
-                TryGetBuilderMember(F, start, builderType, customBuilder, out startMethod) &&
-                TryGetBuilderMember(F, setStateMachine, builderType, customBuilder, out setStateMachineMethod))
+            if (TryGetBuilderMember(F, setException, builderType, customBuilder, out MethodSymbol setExceptionMethod) &&
+                TryGetBuilderMember(F, setResult, builderType, customBuilder, out MethodSymbol setResultMethod) &&
+                TryGetBuilderMember(F, awaitOnCompleted, builderType, customBuilder, out MethodSymbol awaitOnCompletedMethod) &&
+                TryGetBuilderMember(F, awaitUnsafeOnCompleted, builderType, customBuilder, out MethodSymbol awaitUnsafeOnCompletedMethod) &&
+                TryGetBuilderMember(F, start, builderType, customBuilder, out MethodSymbol startMethod) &&
+                TryGetBuilderMember(F, setStateMachine, builderType, customBuilder, out MethodSymbol setStateMachineMethod))
             {
                 collection = new AsyncMethodBuilderMemberCollection(
                     builderType,
@@ -440,7 +433,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     descriptor,
                     F.Compilation.WellKnownMemberSignatureComparer,
                     accessWithinOpt: null);
-                if ((object)sym != null)
+                if (sym is not null)
                 {
                     sym = sym.SymbolAsMember(builderType);
                 }

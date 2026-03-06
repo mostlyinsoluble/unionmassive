@@ -88,12 +88,12 @@ public abstract class RenamerTests : TestBase
             solution = await documentRenameResult.UpdateSolutionAsync(solution, CancellationToken.None);
             var updatedDocument = solution.GetDocument(documentId);
 
-            if (endDocument.DocumentName is object)
+            if (endDocument.DocumentName is not null)
             {
                 Assert.Equal(endDocument.DocumentName, updatedDocument.Name);
             }
 
-            if (endDocument.DocumentFolders is object)
+            if (endDocument.DocumentFolders is not null)
             {
                 AssertEx.SetEqual(endDocument.DocumentFolders, updatedDocument.Folders);
             }

@@ -184,15 +184,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool IsPreprocessorSymbolDefined(InternalSyntax.DirectiveStack directives, string symbolName)
         {
-            switch (directives.IsDefined(symbolName))
+            return directives.IsDefined(symbolName) switch
             {
-                case InternalSyntax.DefineState.Defined:
-                    return true;
-                case InternalSyntax.DefineState.Undefined:
-                    return false;
-                default:
-                    return this.Options.PreprocessorSymbols.Contains(symbolName);
-            }
+                InternalSyntax.DefineState.Defined => true,
+                InternalSyntax.DefineState.Undefined => false,
+                _ => this.Options.PreprocessorSymbols.Contains(symbolName),
+            };
         }
 
         internal bool IsPreprocessorSymbolDefined(string symbolName, int position)
@@ -234,18 +231,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (DirectiveTriviaSyntax directive in this.GetRoot().GetDirectives(d =>
                                                                         {
-                                                                            switch (d.Kind())
+                                                                            return d.Kind() switch
                                                                             {
-                                                                                case SyntaxKind.IfDirectiveTrivia:
-                                                                                case SyntaxKind.ElifDirectiveTrivia:
-                                                                                case SyntaxKind.ElseDirectiveTrivia:
-                                                                                case SyntaxKind.EndIfDirectiveTrivia:
-                                                                                case SyntaxKind.DefineDirectiveTrivia:
-                                                                                case SyntaxKind.UndefDirectiveTrivia:
-                                                                                    return true;
-                                                                                default:
-                                                                                    return false;
-                                                                            }
+                                                                                SyntaxKind.IfDirectiveTrivia or SyntaxKind.ElifDirectiveTrivia or SyntaxKind.ElseDirectiveTrivia or SyntaxKind.EndIfDirectiveTrivia or SyntaxKind.DefineDirectiveTrivia or SyntaxKind.UndefDirectiveTrivia => true,
+                                                                                _ => false,
+                                                                            };
                                                                         }))
             {
                 currentState = directive.ApplyDirectives(currentState);

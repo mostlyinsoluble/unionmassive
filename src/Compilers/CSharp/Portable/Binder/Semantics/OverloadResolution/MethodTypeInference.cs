@@ -559,7 +559,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private TypeSymbol GetFixedDelegateOrFunctionPointer(TypeSymbol delegateOrFunctionPointerType)
         {
-            Debug.Assert((object)delegateOrFunctionPointerType != null);
+            Debug.Assert(delegateOrFunctionPointerType is not null);
             Debug.Assert(delegateOrFunctionPointerType.IsDelegateType() || delegateOrFunctionPointerType is FunctionPointerTypeSymbol);
 
             // We have a delegate where the input types use no unfixed parameters.  Create
@@ -876,7 +876,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void MakeOutputTypeInferences(Binder binder, BoundExpression argument, TypeWithAnnotations formalType, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            if (argument.Kind == BoundKind.TupleLiteral && (object)argument.Type == null)
+            if (argument.Kind == BoundKind.TupleLiteral && argument.Type is null)
             {
                 MakeOutputTypeInferences(binder, (BoundTupleLiteral)argument, formalType, ref useSiteInfo);
             }
@@ -928,7 +928,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var destination = (NamedTypeSymbol)formalType.Type;
 
-            Debug.Assert((object)argument.Type == null, "should not need to dig into elements if tuple has natural type");
+            Debug.Assert(argument.Type is null, "should not need to dig into elements if tuple has natural type");
             var sourceArguments = argument.Arguments;
 
             // check if the type is actually compatible type for a tuple of given cardinality
@@ -1014,7 +1014,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC: input types of E with type T.
 
             var delegateOrFunctionPointerType = formalParameterType.GetDelegateOrFunctionPointerType();
-            if ((object)delegateOrFunctionPointerType == null)
+            if (delegateOrFunctionPointerType is null)
             {
                 return false; // No input types.
             }
@@ -1070,7 +1070,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC: of E with type T.
 
             var delegateOrFunctionPointerType = formalParameterType.GetDelegateOrFunctionPointerType();
-            if ((object)delegateOrFunctionPointerType == null)
+            if (delegateOrFunctionPointerType is null)
             {
                 return false;
             }
@@ -1089,13 +1089,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _ => throw ExceptionUtilities.UnexpectedValue(delegateOrFunctionPointerType)
             };
 
-            if ((object)method == null || method.HasUseSiteError)
+            if (method is null || method.HasUseSiteError)
             {
                 return false;
             }
 
             var returnType = method.ReturnType;
-            if ((object)returnType == null)
+            if (returnType is null)
             {
                 return false;
             }
@@ -1408,14 +1408,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   then a lower bound inference is made from U to Tb.
 
             var delegateType = target.Type.GetDelegateType();
-            if ((object)delegateType == null)
+            if (delegateType is null)
             {
                 return false;
             }
 
             // cannot be hit, because an invalid delegate does not have an unfixed return type
             // this will be checked earlier.
-            Debug.Assert((object)delegateType.DelegateInvokeMethod != null && !delegateType.DelegateInvokeMethod.HasUseSiteError,
+            Debug.Assert(delegateType.DelegateInvokeMethod is not null && !delegateType.DelegateInvokeMethod.HasUseSiteError,
                          "This method should only be called for valid delegate types.");
             var returnType = delegateType.DelegateInvokeMethod.ReturnTypeWithAnnotations;
             if (!returnType.HasType || returnType.SpecialType == SpecialType.System_Void)
@@ -1438,7 +1438,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool MethodGroupReturnTypeInference(Binder binder, BoundExpression source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
             Debug.Assert(source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(target is not null);
             // SPEC: * Otherwise, if E is a method group and T is a delegate type or
             // SPEC:   expression tree type with parameter types T1...Tk and return
             // SPEC:   type Tb and overload resolution of E with the types T1...Tk
@@ -1451,7 +1451,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var delegateOrFunctionPointerType = target.GetDelegateOrFunctionPointerType();
-            if ((object)delegateOrFunctionPointerType == null)
+            if (delegateOrFunctionPointerType is null)
             {
                 return false;
             }
@@ -1727,32 +1727,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             return true;
         }
 
-        private readonly bool IsFeatureFirstClassSpanEnabled
-        {
-            get
-            {
-                // Note: when Compilation is null, we assume latest LangVersion.
-                return _compilation?.IsFeatureEnabled(MessageID.IDS_FeatureFirstClassSpan) != false;
-            }
-        }
-
         private bool ExactSpanInference(TypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
             Debug.Assert(source is not null);
             Debug.Assert(target is not null);
 
-            if (IsFeatureFirstClassSpanEnabled && (
-                // SPEC: * V is a Span<V1> and U is an array type U1[] or a Span<U1>
-                (
+            if ((( // SPEC: * V is a Span<V1> and U is an array type U1[] or a Span<U1>
                     target.IsSpan() &&
                     (source.IsSZArray() || source.IsSpan())
-                ) ||
-                // SPEC: * V is a ReadOnlySpan<V1> and U is an array type U1[] or a Span<U1> or ReadOnlySpan<U1>
-                (
+                ) || ( // SPEC: * V is a ReadOnlySpan<V1> and U is an array type U1[] or a Span<U1> or ReadOnlySpan<U1>
                     target.IsReadOnlySpan() &&
                     (source.IsSZArray() || source.IsSpan() || source.IsReadOnlySpan())
-                )
-            ))
+                )))
             {
                 var sourceElementType = GetSpanOrSZArrayElementType(source);
                 var targetElementType = GetSpanElementType(target);
@@ -1837,11 +1823,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             //       that is ok, because we are inferring type parameters used in the matching elements, 
             //       This is not the situation where entire tuple type used to infer a single type param
 
-            ImmutableArray<TypeWithAnnotations> sourceTypes;
-            ImmutableArray<TypeWithAnnotations> targetTypes;
 
-            if (!source.Type.TryGetElementTypesWithAnnotationsIfTupleType(out sourceTypes) ||
-                !target.Type.TryGetElementTypesWithAnnotationsIfTupleType(out targetTypes) ||
+            if (!source.Type.TryGetElementTypesWithAnnotationsIfTupleType(out ImmutableArray<TypeWithAnnotations> sourceTypes) ||
+                !target.Type.TryGetElementTypesWithAnnotationsIfTupleType(out ImmutableArray<TypeWithAnnotations> targetTypes) ||
                 sourceTypes.Length != targetTypes.Length)
             {
                 return false;
@@ -1865,13 +1849,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   is made from each Ui to the corresponding Vi.
 
             var namedSource = source.Type as NamedTypeSymbol;
-            if ((object)namedSource == null)
+            if (namedSource is null)
             {
                 return false;
             }
 
             var namedTarget = target.Type as NamedTypeSymbol;
-            if ((object)namedTarget == null)
+            if (namedTarget is null)
             {
                 return false;
             }
@@ -1941,8 +1925,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void ExactTypeArgumentInference(NamedTypeSymbol source, NamedTypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
             Debug.Assert(TypeSymbol.Equals(source.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything2));
 
             var sourceTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
@@ -2077,8 +2061,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static TypeWithAnnotations GetMatchingElementType(ArrayTypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             // It might be an array of same rank.
             if (target.IsArray())
@@ -2112,8 +2096,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool LowerBoundArrayInference(TypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             // SPEC: * Otherwise, if U is an array type Ue[...] and V is either an array
             // SPEC:   type Ve[...] of the same rank, or if U is a one-dimensional array
@@ -2153,18 +2137,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(source is not null);
             Debug.Assert(target is not null);
 
-            if (IsFeatureFirstClassSpanEnabled && (
-                // SPEC: * V is a Span<V1> and U is an array type U1[] or a Span<U1>
-                (
+            if ((( // SPEC: * V is a Span<V1> and U is an array type U1[] or a Span<U1>
                     target.IsSpan() &&
                     (source.IsSZArray() || source.IsSpan())
-                ) ||
-                // SPEC: * V is a ReadOnlySpan<V1> and U is an array type U1[] or a Span<U1> or ReadOnlySpan<U1>
-                (
+                ) || ( // SPEC: * V is a ReadOnlySpan<V1> and U is an array type U1[] or a Span<U1> or ReadOnlySpan<U1>
                     target.IsReadOnlySpan() &&
                     (source.IsSZArray() || source.IsSpan() || source.IsReadOnlySpan())
-                )
-            ))
+                )))
             {
                 var sourceElementType = GetSpanOrSZArrayElementType(source);
                 var targetElementType = GetSpanElementType(target);
@@ -2193,11 +2172,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool LowerBoundConstructedInference(TypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             var constructedTarget = target as NamedTypeSymbol;
-            if ((object)constructedTarget == null)
+            if (constructedTarget is null)
             {
                 return false;
             }
@@ -2217,7 +2196,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   is made from each Ui to the corresponding Vi.
 
             var constructedSource = source as NamedTypeSymbol;
-            if ((object)constructedSource != null &&
+            if (constructedSource is not null &&
                 TypeSymbol.Equals(constructedSource.OriginalDefinition, constructedTarget.OriginalDefinition, TypeCompareKind.ConsiderEverything2))
             {
                 if (constructedSource.IsInterface || constructedSource.IsDelegateType())
@@ -2257,8 +2236,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool LowerBoundClassInference(TypeSymbol source, NamedTypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             if (target.TypeKind != TypeKind.Class)
             {
@@ -2288,7 +2267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 sourceBase = ((TypeParameterSymbol)source).EffectiveBaseClass(ref useSiteInfo);
             }
 
-            while ((object)sourceBase != null)
+            while (sourceBase is not null)
             {
                 if (TypeSymbol.Equals(sourceBase.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything2))
                 {
@@ -2302,8 +2281,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool LowerBoundInterfaceInference(TypeSymbol source, NamedTypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             if (!target.IsInterface)
             {
@@ -2342,7 +2321,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             allInterfaces = ModuloReferenceTypeNullabilityDifferences(allInterfaces, VarianceKind.In);
 
             NamedTypeSymbol matchingInterface = GetInterfaceInferenceBound(allInterfaces, target);
-            if ((object)matchingInterface == null)
+            if (matchingInterface is null)
             {
                 return false;
             }
@@ -2383,8 +2362,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   was declared as contravariant then an upper bound inference is made.
             // SPEC: * otherwise, an exact inference is made.
 
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
             Debug.Assert(TypeSymbol.Equals(source.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything2));
 
             var typeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance();
@@ -2600,7 +2579,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var target = targetWithAnnotations.Type;
 
             var constructedSource = source as NamedTypeSymbol;
-            if ((object)constructedSource == null)
+            if (constructedSource is null)
             {
                 return false;
             }
@@ -2617,7 +2596,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var constructedTarget = target as NamedTypeSymbol;
 
-            if ((object)constructedTarget != null &&
+            if (constructedTarget is not null &&
                 TypeSymbol.Equals(constructedSource.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything2))
             {
                 if (constructedTarget.IsInterface || constructedTarget.IsDelegateType())
@@ -2654,8 +2633,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool UpperBoundClassInference(NamedTypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             if (source.TypeKind != TypeKind.Class || target.TypeKind != TypeKind.Class)
             {
@@ -2667,7 +2646,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   inference is made from each Ui to the corresponding Vi.
 
             var targetBase = target.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo);
-            while ((object)targetBase != null)
+            while (targetBase is not null)
             {
                 if (TypeSymbol.Equals(targetBase.OriginalDefinition, source.OriginalDefinition, TypeCompareKind.ConsiderEverything2))
                 {
@@ -2683,8 +2662,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool UpperBoundInterfaceInference(NamedTypeSymbol source, TypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
 
             if (!source.IsInterface)
             {
@@ -2713,7 +2692,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             allInterfaces = ModuloReferenceTypeNullabilityDifferences(allInterfaces, VarianceKind.Out);
 
             NamedTypeSymbol bestInterface = GetInterfaceInferenceBound(allInterfaces, source);
-            if ((object)bestInterface == null)
+            if (bestInterface is null)
             {
                 return false;
             }
@@ -2733,8 +2712,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC:   was declared as contravariant then a lower-bound inference is made.
             // SPEC: * otherwise, an exact inference is made.
 
-            Debug.Assert((object)source != null);
-            Debug.Assert((object)target != null);
+            Debug.Assert(source is not null);
+            Debug.Assert(target is not null);
             Debug.Assert(TypeSymbol.Equals(source.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything2));
 
             var typeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance();
@@ -3063,9 +3042,9 @@ OuterBreak:
         //
         private TypeWithAnnotations InferReturnType(BoundExpression source, NamedTypeSymbol target, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            Debug.Assert((object)target != null);
+            Debug.Assert(target is not null);
             Debug.Assert(target.IsDelegateType());
-            Debug.Assert((object)target.DelegateInvokeMethod != null && !target.DelegateInvokeMethod.HasUseSiteError,
+            Debug.Assert(target.DelegateInvokeMethod is not null && !target.DelegateInvokeMethod.HasUseSiteError,
                          "This method should only be called for legal delegate types.");
             Debug.Assert(!target.DelegateInvokeMethod.ReturnsVoid);
 
@@ -3163,7 +3142,7 @@ OuterBreak:
             {
                 if (TypeSymbol.Equals(currentInterface.OriginalDefinition, target.OriginalDefinition, TypeCompareKind.ConsiderEverything))
                 {
-                    if ((object)matchingInterface == null)
+                    if (matchingInterface is null)
                     {
                         matchingInterface = currentInterface;
                     }
@@ -3264,7 +3243,7 @@ OuterBreak:
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo,
             out MethodTypeInferrer inferrer)
         {
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             Debug.Assert(method.Arity > 0);
             Debug.Assert(!arguments.IsDefault);
 

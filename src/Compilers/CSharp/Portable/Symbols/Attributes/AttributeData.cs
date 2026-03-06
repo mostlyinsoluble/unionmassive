@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // NOTE:    We will follow the specification.
                 // NOTE:    See Devdiv Bug #13762 "Custom security attributes deriving from SecurityAttribute are not treated as security attributes" for details.
 
-                if (AttributeClass is object)
+                if (AttributeClass is not null)
                 {
                     // Well-known type SecurityAttribute is optional.
                     // Native compiler doesn't generate a use-site error if it is not found, we do the same.
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <returns>A <see cref="System.String"/> that represents the current AttributeData.</returns>
         public override string? ToString()
         {
-            if (this.AttributeClass is object)
+            if (this.AttributeClass is not null)
             {
                 string className = this.AttributeClass.ToDisplayString(SymbolDisplayFormat.TestFormat);
 
@@ -216,8 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!this.HasErrors);
             Debug.Assert(arguments.Diagnostics is BindingDiagnosticBag);
 
-            bool hasErrors;
-            DeclarativeSecurityAction action = DecodeSecurityAttributeAction(targetSymbol, compilation, arguments.AttributeSyntaxOpt, out hasErrors, (BindingDiagnosticBag)arguments.Diagnostics);
+            DeclarativeSecurityAction action = DecodeSecurityAttributeAction(targetSymbol, compilation, arguments.AttributeSyntaxOpt, out bool hasErrors, (BindingDiagnosticBag)arguments.Diagnostics);
 
             if (!hasErrors)
             {
@@ -242,7 +241,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             arguments.GetOrCreateData<T>().HasSkipLocalsInitAttribute = true;
             if (!compilation.Options.AllowUnsafe)
             {
-                Debug.Assert(arguments.AttributeSyntaxOpt is object);
+                Debug.Assert(arguments.AttributeSyntaxOpt is not null);
                 ((BindingDiagnosticBag)arguments.Diagnostics).Add(ErrorCode.ERR_IllegalUnsafe, arguments.AttributeSyntaxOpt.Location);
             }
         }
@@ -259,7 +258,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (value.Kind != TypedConstantKind.Array)
             {
                 string? memberName = value.DecodeValue<string>(SpecialType.System_String);
-                if (memberName is object)
+                if (memberName is not null)
                 {
                     arguments.GetOrCreateData<T>().AddNotNullMember(memberName);
                     ReportBadNotNullMemberIfNeeded(type, arguments, memberName);
@@ -271,7 +270,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 foreach (var member in value.Values)
                 {
                     var memberName = member.DecodeValue<string>(SpecialType.System_String);
-                    if (memberName is object)
+                    if (memberName is not null)
                     {
                         builder.Add(memberName);
                         ReportBadNotNullMemberIfNeeded(type, arguments, memberName);
@@ -293,7 +292,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
             }
 
-            Debug.Assert(arguments.AttributeSyntaxOpt is object);
+            Debug.Assert(arguments.AttributeSyntaxOpt is not null);
             ((BindingDiagnosticBag)arguments.Diagnostics).Add(ErrorCode.WRN_MemberNotNullBadMember, arguments.AttributeSyntaxOpt.Location, memberName);
         }
 
@@ -310,7 +309,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (value.Kind != TypedConstantKind.Array)
             {
                 var memberName = value.DecodeValue<string>(SpecialType.System_String);
-                if (memberName is object)
+                if (memberName is not null)
                 {
                     arguments.GetOrCreateData<T>().AddNotNullWhenMember(sense, memberName);
                     ReportBadNotNullMemberIfNeeded(type, arguments, memberName);
@@ -322,7 +321,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 foreach (var member in value.Values)
                 {
                     var memberName = member.DecodeValue<string>(SpecialType.System_String);
-                    if (memberName is object)
+                    if (memberName is not null)
                     {
                         builder.Add(memberName);
                         ReportBadNotNullMemberIfNeeded(type, arguments, memberName);
@@ -336,7 +335,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private DeclarativeSecurityAction DecodeSecurityAttributeAction(Symbol targetSymbol, CSharpCompilation compilation, AttributeSyntax? nodeOpt, out bool hasErrors, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert((object)targetSymbol != null);
+            Debug.Assert(targetSymbol is not null);
             Debug.Assert(targetSymbol.Kind == SymbolKind.Assembly || targetSymbol.Kind == SymbolKind.NamedType || targetSymbol.Kind == SymbolKind.Method);
             Debug.Assert(this.IsSecurityAttribute(compilation));
 
@@ -365,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 TypedConstant firstArg = ctorArgs[0];
                 var firstArgType = (TypeSymbol?)firstArg.TypeInternal;
-                if (firstArgType is object && firstArgType.Equals(compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAction)))
+                if (firstArgType is not null && firstArgType.Equals(compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAction)))
                 {
                     return DecodeSecurityAction(firstArg, targetSymbol, nodeOpt, diagnostics, out hasErrors);
                 }
@@ -379,9 +378,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private DeclarativeSecurityAction DecodeSecurityAction(TypedConstant typedValue, Symbol targetSymbol, AttributeSyntax? nodeOpt, BindingDiagnosticBag diagnostics, out bool hasErrors)
         {
-            Debug.Assert((object)targetSymbol != null);
+            Debug.Assert(targetSymbol is not null);
             Debug.Assert(targetSymbol.Kind == SymbolKind.Assembly || targetSymbol.Kind == SymbolKind.NamedType || targetSymbol.Kind == SymbolKind.Method);
-            Debug.Assert(typedValue.ValueInternal is object);
+            Debug.Assert(typedValue.ValueInternal is not null);
 
             int securityAction = (int)typedValue.ValueInternal;
             bool isPermissionRequestAction;
@@ -393,8 +392,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     if (this.IsTargetAttribute(AttributeDescription.PrincipalPermissionAttribute))
                     {
                         // CS7052: SecurityAction value '{0}' is invalid for PrincipalPermission attribute
-                        object displayString;
-                        Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out displayString);
+                        Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out object displayString);
                         diagnostics.Add(ErrorCode.ERR_PrincipalPermissionInvalidAction, syntaxLocation, displayString);
                         hasErrors = true;
                         return DeclarativeSecurityAction.None;
@@ -423,8 +421,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 default:
                     {
                         // CS7049: Security attribute '{0}' has an invalid SecurityAction value '{1}'
-                        object displayString;
-                        Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out displayString);
+                        Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out object displayString);
                         diagnostics.Add(ErrorCode.ERR_SecurityAttributeInvalidAction, syntaxLocation, nodeOpt != null ? nodeOpt.GetErrorDisplayName() : "", displayString);
                         hasErrors = true;
                         return DeclarativeSecurityAction.None;
@@ -439,8 +436,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // Types and methods cannot take permission requests.
 
                     // CS7051: SecurityAction value '{0}' is invalid for security attributes applied to a type or a method
-                    object displayString;
-                    Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out displayString);
+                    Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out object displayString);
                     diagnostics.Add(ErrorCode.ERR_SecurityAttributeInvalidActionTypeOrMethod, syntaxLocation, displayString);
                     hasErrors = true;
                     return DeclarativeSecurityAction.None;
@@ -453,8 +449,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // Assemblies cannot take declarative security.
 
                     // CS7050: SecurityAction value '{0}' is invalid for security attributes applied to an assembly
-                    object displayString;
-                    Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out displayString);
+                    Location syntaxLocation = GetSecurityAttributeActionSyntaxLocation(nodeOpt, typedValue, out object displayString);
                     diagnostics.Add(ErrorCode.ERR_SecurityAttributeInvalidActionAssembly, syntaxLocation, displayString);
                     hasErrors = true;
                     return DeclarativeSecurityAction.None;
@@ -513,7 +508,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (namedArgs.Length == 1)
             {
                 var namedArg = namedArgs[0];
-                Debug.Assert(AttributeClass is object);
+                Debug.Assert(AttributeClass is not null);
                 NamedTypeSymbol attrType = this.AttributeClass;
                 string filePropName = PermissionSetAttributeWithFileReference.FilePropertyName;
                 string hexPropName = PermissionSetAttributeWithFileReference.HexPropertyName;
@@ -558,7 +553,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 var property = (PropertySymbol)members[0];
                 if (property.TypeWithAnnotations.HasType && property.Type.SpecialType == SpecialType.System_String &&
                     property.DeclaredAccessibility == Accessibility.Public && property.GetMemberArity() == 0 &&
-                    (object)property.SetMethod != null && property.SetMethod.DeclaredAccessibility == Accessibility.Public)
+                    property.SetMethod is not null && property.SetMethod.DeclaredAccessibility == Accessibility.Public)
                 {
                     return true;
                 }
@@ -625,8 +620,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var guidString = (string?)this.CommonConstructorArguments[0].ValueInternal;
 
             // Native compiler allows only a specific GUID format: "D" format (32 digits separated by hyphens)
-            Guid guid;
-            if (!Guid.TryParseExact(guidString, "D", out guid))
+            if (!Guid.TryParseExact(guidString, "D", out Guid guid))
             {
                 // CS0591: Invalid value for argument to '{0}' attribute
                 Location attributeArgumentSyntaxLocation = this.GetAttributeArgumentLocation(0);
@@ -646,7 +640,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private protected sealed override bool IsStringProperty(string memberName)
         {
-            if (AttributeClass is object)
+            if (AttributeClass is not null)
             {
                 foreach (var member in AttributeClass.GetMembers(memberName))
                 {

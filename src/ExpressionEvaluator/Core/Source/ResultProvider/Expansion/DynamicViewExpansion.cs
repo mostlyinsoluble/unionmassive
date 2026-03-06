@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.DynamicView,
                 name,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: proxyTypeAndInfo,
                 useDebuggerDisplay: false,
                 value: _proxyValue,

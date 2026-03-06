@@ -50,15 +50,11 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal static DkmClrCompilationResultFlags GetLocalResultFlags(this Alias alias)
         {
-            switch (alias.Kind)
+            return alias.Kind switch
             {
-                case DkmClrAliasKind.Exception:
-                case DkmClrAliasKind.StowedException:
-                case DkmClrAliasKind.ReturnValue:
-                    return DkmClrCompilationResultFlags.ReadOnlyResult;
-                default:
-                    return DkmClrCompilationResultFlags.None;
-            }
+                DkmClrAliasKind.Exception or DkmClrAliasKind.StowedException or DkmClrAliasKind.ReturnValue => DkmClrCompilationResultFlags.ReadOnlyResult,
+                _ => DkmClrCompilationResultFlags.None,
+            };
         }
 
         internal static bool IsReturnValueWithoutIndex(this Alias alias)

@@ -19,8 +19,7 @@ namespace Microsoft.CodeAnalysis.Collections
 
         public void Push(T key, R value)
         {
-            Stack<R>? store;
-            if (!_dict.TryGetValue(key, out store))
+            if (!_dict.TryGetValue(key, out Stack<R>? store))
             {
                 store = new Stack<R>();
                 _dict.Add(key, store);
@@ -31,14 +30,13 @@ namespace Microsoft.CodeAnalysis.Collections
 
         public bool TryPop(T key, [MaybeNullWhen(returnValue: false)] out R value)
         {
-            Stack<R>? store;
-            if (_dict.TryGetValue(key, out store) && store.Count > 0)
+            if (_dict.TryGetValue(key, out Stack<R>? store) && store.Count > 0)
             {
                 value = store.Pop();
                 return true;
             }
 
-            value = default(R);
+            value = default;
             return false;
         }
     }

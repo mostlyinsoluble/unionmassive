@@ -125,14 +125,14 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         private static string GetTypeName(SignatureTypeCode typeCode)
         {
-            switch (typeCode)
+            return typeCode switch
             {
-                case SignatureTypeCode.Boolean: return "[bool]";
-                case SignatureTypeCode.Int32: return "[int]";
-                case SignatureTypeCode.String: return "[string]";
-                case SignatureTypeCode.Object: return "[object]";
-                default: return null;
-            }
+                SignatureTypeCode.Boolean => "[bool]",
+                SignatureTypeCode.Int32 => "[int]",
+                SignatureTypeCode.String => "[string]",
+                SignatureTypeCode.Object => "[object]",
+                _ => null,
+            };
         }
 
         public void VerifySynthesizedMembers(params string[] expectedSynthesizedTypesAndMemberCounts)

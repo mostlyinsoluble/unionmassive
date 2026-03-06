@@ -93,15 +93,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isExpression = !isUsingDeclaration && syntax.Kind() != SyntaxKind.VariableDeclaration;
             bool hasAwait = awaitKeyword != default;
 
-            if (isUsingDeclaration)
-            {
-                CheckFeatureAvailability(usingKeyword, MessageID.IDS_FeatureUsingDeclarations, diagnostics);
-            }
-            else if (hasAwait)
-            {
-                CheckFeatureAvailability(awaitKeyword, MessageID.IDS_FeatureAsyncUsing, diagnostics);
-            }
-
             Debug.Assert(isUsingDeclaration || usingBinderOpt != null);
 
             bool hasErrors = false;
@@ -190,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // Pattern-based binding
                 // If this is a ref struct, or we're in a valid asynchronous using, try binding via pattern.
-                if (type is object && (type.IsRefLikeType || hasAwait))
+                if (type is not null && (type.IsRefLikeType || hasAwait))
                 {
                     BoundExpression? receiver = fromExpression
                                                ? expressionOpt
@@ -198,14 +189,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     BindingDiagnosticBag patternDiagnostics = BindingDiagnosticBag.GetInstance(diagnostics);
                     MethodSymbol disposeMethod = originalBinder.TryFindDisposePatternMethod(receiver, syntax, hasAwait, patternDiagnostics, out bool expanded);
-                    if (disposeMethod is object)
+                    if (disposeMethod is not null)
                     {
                         Debug.Assert(!disposeMethod.IsExtensionMethod && !disposeMethod.IsExtensionBlockMember(),
                             "No extension disposal. See TryFindDisposePatternMethod");
 
                         diagnostics.AddRangeAndFree(patternDiagnostics);
-                        MessageID.IDS_FeatureDisposalPattern.CheckFeatureAvailability(diagnostics, originalBinder.Compilation, syntax.Location);
-
                         var argumentsBuilder = ArrayBuilder<BoundExpression>.GetInstance(disposeMethod.ParameterCount);
                         ImmutableArray<int> argsToParams = default;
 
@@ -240,7 +229,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // Interface binding
                 NamedTypeSymbol disposableInterface = getDisposableInterface(hasAwait);
-                Debug.Assert((object)disposableInterface != null);
+                Debug.Assert(disposableInterface is not null);
 
                 bool implementsIDisposable = implementsInterface(fromExpression, disposableInterface, diagnostics);
 
@@ -298,13 +287,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 diagnostics.Add(syntax, useSiteInfo);
-
-                if (needSupportForRefStructInterfaces &&
-                    (fromExpression ? expressionOpt!.Type : declarationTypeOpt)!.ContainingModule != originalBinder.Compilation.SourceModule)
-                {
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureRefStructInterfaces, diagnostics);
-                }
-
                 return result;
             }
 

@@ -91,8 +91,8 @@ namespace Roslyn.Test.Utilities
 
             foreach (var value in _equalityUnits.SelectMany(x => x.AllValues))
             {
-                Assert.False(_compareWithEqualityOperator(default(T), value));
-                Assert.False(_compareWithEqualityOperator(value, default(T)));
+                Assert.False(_compareWithEqualityOperator(default, value));
+                Assert.False(_compareWithEqualityOperator(value, default));
             }
         }
 
@@ -123,8 +123,8 @@ namespace Roslyn.Test.Utilities
 
             foreach (var value in _equalityUnits.SelectMany(x => x.AllValues))
             {
-                Assert.True(_compareWithInequalityOperator(default(T), value));
-                Assert.True(_compareWithInequalityOperator(value, default(T)));
+                Assert.True(_compareWithInequalityOperator(default, value));
+                Assert.True(_compareWithInequalityOperator(value, default));
             }
         }
 

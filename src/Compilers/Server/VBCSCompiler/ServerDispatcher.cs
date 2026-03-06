@@ -204,7 +204,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
 
             void AddNonNull(Task? task)
             {
-                if (task is object)
+                if (task is not null)
                 {
                     all.Add(task);
                 }

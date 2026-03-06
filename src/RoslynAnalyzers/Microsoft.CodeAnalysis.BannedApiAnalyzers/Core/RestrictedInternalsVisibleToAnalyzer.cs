@@ -28,12 +28,12 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
     {
         public static readonly DiagnosticDescriptor Rule = new(
             id: DiagnosticIds.RestrictedInternalsVisibleToRuleId,
-            title: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToMessage)),
+            title: new LocalizableResourceString(nameof(RestrictedInternalsVisibleToTitle), ResourceManager, typeof(BannedApiAnalyzerResources)),
+            messageFormat: new LocalizableResourceString(nameof(RestrictedInternalsVisibleToMessage), ResourceManager, typeof(BannedApiAnalyzerResources)),
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Error,  // Force build break on invalid external access.
             isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(RestrictedInternalsVisibleToDescription)),
+            description: new LocalizableResourceString(nameof(RestrictedInternalsVisibleToDescription), ResourceManager, typeof(BannedApiAnalyzerResources)),
             helpLinkUri: null, // TODO: Add help link
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 

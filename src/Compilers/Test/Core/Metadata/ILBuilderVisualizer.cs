@@ -104,24 +104,13 @@ namespace Roslyn.Test.Utilities
                 }
                 else
                 {
-                    HandlerKind kind;
-
-                    switch (region.HandlerKind)
+                    var kind = region.HandlerKind switch
                     {
-                        case System.Reflection.Metadata.ExceptionRegionKind.Catch:
-                            kind = HandlerKind.Catch;
-                            break;
-                        case System.Reflection.Metadata.ExceptionRegionKind.Fault:
-                            kind = HandlerKind.Fault;
-                            break;
-                        case System.Reflection.Metadata.ExceptionRegionKind.Filter:
-                            kind = HandlerKind.Filter;
-                            break;
-                        default:
-                            kind = HandlerKind.Finally;
-                            break;
-                    }
-
+                        System.Reflection.Metadata.ExceptionRegionKind.Catch => HandlerKind.Catch,
+                        System.Reflection.Metadata.ExceptionRegionKind.Fault => HandlerKind.Fault,
+                        System.Reflection.Metadata.ExceptionRegionKind.Filter => HandlerKind.Filter,
+                        _ => HandlerKind.Finally,
+                    };
                     span = new HandlerSpan(kind, region.ExceptionType, region.HandlerStartOffset, region.HandlerEndOffset);
                 }
                 spans.Add(span);
@@ -284,229 +273,228 @@ namespace Roslyn.Test.Utilities
 
         private static string GetInstructionName(ILOpCode opcode)
         {
-            switch (opcode)
+            return opcode switch
             {
-                case ILOpCode.Nop: return "nop";
-                case ILOpCode.Break: return "break";
-                case ILOpCode.Ldarg_0: return "ldarg.0";
-                case ILOpCode.Ldarg_1: return "ldarg.1";
-                case ILOpCode.Ldarg_2: return "ldarg.2";
-                case ILOpCode.Ldarg_3: return "ldarg.3";
-                case ILOpCode.Ldloc_0: return "ldloc.0";
-                case ILOpCode.Ldloc_1: return "ldloc.1";
-                case ILOpCode.Ldloc_2: return "ldloc.2";
-                case ILOpCode.Ldloc_3: return "ldloc.3";
-                case ILOpCode.Stloc_0: return "stloc.0";
-                case ILOpCode.Stloc_1: return "stloc.1";
-                case ILOpCode.Stloc_2: return "stloc.2";
-                case ILOpCode.Stloc_3: return "stloc.3";
-                case ILOpCode.Ldarg_s: return "ldarg.s";
-                case ILOpCode.Ldarga_s: return "ldarga.s";
-                case ILOpCode.Starg_s: return "starg.s";
-                case ILOpCode.Ldloc_s: return "ldloc.s";
-                case ILOpCode.Ldloca_s: return "ldloca.s";
-                case ILOpCode.Stloc_s: return "stloc.s";
-                case ILOpCode.Ldnull: return "ldnull";
-                case ILOpCode.Ldc_i4_m1: return "ldc.i4.m1";
-                case ILOpCode.Ldc_i4_0: return "ldc.i4.0";
-                case ILOpCode.Ldc_i4_1: return "ldc.i4.1";
-                case ILOpCode.Ldc_i4_2: return "ldc.i4.2";
-                case ILOpCode.Ldc_i4_3: return "ldc.i4.3";
-                case ILOpCode.Ldc_i4_4: return "ldc.i4.4";
-                case ILOpCode.Ldc_i4_5: return "ldc.i4.5";
-                case ILOpCode.Ldc_i4_6: return "ldc.i4.6";
-                case ILOpCode.Ldc_i4_7: return "ldc.i4.7";
-                case ILOpCode.Ldc_i4_8: return "ldc.i4.8";
-                case ILOpCode.Ldc_i4_s: return "ldc.i4.s";
-                case ILOpCode.Ldc_i4: return "ldc.i4";
-                case ILOpCode.Ldc_i8: return "ldc.i8";
-                case ILOpCode.Ldc_r4: return "ldc.r4";
-                case ILOpCode.Ldc_r8: return "ldc.r8";
-                case ILOpCode.Dup: return "dup";
-                case ILOpCode.Pop: return "pop";
-                case ILOpCode.Jmp: return "jmp";
-                case ILOpCode.Call: return "call";
-                case ILOpCode.Calli: return "calli";
-                case ILOpCode.Ret: return "ret";
-                case ILOpCode.Br_s: return "br.s";
-                case ILOpCode.Brfalse_s: return "brfalse.s";
-                case ILOpCode.Brtrue_s: return "brtrue.s";
-                case ILOpCode.Beq_s: return "beq.s";
-                case ILOpCode.Bge_s: return "bge.s";
-                case ILOpCode.Bgt_s: return "bgt.s";
-                case ILOpCode.Ble_s: return "ble.s";
-                case ILOpCode.Blt_s: return "blt.s";
-                case ILOpCode.Bne_un_s: return "bne.un.s";
-                case ILOpCode.Bge_un_s: return "bge.un.s";
-                case ILOpCode.Bgt_un_s: return "bgt.un.s";
-                case ILOpCode.Ble_un_s: return "ble.un.s";
-                case ILOpCode.Blt_un_s: return "blt.un.s";
-                case ILOpCode.Br: return "br";
-                case ILOpCode.Brfalse: return "brfalse";
-                case ILOpCode.Brtrue: return "brtrue";
-                case ILOpCode.Beq: return "beq";
-                case ILOpCode.Bge: return "bge";
-                case ILOpCode.Bgt: return "bgt";
-                case ILOpCode.Ble: return "ble";
-                case ILOpCode.Blt: return "blt";
-                case ILOpCode.Bne_un: return "bne.un";
-                case ILOpCode.Bge_un: return "bge.un";
-                case ILOpCode.Bgt_un: return "bgt.un";
-                case ILOpCode.Ble_un: return "ble.un";
-                case ILOpCode.Blt_un: return "blt.un";
-                case ILOpCode.Switch: return "switch";
-                case ILOpCode.Ldind_i1: return "ldind.i1";
-                case ILOpCode.Ldind_u1: return "ldind.u1";
-                case ILOpCode.Ldind_i2: return "ldind.i2";
-                case ILOpCode.Ldind_u2: return "ldind.u2";
-                case ILOpCode.Ldind_i4: return "ldind.i4";
-                case ILOpCode.Ldind_u4: return "ldind.u4";
-                case ILOpCode.Ldind_i8: return "ldind.i8";
-                case ILOpCode.Ldind_i: return "ldind.i";
-                case ILOpCode.Ldind_r4: return "ldind.r4";
-                case ILOpCode.Ldind_r8: return "ldind.r8";
-                case ILOpCode.Ldind_ref: return "ldind.ref";
-                case ILOpCode.Stind_ref: return "stind.ref";
-                case ILOpCode.Stind_i1: return "stind.i1";
-                case ILOpCode.Stind_i2: return "stind.i2";
-                case ILOpCode.Stind_i4: return "stind.i4";
-                case ILOpCode.Stind_i8: return "stind.i8";
-                case ILOpCode.Stind_r4: return "stind.r4";
-                case ILOpCode.Stind_r8: return "stind.r8";
-                case ILOpCode.Add: return "add";
-                case ILOpCode.Sub: return "sub";
-                case ILOpCode.Mul: return "mul";
-                case ILOpCode.Div: return "div";
-                case ILOpCode.Div_un: return "div.un";
-                case ILOpCode.Rem: return "rem";
-                case ILOpCode.Rem_un: return "rem.un";
-                case ILOpCode.And: return "and";
-                case ILOpCode.Or: return "or";
-                case ILOpCode.Xor: return "xor";
-                case ILOpCode.Shl: return "shl";
-                case ILOpCode.Shr: return "shr";
-                case ILOpCode.Shr_un: return "shr.un";
-                case ILOpCode.Neg: return "neg";
-                case ILOpCode.Not: return "not";
-                case ILOpCode.Conv_i1: return "conv.i1";
-                case ILOpCode.Conv_i2: return "conv.i2";
-                case ILOpCode.Conv_i4: return "conv.i4";
-                case ILOpCode.Conv_i8: return "conv.i8";
-                case ILOpCode.Conv_r4: return "conv.r4";
-                case ILOpCode.Conv_r8: return "conv.r8";
-                case ILOpCode.Conv_u4: return "conv.u4";
-                case ILOpCode.Conv_u8: return "conv.u8";
-                case ILOpCode.Callvirt: return "callvirt";
-                case ILOpCode.Cpobj: return "cpobj";
-                case ILOpCode.Ldobj: return "ldobj";
-                case ILOpCode.Ldstr: return "ldstr";
-                case ILOpCode.Newobj: return "newobj";
-                case ILOpCode.Castclass: return "castclass";
-                case ILOpCode.Isinst: return "isinst";
-                case ILOpCode.Conv_r_un: return "conv.r.un";
-                case ILOpCode.Unbox: return "unbox";
-                case ILOpCode.Throw: return "throw";
-                case ILOpCode.Ldfld: return "ldfld";
-                case ILOpCode.Ldflda: return "ldflda";
-                case ILOpCode.Stfld: return "stfld";
-                case ILOpCode.Ldsfld: return "ldsfld";
-                case ILOpCode.Ldsflda: return "ldsflda";
-                case ILOpCode.Stsfld: return "stsfld";
-                case ILOpCode.Stobj: return "stobj";
-                case ILOpCode.Conv_ovf_i1_un: return "conv.ovf.i1.un";
-                case ILOpCode.Conv_ovf_i2_un: return "conv.ovf.i2.un";
-                case ILOpCode.Conv_ovf_i4_un: return "conv.ovf.i4.un";
-                case ILOpCode.Conv_ovf_i8_un: return "conv.ovf.i8.un";
-                case ILOpCode.Conv_ovf_u1_un: return "conv.ovf.u1.un";
-                case ILOpCode.Conv_ovf_u2_un: return "conv.ovf.u2.un";
-                case ILOpCode.Conv_ovf_u4_un: return "conv.ovf.u4.un";
-                case ILOpCode.Conv_ovf_u8_un: return "conv.ovf.u8.un";
-                case ILOpCode.Conv_ovf_i_un: return "conv.ovf.i.un";
-                case ILOpCode.Conv_ovf_u_un: return "conv.ovf.u.un";
-                case ILOpCode.Box: return "box";
-                case ILOpCode.Newarr: return "newarr";
-                case ILOpCode.Ldlen: return "ldlen";
-                case ILOpCode.Ldelema: return "ldelema";
-                case ILOpCode.Ldelem_i1: return "ldelem.i1";
-                case ILOpCode.Ldelem_u1: return "ldelem.u1";
-                case ILOpCode.Ldelem_i2: return "ldelem.i2";
-                case ILOpCode.Ldelem_u2: return "ldelem.u2";
-                case ILOpCode.Ldelem_i4: return "ldelem.i4";
-                case ILOpCode.Ldelem_u4: return "ldelem.u4";
-                case ILOpCode.Ldelem_i8: return "ldelem.i8";
-                case ILOpCode.Ldelem_i: return "ldelem.i";
-                case ILOpCode.Ldelem_r4: return "ldelem.r4";
-                case ILOpCode.Ldelem_r8: return "ldelem.r8";
-                case ILOpCode.Ldelem_ref: return "ldelem.ref";
-                case ILOpCode.Stelem_i: return "stelem.i";
-                case ILOpCode.Stelem_i1: return "stelem.i1";
-                case ILOpCode.Stelem_i2: return "stelem.i2";
-                case ILOpCode.Stelem_i4: return "stelem.i4";
-                case ILOpCode.Stelem_i8: return "stelem.i8";
-                case ILOpCode.Stelem_r4: return "stelem.r4";
-                case ILOpCode.Stelem_r8: return "stelem.r8";
-                case ILOpCode.Stelem_ref: return "stelem.ref";
-                case ILOpCode.Ldelem: return "ldelem";
-                case ILOpCode.Stelem: return "stelem";
-                case ILOpCode.Unbox_any: return "unbox.any";
-                case ILOpCode.Conv_ovf_i1: return "conv.ovf.i1";
-                case ILOpCode.Conv_ovf_u1: return "conv.ovf.u1";
-                case ILOpCode.Conv_ovf_i2: return "conv.ovf.i2";
-                case ILOpCode.Conv_ovf_u2: return "conv.ovf.u2";
-                case ILOpCode.Conv_ovf_i4: return "conv.ovf.i4";
-                case ILOpCode.Conv_ovf_u4: return "conv.ovf.u4";
-                case ILOpCode.Conv_ovf_i8: return "conv.ovf.i8";
-                case ILOpCode.Conv_ovf_u8: return "conv.ovf.u8";
-                case ILOpCode.Refanyval: return "refanyval";
-                case ILOpCode.Ckfinite: return "ckfinite";
-                case ILOpCode.Mkrefany: return "mkrefany";
-                case ILOpCode.Ldtoken: return "ldtoken";
-                case ILOpCode.Conv_u2: return "conv.u2";
-                case ILOpCode.Conv_u1: return "conv.u1";
-                case ILOpCode.Conv_i: return "conv.i";
-                case ILOpCode.Conv_ovf_i: return "conv.ovf.i";
-                case ILOpCode.Conv_ovf_u: return "conv.ovf.u";
-                case ILOpCode.Add_ovf: return "add.ovf";
-                case ILOpCode.Add_ovf_un: return "add.ovf.un";
-                case ILOpCode.Mul_ovf: return "mul.ovf";
-                case ILOpCode.Mul_ovf_un: return "mul.ovf.un";
-                case ILOpCode.Sub_ovf: return "sub.ovf";
-                case ILOpCode.Sub_ovf_un: return "sub.ovf.un";
-                case ILOpCode.Endfinally: return "endfinally";
-                case ILOpCode.Leave: return "leave";
-                case ILOpCode.Leave_s: return "leave.s";
-                case ILOpCode.Stind_i: return "stind.i";
-                case ILOpCode.Conv_u: return "conv.u";
-                case ILOpCode.Arglist: return "arglist";
-                case ILOpCode.Ceq: return "ceq";
-                case ILOpCode.Cgt: return "cgt";
-                case ILOpCode.Cgt_un: return "cgt.un";
-                case ILOpCode.Clt: return "clt";
-                case ILOpCode.Clt_un: return "clt.un";
-                case ILOpCode.Ldftn: return "ldftn";
-                case ILOpCode.Ldvirtftn: return "ldvirtftn";
-                case ILOpCode.Ldarg: return "ldarg";
-                case ILOpCode.Ldarga: return "ldarga";
-                case ILOpCode.Starg: return "starg";
-                case ILOpCode.Ldloc: return "ldloc";
-                case ILOpCode.Ldloca: return "ldloca";
-                case ILOpCode.Stloc: return "stloc";
-                case ILOpCode.Localloc: return "localloc";
-                case ILOpCode.Endfilter: return "endfilter";
-                case ILOpCode.Unaligned: return "unaligned.";
-                case ILOpCode.Volatile: return "volatile.";
-                case ILOpCode.Tail: return "tail.";
-                case ILOpCode.Initobj: return "initobj";
-                case ILOpCode.Constrained: return "constrained.";
-                case ILOpCode.Cpblk: return "cpblk";
-                case ILOpCode.Initblk: return "initblk";
-                case ILOpCode.Rethrow: return "rethrow";
-                case ILOpCode.Sizeof: return "sizeof";
-                case ILOpCode.Refanytype: return "refanytype";
-                case ILOpCode.Readonly: return "readonly.";
-            }
-
-            throw ExceptionUtilities.UnexpectedValue(opcode);
+                ILOpCode.Nop => "nop",
+                ILOpCode.Break => "break",
+                ILOpCode.Ldarg_0 => "ldarg.0",
+                ILOpCode.Ldarg_1 => "ldarg.1",
+                ILOpCode.Ldarg_2 => "ldarg.2",
+                ILOpCode.Ldarg_3 => "ldarg.3",
+                ILOpCode.Ldloc_0 => "ldloc.0",
+                ILOpCode.Ldloc_1 => "ldloc.1",
+                ILOpCode.Ldloc_2 => "ldloc.2",
+                ILOpCode.Ldloc_3 => "ldloc.3",
+                ILOpCode.Stloc_0 => "stloc.0",
+                ILOpCode.Stloc_1 => "stloc.1",
+                ILOpCode.Stloc_2 => "stloc.2",
+                ILOpCode.Stloc_3 => "stloc.3",
+                ILOpCode.Ldarg_s => "ldarg.s",
+                ILOpCode.Ldarga_s => "ldarga.s",
+                ILOpCode.Starg_s => "starg.s",
+                ILOpCode.Ldloc_s => "ldloc.s",
+                ILOpCode.Ldloca_s => "ldloca.s",
+                ILOpCode.Stloc_s => "stloc.s",
+                ILOpCode.Ldnull => "ldnull",
+                ILOpCode.Ldc_i4_m1 => "ldc.i4.m1",
+                ILOpCode.Ldc_i4_0 => "ldc.i4.0",
+                ILOpCode.Ldc_i4_1 => "ldc.i4.1",
+                ILOpCode.Ldc_i4_2 => "ldc.i4.2",
+                ILOpCode.Ldc_i4_3 => "ldc.i4.3",
+                ILOpCode.Ldc_i4_4 => "ldc.i4.4",
+                ILOpCode.Ldc_i4_5 => "ldc.i4.5",
+                ILOpCode.Ldc_i4_6 => "ldc.i4.6",
+                ILOpCode.Ldc_i4_7 => "ldc.i4.7",
+                ILOpCode.Ldc_i4_8 => "ldc.i4.8",
+                ILOpCode.Ldc_i4_s => "ldc.i4.s",
+                ILOpCode.Ldc_i4 => "ldc.i4",
+                ILOpCode.Ldc_i8 => "ldc.i8",
+                ILOpCode.Ldc_r4 => "ldc.r4",
+                ILOpCode.Ldc_r8 => "ldc.r8",
+                ILOpCode.Dup => "dup",
+                ILOpCode.Pop => "pop",
+                ILOpCode.Jmp => "jmp",
+                ILOpCode.Call => "call",
+                ILOpCode.Calli => "calli",
+                ILOpCode.Ret => "ret",
+                ILOpCode.Br_s => "br.s",
+                ILOpCode.Brfalse_s => "brfalse.s",
+                ILOpCode.Brtrue_s => "brtrue.s",
+                ILOpCode.Beq_s => "beq.s",
+                ILOpCode.Bge_s => "bge.s",
+                ILOpCode.Bgt_s => "bgt.s",
+                ILOpCode.Ble_s => "ble.s",
+                ILOpCode.Blt_s => "blt.s",
+                ILOpCode.Bne_un_s => "bne.un.s",
+                ILOpCode.Bge_un_s => "bge.un.s",
+                ILOpCode.Bgt_un_s => "bgt.un.s",
+                ILOpCode.Ble_un_s => "ble.un.s",
+                ILOpCode.Blt_un_s => "blt.un.s",
+                ILOpCode.Br => "br",
+                ILOpCode.Brfalse => "brfalse",
+                ILOpCode.Brtrue => "brtrue",
+                ILOpCode.Beq => "beq",
+                ILOpCode.Bge => "bge",
+                ILOpCode.Bgt => "bgt",
+                ILOpCode.Ble => "ble",
+                ILOpCode.Blt => "blt",
+                ILOpCode.Bne_un => "bne.un",
+                ILOpCode.Bge_un => "bge.un",
+                ILOpCode.Bgt_un => "bgt.un",
+                ILOpCode.Ble_un => "ble.un",
+                ILOpCode.Blt_un => "blt.un",
+                ILOpCode.Switch => "switch",
+                ILOpCode.Ldind_i1 => "ldind.i1",
+                ILOpCode.Ldind_u1 => "ldind.u1",
+                ILOpCode.Ldind_i2 => "ldind.i2",
+                ILOpCode.Ldind_u2 => "ldind.u2",
+                ILOpCode.Ldind_i4 => "ldind.i4",
+                ILOpCode.Ldind_u4 => "ldind.u4",
+                ILOpCode.Ldind_i8 => "ldind.i8",
+                ILOpCode.Ldind_i => "ldind.i",
+                ILOpCode.Ldind_r4 => "ldind.r4",
+                ILOpCode.Ldind_r8 => "ldind.r8",
+                ILOpCode.Ldind_ref => "ldind.ref",
+                ILOpCode.Stind_ref => "stind.ref",
+                ILOpCode.Stind_i1 => "stind.i1",
+                ILOpCode.Stind_i2 => "stind.i2",
+                ILOpCode.Stind_i4 => "stind.i4",
+                ILOpCode.Stind_i8 => "stind.i8",
+                ILOpCode.Stind_r4 => "stind.r4",
+                ILOpCode.Stind_r8 => "stind.r8",
+                ILOpCode.Add => "add",
+                ILOpCode.Sub => "sub",
+                ILOpCode.Mul => "mul",
+                ILOpCode.Div => "div",
+                ILOpCode.Div_un => "div.un",
+                ILOpCode.Rem => "rem",
+                ILOpCode.Rem_un => "rem.un",
+                ILOpCode.And => "and",
+                ILOpCode.Or => "or",
+                ILOpCode.Xor => "xor",
+                ILOpCode.Shl => "shl",
+                ILOpCode.Shr => "shr",
+                ILOpCode.Shr_un => "shr.un",
+                ILOpCode.Neg => "neg",
+                ILOpCode.Not => "not",
+                ILOpCode.Conv_i1 => "conv.i1",
+                ILOpCode.Conv_i2 => "conv.i2",
+                ILOpCode.Conv_i4 => "conv.i4",
+                ILOpCode.Conv_i8 => "conv.i8",
+                ILOpCode.Conv_r4 => "conv.r4",
+                ILOpCode.Conv_r8 => "conv.r8",
+                ILOpCode.Conv_u4 => "conv.u4",
+                ILOpCode.Conv_u8 => "conv.u8",
+                ILOpCode.Callvirt => "callvirt",
+                ILOpCode.Cpobj => "cpobj",
+                ILOpCode.Ldobj => "ldobj",
+                ILOpCode.Ldstr => "ldstr",
+                ILOpCode.Newobj => "newobj",
+                ILOpCode.Castclass => "castclass",
+                ILOpCode.Isinst => "isinst",
+                ILOpCode.Conv_r_un => "conv.r.un",
+                ILOpCode.Unbox => "unbox",
+                ILOpCode.Throw => "throw",
+                ILOpCode.Ldfld => "ldfld",
+                ILOpCode.Ldflda => "ldflda",
+                ILOpCode.Stfld => "stfld",
+                ILOpCode.Ldsfld => "ldsfld",
+                ILOpCode.Ldsflda => "ldsflda",
+                ILOpCode.Stsfld => "stsfld",
+                ILOpCode.Stobj => "stobj",
+                ILOpCode.Conv_ovf_i1_un => "conv.ovf.i1.un",
+                ILOpCode.Conv_ovf_i2_un => "conv.ovf.i2.un",
+                ILOpCode.Conv_ovf_i4_un => "conv.ovf.i4.un",
+                ILOpCode.Conv_ovf_i8_un => "conv.ovf.i8.un",
+                ILOpCode.Conv_ovf_u1_un => "conv.ovf.u1.un",
+                ILOpCode.Conv_ovf_u2_un => "conv.ovf.u2.un",
+                ILOpCode.Conv_ovf_u4_un => "conv.ovf.u4.un",
+                ILOpCode.Conv_ovf_u8_un => "conv.ovf.u8.un",
+                ILOpCode.Conv_ovf_i_un => "conv.ovf.i.un",
+                ILOpCode.Conv_ovf_u_un => "conv.ovf.u.un",
+                ILOpCode.Box => "box",
+                ILOpCode.Newarr => "newarr",
+                ILOpCode.Ldlen => "ldlen",
+                ILOpCode.Ldelema => "ldelema",
+                ILOpCode.Ldelem_i1 => "ldelem.i1",
+                ILOpCode.Ldelem_u1 => "ldelem.u1",
+                ILOpCode.Ldelem_i2 => "ldelem.i2",
+                ILOpCode.Ldelem_u2 => "ldelem.u2",
+                ILOpCode.Ldelem_i4 => "ldelem.i4",
+                ILOpCode.Ldelem_u4 => "ldelem.u4",
+                ILOpCode.Ldelem_i8 => "ldelem.i8",
+                ILOpCode.Ldelem_i => "ldelem.i",
+                ILOpCode.Ldelem_r4 => "ldelem.r4",
+                ILOpCode.Ldelem_r8 => "ldelem.r8",
+                ILOpCode.Ldelem_ref => "ldelem.ref",
+                ILOpCode.Stelem_i => "stelem.i",
+                ILOpCode.Stelem_i1 => "stelem.i1",
+                ILOpCode.Stelem_i2 => "stelem.i2",
+                ILOpCode.Stelem_i4 => "stelem.i4",
+                ILOpCode.Stelem_i8 => "stelem.i8",
+                ILOpCode.Stelem_r4 => "stelem.r4",
+                ILOpCode.Stelem_r8 => "stelem.r8",
+                ILOpCode.Stelem_ref => "stelem.ref",
+                ILOpCode.Ldelem => "ldelem",
+                ILOpCode.Stelem => "stelem",
+                ILOpCode.Unbox_any => "unbox.any",
+                ILOpCode.Conv_ovf_i1 => "conv.ovf.i1",
+                ILOpCode.Conv_ovf_u1 => "conv.ovf.u1",
+                ILOpCode.Conv_ovf_i2 => "conv.ovf.i2",
+                ILOpCode.Conv_ovf_u2 => "conv.ovf.u2",
+                ILOpCode.Conv_ovf_i4 => "conv.ovf.i4",
+                ILOpCode.Conv_ovf_u4 => "conv.ovf.u4",
+                ILOpCode.Conv_ovf_i8 => "conv.ovf.i8",
+                ILOpCode.Conv_ovf_u8 => "conv.ovf.u8",
+                ILOpCode.Refanyval => "refanyval",
+                ILOpCode.Ckfinite => "ckfinite",
+                ILOpCode.Mkrefany => "mkrefany",
+                ILOpCode.Ldtoken => "ldtoken",
+                ILOpCode.Conv_u2 => "conv.u2",
+                ILOpCode.Conv_u1 => "conv.u1",
+                ILOpCode.Conv_i => "conv.i",
+                ILOpCode.Conv_ovf_i => "conv.ovf.i",
+                ILOpCode.Conv_ovf_u => "conv.ovf.u",
+                ILOpCode.Add_ovf => "add.ovf",
+                ILOpCode.Add_ovf_un => "add.ovf.un",
+                ILOpCode.Mul_ovf => "mul.ovf",
+                ILOpCode.Mul_ovf_un => "mul.ovf.un",
+                ILOpCode.Sub_ovf => "sub.ovf",
+                ILOpCode.Sub_ovf_un => "sub.ovf.un",
+                ILOpCode.Endfinally => "endfinally",
+                ILOpCode.Leave => "leave",
+                ILOpCode.Leave_s => "leave.s",
+                ILOpCode.Stind_i => "stind.i",
+                ILOpCode.Conv_u => "conv.u",
+                ILOpCode.Arglist => "arglist",
+                ILOpCode.Ceq => "ceq",
+                ILOpCode.Cgt => "cgt",
+                ILOpCode.Cgt_un => "cgt.un",
+                ILOpCode.Clt => "clt",
+                ILOpCode.Clt_un => "clt.un",
+                ILOpCode.Ldftn => "ldftn",
+                ILOpCode.Ldvirtftn => "ldvirtftn",
+                ILOpCode.Ldarg => "ldarg",
+                ILOpCode.Ldarga => "ldarga",
+                ILOpCode.Starg => "starg",
+                ILOpCode.Ldloc => "ldloc",
+                ILOpCode.Ldloca => "ldloca",
+                ILOpCode.Stloc => "stloc",
+                ILOpCode.Localloc => "localloc",
+                ILOpCode.Endfilter => "endfilter",
+                ILOpCode.Unaligned => "unaligned.",
+                ILOpCode.Volatile => "volatile.",
+                ILOpCode.Tail => "tail.",
+                ILOpCode.Initobj => "initobj",
+                ILOpCode.Constrained => "constrained.",
+                ILOpCode.Cpblk => "cpblk",
+                ILOpCode.Initblk => "initblk",
+                ILOpCode.Rethrow => "rethrow",
+                ILOpCode.Sizeof => "sizeof",
+                ILOpCode.Refanytype => "refanytype",
+                ILOpCode.Readonly => "readonly.",
+                _ => throw ExceptionUtilities.UnexpectedValue(opcode),
+            };
         }
     }
 }

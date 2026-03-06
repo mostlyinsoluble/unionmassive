@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             NamedTypeSymbol array)
         {
             Debug.Assert(elementTypeWithAnnotations.HasType);
-            RoslynDebug.Assert((object)array != null);
+            RoslynDebug.Assert(array is not null);
 
             _elementTypeWithAnnotations = elementTypeWithAnnotations;
             _baseType = array;
@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return CreateSZArray(declaringAssembly, elementTypeWithAnnotations);
             }
 
-            return CreateMDArray(declaringAssembly, elementTypeWithAnnotations, rank, default(ImmutableArray<int>), default(ImmutableArray<int>));
+            return CreateMDArray(declaringAssembly, elementTypeWithAnnotations, rank, default, default);
         }
 
         internal static ArrayTypeSymbol CreateMDArray(
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                return default(ImmutableArray<int>);
+                return default;
             }
         }
 
@@ -351,7 +351,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            if ((object?)other == null || !other.HasSameShapeAs(this) ||
+            if (other is null || !other.HasSameShapeAs(this) ||
                 !other.ElementTypeWithAnnotations.Equals(ElementTypeWithAnnotations, comparison))
             {
                 return false;
@@ -392,9 +392,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override bool ApplyNullableTransforms(byte defaultTransformFlag, ImmutableArray<byte> transforms, ref int position, out TypeSymbol result)
         {
             TypeWithAnnotations oldElementType = ElementTypeWithAnnotations;
-            TypeWithAnnotations newElementType;
 
-            if (!oldElementType.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position, out newElementType))
+            if (!oldElementType.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position, out TypeWithAnnotations newElementType))
             {
                 result = this;
                 return false;
@@ -464,7 +463,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override bool GetUnificationUseSiteDiagnosticRecursive(ref DiagnosticInfo result, Symbol owner, ref HashSet<TypeSymbol> checkedTypes)
         {
             return _elementTypeWithAnnotations.GetUnificationUseSiteDiagnosticRecursive(ref result, owner, ref checkedTypes) ||
-                   ((object)_baseType != null && _baseType.GetUnificationUseSiteDiagnosticRecursive(ref result, owner, ref checkedTypes)) ||
+                   (_baseType is not null && _baseType.GetUnificationUseSiteDiagnosticRecursive(ref result, owner, ref checkedTypes)) ||
                    GetUnificationUseSiteDiagnosticRecursive(ref result, this.InterfacesNoUseSiteDiagnostics(), owner, ref checkedTypes);
         }
 

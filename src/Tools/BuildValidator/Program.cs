@@ -101,7 +101,7 @@ namespace BuildValidator
         static int HandleCommand(string[] assembliesPath, string[]? exclude, string sourcePath, string[]? referencesPath, bool verbose, bool quiet, bool debug, string? debugPath)
         {
             // If user provided a debug path then assume we should write debug outputs.
-            debug |= debugPath is object;
+            debug |= debugPath is not null;
             debugPath ??= Path.Combine(Path.GetTempPath(), $"BuildValidator");
             referencesPath ??= Array.Empty<string>();
 

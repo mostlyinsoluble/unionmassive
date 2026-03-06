@@ -83,43 +83,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                      template: new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, currentCompilation.Assembly));
 
             if (useSiteDiagnosticsBuilder != null)
-            {
                 diagnosticsBuilder.AddRange(useSiteDiagnosticsBuilder);
-            }
 
             foreach (var pair in diagnosticsBuilder)
-            {
                 diagnostics.Add(pair.UseSiteInfo, pair.TypeParameter.GetFirstLocation());
-            }
 
             diagnosticsBuilder.Free();
 
-            if (typeParameter.AllowsRefLikeType)
-            {
-                if (inherited)
-                {
-                    Location location = typeParameter.GetFirstLocation();
-                    Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_FeatureAllowsRefStructConstraint, diagnostics, location);
-
-                    if (!typeParameter.DeclaringCompilation.Assembly.RuntimeSupportsByRefLikeGenerics)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportByRefLikeGenerics, location);
-                    }
-                }
-                else
-                {
-                    switch (typeParameter.HasReferenceTypeConstraint ? SpecialType.None : (bounds?.EffectiveBaseClass.SpecialType ?? SpecialType.System_Object))
-                    {
-                        case SpecialType.System_Object:
-                        case SpecialType.System_ValueType:
-                        case SpecialType.System_Enum:
-                            break;
-                        default:
-                            diagnostics.Add(ErrorCode.ERR_ClassIsCombinedWithRefStruct, typeParameter.GetFirstLocation());
-                            break;
-                    }
-                }
-            }
+            if (!inherited && typeParameter.AllowsRefLikeType)
+                if (typeParameter.HasReferenceTypeConstraint || (bounds?.EffectiveBaseClass.SpecialType ?? SpecialType.System_Object) is not SpecialType.System_Object and not SpecialType.System_ValueType and not SpecialType.System_Enum)
+                    diagnostics.Add(ErrorCode.ERR_ClassIsCombinedWithRefStruct, typeParameter.GetFirstLocation());
 
             return bounds;
         }
@@ -492,8 +465,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Location location,
             BindingDiagnosticBag diagnostics)
         {
-            bool includeNullability = compilation.IsFeatureEnabled(MessageID.IDS_FeatureNullableReferenceTypes);
-            var boxedArgs = CheckConstraintsArgsBoxed.Allocate(compilation, conversions, includeNullability, location, diagnostics);
+            var boxedArgs = CheckConstraintsArgsBoxed.Allocate(compilation, conversions, true, location, diagnostics);
             type.CheckAllConstraints(boxedArgs);
             boxedArgs.Free();
         }
@@ -533,7 +505,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             public readonly CompoundUseSiteInfo<AssemblySymbol> Template;
 
             public CheckConstraintsArgs(CSharpCompilation currentCompilation, ConversionsBase conversions, Location location, BindingDiagnosticBag diagnostics) :
-                this(currentCompilation, conversions, currentCompilation.IsFeatureEnabled(MessageID.IDS_FeatureNullableReferenceTypes), location, diagnostics)
+                this(currentCompilation, conversions, true, location, diagnostics)
             {
             }
 
@@ -862,7 +834,7 @@ hasRelatedInterfaces:
            ArrayBuilder<TypeParameterDiagnosticInfo> diagnosticsBuilder,
            ArrayBuilder<TypeParameterDiagnosticInfo> nullabilityDiagnosticsBuilderOpt,
            ref ArrayBuilder<TypeParameterDiagnosticInfo> useSiteDiagnosticsBuilder,
-           BitVector skipParameters = default(BitVector))
+           BitVector skipParameters = default)
         {
             return CheckConstraints(
                 method,
@@ -901,7 +873,7 @@ hasRelatedInterfaces:
             ArrayBuilder<TypeParameterDiagnosticInfo> diagnosticsBuilder,
             ArrayBuilder<TypeParameterDiagnosticInfo> nullabilityDiagnosticsBuilderOpt,
             ref ArrayBuilder<TypeParameterDiagnosticInfo> useSiteDiagnosticsBuilder,
-            BitVector skipParameters = default(BitVector),
+            BitVector skipParameters = default,
             HashSet<TypeParameterSymbol> ignoreTypeConstraintsDependentOnTypeParametersOpt = null)
         {
             Debug.Assert(typeParameters.Length == typeArguments.Length);
@@ -960,30 +932,10 @@ hasRelatedInterfaces:
                 return false;
             }
 
-            if (typeArgument.Type.IsRefLikeOrAllowsRefLikeType())
+            if (typeArgument.Type.IsRefLikeOrAllowsRefLikeType() && !typeParameter.AllowsRefLikeType)
             {
-                if (typeParameter.AllowsRefLikeType)
-                {
-#nullable enable
-                    if (args.CurrentCompilation is not null && args.CurrentCompilation.SourceModule != typeParameter.ContainingModule)
-                    {
-                        if (MessageID.IDS_FeatureAllowsRefStructConstraint.GetFeatureAvailabilityDiagnosticInfo(args.CurrentCompilation) is { } diagnosticInfo)
-                        {
-                            diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(diagnosticInfo)));
-                        }
-
-                        if (!args.CurrentCompilation.Assembly.RuntimeSupportsByRefLikeGenerics)
-                        {
-                            diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_RuntimeDoesNotSupportByRefLikeGenerics))));
-                        }
-                    }
-#nullable disable
-                }
-                else
-                {
-                    diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_NotRefStructConstraintNotSatisfied, containingSymbol.ConstructedFrom(), typeParameter, typeArgument.Type))));
-                    return false;
-                }
+                diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_NotRefStructConstraintNotSatisfied, containingSymbol.ConstructedFrom(), typeParameter, typeArgument.Type))));
+                return false;
             }
 
             if (typeArgument.IsStatic)
@@ -1016,24 +968,6 @@ hasRelatedInterfaces:
                     // "The type '{2}' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as parameter '{1}' in the generic type or method '{0}'"
                     diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_UnmanagedConstraintNotSatisfied, containingSymbol.ConstructedFrom(), typeParameter, typeArgument.Type))));
                     return false;
-                }
-                else if (managedKind == ManagedKind.UnmanagedWithGenerics)
-                {
-#nullable enable
-                    // When there is no compilation, we are being invoked through the API IMethodSymbol.ReduceExtensionMethod(...).
-                    // In that case we consider the unmanaged constraint to be satisfied as if we were compiling with the latest
-                    // language version.  The net effect of this is that in some IDE scenarios completion might consider an
-                    // extension method to be applicable, but then when you try to use it the IDE tells you to upgrade your language version.
-                    if (!(args.CurrentCompilation is null))
-                    {
-                        var csDiagnosticInfo = MessageID.IDS_FeatureUnmanagedConstructedTypes.GetFeatureAvailabilityDiagnosticInfo(args.CurrentCompilation);
-                        if (csDiagnosticInfo != null)
-                        {
-                            diagnosticsBuilder.Add(new TypeParameterDiagnosticInfo(typeParameter, new UseSiteInfo<AssemblySymbol>(csDiagnosticInfo)));
-                            return false;
-                        }
-                    }
-#nullable disable
                 }
             }
 
@@ -1560,17 +1494,11 @@ hasRelatedInterfaces:
 
         private static bool IsValidEncompassedByArgument(TypeSymbol type)
         {
-            switch (type.TypeKind)
+            return type.TypeKind switch
             {
-                case TypeKind.Array:
-                case TypeKind.Class:
-                case TypeKind.Delegate:
-                case TypeKind.Enum:
-                case TypeKind.Struct:
-                    return true;
-                default:
-                    return false;
-            }
+                TypeKind.Array or TypeKind.Class or TypeKind.Delegate or TypeKind.Enum or TypeKind.Struct => true,
+                _ => false,
+            };
         }
 
         public static bool RequiresChecking(NamedTypeSymbol type)
@@ -1621,8 +1549,8 @@ hasRelatedInterfaces:
         [Conditional("DEBUG")]
         private static void CheckEffectiveAndDeducedBaseTypes(ConversionsBase conversions, TypeSymbol effectiveBase, TypeSymbol deducedBase)
         {
-            Debug.Assert((object)deducedBase != null);
-            Debug.Assert((object)effectiveBase != null);
+            Debug.Assert(deducedBase is not null);
+            Debug.Assert(effectiveBase is not null);
             var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             Debug.Assert(deducedBase.IsErrorType() ||
                 effectiveBase.IsErrorType() ||

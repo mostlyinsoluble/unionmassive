@@ -20,8 +20,7 @@ namespace Microsoft.VisualStudio.Debugger
 
         public T GetDataItem<T>() where T : DkmDataItem
         {
-            object value;
-            if (_dataItems.TryGetValue(typeof(T).GUID, out value))
+            if (_dataItems.TryGetValue(typeof(T).GUID, out var value))
             {
                 return value as T;
             }

@@ -241,8 +241,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
 
         Friend Overrides Function GetUseSiteInfo() As UseSiteInfo(Of AssemblySymbol)
             If _cannotUse Then
-                Return New UseSiteInfo(Of AssemblySymbol)(ErrorFactory.ErrorInfo(ERRID.ERR_TupleInferredNamesNotAvailable, _name,
-                                                                                 New VisualBasicRequiredLanguageVersion(LanguageVersion.VisualBasic15_3)))
+                Return New UseSiteInfo(Of AssemblySymbol)(ErrorFactory.ErrorInfo(ERRID.ERR_TupleInferredNamesNotAvailable, _name))
             End If
 
             Return MyBase.GetUseSiteInfo()

@@ -47,9 +47,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             bool visitAll,
             ref int index)
         {
-            int startIndex2;
-            int count2;
-            GetIntersection(startIndex, count, index, _typeArguments.Length, out startIndex2, out count2);
+            GetIntersection(startIndex, count, index, _typeArguments.Length, out var startIndex2, out var count2);
 
             int offset = startIndex2 - index;
             for (int i = 0; i < count2; i++)
@@ -73,7 +71,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.TypeVariable,
                 typeParameter.Name,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: new TypeAndCustomInfo(DkmClrType.Create(value.Type.AppDomain, typeArgument), typeArgumentInfo),
                 useDebuggerDisplay: parent != null,
                 value: value,

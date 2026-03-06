@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     options = (options ?? EmitOptions.Default).WithDebugInformationFormat(DebugInformationFormat.PortablePdb);
                 }
 
-                var discretePdb = (object)options != null && options.DebugInformationFormat != DebugInformationFormat.Embedded;
+                var discretePdb = options is not null && options.DebugInformationFormat != DebugInformationFormat.Embedded;
                 pdbStream = discretePdb ? new MemoryStream() : null;
             }
 
@@ -85,7 +85,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                 embeddedTexts: embeddedTexts,
                 rebuildData: null,
                 testData: testData,
-                cancellationToken: default(CancellationToken));
+                cancellationToken: default);
 
             Assert.True(emitResult.Success, "Diagnostics:\r\n" + string.Join("\r\n", emitResult.Diagnostics.Select(d => d.ToString())));
 
@@ -256,18 +256,11 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         internal static bool CanHaveExecutableCodeBlock(ISymbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Field:
-                case SymbolKind.Event:
-                case SymbolKind.Method:
-                case SymbolKind.NamedType:
-                case SymbolKind.Property:
-                    return true;
-
-                default:
-                    return false;
-            }
+                SymbolKind.Field or SymbolKind.Event or SymbolKind.Method or SymbolKind.NamedType or SymbolKind.Property => true,
+                _ => false,
+            };
         }
 
         public static void ValidateIOperations(Func<Compilation> createCompilation)

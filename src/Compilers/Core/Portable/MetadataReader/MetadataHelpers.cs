@@ -502,8 +502,7 @@ ExitDecodeTypeName:
 
         internal static int InferTypeArityFromMetadataName(string emittedTypeName)
         {
-            int suffixStartsAt;
-            return InferTypeArityFromMetadataName(emittedTypeName.AsSpan(), out suffixStartsAt);
+            return InferTypeArityFromMetadataName(emittedTypeName.AsSpan(), out int suffixStartsAt);
         }
 
         private static short InferTypeArityFromMetadataName(ReadOnlySpan<char> emittedTypeName, out int suffixStartsAt)
@@ -576,8 +575,7 @@ ExitDecodeTypeName:
 
         internal static ReadOnlyMemory<char> InferTypeArityAndUnmangleMetadataName(ReadOnlyMemory<char> emittedTypeName, out short arity)
         {
-            int suffixStartsAt;
-            arity = InferTypeArityFromMetadataName(emittedTypeName.Span, out suffixStartsAt);
+            arity = InferTypeArityFromMetadataName(emittedTypeName.Span, out int suffixStartsAt);
 
             if (arity == 0)
             {
@@ -593,8 +591,7 @@ ExitDecodeTypeName:
         {
             Debug.Assert(arity > 0);
 
-            int suffixStartsAt;
-            if (arity == InferTypeArityFromMetadataName(emittedTypeName.AsSpan(), out suffixStartsAt))
+            if (arity == InferTypeArityFromMetadataName(emittedTypeName.AsSpan(), out int suffixStartsAt))
             {
                 Debug.Assert(suffixStartsAt > 0 && suffixStartsAt < emittedTypeName.Length - 1);
                 return emittedTypeName[..suffixStartsAt];
@@ -618,7 +615,7 @@ ExitDecodeTypeName:
         internal static ImmutableArray<T> SplitQualifiedNameWorker<T>(
             ReadOnlyMemory<char> nameMemory, ImmutableArray<T> splitSystemString, Func<ReadOnlyMemory<char>, T> convert)
         {
-            Debug.Assert(!nameMemory.Equals(default(ReadOnlyMemory<char>)));
+            Debug.Assert(!nameMemory.Equals(default));
 
             if (nameMemory.Length == 0)
             {
@@ -852,7 +849,7 @@ ExitDecodeTypeName:
                             // This cannot be null because the starting state for lastChildNamespaceName is null and 
                             // hence we can't hit this branch in the first iteration. The else branch will always 
                             // allocate this value.
-                            Debug.Assert((object?)typesInLastChildNamespace != null);
+                            Debug.Assert(typesInLastChildNamespace is not null);
 
                             // We are still processing the same child namespace
                             typesInLastChildNamespace.Add(pair);
@@ -924,11 +921,11 @@ DoneWithSequence:
                             Debug.Assert(keyIndex < i);
                             var primaryPair = nestedNamespaces[keyIndex];
                             nestedNamespaces[keyIndex] = KeyValuePair.Create(primaryPair.Key, primaryPair.Value.Concat(pair.Value));
-                            nestedNamespaces[i] = default(KeyValuePair<string, IEnumerable<IGrouping<string, TypeDefinitionHandle>>>);
+                            nestedNamespaces[i] = default;
                         }
                     }
 
-                    int removed = nestedNamespaces.RemoveAll(pair => (object)pair.Key == null);
+                    int removed = nestedNamespaces.RemoveAll(pair => pair.Key is null);
                     Debug.Assert(removed > 0);
                 }
             }

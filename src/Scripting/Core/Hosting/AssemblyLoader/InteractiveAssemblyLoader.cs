@@ -345,8 +345,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             foreach (var extension in RuntimeMetadataReferenceResolver.AssemblyExtensions)
             {
-                AssemblyAndLocation assemblyAndLocation;
-                if (_assembliesLoadedFromLocationByFullPath.TryGetValue(pathWithoutExtension + extension, out assemblyAndLocation) &&
+                if (_assembliesLoadedFromLocationByFullPath.TryGetValue(pathWithoutExtension + extension, out var assemblyAndLocation) &&
                     identity.Equals(AssemblyIdentity.FromAssemblyDefinition(assemblyAndLocation.Assembly)))
                 {
                     return assemblyAndLocation.Assembly;
@@ -402,8 +401,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                     if (identityAndLocation.Identity != null)
                     {
                         assemblyFileToLoad = identityAndLocation.Location;
-                        AssemblyAndLocation assemblyAndLocation;
-                        if (_assembliesLoadedFromLocationByFullPath.TryGetValue(assemblyFileToLoad, out assemblyAndLocation))
+                        if (_assembliesLoadedFromLocationByFullPath.TryGetValue(assemblyFileToLoad, out var assemblyAndLocation))
                         {
                             return assemblyAndLocation.Assembly;
                         }

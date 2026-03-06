@@ -26,18 +26,12 @@ internal sealed partial class SimplifyTypeNamesCodeFixProvider()
 {
     protected override string GetTitle(string diagnosticId, string nodeText)
     {
-        switch (diagnosticId)
+        return diagnosticId switch
         {
-            case IDEDiagnosticIds.SimplifyNamesDiagnosticId:
-            case IDEDiagnosticIds.PreferBuiltInOrFrameworkTypeDiagnosticId:
-                return string.Format(FeaturesResources.Simplify_name_0, nodeText);
-
-            case IDEDiagnosticIds.SimplifyMemberAccessDiagnosticId:
-                return string.Format(FeaturesResources.Simplify_member_access_0, nodeText);
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(diagnosticId);
-        }
+            IDEDiagnosticIds.SimplifyNamesDiagnosticId or IDEDiagnosticIds.PreferBuiltInOrFrameworkTypeDiagnosticId => string.Format(FeaturesResources.Simplify_name_0, nodeText),
+            IDEDiagnosticIds.SimplifyMemberAccessDiagnosticId => string.Format(FeaturesResources.Simplify_member_access_0, nodeText),
+            _ => throw ExceptionUtilities.UnexpectedValue(diagnosticId),
+        };
     }
 
     protected override SyntaxNode AddSimplificationAnnotationTo(SyntaxNode expressionSyntax)

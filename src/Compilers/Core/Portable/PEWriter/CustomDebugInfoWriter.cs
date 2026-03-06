@@ -179,7 +179,7 @@ namespace Microsoft.Cci
                         {
                             builder = ArrayBuilder<T>.GetInstance();
                         }
-                        builder.Add(getInfo(default(LocalScope), local));
+                        builder.Add(getInfo(default, local));
                     }
                 }
 

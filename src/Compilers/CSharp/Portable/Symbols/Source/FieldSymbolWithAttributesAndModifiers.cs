@@ -117,11 +117,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #nullable enable
         internal sealed override (CSharpAttributeData?, BoundAttribute?) EarlyDecodeWellKnownAttribute(ref EarlyDecodeWellKnownAttributeArguments<EarlyWellKnownAttributeBinder, NamedTypeSymbol, AttributeSyntax, AttributeLocation> arguments)
         {
-            CSharpAttributeData? attributeData;
-            BoundAttribute? boundAttribute;
-            ObsoleteAttributeData? obsoleteData;
 
-            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out attributeData, out boundAttribute, out obsoleteData))
+            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out CSharpAttributeData? attributeData, out BoundAttribute? boundAttribute, out ObsoleteAttributeData? obsoleteData))
             {
                 if (obsoleteData != null)
                 {
@@ -162,7 +159,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
+            Debug.Assert(arguments.AttributeSyntaxOpt is not null);
             var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
 
             var attribute = arguments.Attribute;
@@ -277,7 +274,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         constValue = this.GetConstantValue(ConstantFieldsInProgress.Empty, earlyDecodingWellKnownAttributes: false);
 
-                        if ((object)constValue != null && !constValue.IsBad && constValue != attrValue)
+                        if (constValue is not null && !constValue.IsBad && constValue != attrValue)
                         {
                             diagnostics.Add(ErrorCode.ERR_FieldHasMultipleDistinctConstantValues, arguments.AttributeSyntaxOpt.Location);
                         }
@@ -405,7 +402,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     compilation.SynthesizeDynamicAttribute(type.Type, type.CustomModifiers.Length));
             }
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(type.Type))
+            if (type.Type.ContainsNativeIntegerWrapperType())
             {
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeNativeIntegerAttribute(this, type.Type));
             }

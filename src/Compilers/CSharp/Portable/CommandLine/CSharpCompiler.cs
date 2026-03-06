@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (Arguments.TouchedFilesPath != null)
             {
-                Debug.Assert(touchedFilesLogger is object);
+                Debug.Assert(touchedFilesLogger is not null);
                 foreach (var path in uniqueFilePaths)
                 {
                     touchedFilesLogger.AddRead(path);
@@ -147,8 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var xmlFileResolver = new LoggingXmlFileResolver(Arguments.BaseDirectory, touchedFilesLogger);
             var sourceFileResolver = new LoggingSourceFileResolver(ImmutableArray<string>.Empty, Arguments.BaseDirectory, Arguments.PathMap, touchedFilesLogger);
 
-            MetadataReferenceResolver referenceDirectiveResolver;
-            var resolvedReferences = ResolveMetadataReferences(diagnostics, touchedFilesLogger, out referenceDirectiveResolver);
+            var resolvedReferences = ResolveMetadataReferences(diagnostics, touchedFilesLogger, out MetadataReferenceResolver referenceDirectiveResolver);
             if (ReportDiagnostics(diagnostics, consoleOutput, errorLogger, compilation: null))
             {
                 return null;
@@ -212,8 +211,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // prepopulate line tables.
             // we will need line tables anyways and it is better to not wait until we are in emit
             // where things run sequentially.
-            bool isHiddenDummy;
-            tree.GetMappedLineSpanAndVisibility(default(TextSpan), out isHiddenDummy);
+            tree.GetMappedLineSpanAndVisibility(default, out bool isHiddenDummy);
 
             return tree;
         }
@@ -235,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         protected override string GetOutputFileName(Compilation compilation, CancellationToken cancellationToken)
         {
-            if (Arguments.OutputFileName is object)
+            if (Arguments.OutputFileName is not null)
             {
                 return Arguments.OutputFileName;
             }
@@ -248,7 +246,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (entryPoint is null)
             {
                 var method = comp.GetEntryPoint(cancellationToken);
-                if (method is object)
+                if (method is not null)
                 {
                     entryPoint = method.PartialImplementationPart ?? method;
                 }
@@ -276,29 +274,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             consoleOutput.WriteLine(ErrorFacts.GetMessage(MessageID.IDS_LogoLine1, Culture), GetToolName(), GetCompilerVersion());
             consoleOutput.WriteLine(ErrorFacts.GetMessage(MessageID.IDS_LogoLine2, Culture));
-            consoleOutput.WriteLine();
-        }
-
-        public override void PrintLangVersions(TextWriter consoleOutput)
-        {
-            consoleOutput.WriteLine(ErrorFacts.GetMessage(MessageID.IDS_LangVersions, Culture));
-            var defaultVersion = LanguageVersion.Default.MapSpecifiedToEffectiveVersion();
-            var latestVersion = LanguageVersion.Latest.MapSpecifiedToEffectiveVersion();
-            foreach (var v in (LanguageVersion[])Enum.GetValues(typeof(LanguageVersion)))
-            {
-                if (v == defaultVersion)
-                {
-                    consoleOutput.WriteLine($"{v.ToDisplayString()} (default)");
-                }
-                else if (v == latestVersion)
-                {
-                    consoleOutput.WriteLine($"{v.ToDisplayString()} (latest)");
-                }
-                else
-                {
-                    consoleOutput.WriteLine(v.ToDisplayString());
-                }
-            }
             consoleOutput.WriteLine();
         }
 

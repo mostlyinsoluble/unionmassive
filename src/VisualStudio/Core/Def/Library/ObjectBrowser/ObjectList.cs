@@ -399,20 +399,12 @@ internal sealed class ObjectList : AbstractObjectList<AbstractObjectBrowserLibra
     protected override async Task<bool> GetExpandableAsync(
         uint index, uint listTypeExcluded, CancellationToken cancellationToken)
     {
-        switch (Kind)
+        return Kind switch
         {
-            case ObjectListKind.Hierarchy:
-            case ObjectListKind.Namespaces:
-            case ObjectListKind.Projects:
-            case ObjectListKind.References:
-                return true;
-
-            case ObjectListKind.BaseTypes:
-            case ObjectListKind.Types:
-                return await IsExpandableTypeAsync(index, cancellationToken).ConfigureAwait(true);
-        }
-
-        return false;
+            ObjectListKind.Hierarchy or ObjectListKind.Namespaces or ObjectListKind.Projects or ObjectListKind.References => true,
+            ObjectListKind.BaseTypes or ObjectListKind.Types => await IsExpandableTypeAsync(index, cancellationToken).ConfigureAwait(true),
+            _ => false,
+        };
     }
 
     private async Task<bool> IsExpandableTypeAsync(uint index, CancellationToken cancellationToken)
@@ -510,23 +502,16 @@ internal sealed class ObjectList : AbstractObjectList<AbstractObjectBrowserLibra
         if (compilation == null)
             return null;
 
-        switch (listKind)
+        return listKind switch
         {
-            case ObjectListKind.Types:
-                return new ObjectList(ObjectListKind.Types, flags, this, listItem, LibraryManager, this.LibraryManager.GetTypeListItems(listItem, compilation));
-            case ObjectListKind.Hierarchy:
-                return new ObjectList(ObjectListKind.Hierarchy, flags, this, listItem, LibraryManager, this.LibraryManager.GetFolderListItems(listItem, compilation));
-            case ObjectListKind.Namespaces:
-                return new ObjectList(ObjectListKind.Namespaces, flags, this, listItem, LibraryManager, this.LibraryManager.GetNamespaceListItems(listItem, compilation));
-            case ObjectListKind.Members:
-                return new ObjectList(ObjectListKind.Members, flags, this, listItem, LibraryManager, this.LibraryManager.GetMemberListItems(listItem, compilation));
-            case ObjectListKind.References:
-                return new ObjectList(ObjectListKind.References, flags, this, listItem, LibraryManager, this.LibraryManager.GetReferenceListItems(listItem, compilation));
-            case ObjectListKind.BaseTypes:
-                return new ObjectList(ObjectListKind.BaseTypes, flags, this, listItem, LibraryManager, this.LibraryManager.GetBaseTypeListItems(listItem, compilation));
-        }
-
-        throw new NotImplementedException();
+            ObjectListKind.Types => new ObjectList(ObjectListKind.Types, flags, this, listItem, LibraryManager, this.LibraryManager.GetTypeListItems(listItem, compilation)),
+            ObjectListKind.Hierarchy => new ObjectList(ObjectListKind.Hierarchy, flags, this, listItem, LibraryManager, this.LibraryManager.GetFolderListItems(listItem, compilation)),
+            ObjectListKind.Namespaces => new ObjectList(ObjectListKind.Namespaces, flags, this, listItem, LibraryManager, this.LibraryManager.GetNamespaceListItems(listItem, compilation)),
+            ObjectListKind.Members => new ObjectList(ObjectListKind.Members, flags, this, listItem, LibraryManager, this.LibraryManager.GetMemberListItems(listItem, compilation)),
+            ObjectListKind.References => new ObjectList(ObjectListKind.References, flags, this, listItem, LibraryManager, this.LibraryManager.GetReferenceListItems(listItem, compilation)),
+            ObjectListKind.BaseTypes => new ObjectList(ObjectListKind.BaseTypes, flags, this, listItem, LibraryManager, this.LibraryManager.GetBaseTypeListItems(listItem, compilation)),
+            _ => throw new NotImplementedException(),
+        };
     }
 
     protected override Task<object> GetBrowseObjectAsync(uint index, CancellationToken cancellationToken)
@@ -802,22 +787,13 @@ internal sealed class ObjectList : AbstractObjectList<AbstractObjectBrowserLibra
         const int IDM_VS_CTXT_CV_GROUPINGFOLDER = 0x0435;
         const int IDM_VS_CTXT_CV_MEMBER = 0x0438;
 
-        switch (Kind)
+        menuId = Kind switch
         {
-            case ObjectListKind.Projects:
-                menuId = IDM_VS_CTXT_CV_PROJECT;
-                break;
-            case ObjectListKind.Members:
-                menuId = IDM_VS_CTXT_CV_MEMBER;
-                break;
-            case ObjectListKind.Hierarchy:
-                menuId = IDM_VS_CTXT_CV_GROUPINGFOLDER;
-                break;
-            default:
-                menuId = IDM_VS_CTXT_CV_ITEM;
-                break;
-        }
-
+            ObjectListKind.Projects => IDM_VS_CTXT_CV_PROJECT,
+            ObjectListKind.Members => IDM_VS_CTXT_CV_MEMBER,
+            ObjectListKind.Hierarchy => IDM_VS_CTXT_CV_GROUPINGFOLDER,
+            _ => IDM_VS_CTXT_CV_ITEM,
+        };
         return true;
     }
 

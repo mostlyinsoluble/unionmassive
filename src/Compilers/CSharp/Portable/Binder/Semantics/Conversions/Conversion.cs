@@ -214,46 +214,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         [Conditional("DEBUG")]
         private static void AssertTrivialConversion(ConversionKind kind)
         {
-            bool isTrivial;
-
-            switch (kind)
+            var isTrivial = kind switch
             {
-                case ConversionKind.NoConversion:
-                case ConversionKind.Identity:
-                case ConversionKind.ImplicitConstant:
-                case ConversionKind.ImplicitNumeric:
-                case ConversionKind.ImplicitReference:
-                case ConversionKind.ImplicitEnumeration:
-                case ConversionKind.ImplicitThrow:
-                case ConversionKind.AnonymousFunction:
-                case ConversionKind.Boxing:
-                case ConversionKind.NullLiteral:
-                case ConversionKind.DefaultLiteral:
-                case ConversionKind.ImplicitNullToPointer:
-                case ConversionKind.ImplicitPointerToVoid:
-                case ConversionKind.ExplicitPointerToPointer:
-                case ConversionKind.ExplicitPointerToInteger:
-                case ConversionKind.ExplicitIntegerToPointer:
-                case ConversionKind.Unboxing:
-                case ConversionKind.ExplicitReference:
-                case ConversionKind.IntPtr:
-                case ConversionKind.ExplicitEnumeration:
-                case ConversionKind.ExplicitNumeric:
-                case ConversionKind.ImplicitDynamic:
-                case ConversionKind.ExplicitDynamic:
-                case ConversionKind.InterpolatedString:
-                case ConversionKind.InterpolatedStringHandler:
-                case ConversionKind.InlineArray:
-                case ConversionKind.ImplicitSpan:
-                case ConversionKind.ExplicitSpan:
-                    isTrivial = true;
-                    break;
-
-                default:
-                    isTrivial = false;
-                    break;
-            }
-
+                ConversionKind.NoConversion or ConversionKind.Identity or ConversionKind.ImplicitConstant or ConversionKind.ImplicitNumeric or ConversionKind.ImplicitReference or ConversionKind.ImplicitEnumeration or ConversionKind.ImplicitThrow or ConversionKind.AnonymousFunction or ConversionKind.Boxing or ConversionKind.NullLiteral or ConversionKind.DefaultLiteral or ConversionKind.ImplicitNullToPointer or ConversionKind.ImplicitPointerToVoid or ConversionKind.ExplicitPointerToPointer or ConversionKind.ExplicitPointerToInteger or ConversionKind.ExplicitIntegerToPointer or ConversionKind.Unboxing or ConversionKind.ExplicitReference or ConversionKind.IntPtr or ConversionKind.ExplicitEnumeration or ConversionKind.ExplicitNumeric or ConversionKind.ImplicitDynamic or ConversionKind.ExplicitDynamic or ConversionKind.InterpolatedString or ConversionKind.InterpolatedStringHandler or ConversionKind.InlineArray or ConversionKind.ImplicitSpan or ConversionKind.ExplicitSpan => true,
+                _ => false,
+            };
             RoslynDebug.Assert(isTrivial, $"this conversion needs additional data: {kind}");
         }
 
@@ -401,7 +366,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 return _uncommonData is NestedUncommonData { _nestedConversionsOpt: var conversions } ?
                     conversions :
-                    default(ImmutableArray<Conversion>);
+                    default;
             }
         }
 
@@ -585,7 +550,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 return !this.IsUserDefined ||
-                    this.Method is object ||
+                    this.Method is not null ||
                     (_uncommonData as MethodUncommonData)?._conversionResult.Kind == UserDefinedConversionResultKind.Valid;
             }
         }
@@ -1045,7 +1010,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var conversionResult = (_uncommonData as MethodUncommonData)?._conversionResult ?? default(UserDefinedConversionResult);
+                var conversionResult = (_uncommonData as MethodUncommonData)?._conversionResult ?? default;
 
                 switch (conversionResult.Kind)
                 {
@@ -1223,7 +1188,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var sub = new System.Collections.Generic.List<TreeDumperNode>();
 
-                if (self.Method is object)
+                if (self.Method is not null)
                 {
                     sub.Add(new TreeDumperNode("method", self.Method.ToDisplayString(), null));
                 }

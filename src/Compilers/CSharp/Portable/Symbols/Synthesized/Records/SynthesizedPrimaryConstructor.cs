@@ -163,7 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override bool ShouldBindAttributes(AttributeListSyntax attributeDeclarationSyntax, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert(attributeDeclarationSyntax.Target is object);
+            Debug.Assert(attributeDeclarationSyntax.Target is not null);
 
             if (!base.ShouldBindAttributes(attributeDeclarationSyntax, diagnostics))
             {
@@ -173,11 +173,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (attributeDeclarationSyntax.SyntaxTree == SyntaxRef.SyntaxTree &&
                 GetSyntax().AttributeLists.Contains(attributeDeclarationSyntax))
             {
-                if (ContainingType is { IsRecord: true } or { IsRecordStruct: true })
-                {
-                    MessageID.IDS_FeaturePrimaryConstructors.CheckFeatureAvailability(diagnostics, attributeDeclarationSyntax, attributeDeclarationSyntax.Target.Identifier.GetLocation());
-                }
-
                 return true;
             }
 

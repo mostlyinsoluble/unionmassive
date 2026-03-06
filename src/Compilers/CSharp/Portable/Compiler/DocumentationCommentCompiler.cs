@@ -533,12 +533,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool shouldSkipPartialDefinitionComments,
             ImmutableArray<DocumentationCommentTriviaSyntax> docCommentNodes)
         {
-            string? withUnprocessedIncludes;
-            bool haveParseError;
-            HashSet<TypeParameterSymbol>? documentedTypeParameters;
-            HashSet<ParameterSymbol>? documentedParameters;
-            ImmutableArray<CSharpSyntaxNode> includeElementNodes;
-            if (!tryProcessDocumentationCommentTriviaNodes(symbol, shouldSkipPartialDefinitionComments, docCommentNodes, out withUnprocessedIncludes, out haveParseError, out documentedTypeParameters, out documentedParameters, out includeElementNodes))
+            if (!tryProcessDocumentationCommentTriviaNodes(symbol, shouldSkipPartialDefinitionComments, docCommentNodes, out string? withUnprocessedIncludes, out bool haveParseError, out HashSet<TypeParameterSymbol>? documentedTypeParameters, out HashSet<ParameterSymbol>? documentedParameters, out ImmutableArray<CSharpSyntaxNode> includeElementNodes))
             {
                 return;
             }
@@ -712,7 +707,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (!processedDocComment)
                 {
                     withUnprocessedIncludes = null;
-                    includeElementNodes = default(ImmutableArray<CSharpSyntaxNode>);
+                    includeElementNodes = default;
 
                     return false;
                 }
@@ -727,7 +722,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 withUnprocessedIncludes = GetAndEndTemporaryString();
 
                 // Free the builder, even if there was an error.
-                includeElementNodes = _processIncludes ? includeElementNodesBuilder!.ToImmutableAndFree() : default(ImmutableArray<CSharpSyntaxNode>);
+                includeElementNodes = _processIncludes ? includeElementNodesBuilder!.ToImmutableAndFree() : default;
 
                 return true;
             }
@@ -756,7 +751,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SymbolKind.NamedType:
                     MethodSymbol delegateInvoke = ((NamedTypeSymbol)symbol).DelegateInvokeMethod;
-                    if ((object)delegateInvoke != null)
+                    if (delegateInvoke is not null)
                     {
                         return delegateInvoke.Parameters;
                     }
@@ -775,15 +770,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private static ImmutableArray<TypeParameterSymbol> GetTypeParameters(Symbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Method:
-                case SymbolKind.NamedType:
-                case SymbolKind.ErrorType:
-                    return symbol.GetMemberTypeParameters();
-            }
-
-            return ImmutableArray<TypeParameterSymbol>.Empty;
+                SymbolKind.Method or SymbolKind.NamedType or SymbolKind.ErrorType => symbol.GetMemberTypeParameters(),
+                _ => ImmutableArray<TypeParameterSymbol>.Empty,
+            };
         }
 
         /// <summary>
@@ -793,14 +784,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private static bool RequiresDocumentationComment(Symbol symbol)
         {
-            Debug.Assert((object)symbol != null);
+            Debug.Assert(symbol is not null);
 
             if (ShouldSkip(symbol))
             {
                 return false;
             }
 
-            while ((object)symbol != null)
+            while (symbol is not null)
             {
                 switch (symbol.DeclaredAccessibility)
                 {
@@ -825,7 +816,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool TryGetDocumentationCommentNodes(Symbol symbol, out DocumentationMode maxDocumentationMode, out ImmutableArray<DocumentationCommentTriviaSyntax> nodes)
         {
             maxDocumentationMode = DocumentationMode.None;
-            nodes = default(ImmutableArray<DocumentationCommentTriviaSyntax>);
+            nodes = default;
 
             ArrayBuilder<DocumentationCommentTriviaSyntax> builder = null;
             var diagnosticBag = _diagnostics.DiagnosticBag ?? DiagnosticBag.GetInstance();
@@ -1040,8 +1031,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool skipSpace = true;
             for (int start = 0; start < text.Length;)
             {
-                int newLineLength;
-                int end = IndexOfNewLine(text, start, out newLineLength);
+                int end = IndexOfNewLine(text, start, out int newLineLength);
                 int trimStart = GetIndexOfFirstNonWhitespaceChar(text, start, end);
                 int trimmedLength = end - trimStart;
                 if (trimmedLength < 4 || !SyntaxFacts.IsWhitespace(text[trimStart + 3]))
@@ -1057,8 +1047,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int start = 0; start < text.Length;)
             {
-                int newLineLength;
-                int end = IndexOfNewLine(text, start, out newLineLength);
+                int end = IndexOfNewLine(text, start, out int newLineLength);
                 int trimStart = GetIndexOfFirstNonWhitespaceChar(text, start, end) + substringStart;
                 WriteSubStringLine(text, trimStart, end - trimStart);
                 start = end + newLineLength;
@@ -1206,8 +1195,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return ToBadCrefString(crefSyntax);
             }
 
-            Symbol ambiguityWinner;
-            ImmutableArray<Symbol> symbols = binder.BindCref(crefSyntax, out ambiguityWinner, diagnostics);
+            ImmutableArray<Symbol> symbols = binder.BindCref(crefSyntax, out Symbol ambiguityWinner, diagnostics);
 
             Symbol symbol;
             switch (symbols.Length)
@@ -1219,7 +1207,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
                 default:
                     symbol = ambiguityWinner;
-                    Debug.Assert((object)symbol != null);
+                    Debug.Assert(symbol is not null);
                     break;
             }
 

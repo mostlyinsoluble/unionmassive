@@ -550,7 +550,7 @@ namespace Microsoft.CodeAnalysis
                 var versionPattern = symbols[i].AssemblyVersionPattern;
                 var originalIdentity = originalIdentities[i];
 
-                if (versionPattern is object)
+                if (versionPattern is not null)
                 {
                     Debug.Assert(versionPattern.Build == ushort.MaxValue || versionPattern.Revision == ushort.MaxValue);
 
@@ -644,7 +644,7 @@ namespace Microsoft.CodeAnalysis
                         // push dependencies onto the stack:
                         // +1 for the assembly being built:
                         var referenceBinding = bindingResult[assemblyIndex + 1].ReferenceBinding;
-                        Debug.Assert(referenceBinding is object);
+                        Debug.Assert(referenceBinding is not null);
                         foreach (var binding in referenceBinding)
                         {
                             if (binding.IsBound)
@@ -684,14 +684,12 @@ namespace Microsoft.CodeAnalysis
 
         internal TAssemblySymbol? GetReferencedAssemblySymbol(MetadataReference reference)
         {
-            int index;
-            return ReferencedAssembliesMap.TryGetValue(reference, out index) ? ReferencedAssemblies[index] : null;
+            return ReferencedAssembliesMap.TryGetValue(reference, out int index) ? ReferencedAssemblies[index] : null;
         }
 
         internal int GetReferencedModuleIndex(MetadataReference reference)
         {
-            int index;
-            return ReferencedModuleIndexMap.TryGetValue(reference, out index) ? index : -1;
+            return ReferencedModuleIndexMap.TryGetValue(reference, out int index) ? index : -1;
         }
 
         /// <summary>

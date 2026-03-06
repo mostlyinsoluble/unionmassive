@@ -13,202 +13,55 @@ internal static class GlyphExtensions
 {
     public static StandardGlyphGroup GetStandardGlyphGroup(this Glyph glyph)
     {
-        switch (glyph)
+        return glyph switch
         {
-            case Glyph.Assembly:
-                return StandardGlyphGroup.GlyphAssembly;
-
-            case Glyph.BasicFile:
-            case Glyph.BasicProject:
-                return StandardGlyphGroup.GlyphVBProject;
-
-            case Glyph.ClassPublic:
-            case Glyph.ClassProtected:
-            case Glyph.ClassPrivate:
-            case Glyph.ClassInternal:
-                return StandardGlyphGroup.GlyphGroupClass;
-
-            case Glyph.ConstantPublic:
-            case Glyph.ConstantProtected:
-            case Glyph.ConstantPrivate:
-            case Glyph.ConstantInternal:
-                return StandardGlyphGroup.GlyphGroupConstant;
-
-            case Glyph.CSharpFile:
-                return StandardGlyphGroup.GlyphCSharpFile;
-
-            case Glyph.CSharpProject:
-                return StandardGlyphGroup.GlyphCoolProject;
-
-            case Glyph.DelegatePublic:
-            case Glyph.DelegateProtected:
-            case Glyph.DelegatePrivate:
-            case Glyph.DelegateInternal:
-                return StandardGlyphGroup.GlyphGroupDelegate;
-
-            case Glyph.EnumPublic:
-            case Glyph.EnumProtected:
-            case Glyph.EnumPrivate:
-            case Glyph.EnumInternal:
-                return StandardGlyphGroup.GlyphGroupEnum;
-
-            case Glyph.EnumMemberPublic:
-            case Glyph.EnumMemberProtected:
-            case Glyph.EnumMemberPrivate:
-            case Glyph.EnumMemberInternal:
-                return StandardGlyphGroup.GlyphGroupEnumMember;
-
-            case Glyph.Error:
-                return StandardGlyphGroup.GlyphGroupError;
-
-            case Glyph.ExtensionMethodPublic:
-                return StandardGlyphGroup.GlyphExtensionMethod;
-
-            case Glyph.ExtensionMethodProtected:
-                return StandardGlyphGroup.GlyphExtensionMethodProtected;
-
-            case Glyph.ExtensionMethodPrivate:
-                return StandardGlyphGroup.GlyphExtensionMethodPrivate;
-
-            case Glyph.ExtensionMethodInternal:
-                return StandardGlyphGroup.GlyphExtensionMethodInternal;
-
-            case Glyph.EventPublic:
-            case Glyph.EventProtected:
-            case Glyph.EventPrivate:
-            case Glyph.EventInternal:
-                return StandardGlyphGroup.GlyphGroupEvent;
-
-            case Glyph.FieldPublic:
-            case Glyph.FieldProtected:
-            case Glyph.FieldPrivate:
-            case Glyph.FieldInternal:
-                return StandardGlyphGroup.GlyphGroupField;
-
-            case Glyph.InterfacePublic:
-            case Glyph.InterfaceProtected:
-            case Glyph.InterfacePrivate:
-            case Glyph.InterfaceInternal:
-                return StandardGlyphGroup.GlyphGroupInterface;
-
-            case Glyph.Intrinsic:
-                return StandardGlyphGroup.GlyphGroupIntrinsic;
-
-            case Glyph.Keyword:
-                return StandardGlyphGroup.GlyphKeyword;
-
-            case Glyph.Label:
-                return StandardGlyphGroup.GlyphGroupIntrinsic;
-
-            case Glyph.Local:
-                return StandardGlyphGroup.GlyphGroupVariable;
-
-            case Glyph.Namespace:
-                return StandardGlyphGroup.GlyphGroupNamespace;
-
-            case Glyph.MethodPublic:
-            case Glyph.MethodProtected:
-            case Glyph.MethodPrivate:
-            case Glyph.MethodInternal:
-                return StandardGlyphGroup.GlyphGroupMethod;
-
-            case Glyph.ModulePublic:
-            case Glyph.ModuleProtected:
-            case Glyph.ModulePrivate:
-            case Glyph.ModuleInternal:
-                return StandardGlyphGroup.GlyphGroupModule;
-
-            case Glyph.OpenFolder:
-                return StandardGlyphGroup.GlyphOpenFolder;
-
-            case Glyph.OperatorPublic:
-            case Glyph.OperatorProtected:
-            case Glyph.OperatorPrivate:
-            case Glyph.OperatorInternal:
-                return StandardGlyphGroup.GlyphGroupOperator;
-
-            case Glyph.Parameter:
-                return StandardGlyphGroup.GlyphGroupVariable;
-
-            case Glyph.PropertyPublic:
-            case Glyph.PropertyProtected:
-            case Glyph.PropertyPrivate:
-            case Glyph.PropertyInternal:
-                return StandardGlyphGroup.GlyphGroupProperty;
-
-            case Glyph.RangeVariable:
-                return StandardGlyphGroup.GlyphGroupVariable;
-
-            case Glyph.Reference:
-                return StandardGlyphGroup.GlyphReference;
-
-            case Glyph.StructurePublic:
-            case Glyph.StructureProtected:
-            case Glyph.StructurePrivate:
-            case Glyph.StructureInternal:
-                return StandardGlyphGroup.GlyphGroupStruct;
-
-            case Glyph.TypeParameter:
-                return StandardGlyphGroup.GlyphGroupType;
-
-            case Glyph.Snippet:
-                return StandardGlyphGroup.GlyphCSharpExpansion;
-
-            case Glyph.CompletionWarning:
-                return StandardGlyphGroup.GlyphCompletionWarning;
-
-            default:
-                throw new ArgumentException("glyph");
-        }
+            Glyph.Assembly => StandardGlyphGroup.GlyphAssembly,
+            Glyph.BasicFile or Glyph.BasicProject => StandardGlyphGroup.GlyphVBProject,
+            Glyph.ClassPublic or Glyph.ClassProtected or Glyph.ClassPrivate or Glyph.ClassInternal => StandardGlyphGroup.GlyphGroupClass,
+            Glyph.ConstantPublic or Glyph.ConstantProtected or Glyph.ConstantPrivate or Glyph.ConstantInternal => StandardGlyphGroup.GlyphGroupConstant,
+            Glyph.CSharpFile => StandardGlyphGroup.GlyphCSharpFile,
+            Glyph.CSharpProject => StandardGlyphGroup.GlyphCoolProject,
+            Glyph.DelegatePublic or Glyph.DelegateProtected or Glyph.DelegatePrivate or Glyph.DelegateInternal => StandardGlyphGroup.GlyphGroupDelegate,
+            Glyph.EnumPublic or Glyph.EnumProtected or Glyph.EnumPrivate or Glyph.EnumInternal => StandardGlyphGroup.GlyphGroupEnum,
+            Glyph.EnumMemberPublic or Glyph.EnumMemberProtected or Glyph.EnumMemberPrivate or Glyph.EnumMemberInternal => StandardGlyphGroup.GlyphGroupEnumMember,
+            Glyph.Error => StandardGlyphGroup.GlyphGroupError,
+            Glyph.ExtensionMethodPublic => StandardGlyphGroup.GlyphExtensionMethod,
+            Glyph.ExtensionMethodProtected => StandardGlyphGroup.GlyphExtensionMethodProtected,
+            Glyph.ExtensionMethodPrivate => StandardGlyphGroup.GlyphExtensionMethodPrivate,
+            Glyph.ExtensionMethodInternal => StandardGlyphGroup.GlyphExtensionMethodInternal,
+            Glyph.EventPublic or Glyph.EventProtected or Glyph.EventPrivate or Glyph.EventInternal => StandardGlyphGroup.GlyphGroupEvent,
+            Glyph.FieldPublic or Glyph.FieldProtected or Glyph.FieldPrivate or Glyph.FieldInternal => StandardGlyphGroup.GlyphGroupField,
+            Glyph.InterfacePublic or Glyph.InterfaceProtected or Glyph.InterfacePrivate or Glyph.InterfaceInternal => StandardGlyphGroup.GlyphGroupInterface,
+            Glyph.Intrinsic => StandardGlyphGroup.GlyphGroupIntrinsic,
+            Glyph.Keyword => StandardGlyphGroup.GlyphKeyword,
+            Glyph.Label => StandardGlyphGroup.GlyphGroupIntrinsic,
+            Glyph.Local => StandardGlyphGroup.GlyphGroupVariable,
+            Glyph.Namespace => StandardGlyphGroup.GlyphGroupNamespace,
+            Glyph.MethodPublic or Glyph.MethodProtected or Glyph.MethodPrivate or Glyph.MethodInternal => StandardGlyphGroup.GlyphGroupMethod,
+            Glyph.ModulePublic or Glyph.ModuleProtected or Glyph.ModulePrivate or Glyph.ModuleInternal => StandardGlyphGroup.GlyphGroupModule,
+            Glyph.OpenFolder => StandardGlyphGroup.GlyphOpenFolder,
+            Glyph.OperatorPublic or Glyph.OperatorProtected or Glyph.OperatorPrivate or Glyph.OperatorInternal => StandardGlyphGroup.GlyphGroupOperator,
+            Glyph.Parameter => StandardGlyphGroup.GlyphGroupVariable,
+            Glyph.PropertyPublic or Glyph.PropertyProtected or Glyph.PropertyPrivate or Glyph.PropertyInternal => StandardGlyphGroup.GlyphGroupProperty,
+            Glyph.RangeVariable => StandardGlyphGroup.GlyphGroupVariable,
+            Glyph.Reference => StandardGlyphGroup.GlyphReference,
+            Glyph.StructurePublic or Glyph.StructureProtected or Glyph.StructurePrivate or Glyph.StructureInternal => StandardGlyphGroup.GlyphGroupStruct,
+            Glyph.TypeParameter => StandardGlyphGroup.GlyphGroupType,
+            Glyph.Snippet => StandardGlyphGroup.GlyphCSharpExpansion,
+            Glyph.CompletionWarning => StandardGlyphGroup.GlyphCompletionWarning,
+            _ => throw new ArgumentException("glyph"),
+        };
     }
 
     public static StandardGlyphItem GetStandardGlyphItem(this Glyph icon)
     {
-        switch (icon)
+        return icon switch
         {
-            case Glyph.ClassProtected:
-            case Glyph.ConstantProtected:
-            case Glyph.DelegateProtected:
-            case Glyph.EnumProtected:
-            case Glyph.EventProtected:
-            case Glyph.FieldProtected:
-            case Glyph.InterfaceProtected:
-            case Glyph.MethodProtected:
-            case Glyph.ModuleProtected:
-            case Glyph.PropertyProtected:
-            case Glyph.StructureProtected:
-                return StandardGlyphItem.GlyphItemProtected;
-
-            case Glyph.ClassPrivate:
-            case Glyph.ConstantPrivate:
-            case Glyph.DelegatePrivate:
-            case Glyph.EnumPrivate:
-            case Glyph.EventPrivate:
-            case Glyph.FieldPrivate:
-            case Glyph.InterfacePrivate:
-            case Glyph.MethodPrivate:
-            case Glyph.ModulePrivate:
-            case Glyph.PropertyPrivate:
-            case Glyph.StructurePrivate:
-                return StandardGlyphItem.GlyphItemPrivate;
-
-            case Glyph.ClassInternal:
-            case Glyph.ConstantInternal:
-            case Glyph.DelegateInternal:
-            case Glyph.EnumInternal:
-            case Glyph.EventInternal:
-            case Glyph.FieldInternal:
-            case Glyph.InterfaceInternal:
-            case Glyph.MethodInternal:
-            case Glyph.ModuleInternal:
-            case Glyph.PropertyInternal:
-            case Glyph.StructureInternal:
-                return StandardGlyphItem.GlyphItemFriend;
-
-            default:
-                // We don't want any overlays
-                return StandardGlyphItem.GlyphItemPublic;
-        }
+            Glyph.ClassProtected or Glyph.ConstantProtected or Glyph.DelegateProtected or Glyph.EnumProtected or Glyph.EventProtected or Glyph.FieldProtected or Glyph.InterfaceProtected or Glyph.MethodProtected or Glyph.ModuleProtected or Glyph.PropertyProtected or Glyph.StructureProtected => StandardGlyphItem.GlyphItemProtected,
+            Glyph.ClassPrivate or Glyph.ConstantPrivate or Glyph.DelegatePrivate or Glyph.EnumPrivate or Glyph.EventPrivate or Glyph.FieldPrivate or Glyph.InterfacePrivate or Glyph.MethodPrivate or Glyph.ModulePrivate or Glyph.PropertyPrivate or Glyph.StructurePrivate => StandardGlyphItem.GlyphItemPrivate,
+            Glyph.ClassInternal or Glyph.ConstantInternal or Glyph.DelegateInternal or Glyph.EnumInternal or Glyph.EventInternal or Glyph.FieldInternal or Glyph.InterfaceInternal or Glyph.MethodInternal or Glyph.ModuleInternal or Glyph.PropertyInternal or Glyph.StructureInternal => StandardGlyphItem.GlyphItemFriend,
+            _ => StandardGlyphItem.GlyphItemPublic,// We don't want any overlays
+        };
     }
 
     public static ImageSource GetImageSource(this Glyph glyph, IGlyphService glyphService)

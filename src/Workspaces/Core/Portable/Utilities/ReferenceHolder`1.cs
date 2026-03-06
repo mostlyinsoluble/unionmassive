@@ -44,7 +44,7 @@ internal readonly struct ReferenceHolder<T> : IEquatable<ReferenceHolder<T>>
 
     public T? TryGetTarget()
     {
-        if (_weakReference is object)
+        if (_weakReference is not null)
             return _weakReference.GetTarget();
 
         return _strongReference;
@@ -62,14 +62,14 @@ internal readonly struct ReferenceHolder<T> : IEquatable<ReferenceHolder<T>>
         var y = other.TryGetTarget();
         if (x is null)
         {
-            if (_weakReference is object)
+            if (_weakReference is not null)
             {
                 // 'x' is a weak reference that was collected. Verify 'y' is a collected weak reference with the
                 // same runtime hash code. This code path can fail in an edge case where the references to two
                 // different objects have both been collected, but the runtime hash codes for the objects were
                 // equal. Callers can ensure this case is not encountered by structuring equality checks such that
                 // at least one of the objects is alive at the time Equals is called.
-                return y is null && other._weakReference is object && _hashCode == other._hashCode;
+                return y is null && other._weakReference is not null && _hashCode == other._hashCode;
             }
             else
             {
@@ -84,7 +84,7 @@ internal readonly struct ReferenceHolder<T> : IEquatable<ReferenceHolder<T>>
 
     public override int GetHashCode()
     {
-        if (_weakReference is object)
+        if (_weakReference is not null)
             return _hashCode;
 
         return ReferenceEqualityComparer.Instance.GetHashCode(_strongReference);

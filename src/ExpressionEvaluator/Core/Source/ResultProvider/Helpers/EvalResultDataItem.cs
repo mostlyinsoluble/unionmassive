@@ -128,8 +128,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             : this(
                 ExpansionKind.Error,
                 name: name,
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
-                declaredTypeAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
+                declaredTypeAndInfo: default,
                 useDebuggerDisplay: false,
                 value: null,
                 displayValue: errorMessage,

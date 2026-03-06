@@ -151,15 +151,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static Type GetMemberType(MemberInfo member)
         {
-            switch (member.MemberType)
+            return member.MemberType switch
             {
-                case MemberTypes.Field:
-                    return ((FieldInfo)member).FieldType;
-                case MemberTypes.Property:
-                    return ((PropertyInfo)member).PropertyType;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(member.MemberType);
-            }
+                MemberTypes.Field => ((FieldInfo)member).FieldType,
+                MemberTypes.Property => ((PropertyInfo)member).PropertyType,
+                _ => throw ExceptionUtilities.UnexpectedValue(member.MemberType),
+            };
         }
 
         private static bool SupportsCanFavorite(MemberInfo member, DeclarationInfo info)
@@ -191,30 +188,23 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static bool IsMemberStatic(MemberInfo member)
         {
-            switch (member.MemberType)
+            return member.MemberType switch
             {
-                case MemberTypes.Field:
-                    return ((FieldInfo)member).IsStatic;
-                case MemberTypes.Property:
-                    return ((PropertyInfo)member).GetGetMethod(nonPublic: true).IsStatic;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(member.MemberType);
-            }
+                MemberTypes.Field => ((FieldInfo)member).IsStatic,
+                MemberTypes.Property => ((PropertyInfo)member).GetGetMethod(nonPublic: true).IsStatic,
+                _ => throw ExceptionUtilities.UnexpectedValue(member.MemberType),
+            };
         }
 
         public DkmClrCustomTypeInfo TypeInfo
         {
             get
             {
-                switch (_member.MemberType)
+                return _member.MemberType switch
                 {
-                    case MemberTypes.Field:
-                    case MemberTypes.Property:
-                        return _member.GetCustomAttributesData().GetCustomTypeInfo();
-                    default:
-                        // If we ever see a method, we'll have to use ReturnTypeCustomAttributes.
-                        throw ExceptionUtilities.UnexpectedValue(_member.MemberType);
-                }
+                    MemberTypes.Field or MemberTypes.Property => _member.GetCustomAttributesData().GetCustomTypeInfo(),
+                    _ => throw ExceptionUtilities.UnexpectedValue(_member.MemberType),// If we ever see a method, we'll have to use ReturnTypeCustomAttributes.
+                };
             }
         }
 

@@ -92,7 +92,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             Dim displayLogo As Boolean = True
             Dim displayHelp As Boolean = False
             Dim displayVersion As Boolean = False
-            Dim displayLangVersions As Boolean = False
             Dim outputLevel As OutputLevel = OutputLevel.Normal
             Dim optimize As Boolean = False
             Dim checkOverflow As Boolean = True
@@ -111,7 +110,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             Dim parseDocumentationComments As Boolean = False ' Don't just null check documentationFileName because we want to do this even if the file name is invalid.
             Dim outputKind As OutputKind = OutputKind.ConsoleApplication
             Dim ssVersion As SubsystemVersion = SubsystemVersion.None
-            Dim languageVersion As LanguageVersion = LanguageVersion.Default
             Dim mainTypeName As String = Nothing
             Dim win32ManifestFile As String = Nothing
             Dim win32ResourceFile As String = Nothing
@@ -899,17 +897,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                             Continue For
 
                         Case "langversion"
-                            value = RemoveQuotesAndSlashes(value)
-                            If String.IsNullOrEmpty(value) Then
-                                AddDiagnostic(diagnostics, ERRID.ERR_ArgumentRequired, "langversion", ":<number>")
-                            ElseIf value = "?" Then
-                                displayLangVersions = True
-                            Else
-                                If Not TryParse(value, languageVersion) Then
-                                    AddDiagnostic(diagnostics, ERRID.ERR_InvalidSwitchValue, "langversion", value)
-                                End If
-                            End If
-
                             Continue For
 
                         Case "delaysign", "delaysign+"
@@ -1431,7 +1418,6 @@ lVbRuntimePlus:
             flattenedArgs.Free()
 
             Dim parseOptions = New VisualBasicParseOptions(
-                languageVersion:=languageVersion,
                 documentationMode:=If(parseDocumentationComments, DocumentationMode.Diagnose, DocumentationMode.None),
                 kind:=If(IsScriptCommandLineParser, SourceCodeKind.Script, SourceCodeKind.Regular),
                 preprocessorSymbols:=AddPredefinedPreprocessorSymbols(outputKind, defines.AsImmutableOrEmpty()),
@@ -1526,7 +1512,6 @@ lVbRuntimePlus:
                 .DisplayLogo = displayLogo,
                 .DisplayHelp = displayHelp,
                 .DisplayVersion = displayVersion,
-                .DisplayLangVersions = displayLangVersions,
                 .ManifestResourceArguments = managedResources.AsImmutable(),
                 .CompilationOptions = options,
                 .ParseOptions = parseOptions,

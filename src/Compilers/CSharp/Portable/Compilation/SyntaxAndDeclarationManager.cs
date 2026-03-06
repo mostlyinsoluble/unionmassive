@@ -316,8 +316,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             var removeSet = PooledHashSet<SyntaxTree>.GetInstance();
             foreach (var tree in trees)
             {
-                int unused1;
-                ImmutableArray<LoadDirective> unused2;
                 GetRemoveSet(
                     tree,
                     includeLoadedTrees: true,
@@ -326,8 +324,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     loadDirectiveMap: loadDirectiveMap,
                     loadedSyntaxTreeMap: loadedSyntaxTreeMap,
                     removeSet: removeSet,
-                    totalReferencedTreeCount: out unused1,
-                    oldLoadDirectives: out unused2);
+                    totalReferencedTreeCount: out int unused1,
+                    oldLoadDirectives: out ImmutableArray<LoadDirective> unused2);
             }
 
             var treesBuilder = ArrayBuilder<SyntaxTree>.GetInstance();
@@ -412,14 +410,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 for (int i = ordinal + 1; i < syntaxTrees.Length; i++)
                 {
                     var tree = syntaxTrees[i];
-                    ImmutableArray<LoadDirective> loadDirectives;
-                    if (loadDirectiveMap.TryGetValue(tree, out loadDirectives))
+                    if (loadDirectiveMap.TryGetValue(tree, out ImmutableArray<LoadDirective> loadDirectives))
                     {
                         Debug.Assert(!loadDirectives.IsEmpty);
                         foreach (var directive in loadDirectives)
                         {
-                            SyntaxTree loadedTree;
-                            if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out loadedTree))
+                            if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out SyntaxTree loadedTree))
                             {
                                 removeSet.Remove(loadedTree);
                             }
@@ -439,11 +435,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (directive.ResolvedPath != null)
                 {
-                    SyntaxTree loadedTree;
-                    if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out loadedTree) && removeSet.Add(loadedTree))
+                    if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out SyntaxTree loadedTree) && removeSet.Add(loadedTree))
                     {
-                        ImmutableArray<LoadDirective> nestedLoadDirectives;
-                        if (loadDirectiveMap.TryGetValue(loadedTree, out nestedLoadDirectives))
+                        if (loadDirectiveMap.TryGetValue(loadedTree, out ImmutableArray<LoadDirective> nestedLoadDirectives))
                         {
                             Debug.Assert(!nestedLoadDirectives.IsEmpty);
                             GetRemoveSetForLoadedTrees(nestedLoadDirectives, loadDirectiveMap, loadedSyntaxTreeMap, removeSet);
@@ -479,8 +473,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             var loadDirectiveMap = state.LoadDirectiveMap;
             var loadedSyntaxTreeMap = state.LoadedSyntaxTreeMap;
             var removeSet = PooledHashSet<SyntaxTree>.GetInstance();
-            int totalReferencedTreeCount;
-            ImmutableArray<LoadDirective> oldLoadDirectives;
             GetRemoveSet(
                 oldTree,
                 loadDirectivesHaveChanged,
@@ -489,8 +481,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 loadDirectiveMap,
                 loadedSyntaxTreeMap,
                 removeSet,
-                out totalReferencedTreeCount,
-                out oldLoadDirectives);
+                out int totalReferencedTreeCount,
+                out ImmutableArray<LoadDirective> oldLoadDirectives);
 
             var loadDirectiveMapBuilder = loadDirectiveMap.ToBuilder();
             var loadedSyntaxTreeMapBuilder = loadedSyntaxTreeMap.ToBuilder();
@@ -667,8 +659,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static bool IsLoadedSyntaxTree(SyntaxTree tree, ImmutableDictionary<string, SyntaxTree> loadedSyntaxTreeMap)
         {
-            SyntaxTree loadedTree;
-            return loadedSyntaxTreeMap.TryGetValue(tree.FilePath, out loadedTree) && (tree == loadedTree);
+            return loadedSyntaxTreeMap.TryGetValue(tree.FilePath, out SyntaxTree loadedTree) && (tree == loadedTree);
         }
 
         private static void UpdateSyntaxTreesAndOrdinalMapOnly(
@@ -681,8 +672,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var sourceCodeKind = tree.Options.Kind;
             if (sourceCodeKind == SourceCodeKind.Script)
             {
-                ImmutableArray<LoadDirective> loadDirectives;
-                if (loadDirectiveMap.TryGetValue(tree, out loadDirectives))
+                if (loadDirectiveMap.TryGetValue(tree, out ImmutableArray<LoadDirective> loadDirectives))
                 {
                     Debug.Assert(!loadDirectives.IsEmpty);
                     foreach (var directive in loadDirectives)
@@ -694,8 +684,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             continue;
                         }
 
-                        SyntaxTree loadedTree;
-                        if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out loadedTree))
+                        if (TryGetLoadedSyntaxTree(loadedSyntaxTreeMap, directive, out SyntaxTree loadedTree))
                         {
                             UpdateSyntaxTreesAndOrdinalMapOnly(
                                 treesBuilder,

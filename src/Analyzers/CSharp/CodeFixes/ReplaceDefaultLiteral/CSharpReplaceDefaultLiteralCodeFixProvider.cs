@@ -128,19 +128,10 @@ internal sealed class CSharpReplaceDefaultLiteralCodeFixProvider() : CodeFixProv
 
     private static bool IsZero(object? o)
     {
-        switch (o)
+        return o switch
         {
-            case default(int):
-            case default(uint):
-            case default(byte):
-            case default(sbyte):
-            case default(short):
-            case default(ushort):
-            case default(long):
-            case default(ulong):
-                return true;
-            default:
-                return false;
-        }
+            default(int) or default(uint) or default(byte) or default(sbyte) or default(short) or default(ushort) or default(long) or default(ulong) => true,
+            _ => false,
+        };
     }
 }

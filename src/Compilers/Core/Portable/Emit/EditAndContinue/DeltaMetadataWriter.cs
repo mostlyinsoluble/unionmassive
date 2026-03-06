@@ -461,8 +461,7 @@ namespace Microsoft.CodeAnalysis.Emit
 
         protected override bool TryGetTypeReferenceHandle(ITypeReference reference, out TypeReferenceHandle handle)
         {
-            int index;
-            bool result = _typeRefIndex.TryGetValue(reference, out index);
+            bool result = _typeRefIndex.TryGetValue(reference, out int index);
             handle = MetadataTokens.TypeReferenceHandle(index);
             return result;
         }

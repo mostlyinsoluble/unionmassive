@@ -111,13 +111,13 @@ namespace BuildBoss
             static Guid getExpectedGuid(ProjectData data)
             {
                 var util = data.ProjectUtil;
-                switch (ProjectEntryUtil.GetProjectFileType(data.FilePath))
+                return ProjectEntryUtil.GetProjectFileType(data.FilePath) switch
                 {
-                    case ProjectFileType.CSharp: return ProjectEntryUtil.ManagedProjectSystemCSharp;
-                    case ProjectFileType.Basic: return ProjectEntryUtil.ManagedProjectSystemVisualBasic;
-                    case ProjectFileType.Shared: return ProjectEntryUtil.SharedProject;
-                    default: throw new Exception($"Invalid file path {data.FilePath}");
-                }
+                    ProjectFileType.CSharp => ProjectEntryUtil.ManagedProjectSystemCSharp,
+                    ProjectFileType.Basic => ProjectEntryUtil.ManagedProjectSystemVisualBasic,
+                    ProjectFileType.Shared => ProjectEntryUtil.SharedProject,
+                    _ => throw new Exception($"Invalid file path {data.FilePath}"),
+                };
             }
 
             var allGood = true;

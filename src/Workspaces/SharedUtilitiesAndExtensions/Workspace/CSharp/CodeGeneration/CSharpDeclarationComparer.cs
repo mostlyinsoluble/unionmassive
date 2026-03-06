@@ -98,59 +98,24 @@ internal sealed class CSharpDeclarationComparer : IComparer<SyntaxNode>
             return xPrecedence < yPrecedence ? -1 : 1;
         }
 
-        switch (x.Kind())
+        return x.Kind() switch
         {
-            case SyntaxKind.DelegateDeclaration:
-                return Compare((DelegateDeclarationSyntax)x, (DelegateDeclarationSyntax)y);
-
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-                return Compare((BaseFieldDeclarationSyntax)x, (BaseFieldDeclarationSyntax)y);
-
-            case SyntaxKind.ConstructorDeclaration:
-                return Compare((ConstructorDeclarationSyntax)x, (ConstructorDeclarationSyntax)y);
-
-            case SyntaxKind.DestructorDeclaration:
-                // All destructors are equal since there can only be one per named type
-                return 0;
-
-            case SyntaxKind.MethodDeclaration:
-                return Compare((MethodDeclarationSyntax)x, (MethodDeclarationSyntax)y);
-
-            case SyntaxKind.OperatorDeclaration:
-                return Compare((OperatorDeclarationSyntax)x, (OperatorDeclarationSyntax)y);
-
-            case SyntaxKind.EventDeclaration:
-                return Compare((EventDeclarationSyntax)x, (EventDeclarationSyntax)y);
-
-            case SyntaxKind.IndexerDeclaration:
-                return Compare((IndexerDeclarationSyntax)x, (IndexerDeclarationSyntax)y);
-
-            case SyntaxKind.PropertyDeclaration:
-                return Compare((PropertyDeclarationSyntax)x, (PropertyDeclarationSyntax)y);
-
-            case SyntaxKind.EnumDeclaration:
-                return Compare((EnumDeclarationSyntax)x, (EnumDeclarationSyntax)y);
-
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.RecordDeclaration:
-                return Compare((BaseTypeDeclarationSyntax)x, (BaseTypeDeclarationSyntax)y);
-
-            case SyntaxKind.ConversionOperatorDeclaration:
-                return Compare((ConversionOperatorDeclarationSyntax)x, (ConversionOperatorDeclarationSyntax)y);
-
-            case SyntaxKind.IncompleteMember:
-                // Since these are incomplete members they are considered to be equal
-                return 0;
-            case SyntaxKind.GlobalStatement:
-                // for REPL, don't mess with order, just put new one at the end.
-                return 1;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(x.Kind());
-        }
+            SyntaxKind.DelegateDeclaration => Compare((DelegateDeclarationSyntax)x, (DelegateDeclarationSyntax)y),
+            SyntaxKind.FieldDeclaration or SyntaxKind.EventFieldDeclaration => Compare((BaseFieldDeclarationSyntax)x, (BaseFieldDeclarationSyntax)y),
+            SyntaxKind.ConstructorDeclaration => Compare((ConstructorDeclarationSyntax)x, (ConstructorDeclarationSyntax)y),
+            SyntaxKind.DestructorDeclaration => 0,// All destructors are equal since there can only be one per named type
+            SyntaxKind.MethodDeclaration => Compare((MethodDeclarationSyntax)x, (MethodDeclarationSyntax)y),
+            SyntaxKind.OperatorDeclaration => Compare((OperatorDeclarationSyntax)x, (OperatorDeclarationSyntax)y),
+            SyntaxKind.EventDeclaration => Compare((EventDeclarationSyntax)x, (EventDeclarationSyntax)y),
+            SyntaxKind.IndexerDeclaration => Compare((IndexerDeclarationSyntax)x, (IndexerDeclarationSyntax)y),
+            SyntaxKind.PropertyDeclaration => Compare((PropertyDeclarationSyntax)x, (PropertyDeclarationSyntax)y),
+            SyntaxKind.EnumDeclaration => Compare((EnumDeclarationSyntax)x, (EnumDeclarationSyntax)y),
+            SyntaxKind.InterfaceDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.ClassDeclaration or SyntaxKind.RecordDeclaration => Compare((BaseTypeDeclarationSyntax)x, (BaseTypeDeclarationSyntax)y),
+            SyntaxKind.ConversionOperatorDeclaration => Compare((ConversionOperatorDeclarationSyntax)x, (ConversionOperatorDeclarationSyntax)y),
+            SyntaxKind.IncompleteMember => 0,// Since these are incomplete members they are considered to be equal
+            SyntaxKind.GlobalStatement => 1,// for REPL, don't mess with order, just put new one at the end.
+            _ => throw ExceptionUtilities.UnexpectedValue(x.Kind()),
+        };
     }
 
     private int Compare(DelegateDeclarationSyntax x, DelegateDeclarationSyntax y)

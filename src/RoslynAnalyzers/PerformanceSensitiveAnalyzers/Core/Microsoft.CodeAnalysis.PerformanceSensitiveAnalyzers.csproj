@@ -10,16 +10,16 @@
     <RootNamespace>Microsoft.CodeAnalysis</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Update="PerformanceSensitiveAnalyzersResources.resx" GenerateSource="true" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\..\..\Workspaces\Core\Portable\Microsoft.CodeAnalysis.Workspaces.csproj" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 

@@ -251,8 +251,7 @@ namespace Microsoft.CodeAnalysis
 
         internal SyntaxNode GetWeakRedElement(ref WeakReference<SyntaxNode>? slot, int index)
         {
-            SyntaxNode? value = null;
-            if (slot?.TryGetTarget(out value) == true)
+            if (slot?.TryGetTarget(out SyntaxNode? value) == true)
             {
                 return value;
             }
@@ -269,9 +268,8 @@ namespace Microsoft.CodeAnalysis
 
             while (true)
             {
-                SyntaxNode? previousNode = null;
                 WeakReference<SyntaxNode>? previousWeakReference = slot;
-                if (previousWeakReference?.TryGetTarget(out previousNode) == true)
+                if (previousWeakReference?.TryGetTarget(out SyntaxNode? previousNode) == true)
                 {
                     return previousNode;
                 }
@@ -732,7 +730,7 @@ namespace Microsoft.CodeAnalysis
         {
             get
             {
-                return default(SyntaxTrivia);
+                return default;
             }
         }
 
@@ -776,7 +774,7 @@ namespace Microsoft.CodeAnalysis
         internal SyntaxNode GetRequiredNodeSlot(int slot)
         {
             var syntaxNode = GetNodeSlot(slot);
-            RoslynDebug.Assert(syntaxNode is object);
+            RoslynDebug.Assert(syntaxNode is not null);
             return syntaxNode;
         }
 
@@ -974,7 +972,7 @@ namespace Microsoft.CodeAnalysis
                 .Parent
                 !.FirstAncestorOrSelf<SyntaxNode, TextSpan>((a, span) => a.FullSpan.Contains(span), span);
 
-            RoslynDebug.Assert(node is object);
+            RoslynDebug.Assert(node is not null);
             SyntaxNode? cuRoot = node.SyntaxTree?.GetRoot();
 
             // Tie-breaking.
@@ -1108,7 +1106,7 @@ namespace Microsoft.CodeAnalysis
                 return FindTriviaByOffset(this, position - this.Position, stepInto);
             }
 
-            return default(SyntaxTrivia);
+            return default;
         }
 
         internal static SyntaxTrivia FindTriviaByOffset(SyntaxNode node, int textOffset, Func<SyntaxTrivia, bool>? stepInto = null)
@@ -1168,7 +1166,7 @@ recurse:
                                 }
                             }
 
-                            return default(SyntaxTrivia);
+                            return default;
                         }
                     }
 
@@ -1176,7 +1174,7 @@ recurse:
                 }
             }
 
-            return default(SyntaxTrivia);
+            return default;
         }
 
         /// <summary>
@@ -1447,8 +1445,7 @@ recurse:
                 return this.FindToken(position, SyntaxTrivia.Any);
             }
 
-            SyntaxToken EoF;
-            if (this.TryGetEofAt(position, out EoF))
+            if (this.TryGetEofAt(position, out SyntaxToken EoF))
             {
                 return EoF;
             }
@@ -1474,7 +1471,7 @@ recurse:
                 }
             }
 
-            Eof = default(SyntaxToken);
+            Eof = default;
             return false;
         }
 
@@ -1563,7 +1560,7 @@ recurse:
                 }
             }
 
-            return default(SyntaxTrivia);
+            return default;
         }
 
         /// <summary>

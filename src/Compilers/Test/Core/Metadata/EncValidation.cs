@@ -38,7 +38,7 @@ namespace Roslyn.Test.Utilities
                 Assert.Equal(previousReader.GetGuid(previousModule.GenerationId), currentReader.GetGuid(currentModule.BaseGenerationId));
             }
 
-            Assert.NotEqual(default(Guid), currentReader.GetGuid(currentModule.GenerationId));
+            Assert.NotEqual(default, currentReader.GetGuid(currentModule.GenerationId));
         }
     }
 }

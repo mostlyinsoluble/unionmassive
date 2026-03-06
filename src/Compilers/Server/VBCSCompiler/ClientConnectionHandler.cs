@@ -186,11 +186,10 @@ namespace Microsoft.CodeAnalysis.CompilerServer
             {
                 if (arg.ArgumentId == BuildProtocolConstants.ArgumentId.KeepAlive)
                 {
-                    int result;
                     // If the value is not a valid integer for any reason,
                     // ignore it and continue with the current timeout. The client
                     // is responsible for validating the argument.
-                    if (int.TryParse(arg.Value, out result))
+                    if (int.TryParse(arg.Value, out int result))
                     {
                         // Keep alive times are specified in seconds
                         timeout = TimeSpan.FromSeconds(result);

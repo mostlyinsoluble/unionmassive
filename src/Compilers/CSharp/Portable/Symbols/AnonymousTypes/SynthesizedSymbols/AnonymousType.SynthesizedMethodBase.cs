@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal sealed override System.Reflection.MethodImplAttributes ImplementationAttributes
             {
-                get { return default(System.Reflection.MethodImplAttributes); }
+                get { return default; }
             }
 
             internal sealed override Cci.CallingConvention CallingConvention
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 get
                 {
                     AnonymousTypeTemplateSymbol template = _containingType as AnonymousTypeTemplateSymbol;
-                    return ((object)template != null) ? template.Manager : ((AnonymousTypePublicSymbol)_containingType).Manager;
+                    return (template is not null) ? template.Manager : ((AnonymousTypePublicSymbol)_containingType).Manager;
                 }
             }
 

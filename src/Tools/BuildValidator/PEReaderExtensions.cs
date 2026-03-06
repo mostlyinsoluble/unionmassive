@@ -17,8 +17,8 @@ namespace BuildValidator
 
         private PEExportTable(PEReader peReader)
         {
-            Debug.Assert(peReader.PEHeaders is object);
-            Debug.Assert(peReader.PEHeaders.PEHeader is object);
+            Debug.Assert(peReader.PEHeaders is not null);
+            Debug.Assert(peReader.PEHeaders.PEHeader is not null);
 
             _namedExportRva = new Dictionary<string, int>();
 

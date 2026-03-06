@@ -599,36 +599,16 @@ internal sealed class AnalyzersCommandHandler : IAnalyzersCommandHandler, IVsUpd
 
         if (selectedItem.CommandID.Guid == Guids.RoslynGroupId)
         {
-            switch (selectedItem.CommandID.ID)
+            selectedAction = selectedItem.CommandID.ID switch
             {
-                case ID.RoslynCommands.SetSeverityDefault:
-                    selectedAction = ReportDiagnostic.Default;
-                    break;
-
-                case ID.RoslynCommands.SetSeverityError:
-                    selectedAction = ReportDiagnostic.Error;
-                    break;
-
-                case ID.RoslynCommands.SetSeverityWarning:
-                    selectedAction = ReportDiagnostic.Warn;
-                    break;
-
-                case ID.RoslynCommands.SetSeverityInfo:
-                    selectedAction = ReportDiagnostic.Info;
-                    break;
-
-                case ID.RoslynCommands.SetSeverityHidden:
-                    selectedAction = ReportDiagnostic.Hidden;
-                    break;
-
-                case ID.RoslynCommands.SetSeverityNone:
-                    selectedAction = ReportDiagnostic.Suppress;
-                    break;
-
-                default:
-                    selectedAction = null;
-                    break;
-            }
+                ID.RoslynCommands.SetSeverityDefault => (ReportDiagnostic?)ReportDiagnostic.Default,
+                ID.RoslynCommands.SetSeverityError => (ReportDiagnostic?)ReportDiagnostic.Error,
+                ID.RoslynCommands.SetSeverityWarning => (ReportDiagnostic?)ReportDiagnostic.Warn,
+                ID.RoslynCommands.SetSeverityInfo => (ReportDiagnostic?)ReportDiagnostic.Info,
+                ID.RoslynCommands.SetSeverityHidden => (ReportDiagnostic?)ReportDiagnostic.Hidden,
+                ID.RoslynCommands.SetSeverityNone => (ReportDiagnostic?)ReportDiagnostic.Suppress,
+                _ => null,
+            };
         }
 
         return selectedAction;

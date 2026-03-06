@@ -428,16 +428,11 @@ internal abstract partial class AbstractConvertIfToSwitchCodeRefactoringProvider
 
         private static bool IsRelationalOperator(BinaryOperatorKind operatorKind)
         {
-            switch (operatorKind)
+            return operatorKind switch
             {
-                case LessThan:
-                case LessThanOrEqual:
-                case GreaterThanOrEqual:
-                case GreaterThan:
-                    return true;
-                default:
-                    return false;
-            }
+                LessThan or LessThanOrEqual or GreaterThanOrEqual or GreaterThan => true,
+                _ => false,
+            };
         }
 
         private static bool IsConstant(IOperation operation)

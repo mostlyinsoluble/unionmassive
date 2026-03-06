@@ -450,8 +450,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
                         foreach (var argumentName in _sourceMethodParametersInOrder)
                         {
-                            (LocalSymbol local, int localIndex) localSymbolAndIndex;
-                            if (localsDictionary.TryGetValue(argumentName, out localSymbolAndIndex))
+                            if (localsDictionary.TryGetValue(argumentName, out var localSymbolAndIndex))
                             {
                                 itemsAdded.Add(argumentName);
                                 var local = localSymbolAndIndex.local;
@@ -488,7 +487,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                         }
 
                         // "Type variables".
-                        if (typeVariablesType is object)
+                        if (typeVariablesType is not null)
                         {
                             var methodName = GetNextMethodName(methodBuilder);
                             var returnType = typeVariablesType.Construct(allTypeParameters.Cast<TypeParameterSymbol, TypeSymbol>());
@@ -820,7 +819,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             FileIdentifier? fileIdentifier)
         {
             var stack = ArrayBuilder<string>.GetInstance();
-            while (@namespace is object)
+            while (@namespace is not null)
             {
                 stack.Push(@namespace.Name);
                 @namespace = @namespace.ContainingNamespace;
@@ -973,7 +972,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             var substitutedSourceType = substitutedSourceMethod.ContainingType;
 
             var stack = ArrayBuilder<NamedTypeSymbol>.GetInstance();
-            for (var type = substitutedSourceType; type is object; type = type.ContainingType)
+            for (var type = substitutedSourceType; type is not null; type = type.ContainingType)
             {
                 stack.Add(type);
             }
@@ -1066,8 +1065,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                     continue;
                 }
 
-                NamespaceSymbol target;
-                compilation.GetExternAliasTarget(aliasNameSyntax.Identifier.ValueText, out target);
+                compilation.GetExternAliasTarget(aliasNameSyntax.Identifier.ValueText, out var target);
                 Debug.Assert(target.IsGlobalNamespace);
 
                 var aliasSymbol = AliasSymbol.CreateCustomDebugInfoAlias(target, aliasNameSyntax.Identifier, binder.ContainingMemberOrLambda, isExtern: true);
@@ -1135,7 +1133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                             NamespaceSymbol globalNamespace;
                             var targetAssembly = (AssemblySymbol?)importRecord.TargetAssembly;
 
-                            if (targetAssembly is object)
+                            if (targetAssembly is not null)
                             {
                                 if (targetAssembly.IsMissing)
                                 {
@@ -1353,7 +1351,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             }
             else
             {
-                if (sourceMethod is object)
+                if (sourceMethod is not null)
                 {
                     foreach (var p in sourceMethod.Parameters)
                     {
@@ -1429,7 +1427,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 if (name != null && GeneratedNameParser.GetKind(name) == GeneratedNameKind.DisplayClassLocalOrField)
                 {
                     var localType = local.Type;
-                    if (localType is object && displayClassTypes.Add(localType))
+                    if (localType is not null && displayClassTypes.Add(localType))
                     {
                         var instance = new DisplayClassInstanceFromLocal((EELocalSymbol)local);
                         displayClassInstancesInside.Add(new DisplayClassInstanceAndFields(instance));
@@ -1766,17 +1764,11 @@ REPARSE:
         private static void TryParseGeneratedName(string name, out GeneratedNameKind kind, out string? part)
         {
             _ = GeneratedNameParser.TryParseGeneratedName(name, out kind, out int openBracketOffset, out int closeBracketOffset);
-            switch (kind)
+            part = kind switch
             {
-                case GeneratedNameKind.AnonymousTypeField:
-                case GeneratedNameKind.HoistedLocalField:
-                    part = name.Substring(openBracketOffset + 1, closeBracketOffset - openBracketOffset - 1);
-                    break;
-
-                default:
-                    part = null;
-                    break;
-            }
+                GeneratedNameKind.AnonymousTypeField or GeneratedNameKind.HoistedLocalField => name.Substring(openBracketOffset + 1, closeBracketOffset - openBracketOffset - 1),
+                _ => null,
+            };
         }
 
         private static bool IsDisplayClassType(TypeSymbol type)
@@ -1855,16 +1847,14 @@ REPARSE:
 
             var candidateSubstitutedSourceType = candidateSubstitutedSourceMethod.ContainingType;
 
-            string? desiredMethodName;
-            if (GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(candidateSubstitutedSourceType.Name, GeneratedNameKind.StateMachineType, out desiredMethodName) ||
+            if (GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(candidateSubstitutedSourceType.Name, GeneratedNameKind.StateMachineType, out var desiredMethodName) ||
                 GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(candidateSubstitutedSourceMethod.Name, GeneratedNameKind.LambdaMethod, out desiredMethodName) ||
                 GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(candidateSubstitutedSourceMethod.Name, GeneratedNameKind.LocalFunction, out desiredMethodName))
             {
                 bool sourceMethodMustBeInstance = GetThisProxy(_displayClassVariables) != null;
 
                 // We could be in the MoveNext method of an async lambda.
-                string? tempMethodName;
-                if (GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(desiredMethodName, GeneratedNameKind.LambdaMethod, out tempMethodName) ||
+                if (GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(desiredMethodName, GeneratedNameKind.LambdaMethod, out var tempMethodName) ||
                     GeneratedNameParser.TryParseSourceMethodNameFromGeneratedName(desiredMethodName, GeneratedNameKind.LocalFunction, out tempMethodName))
                 {
                     desiredMethodName = tempMethodName;

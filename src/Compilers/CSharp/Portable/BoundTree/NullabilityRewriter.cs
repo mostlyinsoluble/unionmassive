@@ -203,12 +203,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (sym is null) return sym;
 
-            Symbol? updatedSymbol = null;
-            if (_snapshotManager?.TryGetUpdatedSymbol(expr, sym, out updatedSymbol) != true)
+            if (_snapshotManager?.TryGetUpdatedSymbol(expr, sym, out Symbol? updatedSymbol) != true)
             {
                 updatedSymbol = sym;
             }
-            RoslynDebug.Assert(updatedSymbol is object);
+            RoslynDebug.Assert(updatedSymbol is not null);
 
             switch (updatedSymbol)
             {
@@ -240,12 +239,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 LambdaSymbol updatedLambda;
                 if (updatedDelegateType is null)
                 {
-                    Debug.Assert(updatedContaining is object);
+                    Debug.Assert(updatedContaining is not null);
                     updatedLambda = boundLambda.CreateLambdaSymbol(updatedContaining, lambda.ReturnTypeWithAnnotations, lambda.ParameterTypesWithAnnotations, lambda.ParameterRefKinds, lambda.RefKind, lambda.RefCustomModifiers);
                 }
                 else
                 {
-                    Debug.Assert(updatedDelegateType is object);
+                    Debug.Assert(updatedDelegateType is not null);
                     updatedLambda = boundLambda.CreateLambdaSymbol(updatedDelegateType, updatedContaining ?? lambda.ContainingSymbol);
                 }
 

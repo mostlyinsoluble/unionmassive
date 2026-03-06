@@ -138,20 +138,13 @@ internal abstract partial class AbstractGenerateConstructorService<TService, TEx
         // accessible if we have friend access.  We can't call the normal accessibility
         // checkers since they will think that a protected constructor isn't accessible
         // (since we don't have the destination type that would have access to them yet).
-        switch (symbol.DeclaredAccessibility)
+        return symbol.DeclaredAccessibility switch
         {
-            case Accessibility.ProtectedOrInternal:
-            case Accessibility.Protected:
-            case Accessibility.Public:
-                return true;
-            case Accessibility.ProtectedAndInternal:
-            case Accessibility.Internal:
-                return document.SemanticModel.Compilation.Assembly.IsSameAssemblyOrHasFriendAccessTo(
-                    symbol.ContainingAssembly);
-
-            default:
-                return false;
-        }
+            Accessibility.ProtectedOrInternal or Accessibility.Protected or Accessibility.Public => true,
+            Accessibility.ProtectedAndInternal or Accessibility.Internal => document.SemanticModel.Compilation.Assembly.IsSameAssemblyOrHasFriendAccessTo(
+                                symbol.ContainingAssembly),
+            _ => false,
+        };
     }
 
     protected string GenerateNameForArgument(SemanticModel semanticModel, Argument<TExpressionSyntax> argument, CancellationToken cancellationToken)

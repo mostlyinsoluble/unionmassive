@@ -122,7 +122,7 @@ namespace Roslyn.Test.Utilities
 
         public int GetUserEntryPoint(out int EntryPoint)
         {
-            EntryPoint = default(int);
+            EntryPoint = default;
             return HResult.E_NOTIMPL;
         }
 

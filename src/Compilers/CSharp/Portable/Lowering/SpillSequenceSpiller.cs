@@ -211,8 +211,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!node.LocalSymbol.SynthesizedKind.IsLongLived())
                 {
-                    LocalSymbol longLived;
-                    if (_tempSubstitution.TryGetValue(node.LocalSymbol, out longLived))
+                    if (_tempSubstitution.TryGetValue(node.LocalSymbol, out LocalSymbol longLived))
                     {
                         Debug.Assert(!_receiverSubstitution.ContainsKey(node.LocalSymbol));
 
@@ -501,11 +500,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                         else
                         {
-                            BoundAssignmentOperator assignToTemp;
 
                             var replacement = _F.StoreToTemp(
                                 expression,
-                                out assignToTemp,
+                                out BoundAssignmentOperator assignToTemp,
                                 refKind: refKind,
                                 kind: SynthesizedLocalKind.Spill,
                                 syntaxOpt: _F.Syntax);
@@ -584,7 +582,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ImmutableArray<BoundExpression> VisitExpressionList(
             ref BoundSpillSequenceBuilder builder,
             ImmutableArray<BoundExpression> args,
-            ImmutableArray<RefKind> refKinds = default(ImmutableArray<RefKind>),
+            ImmutableArray<RefKind> refKinds = default,
             bool forceSpill = false,
             bool sideEffectsOnly = false)
         {
@@ -930,7 +928,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 var generateDummyFieldAccess = false;
                 if (!field.FieldSymbol.IsStatic)
                 {
-                    Debug.Assert(field.ReceiverOpt is object);
+                    Debug.Assert(field.ReceiverOpt is not null);
                     BoundExpression receiver;
                     if (field.FieldSymbol.ContainingType.IsReferenceType)
                     {

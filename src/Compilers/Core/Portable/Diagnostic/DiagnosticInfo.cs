@@ -435,17 +435,12 @@ namespace Microsoft.CodeAnalysis
         {
             // There aren't message resources for our internal error codes, so make
             // sure we don't call ToString for those.
-            switch (Code)
+            return Code switch
             {
-                case InternalErrorCode.Unknown:
-                    return "Unresolved DiagnosticInfo";
-
-                case InternalErrorCode.Void:
-                    return "Void DiagnosticInfo";
-
-                default:
-                    return ToString();
-            }
+                InternalErrorCode.Unknown => "Unresolved DiagnosticInfo",
+                InternalErrorCode.Void => "Void DiagnosticInfo",
+                _ => ToString(),
+            };
         }
 
         /// <summary>

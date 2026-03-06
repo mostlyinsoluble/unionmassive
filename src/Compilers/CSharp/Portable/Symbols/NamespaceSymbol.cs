@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                return (object)ContainingNamespace == null;
+                return ContainingNamespace is null;
             }
         }
 
@@ -298,7 +298,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case SyntaxKind.QualifiedName:
                     var qn = (QualifiedNameSyntax)name;
                     var leftNs = this.GetNestedNamespace(qn.Left);
-                    if ((object)leftNs != null)
+                    if (leftNs is not null)
                     {
                         return leftNs.GetNestedNamespace(qn.Right);
                     }
@@ -341,7 +341,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // Only MergedNamespaceSymbol should have a null ContainingAssembly
             // and MergedNamespaceSymbol overrides GetAllExtensionMembers.
-            Debug.Assert((object)assembly != null);
+            Debug.Assert(assembly is not null);
 
             if (!assembly.MightContainExtensions)
             {

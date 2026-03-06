@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isForOverride = false)
         {
             Debug.Assert(this.Flags.Includes(BinderFlags.GenericConstraintsClause));
-            RoslynDebug.Assert((object)containingSymbol != null);
+            RoslynDebug.Assert(containingSymbol is not null);
             Debug.Assert((containingSymbol.Kind == SymbolKind.NamedType) || (containingSymbol.Kind == SymbolKind.Method));
             Debug.Assert(typeParameters.Length > 0);
             Debug.Assert(clauses.Count > 0);
@@ -59,9 +59,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             foreach (var clause in clauses)
             {
                 var name = clause.Name.Identifier.ValueText;
-                RoslynDebug.Assert(name is object);
-                int ordinal;
-                if (names.TryGetValue(name, out ordinal))
+                RoslynDebug.Assert(name is not null);
+                if (names.TryGetValue(name, out int ordinal))
                 {
                     Debug.Assert(ordinal >= 0);
                     Debug.Assert(ordinal < n);
@@ -214,8 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         constraints |= TypeParameterConstraintKind.Constructor;
                         continue;
                     case SyntaxKind.DefaultConstraint:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureDefaultTypeParameterConstraint, diagnostics);
-
+                        
                         if (!isForOverride)
                         {
                             diagnostics.Add(ErrorCode.ERR_DefaultConstraintOverrideOnly, syntax.GetLocation());
@@ -317,13 +315,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 }
                                 else
                                 {
-                                    CheckFeatureAvailability(allowsConstraint, MessageID.IDS_FeatureAllowsRefStructConstraint, diagnostics);
-
-                                    if (!Compilation.Assembly.RuntimeSupportsByRefLikeGenerics)
-                                    {
-                                        Error(diagnostics, ErrorCode.ERR_RuntimeDoesNotSupportByRefLikeGenerics, allowsConstraint);
-                                    }
-
                                     constraints |= TypeParameterConstraintKind.AllowByRefLike;
                                     hasRefStructConstraint = true;
                                 }
@@ -564,14 +555,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 switch (type.SpecialType)
                 {
                     case SpecialType.System_Enum:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureEnumGenericTypeConstraint, diagnostics);
-                        break;
-
                     case SpecialType.System_Delegate:
                     case SpecialType.System_MulticastDelegate:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureDelegateGenericTypeConstraint, diagnostics);
                         break;
-
                     case SpecialType.System_Object:
                     case SpecialType.System_ValueType:
                     case SpecialType.System_Array:

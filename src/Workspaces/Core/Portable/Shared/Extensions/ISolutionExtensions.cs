@@ -42,23 +42,14 @@ internal static partial class ISolutionExtensions
     public static Solution WithTextDocumentText(this Solution solution, DocumentId documentId, SourceText text, PreservationMode mode = PreservationMode.PreserveIdentity)
     {
         var documentKind = solution.GetDocumentKind(documentId);
-        switch (documentKind)
+        return documentKind switch
         {
-            case TextDocumentKind.Document:
-                return solution.WithDocumentText(documentId, text, mode);
-
-            case TextDocumentKind.AnalyzerConfigDocument:
-                return solution.WithAnalyzerConfigDocumentText(documentId, text, mode);
-
-            case TextDocumentKind.AdditionalDocument:
-                return solution.WithAdditionalDocumentText(documentId, text, mode);
-
-            case null:
-                throw CreateDocumentNotFoundException(documentId);
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(documentKind);
-        }
+            TextDocumentKind.Document => solution.WithDocumentText(documentId, text, mode),
+            TextDocumentKind.AnalyzerConfigDocument => solution.WithAnalyzerConfigDocumentText(documentId, text, mode),
+            TextDocumentKind.AdditionalDocument => solution.WithAdditionalDocumentText(documentId, text, mode),
+            null => throw CreateDocumentNotFoundException(documentId),
+            _ => throw ExceptionUtilities.UnexpectedValue(documentKind),
+        };
     }
 
     public static Workspace? TryGetWorkspace(this Solution solution)

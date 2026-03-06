@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             {
                 _text = text;
                 _offset = 0;
-                _currentToken = default(Token);
+                _currentToken = default;
             }
 
             internal Token CurrentToken

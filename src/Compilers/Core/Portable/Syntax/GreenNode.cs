@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis
         internal GreenNode GetRequiredSlot(int index)
         {
             var node = GetSlot(index);
-            RoslynDebug.Assert(node is object);
+            RoslynDebug.Assert(node is not null);
             return node;
         }
 
@@ -593,8 +593,7 @@ namespace Microsoft.CodeAnalysis
         {
             if (this.ContainsDiagnostics)
             {
-                DiagnosticInfo[]? diags;
-                if (s_diagnosticsTable.TryGetValue(this, out diags))
+                if (s_diagnosticsTable.TryGetValue(this, out DiagnosticInfo[]? diags))
                 {
                     return diags;
                 }

@@ -46,20 +46,14 @@ public sealed class ExternalCodeFunction : AbstractExternalCodeMember, ICodeElem
         get
         {
             // TODO: Verify VB implementation
-            switch (MethodSymbol.MethodKind)
+            return MethodSymbol.MethodKind switch
             {
-                case MethodKind.Constructor:
-                    return EnvDTE.vsCMFunction.vsCMFunctionConstructor;
-                case MethodKind.Destructor:
-                    return EnvDTE.vsCMFunction.vsCMFunctionDestructor;
-                case MethodKind.UserDefinedOperator:
-                case MethodKind.Conversion:
-                    return EnvDTE.vsCMFunction.vsCMFunctionOperator;
-                case MethodKind.Ordinary:
-                    return EnvDTE.vsCMFunction.vsCMFunctionFunction;
-                default:
-                    throw Exceptions.ThrowEFail();
-            }
+                MethodKind.Constructor => EnvDTE.vsCMFunction.vsCMFunctionConstructor,
+                MethodKind.Destructor => EnvDTE.vsCMFunction.vsCMFunctionDestructor,
+                MethodKind.UserDefinedOperator or MethodKind.Conversion => EnvDTE.vsCMFunction.vsCMFunctionOperator,
+                MethodKind.Ordinary => EnvDTE.vsCMFunction.vsCMFunctionFunction,
+                _ => throw Exceptions.ThrowEFail(),
+            };
         }
     }
 

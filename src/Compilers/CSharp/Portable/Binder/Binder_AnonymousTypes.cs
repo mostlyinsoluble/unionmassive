@@ -20,8 +20,6 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private BoundExpression BindAnonymousObjectCreation(AnonymousObjectCreationExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureAnonymousTypes.CheckFeatureAvailability(diagnostics, node.NewKeyword);
-
             //  prepare
             var initializers = node.Initializers;
             int fieldCount = initializers.Count;
@@ -46,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 NameEqualsSyntax? nameEquals = fieldInitializer.NameEquals;
                 ExpressionSyntax expression = fieldInitializer.Expression;
 
-                SyntaxToken nameToken = default(SyntaxToken);
+                SyntaxToken nameToken = default;
                 if (nameEquals != null)
                 {
                     nameToken = nameEquals.Name.Identifier;
@@ -188,20 +186,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            switch (member.Kind)
+            return member.Kind switch
             {
-                case SymbolKind.Method:
-                    return true;
-
-                case SymbolKind.Field:
-                    return !((FieldSymbol)member).IsConst;
-
-                case SymbolKind.NamedType:
-                    //  allow usage of anonymous types in script classes
-                    return ((NamedTypeSymbol)member).IsScriptClass;
-            }
-
-            return false;
+                SymbolKind.Method => true,
+                SymbolKind.Field => !((FieldSymbol)member).IsConst,
+                SymbolKind.NamedType => ((NamedTypeSymbol)member).IsScriptClass,//  allow usage of anonymous types in script classes
+                _ => false,
+            };
         }
 
         /// <summary>
@@ -217,7 +208,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (expression.HasExpressionType())
                 {
-                    RoslynDebug.Assert(expressionType is object);
+                    RoslynDebug.Assert(expressionType is not null);
                     if (expressionType.IsVoidType())
                     {
                         errorArg = expressionType;

@@ -416,8 +416,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                         ' This looks like ?. or ?! 
 
                         Dim qToken = DirectCast(start, PunctuationSyntax)
-                        qToken = CheckFeatureAvailability(Feature.NullPropagatingOperator, qToken)
-
                         GetNextToken()
                         term = SyntaxFactory.ConditionalAccessExpression(term, qToken, ParsePostFixExpression(RedimOrNewParent, term:=Nothing))
                     Else
@@ -482,7 +480,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                     ' This looks like ?. ?! or ?(
 
                     Dim qToken = DirectCast([Next], PunctuationSyntax)
-                    qToken = CheckFeatureAvailability(Feature.NullPropagatingOperator, qToken)
 
                     GetNextToken()
 
@@ -672,8 +669,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
             Debug.Assert(CurrentToken.Kind = SyntaxKind.NameOfKeyword, "should be at NameOf.")
 
             Dim [nameOf] As KeywordSyntax = DirectCast(CurrentToken, KeywordSyntax)
-            [nameOf] = CheckFeatureAvailability(Feature.NameOfExpressions, [nameOf])
-
             GetNextToken()
 
             Dim openParen As PunctuationSyntax = Nothing
@@ -943,10 +938,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                current.Kind = SyntaxKind.IsNotKeyword Then
 
                 operatorToken = DirectCast(current, KeywordSyntax)
-
-                If operatorToken.Kind = SyntaxKind.IsNotKeyword Then
-                    operatorToken = CheckFeatureAvailability(Feature.TypeOfIsNot, operatorToken)
-                End If
 
                 GetNextToken()
 
@@ -1298,10 +1289,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
             Dim arguments = argumentBuilder.ToList
             _pool.Free(argumentBuilder)
 
-            Dim tupleExpression = SyntaxFactory.TupleExpression(openParen, arguments, closeParen)
-
-            tupleExpression = CheckFeatureAvailability(Feature.Tuples, tupleExpression)
-            Return tupleExpression
+            Return SyntaxFactory.TupleExpression(openParen, arguments, closeParen)
         End Function
 
         ' Parse an argument list enclosed in parentheses.
@@ -1392,7 +1380,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
         Private Function ParseArguments(ByRef unexpected As GreenNode, Optional RedimOrNewParent As Boolean = False, Optional attributeListParent As Boolean = False) As CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList(Of ArgumentSyntax)
             Dim arguments = _pool.AllocateSeparated(Of ArgumentSyntax)()
 
-            Dim allowNonTrailingNamedArguments = _scanner.Options.LanguageVersion.AllowNonTrailingNamedArguments()
             Dim seenNames As Boolean = False
 
             Do
@@ -1421,21 +1408,20 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 ElseIf CurrentToken.Kind = SyntaxKind.CommaToken Then
                     TryGetTokenAndEatNewLine(SyntaxKind.CommaToken, comma)
 
-                    Dim argument = ReportNonTrailingNamedArgumentIfNeeded(InternalSyntaxFactory.OmittedArgument(), seenNames, allowNonTrailingNamedArguments)
+                    Dim argument = InternalSyntaxFactory.OmittedArgument()
                     arguments.Add(argument)
                     arguments.AddSeparator(comma)
                     Continue Do
 
                 ElseIf CurrentToken.Kind = SyntaxKind.CloseParenToken Then
                     If arguments.Count > 0 Then
-                        Dim argument = ReportNonTrailingNamedArgumentIfNeeded(InternalSyntaxFactory.OmittedArgument(), seenNames, allowNonTrailingNamedArguments)
+                        Dim argument = InternalSyntaxFactory.OmittedArgument()
                         arguments.Add(argument)
                     End If
                     Exit Do
 
                 Else
                     Dim argument = ParseArgument(RedimOrNewParent)
-                    argument = ReportNonTrailingNamedArgumentIfNeeded(argument, seenNames, allowNonTrailingNamedArguments)
                     arguments.Add(argument)
                 End If
 
@@ -1471,16 +1457,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
             _pool.Free(arguments)
             Return result
 
-        End Function
-
-        ''' <summary>After VB15.5 it is possible to use named arguments in non-trailing position, except in attribute lists (where it remains disallowed)</summary>
-        Private Shared Function ReportNonTrailingNamedArgumentIfNeeded(argument As ArgumentSyntax, seenNames As Boolean, allowNonTrailingNamedArguments As Boolean) As ArgumentSyntax
-            If Not seenNames OrElse allowNonTrailingNamedArguments Then
-                Return argument
-            End If
-
-            Return ReportSyntaxError(argument, ERRID.ERR_ExpectedNamedArgument,
-                    New VisualBasicRequiredLanguageVersion(Feature.NonTrailingNamedArguments.GetLanguageVersion()))
         End Function
 
         ' Parse a list of comma-separated keyword arguments.
@@ -1825,11 +1801,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 value = DirectCast(lambdaContext.CreateBlockSyntax(statement), ExpressionSyntax)
 
             End If
-
-            If isMultiLine Then
-                value = CheckFeatureAvailability(Feature.StatementLambdas, value)
-            End If
-
             Return value
         End Function
 

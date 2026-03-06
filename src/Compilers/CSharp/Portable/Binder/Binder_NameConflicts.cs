@@ -114,12 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool ValidateNameConflictsInScope(Symbol? symbol, Location location, string name, BindingDiagnosticBag diagnostics)
         {
             if (string.IsNullOrEmpty(name))
-            {
                 return false;
-            }
-
-            bool allowShadowing = Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions);
-
             for (Binder? binder = this; binder != null; binder = binder.Next)
             {
                 // no local scopes enclose members
@@ -135,10 +130,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 // If shadowing is enabled, avoid checking for conflicts outside of local functions or lambdas.
-                if (allowShadowing && binder.IsNestedFunctionBinder)
-                {
+                if (binder.IsNestedFunctionBinder)
                     return false;
-                }
 
                 if (binder.IsLastBinderWithinMember())
                 {
@@ -154,16 +147,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var containingMemberOrLambda = this.ContainingMemberOrLambda;
 
-            switch (containingMemberOrLambda?.Kind)
+            return (containingMemberOrLambda?.Kind) switch
             {
-                case null:
-                case SymbolKind.NamedType:
-                case SymbolKind.Namespace:
-                    return true;
-                default:
-                    return containingMemberOrLambda.ContainingSymbol?.Kind == SymbolKind.NamedType &&
-                           this.Next?.ContainingMemberOrLambda != containingMemberOrLambda;
-            }
+                null or SymbolKind.NamedType or SymbolKind.Namespace => true,
+                _ => containingMemberOrLambda.ContainingSymbol?.Kind == SymbolKind.NamedType &&
+                                           this.Next?.ContainingMemberOrLambda != containingMemberOrLambda,
+            };
         }
     }
 }

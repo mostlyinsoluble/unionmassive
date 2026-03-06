@@ -151,7 +151,7 @@ internal sealed class CodeRefactoringService(
                     // other concurrent operations, and can return 'true' to the caller to indicate that there are
                     // refactorings.
                     if (refactoring != null)
-                        callback(default(VoidResult));
+                        callback(default);
                 }
                 catch (OperationCanceledException)
                 {

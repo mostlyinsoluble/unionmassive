@@ -46,10 +46,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 foreach (SourceMemberMethodSymbol sourceMethod in containingType.GetMethodsPossiblyCapturingPrimaryConstructorParameters())
                 {
-                    Binder? bodyBinder;
-                    CSharpSyntaxNode? syntaxNode;
 
-                    getBodyBinderAndSyntax(sourceMethod, out bodyBinder, out syntaxNode);
+                    getBodyBinderAndSyntax(sourceMethod, out Binder? bodyBinder, out CSharpSyntaxNode? syntaxNode);
                     if (bodyBinder is null)
                     {
                         continue;
@@ -114,27 +112,18 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 bool checkParameterReferencesInMethodBody(CSharpSyntaxNode syntaxNode, Binder bodyBinder)
                 {
-                    switch (syntaxNode)
+                    return syntaxNode switch
                     {
-                        case ConstructorDeclarationSyntax s:
-                            return finder.CheckIdentifiersInNode(s.Initializer, bodyBinder) &&
-                                   finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
-                                   finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder);
-
-                        case BaseMethodDeclarationSyntax s:
-                            return finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
-                                   finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder);
-
-                        case AccessorDeclarationSyntax s:
-                            return finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
-                                   finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder);
-
-                        case ArrowExpressionClauseSyntax s:
-                            return finder.CheckIdentifiersInNode(s, bodyBinder);
-
-                        default:
-                            throw ExceptionUtilities.UnexpectedValue(syntaxNode);
-                    }
+                        ConstructorDeclarationSyntax s => finder.CheckIdentifiersInNode(s.Initializer, bodyBinder) &&
+                                                           finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
+                                                           finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder),
+                        BaseMethodDeclarationSyntax s => finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
+                                                           finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder),
+                        AccessorDeclarationSyntax s => finder.CheckIdentifiersInNode(s.Body, bodyBinder) &&
+                                                           finder.CheckIdentifiersInNode(s.ExpressionBody, bodyBinder),
+                        ArrowExpressionClauseSyntax s => finder.CheckIdentifiersInNode(s, bodyBinder),
+                        _ => throw ExceptionUtilities.UnexpectedValue(syntaxNode),
+                    };
                 }
             }
 

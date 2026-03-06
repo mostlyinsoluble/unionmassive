@@ -216,7 +216,7 @@ namespace Microsoft.Cci
         {
             get
             {
-                return default(TypeDefinitionHandle);
+                return default;
             }
         }
 

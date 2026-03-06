@@ -144,10 +144,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                for (var container = this.ContainingSymbol; (object)container != null; container = container.ContainingSymbol)
+                for (var container = this.ContainingSymbol; container is not null; container = container.ContainingSymbol)
                 {
                     var ns = container as NamespaceSymbol;
-                    if ((object)ns != null)
+                    if (ns is not null)
                     {
                         return ns;
                     }
@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Default implementation gets the containers assembly.
 
                 var container = this.ContainingSymbol;
-                return (object)container != null ? container.ContainingAssembly : null;
+                return container is not null ? container.ContainingAssembly : null;
             }
         }
 
@@ -206,17 +206,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return null;
                 }
 
-                switch (this.ContainingModule)
+                return this.ContainingModule switch
                 {
-                    case SourceModuleSymbol sourceModuleSymbol:
-                        return sourceModuleSymbol.DeclaringCompilation;
-
-                    case PEModuleSymbol:
-                        // A special handling for EE.
-                        return ContainingSymbol?.DeclaringCompilation;
-                }
-
-                return null;
+                    SourceModuleSymbol sourceModuleSymbol => sourceModuleSymbol.DeclaringCompilation,
+                    PEModuleSymbol => ContainingSymbol?.DeclaringCompilation,// A special handling for EE.
+                    _ => null,
+                };
             }
         }
 
@@ -339,7 +334,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Default implementation gets the containers module.
 
                 var container = this.ContainingSymbol;
-                return (object)container != null ? container.ContainingModule : null;
+                return container is not null ? container.ContainingModule : null;
             }
         }
 
@@ -534,7 +529,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    if (found is object)
+                    if (found is not null)
                     {
                         builder.Add(found.GetReference());
                     }
@@ -732,19 +727,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (this.Kind == SymbolKind.Method)
                 {
                     var method = (MethodSymbol)this;
-                    switch (method.MethodKind)
+                    return method.MethodKind switch
                     {
-                        case MethodKind.Ordinary:
-                        case MethodKind.LocalFunction:
-                        case MethodKind.DelegateInvoke:
-                        case MethodKind.Destructor: // See comment in CanBeReferencedByName.
-                            return true;
-                        case MethodKind.PropertyGet:
-                        case MethodKind.PropertySet:
-                            return ((PropertySymbol)method.AssociatedSymbol).CanCallMethodsDirectly();
-                        default:
-                            return false;
-                    }
+                        MethodKind.Ordinary or MethodKind.LocalFunction or MethodKind.DelegateInvoke or MethodKind.Destructor => true,
+                        MethodKind.PropertyGet or MethodKind.PropertySet => ((PropertySymbol)method.AssociatedSymbol).CanCallMethodsDirectly(),
+                        _ => false,
+                    };
                 }
                 return true;
             }
@@ -803,7 +791,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // the condition is expected to be folded when inlining "someSymbol != null"
             if (right is null)
             {
-                return left is object;
+                return left is not null;
             }
 
             // this part is expected to disappear when inlining "someSymbol != null"
@@ -936,7 +924,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             get { return this.DeclaringCompilation != null; }
         }
 
-        public virtual bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default)
         {
             var declaringReferences = this.DeclaringSyntaxReferences;
             if (this.IsImplicitlyDeclared && declaringReferences.Length == 0)
@@ -1017,7 +1005,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual string GetDocumentationCommentXml(
             CultureInfo? preferredCulture = null,
             bool expandIncludes = false,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return "";
         }
@@ -1083,7 +1071,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             get
             {
                 AssemblySymbol dependency = this.ContainingAssembly;
-                if (dependency is object && dependency.CorLibrary == dependency)
+                if (dependency is not null && dependency.CorLibrary == dependency)
                 {
                     return null;
                 }
@@ -1420,17 +1408,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                switch (ObsoleteKind)
+                return ObsoleteKind switch
                 {
-                    case ObsoleteAttributeKind.None:
-                    case ObsoleteAttributeKind.WindowsExperimental:
-                    case ObsoleteAttributeKind.Experimental:
-                        return ThreeState.False;
-                    case ObsoleteAttributeKind.Uninitialized:
-                        return ThreeState.Unknown;
-                    default:
-                        return ThreeState.True;
-                }
+                    ObsoleteAttributeKind.None or ObsoleteAttributeKind.WindowsExperimental or ObsoleteAttributeKind.Experimental => ThreeState.False,
+                    ObsoleteAttributeKind.Uninitialized => ThreeState.Unknown,
+                    _ => ThreeState.True,
+                };
             }
         }
 
@@ -1442,15 +1425,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                switch (ObsoleteKind)
+                return ObsoleteKind switch
                 {
-                    case ObsoleteAttributeKind.Experimental:
-                        return ThreeState.True;
-                    case ObsoleteAttributeKind.Uninitialized:
-                        return ThreeState.Unknown;
-                    default:
-                        return ThreeState.False;
-                }
+                    ObsoleteAttributeKind.Experimental => ThreeState.True,
+                    ObsoleteAttributeKind.Uninitialized => ThreeState.Unknown,
+                    _ => ThreeState.False,
+                };
             }
         }
 
@@ -1776,7 +1756,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // case the variable is not captured by the target function, or null, in which
             // case it is.
             for (var currentFunction = variable.ContainingSymbol;
-                 (object)currentFunction != null;
+                 currentFunction is not null;
                  currentFunction = currentFunction.ContainingSymbol)
             {
                 if (ReferenceEquals(currentFunction, containingSymbol))

@@ -167,70 +167,14 @@ internal sealed class SyntaxComparer(
     /// </summary>
     private static int TiedToAncestor(Label label)
     {
-        switch (label)
+        return label switch
         {
             // Top level syntax
-            case Label.ExternAliasDirective:
-            case Label.UsingDirective:
-            case Label.FieldDeclaration:
-            case Label.FieldVariableDeclaration:
-            case Label.FieldVariableDeclarator:
-            case Label.MethodDeclaration:
-            case Label.OperatorDeclaration:
-            case Label.ConversionOperatorDeclaration:
-            case Label.ConstructorDeclaration:
-            case Label.DestructorDeclaration:
-            case Label.PropertyDeclaration:
-            case Label.ArrowExpressionClause:
-            case Label.IndexerDeclaration:
-            case Label.EventDeclaration:
-            case Label.EnumMemberDeclaration:
-            case Label.BaseList:
-            case Label.AccessorDeclaration:
-            case Label.AccessorList:
-            case Label.TypeParameterList:
-            case Label.TypeParameter:
-            case Label.TypeParameterConstraintClause:
-            case Label.ParameterList:
-            case Label.BracketedParameterList:
-            case Label.Parameter:
-            case Label.AttributeList:
-            case Label.Attribute:
-            case Label.ExtensionBlockDeclaration:
-                return 1;
-
+            Label.ExternAliasDirective or Label.UsingDirective or Label.FieldDeclaration or Label.FieldVariableDeclaration or Label.FieldVariableDeclarator or Label.MethodDeclaration or Label.OperatorDeclaration or Label.ConversionOperatorDeclaration or Label.ConstructorDeclaration or Label.DestructorDeclaration or Label.PropertyDeclaration or Label.ArrowExpressionClause or Label.IndexerDeclaration or Label.EventDeclaration or Label.EnumMemberDeclaration or Label.BaseList or Label.AccessorDeclaration or Label.AccessorList or Label.TypeParameterList or Label.TypeParameter or Label.TypeParameterConstraintClause or Label.ParameterList or Label.BracketedParameterList or Label.Parameter or Label.AttributeList or Label.Attribute or Label.ExtensionBlockDeclaration => 1,
             // Statement syntax
-            case Label.LocalDeclarationStatement:
-            case Label.LocalVariableDeclaration:
-            case Label.LocalVariableDeclarator:
-            case Label.GotoCaseStatement:
-            case Label.BreakContinueStatement:
-            case Label.ElseClause:
-            case Label.CatchClause:
-            case Label.CatchDeclaration:
-            case Label.CatchFilterClause:
-            case Label.FinallyClause:
-            case Label.ForStatementPart:
-            case Label.YieldReturnStatement:
-            case Label.YieldBreakStatement:
-            case Label.FromClauseLambda:
-            case Label.LetClauseLambda:
-            case Label.WhereClauseLambda:
-            case Label.OrderByClause:
-            case Label.OrderingLambda:
-            case Label.SelectClauseLambda:
-            case Label.JoinClauseLambda:
-            case Label.JoinIntoClause:
-            case Label.GroupClauseLambda:
-            case Label.QueryContinuation:
-            case Label.CasePatternSwitchLabel:
-            case Label.WhenClause:
-            case Label.SwitchExpressionArm:
-                return 1;
-
-            default:
-                return 0;
-        }
+            Label.LocalDeclarationStatement or Label.LocalVariableDeclaration or Label.LocalVariableDeclarator or Label.GotoCaseStatement or Label.BreakContinueStatement or Label.ElseClause or Label.CatchClause or Label.CatchDeclaration or Label.CatchFilterClause or Label.FinallyClause or Label.ForStatementPart or Label.YieldReturnStatement or Label.YieldBreakStatement or Label.FromClauseLambda or Label.LetClauseLambda or Label.WhereClauseLambda or Label.OrderByClause or Label.OrderingLambda or Label.SelectClauseLambda or Label.JoinClauseLambda or Label.JoinIntoClause or Label.GroupClauseLambda or Label.QueryContinuation or Label.CasePatternSwitchLabel or Label.WhenClause or Label.SwitchExpressionArm => 1,
+            _ => 0,
+        };
     }
 
     internal override int Classify(int kind, SyntaxNode? node, out bool isLeaf)
@@ -769,12 +713,12 @@ internal sealed class SyntaxComparer(
 
     private static SyntaxNode? GetBody(SyntaxNode node)
     {
-        switch (node)
+        return node switch
         {
-            case BaseMethodDeclarationSyntax baseMethodDeclarationSyntax: return baseMethodDeclarationSyntax.Body ?? (SyntaxNode?)baseMethodDeclarationSyntax.ExpressionBody?.Expression;
-            case AccessorDeclarationSyntax accessorDeclarationSyntax: return accessorDeclarationSyntax.Body ?? (SyntaxNode?)accessorDeclarationSyntax.ExpressionBody?.Expression;
-            default: throw ExceptionUtilities.UnexpectedValue(node);
-        }
+            BaseMethodDeclarationSyntax baseMethodDeclarationSyntax => baseMethodDeclarationSyntax.Body ?? (SyntaxNode?)baseMethodDeclarationSyntax.ExpressionBody?.Expression,
+            AccessorDeclarationSyntax accessorDeclarationSyntax => accessorDeclarationSyntax.Body ?? (SyntaxNode?)accessorDeclarationSyntax.ExpressionBody?.Expression,
+            _ => throw ExceptionUtilities.UnexpectedValue(node),
+        };
     }
 
     protected override bool TryComputeWeightedDistance(SyntaxNode leftNode, SyntaxNode rightNode, out double distance)
@@ -1419,100 +1363,36 @@ internal sealed class SyntaxComparer(
 
     private static SyntaxNodeOrToken? TryGetName(SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.ExternAliasDirective:
-                return ((ExternAliasDirectiveSyntax)node).Identifier;
-
-            case SyntaxKind.UsingDirective:
-                return ((UsingDirectiveSyntax)node).NamespaceOrType;
-
-            case SyntaxKind.NamespaceDeclaration:
-            case SyntaxKind.FileScopedNamespaceDeclaration:
-                return ((BaseNamespaceDeclarationSyntax)node).Name;
-
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.RecordDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-                return ((TypeDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.EnumDeclaration:
-                return ((EnumDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.DelegateDeclaration:
-                return ((DelegateDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.ExtensionBlockDeclaration:
-                return null;
-
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-            case SyntaxKind.VariableDeclaration:
-                return null;
-
-            case SyntaxKind.VariableDeclarator:
-                return ((VariableDeclaratorSyntax)node).Identifier;
-
-            case SyntaxKind.MethodDeclaration:
-                return ((MethodDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.ConversionOperatorDeclaration:
-                return ((ConversionOperatorDeclarationSyntax)node).Type;
-
-            case SyntaxKind.OperatorDeclaration:
-                return ((OperatorDeclarationSyntax)node).OperatorToken;
-
-            case SyntaxKind.ConstructorDeclaration:
-                return ((ConstructorDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.DestructorDeclaration:
-                return ((DestructorDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.PropertyDeclaration:
-                return ((PropertyDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.IndexerDeclaration:
-                return null;
-
-            case SyntaxKind.ArrowExpressionClause:
-                return null;
-
-            case SyntaxKind.EventDeclaration:
-                return ((EventDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.EnumMemberDeclaration:
-                return ((EnumMemberDeclarationSyntax)node).Identifier;
-
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-            case SyntaxKind.InitAccessorDeclaration:
-                return null;
-
-            case SyntaxKind.TypeParameterConstraintClause:
-                return ((TypeParameterConstraintClauseSyntax)node).Name.Identifier;
-
-            case SyntaxKind.TypeParameter:
-                return ((TypeParameterSyntax)node).Identifier;
-
-            case SyntaxKind.TypeParameterList:
-            case SyntaxKind.ParameterList:
-            case SyntaxKind.BracketedParameterList:
-                return null;
-
-            case SyntaxKind.Parameter:
-                return ((ParameterSyntax)node).Identifier;
-
-            case SyntaxKind.AttributeList:
-                return ((AttributeListSyntax)node).Target;
-
-            case SyntaxKind.Attribute:
-                return ((AttributeSyntax)node).Name;
-
-            default:
-                return null;
-        }
+            SyntaxKind.ExternAliasDirective => (SyntaxNodeOrToken?)((ExternAliasDirectiveSyntax)node).Identifier,
+            SyntaxKind.UsingDirective => (SyntaxNodeOrToken?)((UsingDirectiveSyntax)node).NamespaceOrType,
+            SyntaxKind.NamespaceDeclaration or SyntaxKind.FileScopedNamespaceDeclaration => (SyntaxNodeOrToken?)((BaseNamespaceDeclarationSyntax)node).Name,
+            SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration => (SyntaxNodeOrToken?)((TypeDeclarationSyntax)node).Identifier,
+            SyntaxKind.EnumDeclaration => (SyntaxNodeOrToken?)((EnumDeclarationSyntax)node).Identifier,
+            SyntaxKind.DelegateDeclaration => (SyntaxNodeOrToken?)((DelegateDeclarationSyntax)node).Identifier,
+            SyntaxKind.ExtensionBlockDeclaration => null,
+            SyntaxKind.FieldDeclaration or SyntaxKind.EventFieldDeclaration or SyntaxKind.VariableDeclaration => null,
+            SyntaxKind.VariableDeclarator => (SyntaxNodeOrToken?)((VariableDeclaratorSyntax)node).Identifier,
+            SyntaxKind.MethodDeclaration => (SyntaxNodeOrToken?)((MethodDeclarationSyntax)node).Identifier,
+            SyntaxKind.ConversionOperatorDeclaration => (SyntaxNodeOrToken?)((ConversionOperatorDeclarationSyntax)node).Type,
+            SyntaxKind.OperatorDeclaration => (SyntaxNodeOrToken?)((OperatorDeclarationSyntax)node).OperatorToken,
+            SyntaxKind.ConstructorDeclaration => (SyntaxNodeOrToken?)((ConstructorDeclarationSyntax)node).Identifier,
+            SyntaxKind.DestructorDeclaration => (SyntaxNodeOrToken?)((DestructorDeclarationSyntax)node).Identifier,
+            SyntaxKind.PropertyDeclaration => (SyntaxNodeOrToken?)((PropertyDeclarationSyntax)node).Identifier,
+            SyntaxKind.IndexerDeclaration => null,
+            SyntaxKind.ArrowExpressionClause => null,
+            SyntaxKind.EventDeclaration => (SyntaxNodeOrToken?)((EventDeclarationSyntax)node).Identifier,
+            SyntaxKind.EnumMemberDeclaration => (SyntaxNodeOrToken?)((EnumMemberDeclarationSyntax)node).Identifier,
+            SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration or SyntaxKind.InitAccessorDeclaration => null,
+            SyntaxKind.TypeParameterConstraintClause => (SyntaxNodeOrToken?)((TypeParameterConstraintClauseSyntax)node).Name.Identifier,
+            SyntaxKind.TypeParameter => (SyntaxNodeOrToken?)((TypeParameterSyntax)node).Identifier,
+            SyntaxKind.TypeParameterList or SyntaxKind.ParameterList or SyntaxKind.BracketedParameterList => null,
+            SyntaxKind.Parameter => (SyntaxNodeOrToken?)((ParameterSyntax)node).Identifier,
+            SyntaxKind.AttributeList => (SyntaxNodeOrToken?)((AttributeListSyntax)node).Target,
+            SyntaxKind.Attribute => (SyntaxNodeOrToken?)((AttributeSyntax)node).Name,
+            _ => null,
+        };
     }
 
     public sealed override double GetDistance(SyntaxNode oldNode, SyntaxNode newNode)

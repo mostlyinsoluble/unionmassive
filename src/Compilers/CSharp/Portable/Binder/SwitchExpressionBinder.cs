@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // so that flow analysis will see that some of the cases may be unreachable.
             decisionDag = decisionDag.SimplifyDecisionDagIfConstantInput(boundInputExpression);
 
-            if (!wasReported && diagnostics.AccumulatesDiagnostics && DecisionDagBuilder.EnableRedundantPatternsCheck(this.Compilation))
+            if (!wasReported && diagnostics.AccumulatesDiagnostics)
             {
                 DecisionDagBuilder.CheckRedundantPatternsForSwitchExpression(this.Compilation, node, boundInputExpression, switchArms, diagnostics);
             }
@@ -154,7 +154,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             foreach (var @case in switchCases)
             {
                 var type = @case.Value.Type;
-                if (type is object && seenTypes.Add(type))
+                if (type is not null && seenTypes.Add(type))
                 {
                     typesInOrder.Add(type);
                 }
@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We've found a candidate common type among those arms that have a type.  Also check that every arm's
             // expression (even those without a type) can be converted to that type.
-            if (commonType is object)
+            if (commonType is not null)
             {
                 foreach (var @case in switchCases)
                 {

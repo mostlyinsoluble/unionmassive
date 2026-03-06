@@ -269,7 +269,7 @@ namespace Microsoft.CodeAnalysis
         {
             if (handle.IsNil)
             {
-                return default(Guid);
+                return default;
             }
 
             int offset = (MetadataTokens.GetHeapOffset(handle) - 1) * GuidSize;

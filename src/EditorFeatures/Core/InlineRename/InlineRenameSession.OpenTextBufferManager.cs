@@ -631,24 +631,14 @@ internal sealed partial class InlineRenameSession
 
         private static RenameSpanKind GetRenameSpanKind(InlineRenameReplacementKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case InlineRenameReplacementKind.NoConflict:
-                case InlineRenameReplacementKind.ResolvedReferenceConflict:
-                    return RenameSpanKind.Reference;
-
-                case InlineRenameReplacementKind.ResolvedNonReferenceConflict:
-                    return RenameSpanKind.None;
-
-                case InlineRenameReplacementKind.UnresolvedConflict:
-                    return RenameSpanKind.UnresolvedConflict;
-
-                case InlineRenameReplacementKind.Complexified:
-                    return RenameSpanKind.Complexified;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(kind);
-            }
+                InlineRenameReplacementKind.NoConflict or InlineRenameReplacementKind.ResolvedReferenceConflict => RenameSpanKind.Reference,
+                InlineRenameReplacementKind.ResolvedNonReferenceConflict => RenameSpanKind.None,
+                InlineRenameReplacementKind.UnresolvedConflict => RenameSpanKind.UnresolvedConflict,
+                InlineRenameReplacementKind.Complexified => RenameSpanKind.Complexified,
+                _ => throw ExceptionUtilities.UnexpectedValue(kind),
+            };
         }
 
         private readonly struct SelectionTracking : IDisposable

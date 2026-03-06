@@ -250,16 +250,10 @@ internal static partial class ISymbolExtensions2
 
     private static DocumentationComment GetMethodDocumentation(this IMethodSymbol method, Compilation compilation, CancellationToken cancellationToken)
     {
-        switch (method.MethodKind)
+        return method.MethodKind switch
         {
-            case MethodKind.EventAdd:
-            case MethodKind.EventRaise:
-            case MethodKind.EventRemove:
-            case MethodKind.PropertyGet:
-            case MethodKind.PropertySet:
-                return method.AssociatedSymbol?.GetDocumentationComment(compilation, expandIncludes: true, expandInheritdoc: true, cancellationToken: cancellationToken) ?? DocumentationComment.Empty;
-            default:
-                return method.GetDocumentationComment(compilation, expandIncludes: true, expandInheritdoc: true, cancellationToken: cancellationToken);
-        }
+            MethodKind.EventAdd or MethodKind.EventRaise or MethodKind.EventRemove or MethodKind.PropertyGet or MethodKind.PropertySet => method.AssociatedSymbol?.GetDocumentationComment(compilation, expandIncludes: true, expandInheritdoc: true, cancellationToken: cancellationToken) ?? DocumentationComment.Empty,
+            _ => method.GetDocumentationComment(compilation, expandIncludes: true, expandInheritdoc: true, cancellationToken: cancellationToken),
+        };
     }
 }

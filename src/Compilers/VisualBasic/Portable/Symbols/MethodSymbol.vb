@@ -814,16 +814,16 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
         ''' Name lookup should use this method in order to capture proximity, which affects 
         ''' overload resolution. 
         ''' </summary>
-        Friend Function ReduceExtensionMethod(instanceType As TypeSymbol, proximity As Integer, ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol), languageVersion As LanguageVersion) As MethodSymbol
-            Return ReducedExtensionMethodSymbol.Create(instanceType, Me, proximity, useSiteInfo, languageVersion)
+        Friend Function ReduceExtensionMethod(instanceType As TypeSymbol, proximity As Integer, ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol)) As MethodSymbol
+            Return ReducedExtensionMethodSymbol.Create(instanceType, Me, proximity, useSiteInfo)
         End Function
 
         ''' <summary>
         ''' If this is an extension method that can be applied to a instance of the given type,
         ''' returns the reduced method symbol thus formed. Otherwise, returns Nothing.
         ''' </summary>
-        Public Function ReduceExtensionMethod(instanceType As TypeSymbol, ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol), languageVersion As LanguageVersion) As MethodSymbol
-            Return ReduceExtensionMethod(instanceType, proximity:=0, useSiteInfo, languageVersion)
+        Public Function ReduceExtensionMethod(instanceType As TypeSymbol, ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol)) As MethodSymbol
+            Return ReduceExtensionMethod(instanceType, proximity:=0, useSiteInfo)
         End Function
 
         Public Function ReduceExtensionMember(receiverType As ITypeSymbol) As IMethodSymbol Implements IMethodSymbol.ReduceExtensionMember
@@ -999,7 +999,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                 Throw New ArgumentNullException(NameOf(receiverType))
             End If
 
-            Return Me.ReduceExtensionMethod(receiverType.EnsureVbSymbolOrNothing(Of TypeSymbol)(NameOf(receiverType)), CompoundUseSiteInfo(Of AssemblySymbol).Discarded, LanguageVersion.Latest)
+            Return Me.ReduceExtensionMethod(receiverType.EnsureVbSymbolOrNothing(Of TypeSymbol)(NameOf(receiverType)), CompoundUseSiteInfo(Of AssemblySymbol).Discarded)
         End Function
 
         Private ReadOnly Property IMethodSymbol_Parameters As ImmutableArray(Of IParameterSymbol) Implements IMethodSymbol.Parameters

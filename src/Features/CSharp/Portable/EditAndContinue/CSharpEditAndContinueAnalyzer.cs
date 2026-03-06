@@ -877,12 +877,12 @@ internal sealed class CSharpEditAndContinueAnalyzer() : AbstractEditAndContinueA
             return false;
         }
 
-        switch (oldNode.Kind())
+        return oldNode.Kind() switch
         {
-            case SyntaxKind.ForEachStatement: return AreEquivalentIgnoringLambdaBodies(((ForEachStatementSyntax)oldNode).Type, ((ForEachStatementSyntax)newNode).Type);
-            case SyntaxKind.ForEachVariableStatement: return AreEquivalentIgnoringLambdaBodies(((ForEachVariableStatementSyntax)oldNode).Variable, ((ForEachVariableStatementSyntax)newNode).Variable);
-            default: throw ExceptionUtilities.UnexpectedValue(oldNode.Kind());
-        }
+            SyntaxKind.ForEachStatement => AreEquivalentIgnoringLambdaBodies(((ForEachStatementSyntax)oldNode).Type, ((ForEachStatementSyntax)newNode).Type),
+            SyntaxKind.ForEachVariableStatement => AreEquivalentIgnoringLambdaBodies(((ForEachVariableStatementSyntax)oldNode).Variable, ((ForEachVariableStatementSyntax)newNode).Variable),
+            _ => throw ExceptionUtilities.UnexpectedValue(oldNode.Kind()),
+        };
     }
 
     private static bool AreSimilarActiveStatements(CommonForEachStatementSyntax oldNode, CommonForEachStatementSyntax newNode)
@@ -2607,7 +2607,7 @@ internal sealed class CSharpEditAndContinueAnalyzer() : AbstractEditAndContinueA
                     result.Add(current);
 
                     // skip try:
-                    RoslynDebug.Assert(current.Parent is object);
+                    RoslynDebug.Assert(current.Parent is not null);
                     RoslynDebug.Assert(current.Parent.Kind() == SyntaxKind.TryStatement);
                     current = current.Parent;
 
@@ -2752,8 +2752,8 @@ internal sealed class CSharpEditAndContinueAnalyzer() : AbstractEditAndContinueA
                 return statement;
             }
 
-            RoslynDebug.Assert(node is object);
-            RoslynDebug.Assert(node.Parent is object);
+            RoslynDebug.Assert(node is not null);
+            RoslynDebug.Assert(node.Parent is not null);
             switch (node.Parent.Kind())
             {
                 case SyntaxKind.ForStatement:
@@ -2820,18 +2820,12 @@ internal sealed class CSharpEditAndContinueAnalyzer() : AbstractEditAndContinueA
 
     private static ExpressionSyntax GetExpressionFromStatementPart(SyntaxNode statement)
     {
-        switch (statement.Kind())
+        return statement.Kind() switch
         {
-            case SyntaxKind.ExpressionStatement:
-                return ((ExpressionStatementSyntax)statement).Expression;
-
-            case SyntaxKind.ReturnStatement:
-                // Must have an expression since we are only inspecting at statements that contain an expression.
-                return ((ReturnStatementSyntax)statement).Expression!;
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(statement.Kind());
-        }
+            SyntaxKind.ExpressionStatement => ((ExpressionStatementSyntax)statement).Expression,
+            SyntaxKind.ReturnStatement => ((ReturnStatementSyntax)statement).Expression!,// Must have an expression since we are only inspecting at statements that contain an expression.
+            _ => throw ExceptionUtilities.UnexpectedValue(statement.Kind()),
+        };
     }
 
     private static bool IsSimpleAwaitAssignment(SyntaxNode node, SyntaxNode awaitExpression)

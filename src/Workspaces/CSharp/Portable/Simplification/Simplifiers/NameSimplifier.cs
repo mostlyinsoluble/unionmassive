@@ -221,7 +221,7 @@ internal sealed class NameSimplifier : AbstractCSharpSimplifier<NameSyntax, Type
 
             if (name is AliasQualifiedNameSyntax aliasQualifiedName)
             {
-                if (aliasQualifiedName.Name is SimpleNameSyntax &&
+                if (aliasQualifiedName.Name is not null &&
                     !aliasQualifiedName.Name.Identifier.HasAnnotations(AliasAnnotation.Kind) &&
                     !aliasQualifiedName.Name.HasAnnotation(Simplifier.SpecialTypeAnnotation))
                 {
@@ -520,18 +520,13 @@ internal sealed class NameSimplifier : AbstractCSharpSimplifier<NameSyntax, Type
                             newAttributeName,
                             identifierToken.TrailingTrivia));
 
-                    switch (name)
+                    replacementNode = name switch
                     {
-                        case GenericNameSyntax generic:
-                            replacementNode = GenericName(newIdentifierToken, generic.TypeArgumentList)
-                                .WithLeadingTrivia(name.GetLeadingTrivia());
-                            break;
-
-                        default:
-                            replacementNode = IdentifierName(newIdentifierToken)
-                                .WithLeadingTrivia(name.GetLeadingTrivia());
-                            break;
-                    }
+                        GenericNameSyntax generic => GenericName(newIdentifierToken, generic.TypeArgumentList)
+                                                        .WithLeadingTrivia(name.GetLeadingTrivia()),
+                        _ => IdentifierName(newIdentifierToken)
+                                                        .WithLeadingTrivia(name.GetLeadingTrivia()),
+                    };
                     issueSpan = new TextSpan(identifierToken.Span.End - 9, 9);
 
                     return true;

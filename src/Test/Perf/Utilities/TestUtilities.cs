@@ -102,7 +102,7 @@ namespace Roslyn.Test.Performance.Utilities
                 string file,
                 string args,
                 string workingDirectory = null,
-                CancellationToken cancellationToken = default(CancellationToken))
+                CancellationToken cancellationToken = default)
         {
             var result = ShellOut(file, args, workingDirectory, cancellationToken);
             if (result.Failed)
@@ -119,7 +119,7 @@ namespace Roslyn.Test.Performance.Utilities
                 string file,
                 string args,
                 string workingDirectory = null,
-                CancellationToken cancellationToken = default(CancellationToken))
+                CancellationToken cancellationToken = default)
         {
             workingDirectory ??= AppDomain.CurrentDomain.BaseDirectory;
 
@@ -135,7 +135,7 @@ namespace Roslyn.Test.Performance.Utilities
                 EnableRaisingEvents = true,
             };
 
-            if (cancellationToken != default(CancellationToken))
+            if (cancellationToken != default)
             {
                 cancellationToken.Register(() => process.Kill());
             }

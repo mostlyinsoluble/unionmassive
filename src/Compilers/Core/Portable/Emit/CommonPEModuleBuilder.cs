@@ -411,9 +411,8 @@ namespace Microsoft.CodeAnalysis.Emit
             Debug.Assert(methodSymbol.IsDefinition);
             Debug.Assert(((IMethodSymbol)methodSymbol.GetISymbol()).PartialDefinitionPart == null); // Must be definition.
 
-            Cci.IMethodBody? body;
 
-            if (_methodBodyMap.TryGetValue(methodSymbol, out body))
+            if (_methodBodyMap.TryGetValue(methodSymbol, out Cci.IMethodBody? body))
             {
                 return body;
             }
@@ -526,7 +525,7 @@ namespace Microsoft.CodeAnalysis.Emit
         {
             if (_lazyAssemblyReferenceAliases.IsDefault)
             {
-                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyAssemblyReferenceAliases, CalculateAssemblyReferenceAliases(context), default(ImmutableArray<Cci.AssemblyReferenceAlias>));
+                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyAssemblyReferenceAliases, CalculateAssemblyReferenceAliases(context), default);
             }
 
             return _lazyAssemblyReferenceAliases;
@@ -1181,14 +1180,11 @@ namespace Microsoft.CodeAnalysis.Emit
         {
             Debug.Assert((object)this == context.Module);
 
-            switch (platformType)
+            return platformType switch
             {
-                case Cci.PlatformType.SystemType:
-                    throw ExceptionUtilities.UnexpectedValue(platformType);
-
-                default:
-                    return GetSpecialType((SpecialType)platformType, (TSyntaxNode)context.SyntaxNode, context.Diagnostics);
-            }
+                Cci.PlatformType.SystemType => throw ExceptionUtilities.UnexpectedValue(platformType),
+                _ => GetSpecialType((SpecialType)platformType, (TSyntaxNode)context.SyntaxNode, context.Diagnostics),
+            };
         }
     }
 }

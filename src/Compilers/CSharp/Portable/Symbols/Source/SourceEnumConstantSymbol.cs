@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             int otherConstantOffset,
             BindingDiagnosticBag diagnostics)
         {
-            if ((object)otherConstant == null)
+            if (otherConstant is null)
             {
                 Debug.Assert(otherConstantOffset == 0);
                 return new ZeroValuedEnumConstantSymbol(containingEnum, syntax, diagnostics);
@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 BindingDiagnosticBag diagnostics) :
                 base(containingEnum, syntax, diagnostics)
             {
-                Debug.Assert((object)otherConstant != null);
+                Debug.Assert(otherConstant is not null);
                 Debug.Assert(otherConstantOffset > 0);
 
                 _otherConstant = otherConstant;
@@ -212,8 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     return Microsoft.CodeAnalysis.ConstantValue.Bad;
                 }
-                ConstantValue value;
-                var overflowKind = EnumConstantHelper.OffsetValue(otherValue, _otherConstantOffset, out value);
+                var overflowKind = EnumConstantHelper.OffsetValue(otherValue, _otherConstantOffset, out ConstantValue value);
                 if (overflowKind == EnumOverflowKind.OverflowReport)
                 {
                     // Report an error if the value is immediately

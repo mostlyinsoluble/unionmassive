@@ -303,7 +303,7 @@ namespace Microsoft.CodeAnalysis
 
         internal static MetadataImageReference CreateFromAssemblyInternal(Assembly assembly)
         {
-            return CreateFromAssemblyInternal(assembly, default(MetadataReferenceProperties));
+            return CreateFromAssemblyInternal(assembly, default);
         }
 
         /// <summary>

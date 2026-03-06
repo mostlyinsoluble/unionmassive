@@ -48,15 +48,14 @@ namespace BuildBoss
 
         internal static ProjectFileType GetProjectFileType(string path)
         {
-            switch (Path.GetExtension(path))
+            return Path.GetExtension(path) switch
             {
-                case ".csproj": return ProjectFileType.CSharp;
-                case ".vbproj": return ProjectFileType.Basic;
-                case ".shproj": return ProjectFileType.Shared;
-                case ".proj": return ProjectFileType.Tool;
-                default:
-                    return ProjectFileType.Unknown;
-            }
+                ".csproj" => ProjectFileType.CSharp,
+                ".vbproj" => ProjectFileType.Basic,
+                ".shproj" => ProjectFileType.Shared,
+                ".proj" => ProjectFileType.Tool,
+                _ => ProjectFileType.Unknown,
+            };
         }
     }
 }

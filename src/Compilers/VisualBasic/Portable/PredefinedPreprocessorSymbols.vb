@@ -3,16 +3,9 @@
 ' See the LICENSE file in the project root for more information.
 
 Imports System.Collections.Immutable
-Imports System.Globalization
 
 Namespace Microsoft.CodeAnalysis.VisualBasic
     Public Module PredefinedPreprocessorSymbols
-
-        Friend ReadOnly Property CurrentVersionNumber As Double
-            Get
-                Return Double.Parse(LanguageVersion.Latest.MapSpecifiedToEffectiveVersion().GetErrorName(), CultureInfo.InvariantCulture)
-            End Get
-        End Property
 
         ''' <summary>
         ''' Adds predefined preprocessor symbols VBC_VER and TARGET to given list of preprocessor symbols if not included yet.
@@ -54,7 +47,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
 
             If symbols.FirstOrDefault(Function(entry) IdentifierComparison.Equals(entry.Key, CompilerVersionSymbol)).Key Is Nothing Then
                 ' This number should always line up with the current version of the compilerString
-                symbols = symbols.Add(New KeyValuePair(Of String, Object)(CompilerVersionSymbol, CurrentVersionNumber))
+                symbols = symbols.Add(New KeyValuePair(Of String, Object)(CompilerVersionSymbol, 20D))
             End If
 
             If symbols.FirstOrDefault(Function(entry) IdentifierComparison.Equals(entry.Key, TargetSymbol)).Key Is Nothing Then

@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal void SetCorLibrary(AssemblySymbol corLibrary)
         {
-            Debug.Assert((object)_corLibrary == null);
+            Debug.Assert(_corLibrary is null);
             _corLibrary = corLibrary;
         }
 
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             NamespaceSymbol container = namespaceSymbol.ContainingNamespace;
 
-            if ((object)container == null)
+            if (container is null)
             {
                 return this.GlobalNamespace;
             }
@@ -169,7 +169,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return namespaceSymbol;
             }
 
-            if ((object)assemblyContainer == null)
+            if (assemblyContainer is null)
             {
                 return null;
             }
@@ -404,151 +404,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 throw ExceptionUtilities.Unreachable();
-            }
-        }
-
-        /// <summary>
-        /// Return the native integer type corresponding to the underlying type.
-        /// </summary>
-        internal virtual NamedTypeSymbol GetNativeIntegerType(NamedTypeSymbol underlyingType)
-        {
-            throw ExceptionUtilities.Unreachable();
-        }
-
-        public bool SupportsRuntimeCapability(RuntimeCapability capability)
-        {
-            // Keep in sync with VB's AssemblySymbol.SupportsRuntimeCapability
-            switch (capability)
-            {
-                case RuntimeCapability.ByRefFields:
-                    return this.RuntimeSupportsByRefFields;
-                case RuntimeCapability.CovariantReturnsOfClasses:
-                    return this.RuntimeSupportsCovariantReturnsOfClasses;
-                case RuntimeCapability.DefaultImplementationsOfInterfaces:
-                    return this.RuntimeSupportsDefaultInterfaceImplementation;
-                case RuntimeCapability.NumericIntPtr:
-                    return this.RuntimeSupportsNumericIntPtr;
-                case RuntimeCapability.UnmanagedSignatureCallingConvention:
-                    return this.RuntimeSupportsUnmanagedSignatureCallingConvention;
-                case RuntimeCapability.VirtualStaticsInInterfaces:
-                    return this.RuntimeSupportsStaticAbstractMembersInInterfaces;
-                case RuntimeCapability.InlineArrayTypes:
-                    return this.RuntimeSupportsInlineArrayTypes;
-                case RuntimeCapability.ByRefLikeGenerics:
-                    return this.RuntimeSupportsByRefLikeGenerics;
-                case RuntimeCapability.RuntimeAsyncMethods:
-                    return this.RuntimeSupportsAsyncMethods;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Figure out if the target runtime supports default interface implementation.
-        /// </summary>
-        internal bool RuntimeSupportsDefaultInterfaceImplementation
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsDefaultInterfaceImplementation
-            get => RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__DefaultImplementationsOfInterfaces);
-        }
-
-        /// <summary>
-        /// Figure out if the target runtime supports static abstract members in interfaces.
-        /// </summary>
-        internal bool RuntimeSupportsStaticAbstractMembersInInterfaces
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsVirtualStaticsInInterfaces
-            get => RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__VirtualStaticsInInterfaces);
-        }
-
-        /// <summary>
-        /// Whether the target runtime supports numeric IntPtr types.
-        /// </summary>
-        internal bool RuntimeSupportsNumericIntPtr
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsNumericIntPtr
-            get
-            {
-                // CorLibrary should never be null, but that invariant is broken in some cases for MissingAssemblySymbol.
-                // Tracked by https://github.com/dotnet/roslyn/issues/61262
-                return CorLibrary is not null &&
-                    RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__NumericIntPtr);
-            }
-        }
-
-        /// <summary>
-        /// Figure out if the target runtime supports inline array types.
-        /// </summary>
-        internal bool RuntimeSupportsInlineArrayTypes
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsInlineArrayTypes
-            get
-            {
-                return GetSpecialTypeMember(SpecialMember.System_Runtime_CompilerServices_InlineArrayAttribute__ctor) is object;
-            }
-        }
-
-        /// <summary>
-        /// Figure out if the target runtime supports extended layout types.
-        /// </summary>
-        internal bool RuntimeSupportsExtendedLayout
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsExtendedLayout
-            get
-            {
-                return GetSpecialTypeMember(SpecialMember.System_Runtime_InteropServices_ExtendedLayoutAttribute__ctor) is object;
-            }
-        }
-
-        /// <summary>
-        /// Figure out if the target runtime supports inline array types.
-        /// </summary>
-        internal bool RuntimeSupportsByRefLikeGenerics
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsByRefLikeGenerics
-            get
-            {
-                // CorLibrary should never be null, but that invariant is broken in some cases for MissingAssemblySymbol.
-                // Tracked by https://github.com/dotnet/roslyn/issues/61262
-                return CorLibrary is not null &&
-                    RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__ByRefLikeGenerics);
-            }
-        }
-
-#nullable enable
-        // Keep in sync with VB's AssemblySymbol.RuntimeSupportsAsyncMethods
-        internal bool RuntimeSupportsAsyncMethods
-            => GetSpecialType(InternalSpecialType.System_Runtime_CompilerServices_AsyncHelpers) is { TypeKind: TypeKind.Class, IsStatic: true };
-#nullable disable
-
-        protected bool RuntimeSupportsFeature(SpecialMember feature)
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsFeature
-            Debug.Assert(SpecialMembers.GetDescriptor(feature).DeclaringSpecialType == SpecialType.System_Runtime_CompilerServices_RuntimeFeature);
-            return GetSpecialType(SpecialType.System_Runtime_CompilerServices_RuntimeFeature) is { TypeKind: TypeKind.Class, IsStatic: true } &&
-                   GetSpecialTypeMember(feature) is object;
-        }
-
-        // Keep in sync with VB's AssemblySymbol.RuntimeSupportsUnmanagedSignatureCallingConvention
-        internal bool RuntimeSupportsUnmanagedSignatureCallingConvention
-            => RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__UnmanagedSignatureCallingConvention);
-
-        // Keep in sync with VB's AssemblySymbol.RuntimeSupportsByRefFields
-        internal bool RuntimeSupportsByRefFields
-            => RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__ByRefFields);
-
-        /// <summary>
-        /// True if the target runtime support covariant returns of methods declared in classes.
-        /// </summary>
-        internal bool RuntimeSupportsCovariantReturnsOfClasses
-        {
-            // Keep in sync with VB's AssemblySymbol.RuntimeSupportsCovariantReturnsOfClasses
-            get
-            {
-                // check for the runtime feature indicator and the required attribute.
-                return
-                    RuntimeSupportsFeature(SpecialMember.System_Runtime_CompilerServices_RuntimeFeature__CovariantReturnsOfClasses) &&
-                    GetSpecialType(SpecialType.System_Runtime_CompilerServices_PreserveBaseOverridesAttribute) is { TypeKind: TypeKind.Class };
             }
         }
 
@@ -941,7 +796,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // ignore any types of the same name that might be in referenced assemblies (prefer the current assembly):
-            if (result is object || !includeReferences)
+            if (result is not null || !includeReferences)
             {
                 return result;
             }
@@ -999,7 +854,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 Debug.Assert(!TypeSymbol.Equals(candidate, result, TypeCompareKind.ConsiderEverything));
 
-                if (result is object)
+                if (result is not null)
                 {
                     // duplicate
                     if (ignoreCorLibraryDuplicatedTypes)
@@ -1064,7 +919,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            Debug.Assert((object)result.ContainingType == null || IsValidWellKnownType(result.ContainingType),
+            Debug.Assert(result.ContainingType is null || IsValidWellKnownType(result.ContainingType),
                 "Checking the containing type is the caller's responsibility.");
 
             return result.DeclaredAccessibility == Accessibility.Public || IsSymbolAccessible(result, this);

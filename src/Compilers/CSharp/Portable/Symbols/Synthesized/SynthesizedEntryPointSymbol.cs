@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private SynthesizedEntryPointSymbol(NamedTypeSymbol containingType)
         {
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(containingType is not null);
 
             _containingType = containingType;
         }
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override System.Reflection.MethodImplAttributes ImplementationAttributes
         {
-            get { return default(System.Reflection.MethodImplAttributes); }
+            get { return default; }
         }
 
         internal override bool RequiresSecurityObject
@@ -299,12 +299,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 method,
                 ImmutableArray<BoundExpression>.Empty,
                 default(ImmutableArray<string>),
-                default(ImmutableArray<RefKind>),
+                default,
                 isDelegateCall: false,
                 expanded: false,
                 invokedAsExtensionMethod: false,
-                argsToParamsOpt: default(ImmutableArray<int>),
-                defaultArguments: default(BitVector),
+                argsToParamsOpt: default,
+                defaultArguments: default,
                 resultKind: LookupResultKind.Viable,
                 type: method.ReturnType)
             { WasCompilerGenerated = true };
@@ -367,12 +367,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         method: userMain,
                         arguments: arguments,
                         argumentNamesOpt: default(ImmutableArray<string>),
-                        argumentRefKindsOpt: default(ImmutableArray<RefKind>),
+                        argumentRefKindsOpt: default,
                         isDelegateCall: false,
                         expanded: false,
                         invokedAsExtensionMethod: false,
-                        argsToParamsOpt: default(ImmutableArray<int>),
-                        defaultArguments: default(BitVector),
+                        argsToParamsOpt: default,
+                        defaultArguments: default,
                         resultKind: LookupResultKind.Viable,
                         type: userMain.ReturnType)
                 { WasCompilerGenerated = true };
@@ -393,12 +393,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             method: handleAsyncEntryPointMethod,
                             arguments: [userMainInvocation],
                             argumentNamesOpt: default(ImmutableArray<string>),
-                            argumentRefKindsOpt: default(ImmutableArray<RefKind>),
+                            argumentRefKindsOpt: default,
                             isDelegateCall: false,
                             expanded: false,
                             invokedAsExtensionMethod: false,
-                            argsToParamsOpt: default(ImmutableArray<int>),
-                            defaultArguments: default(BitVector),
+                            argsToParamsOpt: default,
+                            defaultArguments: default,
                             resultKind: LookupResultKind.Viable,
                             type: handleAsyncEntryPointMethod.ReturnType)
                     { WasCompilerGenerated = true };
@@ -526,9 +526,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 Debug.Assert(!initializer.ReturnType.IsDynamic());
                 var initializeCall = CreateParameterlessCall(syntax, scriptLocal, receiverIsSubjectToCloning: ThreeState.False, initializer);
-                BoundExpression getAwaiterGetResultCall;
                 Debug.Assert(!compilation.IsRuntimeAsyncEnabledIn(this));
-                if (!binder.GetAwaitableExpressionInfo(initializeCall, out getAwaiterGetResultCall, runtimeAsyncAwaitCall: out _, syntax, diagnostics))
+                if (!binder.GetAwaitableExpressionInfo(initializeCall, out BoundExpression getAwaiterGetResultCall, runtimeAsyncAwaitCall: out _, syntax, diagnostics))
                 {
                     return new BoundBlock(
                         syntax: syntax,
@@ -628,10 +627,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             ctor,
                             ImmutableArray.Create<BoundExpression>(submissionArrayParameter),
                             argumentNamesOpt: default(ImmutableArray<string>),
-                            argumentRefKindsOpt: default(ImmutableArray<RefKind>),
+                            argumentRefKindsOpt: default,
                             expanded: false,
-                            argsToParamsOpt: default(ImmutableArray<int>),
-                            defaultArguments: default(BitVector),
+                            argsToParamsOpt: default,
+                            defaultArguments: default,
                             constantValueOpt: null,
                             initializerExpressionOpt: null,
                             type: _containingType)

@@ -137,8 +137,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             PENamedTypeSymbol containingType,
             FieldDefinitionHandle fieldDef)
         {
-            Debug.Assert((object)moduleSymbol != null);
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(moduleSymbol is not null);
+            Debug.Assert(containingType is not null);
             Debug.Assert(!fieldDef.IsNil);
 
             _handle = fieldDef;
@@ -151,7 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
             catch (BadImageFormatException)
             {
-                if ((object)_name == null)
+                if (_name is null)
                 {
                     _name = String.Empty;
                 }
@@ -259,7 +259,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if ((_flags & FieldAttributes.HasFieldMarshal) == 0)
                 {
-                    return default(ImmutableArray<byte>);
+                    return default;
                 }
 
                 return _containingType.ContainingPEModule.Module.GetMarshallingDescriptor(_handle);
@@ -289,12 +289,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         /// </summary>
         internal void SetAssociatedEvent(PEEventSymbol eventSymbol)
         {
-            Debug.Assert((object)eventSymbol != null);
+            Debug.Assert(eventSymbol is not null);
             Debug.Assert(TypeSymbol.Equals(eventSymbol.ContainingType, _containingType, TypeCompareKind.ConsiderEverything2));
 
             // This should always be true in valid metadata - there should only
             // be one event with a given name in a given type.
-            if ((object)_associatedEventOpt == null)
+            if (_associatedEventOpt is null)
             {
                 // No locking required since this method will only be called by the thread that created
                 // the field symbol (and will be called before the field symbol is added to the containing 
@@ -313,7 +313,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 ImmutableArray<CustomModifier> customModifiersArray = CSharpCustomModifier.Convert(fieldInfo.CustomModifiers);
 
                 typeSymbol = DynamicTypeDecoder.TransformType(typeSymbol, customModifiersArray.Length, _handle, moduleSymbol);
-                typeSymbol = NativeIntegerTypeDecoder.TransformType(typeSymbol, _handle, moduleSymbol, _containingType);
 
                 // We start without annotations
                 var type = TypeWithAnnotations.Create(typeSymbol, customModifiers: customModifiersArray);
@@ -329,9 +328,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 _packedFlags.SetRefKind(refKind);
                 _packedFlags.SetIsVolatile(customModifiersArray.Any(static m => !m.IsOptional && ((CSharpCustomModifier)m).ModifierSymbol.SpecialType == SpecialType.System_Runtime_CompilerServices_IsVolatile));
 
-                TypeSymbol fixedElementType;
-                int fixedSize;
-                if (customModifiersArray.IsEmpty && IsFixedBuffer(out fixedSize, out fixedElementType))
+                if (customModifiersArray.IsEmpty && IsFixedBuffer(out int fixedSize, out TypeSymbol fixedElementType))
                 {
                     _lazyFixedSize = fixedSize;
                     _lazyFixedImplementationType = type.Type as NamedTypeSymbol;
@@ -349,10 +346,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             fixedSize = 0;
             fixedElementType = null;
 
-            string elementTypeName;
-            int bufferSize;
             PEModuleSymbol containingPEModule = this.ContainingPEModule;
-            if (containingPEModule.Module.HasFixedBufferAttribute(_handle, out elementTypeName, out bufferSize))
+            if (containingPEModule.Module.HasFixedBufferAttribute(_handle, out string elementTypeName, out int bufferSize))
             {
                 var decoder = new MetadataDecoder(containingPEModule);
                 var elementType = decoder.GetTypeSymbolForSerializedType(elementTypeName);
@@ -403,8 +398,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                FlowAnalysisAnnotations value;
-                if (!_packedFlags.TryGetFlowAnalysisAnnotations(out value))
+                if (!_packedFlags.TryGetFlowAnalysisAnnotations(out FlowAnalysisAnnotations value))
                 {
                     value = DecodeFlowAnalysisAttributes(_containingType.ContainingPEModule.Module, _handle);
                     _packedFlags.SetFlowAnalysisAnnotations(value);
@@ -428,7 +422,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             get
             {
                 EnsureSignatureIsLoaded();
-                return (object)_lazyFixedImplementationType != null;
+                return _lazyFixedImplementationType is not null;
             }
         }
 
@@ -495,9 +489,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 if (this.Type.SpecialType == SpecialType.System_Decimal)
                 {
-                    ConstantValue defaultValue;
 
-                    if (_containingType.ContainingPEModule.Module.HasDecimalConstantAttribute(Handle, out defaultValue))
+                    if (_containingType.ContainingPEModule.Module.HasDecimalConstantAttribute(Handle, out ConstantValue defaultValue))
                     {
                         value = defaultValue;
                     }
@@ -534,38 +527,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 var access = Accessibility.Private;
 
-                switch (_flags & FieldAttributes.FieldAccessMask)
+                access = (_flags & FieldAttributes.FieldAccessMask) switch
                 {
-                    case FieldAttributes.Assembly:
-                        access = Accessibility.Internal;
-                        break;
-
-                    case FieldAttributes.FamORAssem:
-                        access = Accessibility.ProtectedOrInternal;
-                        break;
-
-                    case FieldAttributes.FamANDAssem:
-                        access = Accessibility.ProtectedAndInternal;
-                        break;
-
-                    case FieldAttributes.Private:
-                    case FieldAttributes.PrivateScope:
-                        access = Accessibility.Private;
-                        break;
-
-                    case FieldAttributes.Public:
-                        access = Accessibility.Public;
-                        break;
-
-                    case FieldAttributes.Family:
-                        access = Accessibility.Protected;
-                        break;
-
-                    default:
-                        access = Accessibility.Private;
-                        break;
-                }
-
+                    FieldAttributes.Assembly => Accessibility.Internal,
+                    FieldAttributes.FamORAssem => Accessibility.ProtectedOrInternal,
+                    FieldAttributes.FamANDAssem => Accessibility.ProtectedAndInternal,
+                    FieldAttributes.Private or FieldAttributes.PrivateScope => Accessibility.Private,
+                    FieldAttributes.Public => Accessibility.Public,
+                    FieldAttributes.Family => Accessibility.Protected,
+                    _ => Accessibility.Private,
+                };
                 return access;
             }
         }
@@ -622,7 +593,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             ConstantValue value;
             return this.Type.SpecialType == SpecialType.System_Decimal &&
-                   (object)(value = GetConstantValue(ConstantFieldsInProgress.Empty, earlyDecodingWellKnownAttributes: false)) != null &&
+                   (value = GetConstantValue(ConstantFieldsInProgress.Empty, earlyDecodingWellKnownAttributes: false)) is not null &&
                    value.Discriminator == ConstantValueTypeDiscriminator.Decimal;
         }
 
@@ -642,7 +613,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return PEDocumentationCommentUtils.GetDocumentationComment(this, _containingType.ContainingPEModule, preferredCulture, cancellationToken, ref _lazyDocComment);
         }

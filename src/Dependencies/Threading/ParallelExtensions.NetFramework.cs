@@ -41,7 +41,7 @@ internal static partial class RoslynParallelExtensions
             ArgumentNullException.ThrowIfNull(body);
 #endif
 
-            return ForEachAsync(source, DefaultDegreeOfParallelism, TaskScheduler.Default, default(CancellationToken), body);
+            return ForEachAsync(source, DefaultDegreeOfParallelism, TaskScheduler.Default, default, body);
         }
 
         /// <summary>Executes a for each operation on an <see cref="IEnumerable{TSource}"/> in which iterations may run in parallel.</summary>
@@ -219,7 +219,7 @@ internal static partial class RoslynParallelExtensions
             ArgumentNullException.ThrowIfNull(body);
 #endif
 
-            return ForEachAsync(source, DefaultDegreeOfParallelism, TaskScheduler.Default, default(CancellationToken), body);
+            return ForEachAsync(source, DefaultDegreeOfParallelism, TaskScheduler.Default, default, body);
         }
 
         /// <summary>Executes a for each operation on an <see cref="IAsyncEnumerable{TSource}"/> in which iterations may run in parallel.</summary>
@@ -465,7 +465,7 @@ internal static partial class RoslynParallelExtensions
 #endif
                     {
                         // We're targeting a non-default TaskScheduler, so queue the task body to it.
-                        System.Threading.Tasks.Task.Factory.StartNew(_taskBody!, this, default(CancellationToken), TaskCreationOptions.DenyChildAttach, _scheduler);
+                        System.Threading.Tasks.Task.Factory.StartNew(_taskBody!, this, default, TaskCreationOptions.DenyChildAttach, _scheduler);
                     }
                 }
             }
@@ -541,7 +541,7 @@ internal static partial class RoslynParallelExtensions
 #if false
                     taskSet = TrySetResult();
 #else
-                    taskSet = TrySetResult(default(VoidResult));
+                    taskSet = TrySetResult(default);
 #endif
                 }
                 else

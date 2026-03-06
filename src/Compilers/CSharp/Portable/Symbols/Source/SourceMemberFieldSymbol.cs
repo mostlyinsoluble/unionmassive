@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (IsConst && !type.CanBeConst())
             {
-                SyntaxToken constToken = default(SyntaxToken);
+                SyntaxToken constToken = default;
                 foreach (var modifier in ModifiersTokenList)
                 {
                     if (modifier.Kind() == SyntaxKind.ConstKeyword)
@@ -204,12 +204,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if ((result & DeclarationModifiers.Fixed) != 0)
             {
-                foreach (var modifier in modifiers)
-                {
-                    if (modifier.IsKind(SyntaxKind.FixedKeyword))
-                        MessageID.IDS_FeatureFixedBuffer.CheckFeatureAvailability(diagnostics, modifier);
-                }
-
                 reportBadMemberFlagIfAny(result, DeclarationModifiers.Static, diagnostics, errorLocation);
                 reportBadMemberFlagIfAny(result, DeclarationModifiers.ReadOnly, diagnostics, errorLocation);
                 reportBadMemberFlagIfAny(result, DeclarationModifiers.Const, diagnostics, errorLocation);
@@ -363,26 +357,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             this.CheckAccessibility(diagnostics);
 
             if (!modifierErrors)
-            {
                 this.ReportModifiersDiagnostics(diagnostics);
-            }
 
-            if (containingType.IsInterface)
-            {
-                if (this.IsStatic)
-                {
-                    Binder.CheckFeatureAvailability(declarator, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, ErrorLocation);
-
-                    if (!ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, ErrorLocation);
-                    }
-                }
-                else
-                {
-                    diagnostics.Add(ErrorCode.ERR_InterfacesCantContainFields, ErrorLocation);
-                }
-            }
+            if (containingType.IsInterface && !this.IsStatic)
+                diagnostics.Add(ErrorCode.ERR_InterfacesCantContainFields, ErrorLocation);
         }
 
         protected sealed override TypeSyntax TypeSyntax
@@ -471,7 +449,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var diagnosticsForFirstDeclarator = BindingDiagnosticBag.GetInstance();
 
             Symbol associatedPropertyOrEvent = this.AssociatedSymbol;
-            if ((object)associatedPropertyOrEvent != null && associatedPropertyOrEvent.Kind == SymbolKind.Event)
+            if (associatedPropertyOrEvent is not null && associatedPropertyOrEvent.Kind == SymbolKind.Event)
             {
                 EventSymbol @event = (EventSymbol)associatedPropertyOrEvent;
                 if (@event.IsWindowsRuntimeEvent)
@@ -501,10 +479,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     type = binder.BindType(typeOnly, diagnosticsForFirstDeclarator);
                     if (refKind != RefKind.None)
                     {
-                        MessageID.IDS_FeatureRefFields.CheckFeatureAvailability(diagnostics, compilation, typeSyntax.SkipScoped(out _).Location);
-                        if (!compilation.Assembly.RuntimeSupportsByRefFields)
-                            diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportRefFields, ErrorLocation);
-
                         if (!containingType.IsRefLikeType)
                             diagnostics.Add(ErrorCode.ERR_RefFieldInNonRefStruct, ErrorLocation);
 
@@ -514,8 +488,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else
                 {
-                    bool isVar;
-                    type = binder.BindTypeOrVarKeyword(typeSyntax.SkipScoped(out _).SkipRefInField(out RefKind refKindToAssert), diagnostics, out isVar);
+                    type = binder.BindTypeOrVarKeyword(typeSyntax.SkipScoped(out _).SkipRefInField(out RefKind refKindToAssert), diagnostics, out bool isVar);
                     Debug.Assert(refKindToAssert == RefKind.None); // Otherwise we might need to report an error
                     Debug.Assert(type.HasType || isVar);
 
@@ -551,7 +524,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                             if (initializerOpt != null)
                             {
-                                if ((object)initializerOpt.Type != null && !initializerOpt.Type.IsErrorType())
+                                if (initializerOpt.Type is not null && !initializerOpt.Type.IsErrorType())
                                 {
                                     type = TypeWithAnnotations.Create(initializerOpt.Type);
                                 }
@@ -638,7 +611,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return ConstantValueUtils.EvaluateFieldConstant(this, (EqualsValueClauseSyntax)VariableDeclaratorNode.Initializer, dependencies, earlyDecodingWellKnownAttributes, diagnostics);
         }
 
-        public override bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default(CancellationToken))
+        public override bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default)
         {
             if (this.SyntaxTree == tree)
             {

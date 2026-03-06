@@ -807,7 +807,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public override Location TryGetFirstLocation()
             => _location;
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             ref var lazyDocComment = ref expandIncludes ? ref this.lazyExpandedDocComment : ref this.lazyDocComment;
             return SourceDocumentationCommentUtils.GetAndCacheDocumentationComment(this, expandIncludes, ref lazyDocComment);
@@ -836,7 +836,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal sealed override bool TryGetThisParameter(out ParameterSymbol? thisParameter)
         {
             thisParameter = _lazyThisParameter;
-            if ((object)thisParameter != null || IsStatic || this.IsExtensionBlockMember())
+            if (thisParameter is not null || IsStatic || this.IsExtensionBlockMember())
             {
                 return true;
             }
@@ -985,7 +985,6 @@ done:
             if (NeedsSynthesizedRequiresUnsafeAttribute)
             {
                 Debug.Assert(CallerUnsafeMode == CallerUnsafeMode.Explicit);
-                MessageID.IDS_FeatureUnsafeEvolution.CheckFeatureAvailability(diagnostics, compilation, _location);
                 Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_RequiresUnsafeAttribute__ctor, diagnostics, _location);
             }
 
@@ -1000,8 +999,7 @@ done:
         // on lambdas and local functions (see https://github.com/dotnet/roslyn/issues/36736).
         internal override byte? GetLocalNullableContextValue()
         {
-            byte? value;
-            if (!flags.TryGetNullableContext(out value))
+            if (!flags.TryGetNullableContext(out byte? value))
             {
                 value = ComputeNullableContextValue(this);
                 flags.SetNullableContext(value);
@@ -1052,28 +1050,6 @@ done:
             }
             // Do not report error for IsAbstract && IsExtern. Dev10 reports CS0180 only
             // in that case ("member cannot be both extern and abstract").
-        }
-
-        protected void CheckFeatureAvailabilityAndRuntimeSupport(SyntaxNode declarationSyntax, Location location, bool hasBody, BindingDiagnosticBag diagnostics)
-        {
-            if (_containingType.IsInterface)
-            {
-                if ((!IsStatic || MethodKind is MethodKind.StaticConstructor) &&
-                    (hasBody || IsExplicitInterfaceImplementation))
-                {
-                    Binder.CheckFeatureAvailability(declarationSyntax, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, location);
-                }
-
-                if ((((hasBody || IsExtern) && !(IsStatic && IsVirtual)) || IsExplicitInterfaceImplementation) && !ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, location);
-                }
-
-                if (((!hasBody && IsAbstract) || IsVirtual) && !IsExplicitInterfaceImplementation && IsStatic && !ContainingAssembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, location);
-                }
-            }
         }
 
         /// <summary>

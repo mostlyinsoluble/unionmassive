@@ -211,9 +211,9 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             public NullabilityInfo Nullability;
             public ITypeSymbol ConvertedType;
             public NullabilityInfo ConvertedNullability;
-            public Conversion ImplicitConversion = default(Conversion);
+            public Conversion ImplicitConversion = default;
             public IAliasSymbol Alias;
-            public Optional<object> ConstantValue = default(Optional<object>);
+            public Optional<object> ConstantValue = default;
             public bool IsCompileTimeConstant { get { return ConstantValue.HasValue; } }
             public ImmutableArray<ISymbol> MemberGroup = ImmutableArray.Create<ISymbol>();
 
@@ -340,7 +340,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 
         public static List<string> LookupNames(this SemanticModel model, int position, INamespaceOrTypeSymbol container = null, bool namespacesAndTypesOnly = false, bool useBaseReferenceAccessibility = false)
         {
-            Assert.True(!useBaseReferenceAccessibility || (object)container == null);
+            Assert.True(!useBaseReferenceAccessibility || container is null);
             Assert.True(!useBaseReferenceAccessibility || !namespacesAndTypesOnly);
             var symbols = useBaseReferenceAccessibility
                 ? model.LookupBaseMembers(position)

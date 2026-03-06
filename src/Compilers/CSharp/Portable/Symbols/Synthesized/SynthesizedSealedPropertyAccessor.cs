@@ -28,9 +28,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public SynthesizedSealedPropertyAccessor(PropertySymbol property, MethodSymbol overriddenAccessor)
         {
-            Debug.Assert((object)property != null);
+            Debug.Assert(property is not null);
             Debug.Assert(property.IsSealed);
-            Debug.Assert((object)overriddenAccessor != null);
+            Debug.Assert(overriddenAccessor is not null);
 
             _property = property;
             _overriddenAccessor = overriddenAccessor;
@@ -303,7 +303,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                return default(System.Reflection.MethodImplAttributes);
+                return default;
             }
         }
 

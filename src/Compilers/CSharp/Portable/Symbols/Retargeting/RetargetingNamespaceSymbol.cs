@@ -43,8 +43,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         public RetargetingNamespaceSymbol(RetargetingModuleSymbol retargetingModule, NamespaceSymbol underlyingNamespace)
         {
-            Debug.Assert((object)retargetingModule != null);
-            Debug.Assert((object)underlyingNamespace != null);
+            Debug.Assert(retargetingModule is not null);
+            Debug.Assert(underlyingNamespace is not null);
             Debug.Assert(!(underlyingNamespace is RetargetingNamespaceSymbol));
 
             _retargetingModule = retargetingModule;
@@ -209,7 +209,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             }
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return _underlyingNamespace.GetDocumentationCommentXml(preferredCulture, expandIncludes, cancellationToken);
         }

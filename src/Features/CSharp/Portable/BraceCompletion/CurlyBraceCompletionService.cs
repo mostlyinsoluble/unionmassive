@@ -205,29 +205,11 @@ internal sealed class CurlyBraceCompletionService() : AbstractCurlyBraceOrBracke
 
             var parentKind = node?.Parent?.Kind();
 
-            switch (parentKind.GetValueOrDefault())
+            return parentKind.GetValueOrDefault() switch
             {
-                case SyntaxKind.IfStatement:
-                case SyntaxKind.ElseClause:
-                case SyntaxKind.WhileStatement:
-                case SyntaxKind.DoStatement:
-                case SyntaxKind.ForEachStatement:
-                case SyntaxKind.ForEachVariableStatement:
-                case SyntaxKind.UsingStatement:
-                case SyntaxKind.ForStatement:
-                case SyntaxKind.TryStatement:
-                case SyntaxKind.CatchClause:
-                case SyntaxKind.FinallyClause:
-                case SyntaxKind.LockStatement:
-                case SyntaxKind.CheckedStatement:
-                case SyntaxKind.UncheckedStatement:
-                case SyntaxKind.SwitchSection:
-                case SyntaxKind.FixedStatement:
-                case SyntaxKind.UnsafeStatement:
-                    return true;
-                default:
-                    return false;
-            }
+                SyntaxKind.IfStatement or SyntaxKind.ElseClause or SyntaxKind.WhileStatement or SyntaxKind.DoStatement or SyntaxKind.ForEachStatement or SyntaxKind.ForEachVariableStatement or SyntaxKind.UsingStatement or SyntaxKind.ForStatement or SyntaxKind.TryStatement or SyntaxKind.CatchClause or SyntaxKind.FinallyClause or SyntaxKind.LockStatement or SyntaxKind.CheckedStatement or SyntaxKind.UncheckedStatement or SyntaxKind.SwitchSection or SyntaxKind.FixedStatement or SyntaxKind.UnsafeStatement => true,
+                _ => false,
+            };
         }
 
         public override AdjustNewLinesOperation? GetAdjustNewLinesOperation(in SyntaxToken previousToken, in SyntaxToken currentToken, in NextGetAdjustNewLinesOperation nextOperation)

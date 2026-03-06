@@ -13,10 +13,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Simplification
                 Return False
             End If
 
-            If parseOptions.LanguageVersion < LanguageVersion.VisualBasic15_3 Then
-                Return False
-            End If
-
             If RemovalCausesAmbiguity(DirectCast(node.Parent, TupleExpressionSyntax).Arguments, node) Then
                 Return False
             End If

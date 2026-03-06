@@ -331,8 +331,7 @@ namespace Microsoft.Cci
 
         internal string GetOrCreateSerializedNamespaceName(INamespace @namespace)
         {
-            string result;
-            if (!_qualifiedNameCache.TryGetValue(@namespace, out result))
+            if (!_qualifiedNameCache.TryGetValue(@namespace, out string result))
             {
                 result = TypeNameSerializer.BuildQualifiedNamespaceName(@namespace);
                 _qualifiedNameCache.Add(@namespace, result);
@@ -343,8 +342,7 @@ namespace Microsoft.Cci
 
         internal string GetOrCreateSerializedTypeName(ITypeReference typeReference)
         {
-            string result;
-            if (!_qualifiedNameCache.TryGetValue(typeReference, out result))
+            if (!_qualifiedNameCache.TryGetValue(typeReference, out string result))
             {
                 if (Module.GenerateVisualBasicStylePdb)
                 {

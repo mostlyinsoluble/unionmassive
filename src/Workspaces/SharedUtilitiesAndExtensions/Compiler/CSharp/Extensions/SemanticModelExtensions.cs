@@ -132,30 +132,23 @@ internal static partial class SemanticModelExtensions
             return default;
         }
 
-        switch (token.Parent)
+        return token.Parent switch
         {
-            case ExpressionSyntax expression:
-                return semanticModel.GetSymbolInfo(expression);
-            case AttributeSyntax attribute:
-                return semanticModel.GetSymbolInfo(attribute);
-            case ConstructorInitializerSyntax constructorInitializer:
-                return semanticModel.GetSymbolInfo(constructorInitializer);
-        }
-
-        return default;
+            ExpressionSyntax expression => semanticModel.GetSymbolInfo(expression),
+            AttributeSyntax attribute => semanticModel.GetSymbolInfo(attribute),
+            ConstructorInitializerSyntax constructorInitializer => semanticModel.GetSymbolInfo(constructorInitializer),
+            _ => default,
+        };
     }
 
     private static bool CanBindToken(SyntaxToken token)
     {
         // Add more token kinds if necessary;
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.CommaToken:
-            case SyntaxKind.DelegateKeyword:
-                return false;
-        }
-
-        return true;
+            SyntaxKind.CommaToken or SyntaxKind.DelegateKeyword => false,
+            _ => true,
+        };
     }
 
     public static ISet<INamespaceSymbol> GetUsingNamespacesInScope(this SemanticModel semanticModel, SyntaxNode location)

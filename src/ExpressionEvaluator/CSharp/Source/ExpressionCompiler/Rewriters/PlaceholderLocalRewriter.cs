@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             var local = node.LocalSymbol;
             var placeholder = local as PlaceholderLocalSymbol;
-            if ((object)placeholder != null)
+            if (placeholder is not null)
             {
                 return placeholder.RewriteLocal(_compilation, node.Syntax, _diagnostics);
             }

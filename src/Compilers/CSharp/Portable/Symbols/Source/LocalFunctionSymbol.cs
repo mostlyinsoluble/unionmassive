@@ -78,11 +78,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 _declarationDiagnostics.Add(ErrorCode.ERR_BadExtensionAgg, GetFirstLocation());
             }
 
-            foreach (var param in syntax.ParameterList.Parameters)
-            {
-                ReportAttributesDisallowed(param.AttributeLists, diagnostics);
-            }
-
             syntax.ReturnType.SkipRefInLocalOrReturn(diagnostics, out _refKind);
 
             _declarationDiagnostics.AddRange(diagnostics.DiagnosticBag);
@@ -108,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Force complete type parameters
             foreach (var typeParam in _typeParameters)
             {
-                typeParam.ForceComplete(null, filter: null, default(CancellationToken));
+                typeParam.ForceComplete(null, filter: null, default);
             }
 
             // force lazy init
@@ -117,7 +112,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             foreach (var p in _lazyParameters)
             {
                 // Force complete parameters to retrieve all diagnostics
-                p.ForceComplete(null, filter: null, default(CancellationToken));
+                p.ForceComplete(null, filter: null, default);
             }
 
             ComputeReturnType();
@@ -131,7 +126,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (NeedsSynthesizedRequiresUnsafeAttribute)
             {
                 Debug.Assert(CallerUnsafeMode == CallerUnsafeMode.Explicit);
-                MessageID.IDS_FeatureUnsafeEvolution.CheckFeatureAvailability(addTo, compilation, location);
                 Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_RequiresUnsafeAttribute__ctor, addTo, location);
             }
 
@@ -197,7 +191,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            SyntaxToken arglistToken;
             var diagnostics = BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
             Debug.Assert(diagnostics.DependenciesBag is { });
@@ -206,7 +199,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 WithTypeParametersBinder,
                 this,
                 this.Syntax.ParameterList,
-                arglistToken: out arglistToken,
+                arglistToken: out SyntaxToken arglistToken,
                 allowRefOrOut: true,
                 allowThis: true,
                 addRefReadOnlyModifier: false,
@@ -254,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal void ComputeReturnType()
         {
-            if (_lazyReturnType is object)
+            if (_lazyReturnType is not null)
             {
                 return;
             }
@@ -271,7 +264,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // Skip some diagnostics when the local function is not associated with a compilation
             // (specifically, local functions nested in expressions in the EE).
-            if (compilation is object)
+            if (compilation is not null)
             {
                 Location? location = null;
                 if (_refKind == RefKind.RefReadOnly)
@@ -280,7 +273,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     Binder.GetWellKnownType(DeclaringCompilation, WellKnownType.System_Runtime_InteropServices_InAttribute, diagnostics, location ??= returnTypeSyntax.Location);
                 }
 
-                if (compilation.ShouldEmitNativeIntegerAttributes(returnType.Type))
+                if (returnType.Type.ContainsNativeIntegerWrapperType())
                 {
                     compilation.EnsureNativeIntegerAttributeExists(diagnostics, location ??= returnTypeSyntax.Location, modifyCompilation: false);
                 }
@@ -306,7 +299,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             lock (_declarationDiagnostics)
             {
-                if (_lazyReturnType is object)
+                if (_lazyReturnType is not null)
                 {
                     diagnostics.Free();
                     return;
@@ -424,18 +417,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return true;
         }
 
-        private void ReportAttributesDisallowed(SyntaxList<AttributeListSyntax> attributes, BindingDiagnosticBag diagnostics)
-        {
-            var diagnosticInfo = MessageID.IDS_FeatureLocalFunctionAttributes.GetFeatureAvailabilityDiagnosticInfo((CSharpParseOptions)syntaxReferenceOpt.SyntaxTree.Options);
-            if (diagnosticInfo is object)
-            {
-                foreach (var attrList in attributes)
-                {
-                    diagnostics.Add(diagnosticInfo, attrList.Location);
-                }
-            }
-        }
-
         private ImmutableArray<SourceMethodTypeParameterSymbol> MakeTypeParameters(BindingDiagnosticBag diagnostics)
         {
             var result = ArrayBuilder<SourceMethodTypeParameterSymbol>.GetInstance();
@@ -447,8 +428,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, parameter.VarianceKeyword.GetLocation());
                 }
-
-                ReportAttributesDisallowed(parameter.AttributeLists, diagnostics);
 
                 var identifier = parameter.Identifier;
                 var location = identifier.GetLocation();
@@ -466,7 +445,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 SourceMemberContainerTypeSymbol.ReportReservedTypeName(identifier.Text, this.DeclaringCompilation, diagnostics.DiagnosticBag, location);
 
                 var tpEnclosing = ContainingSymbol.FindEnclosingTypeParameter(name);
-                if ((object?)tpEnclosing != null)
+                if (tpEnclosing is not null)
                 {
                     ErrorCode typeError;
                     if (tpEnclosing.ContainingSymbol.Kind == SymbolKind.Method)

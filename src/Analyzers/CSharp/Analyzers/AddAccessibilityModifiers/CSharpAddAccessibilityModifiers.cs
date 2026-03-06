@@ -81,26 +81,12 @@ internal class CSharpAddOrRemoveAccessibilityModifiers : AbstractAddOrRemoveAcce
             return false;
 
         modifierAdded = false;
-        switch (member.GetRequiredParent().Kind())
+        return member.GetRequiredParent().Kind() switch
         {
-            case SyntaxKind.CompilationUnit:
-            case SyntaxKind.FileScopedNamespaceDeclaration:
-            case SyntaxKind.NamespaceDeclaration:
-                // Inside a namespace, default is internal, and can be removed if explicitly stated.
-                return accessibility == Accessibility.Internal;
-
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.RecordDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-                // Inside a type, default is private, and can be removed if explicitly stated.
-                return accessibility == Accessibility.Private;
-
-            case SyntaxKind.InterfaceDeclaration:
-                // Inside an interface, default is public, and can be removed if explicitly stated.
-                return accessibility == Accessibility.Public;
-        }
-
-        return false;
+            SyntaxKind.CompilationUnit or SyntaxKind.FileScopedNamespaceDeclaration or SyntaxKind.NamespaceDeclaration => accessibility == Accessibility.Internal,// Inside a namespace, default is internal, and can be removed if explicitly stated.
+            SyntaxKind.ClassDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration => accessibility == Accessibility.Private,// Inside a type, default is private, and can be removed if explicitly stated.
+            SyntaxKind.InterfaceDeclaration => accessibility == Accessibility.Public,// Inside an interface, default is public, and can be removed if explicitly stated.
+            _ => false,
+        };
     }
 }

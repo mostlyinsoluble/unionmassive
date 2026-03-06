@@ -371,18 +371,12 @@ internal sealed partial class XmlDocCommentCompletionProvider : AbstractDocComme
 
     private string? GetAttributeValue(XmlAttributeSyntax attribute)
     {
-        switch (attribute)
+        return attribute switch
         {
-            case XmlTextAttributeSyntax textAttribute:
-                // Decode any XML enities and concatentate the results
-                return textAttribute.TextTokens.GetValueText();
-
-            case XmlNameAttributeSyntax nameAttribute:
-                return nameAttribute.Identifier.Identifier.ValueText;
-
-            default:
-                return null;
-        }
+            XmlTextAttributeSyntax textAttribute => textAttribute.TextTokens.GetValueText(),// Decode any XML enities and concatentate the results
+            XmlNameAttributeSyntax nameAttribute => nameAttribute.Identifier.Identifier.ValueText,
+            _ => null,
+        };
     }
 
     protected override ImmutableArray<IParameterSymbol> GetParameters(ISymbol declarationSymbol)

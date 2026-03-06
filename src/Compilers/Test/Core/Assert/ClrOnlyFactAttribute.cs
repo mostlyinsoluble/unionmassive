@@ -58,23 +58,16 @@ namespace Roslyn.Test.Utilities
 
         private static string GetSkipReason(ClrOnlyReason reason)
         {
-            switch (reason)
+            return reason switch
             {
-                case ClrOnlyReason.Ilasm:
-                    return "Mono ilasm doesn't support all of the features we need";
-                case ClrOnlyReason.MemberOrder:
-                    return "Mono returns certain symbols in different order than we are expecting";
-                case ClrOnlyReason.Pdb:
-                    return "Can't emit a PDB in this scenario";
-                case ClrOnlyReason.Signing:
-                    return "Can't sign assemblies in this scenario";
-                case ClrOnlyReason.DocumentationComment:
-                    return "Documentation comment compiler can't run this test on Mono";
-                case ClrOnlyReason.Fusion:
-                    return "Fusion not available on Mono";
-                default:
-                    return "Test supported only on CLR";
-            }
+                ClrOnlyReason.Ilasm => "Mono ilasm doesn't support all of the features we need",
+                ClrOnlyReason.MemberOrder => "Mono returns certain symbols in different order than we are expecting",
+                ClrOnlyReason.Pdb => "Can't emit a PDB in this scenario",
+                ClrOnlyReason.Signing => "Can't sign assemblies in this scenario",
+                ClrOnlyReason.DocumentationComment => "Documentation comment compiler can't run this test on Mono",
+                ClrOnlyReason.Fusion => "Fusion not available on Mono",
+                _ => "Test supported only on CLR",
+            };
         }
     }
 }

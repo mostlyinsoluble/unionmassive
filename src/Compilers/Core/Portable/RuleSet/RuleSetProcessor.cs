@@ -113,8 +113,7 @@ namespace Microsoft.CodeAnalysis
                         var ruleId = rule.Key;
                         var action = rule.Value;
 
-                        ReportDiagnostic existingAction;
-                        if (specificOptions.TryGetValue(ruleId, out existingAction))
+                        if (specificOptions.TryGetValue(ruleId, out ReportDiagnostic existingAction))
                         {
                             if (existingAction != action)
                             {

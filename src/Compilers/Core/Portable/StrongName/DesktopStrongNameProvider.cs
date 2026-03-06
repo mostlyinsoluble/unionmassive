@@ -209,10 +209,7 @@ namespace Microsoft.CodeAnalysis
         {
             IClrStrongName strongName = GetStrongNameInterface();
 
-            IntPtr keyBlob;
-            int keyBlobByteCount;
-
-            strongName.StrongNameGetPublicKey(keyContainer, pbKeyBlob: default, 0, out keyBlob, out keyBlobByteCount);
+            strongName.StrongNameGetPublicKey(keyContainer, pbKeyBlob: default, 0, out IntPtr keyBlob, out int keyBlobByteCount);
 
             byte[] pubKey = new byte[keyBlobByteCount];
             Marshal.Copy(keyBlob, pubKey, 0, keyBlobByteCount);

@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private void AddDisposeCombinedTokensIfNeeded(ArrayBuilder<BoundStatement> builder)
         {
             // if (this.combinedTokens != null) { this.combinedTokens.Dispose(); this.combinedTokens = null; } // for enumerables only
-            if (_asyncIteratorInfo.CombinedTokensField is object)
+            if (_asyncIteratorInfo.CombinedTokensField is not null)
             {
                 var combinedTokens = F.Field(F.This(), _asyncIteratorInfo.CombinedTokensField);
                 TypeSymbol combinedTokensType = combinedTokens.Type;
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement GenerateJumpToCurrentDisposalLabel()
         {
-            Debug.Assert(_currentDisposalLabel is object);
+            Debug.Assert(_currentDisposalLabel is not null);
             return F.If(
                 // if (disposeMode)
                 F.InstanceField(_asyncIteratorInfo.DisposeModeField),
@@ -211,7 +211,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement AppendJumpToCurrentDisposalLabel(BoundStatement node)
         {
-            Debug.Assert(_currentDisposalLabel is object);
+            Debug.Assert(_currentDisposalLabel is not null);
             // Append:
             //  if (disposeMode) goto currentDisposalLabel;
 
@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // this.state = cachedState = NotStartedStateMachine
                 GenerateSetBothStates(StateMachineState.NotStartedOrRunningState));
 
-            Debug.Assert(_currentDisposalLabel is object); // no yield return allowed inside a finally
+            Debug.Assert(_currentDisposalLabel is not null); // no yield return allowed inside a finally
             blockBuilder.Add(
                 // if (disposeMode) goto currentDisposalLabel;
                 GenerateJumpToCurrentDisposalLabel());
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             //  disposeMode = true;
             //  goto currentDisposalLabel;
 
-            Debug.Assert(_currentDisposalLabel is object); // no yield break allowed inside a finally
+            Debug.Assert(_currentDisposalLabel is not null); // no yield break allowed inside a finally
             return F.Block(
                 // disposeMode = true;
                 SetDisposeMode(true),
@@ -368,12 +368,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var savedDisposalLabel = _currentDisposalLabel;
             LabelSymbol afterFinally = null;
-            if (node.FinallyBlockOpt is object)
+            if (node.FinallyBlockOpt is not null)
             {
                 afterFinally = F.GenerateLabel("afterFinally");
                 _currentDisposalLabel = afterFinally;
             }
-            else if (node.FinallyLabelOpt is object)
+            else if (node.FinallyLabelOpt is not null)
             {
                 _currentDisposalLabel = node.FinallyLabelOpt;
             }
@@ -390,7 +390,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             _currentDisposalLabel = savedDisposalLabel;
 
-            if (node.FinallyBlockOpt != null && _currentDisposalLabel is object)
+            if (node.FinallyBlockOpt != null && _currentDisposalLabel is not null)
             {
                 // Append:
                 //  if (disposeMode) goto currentDisposalLabel;
@@ -423,7 +423,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundStatement result = VisitFinally(extractedFinally.FinallyBlock);
 
-            if (_currentDisposalLabel is object)
+            if (_currentDisposalLabel is not null)
             {
                 result = AppendJumpToCurrentDisposalLabel(result);
             }

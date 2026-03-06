@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // so that flow analysis will see that some of the cases may be unreachable.
             decisionDag = decisionDag.SimplifyDecisionDagIfConstantInput(boundSwitchGoverningExpression);
 
-            if (!wasReported && diagnostics.AccumulatesDiagnostics && DecisionDagBuilder.EnableRedundantPatternsCheck(this.Compilation))
+            if (!wasReported && diagnostics.AccumulatesDiagnostics)
             {
                 DecisionDagBuilder.CheckRedundantPatternsForSwitchStatement(this.Compilation, syntax: node, boundSwitchGoverningExpression, switchSections, diagnostics);
             }
@@ -276,8 +276,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.CasePatternSwitchLabel:
                     {
                         var matchLabelSyntax = (CasePatternSwitchLabelSyntax)node;
-
-                        MessageID.IDS_FeaturePatternMatching.CheckFeatureAvailability(diagnostics, node.Keyword);
 
                         BoundPattern pattern = sectionBinder.BindPattern(
                             matchLabelSyntax.Pattern, SwitchGoverningType, permitDesignations: true, node.HasErrors, diagnostics);

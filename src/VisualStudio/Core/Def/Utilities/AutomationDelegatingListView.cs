@@ -128,12 +128,12 @@ internal sealed class AutomationDelegatingListViewItemAutomationPeer : ListBoxIt
 
     private static ToggleState ConvertToToggleState(bool? value)
     {
-        switch (value)
+        return value switch
         {
-            case true: return ToggleState.On;
-            case false: return ToggleState.Off;
-            default: return ToggleState.Indeterminate;
-        }
+            true => ToggleState.On,
+            false => ToggleState.Off,
+            _ => ToggleState.Indeterminate,
+        };
     }
 
     protected override AutomationControlType GetAutomationControlTypeCore()

@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Text
         /// <summary>
         /// A <see cref="LinePosition"/> that represents position 0 at line 0.
         /// </summary>
-        public static LinePosition Zero => default(LinePosition);
+        public static LinePosition Zero => default;
 
         [DataMember(Order = 0)]
         private readonly int _line;

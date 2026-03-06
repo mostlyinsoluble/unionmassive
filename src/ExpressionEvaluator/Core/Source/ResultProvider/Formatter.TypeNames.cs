@@ -165,8 +165,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return;
             }
 
-            int cardinality;
-            if (type.IsTupleCompatible(out cardinality))
+            if (type.IsTupleCompatible(out var cardinality))
             {
                 if (cardinality == 1)
                 {
@@ -362,7 +361,6 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             var unmangledName = separatorIndex < 0 ? mangledName : mangledName.Substring(0, separatorIndex);
             AppendIdentifier(builder, escapeKeywordIdentifiers, unmangledName, out sawInvalidIdentifier);
 
-            bool argumentsSawInvalidIdentifier;
             AppendGenericTypeArguments(
                 builder,
                 typeArguments,
@@ -373,7 +371,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 ref tupleElementIndex,
                 arity,
                 escapeKeywordIdentifiers,
-                out argumentsSawInvalidIdentifier);
+                out var argumentsSawInvalidIdentifier);
             sawInvalidIdentifier |= argumentsSawInvalidIdentifier;
         }
 
@@ -409,7 +407,6 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                     {
                         builder.Append(", ");
                     }
-                    bool sawSingleInvalidIdentifier;
                     var name = CustomTypeInfo.GetTupleElementNameIfAny(tupleElementNames, nameIndex);
                     nameIndex++;
                     AppendTupleElement(
@@ -421,7 +418,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                         tupleElementNames,
                         ref tupleElementIndex,
                         escapeKeywordIdentifiers,
-                        sawInvalidIdentifier: out sawSingleInvalidIdentifier);
+                        sawInvalidIdentifier: out var sawSingleInvalidIdentifier);
                     sawInvalidIdentifier |= sawSingleInvalidIdentifier;
                     any = true;
                 }

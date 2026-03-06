@@ -146,8 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                         value = null;
                         return true;
                     }
-                    int val = 0;
-                    if (tryGetNumericLiteralValue(token, out val, oneBased: false))
+                    if (tryGetNumericLiteralValue(token, out int val, oneBased: false))
                     {
                         value = val;
                         return true;

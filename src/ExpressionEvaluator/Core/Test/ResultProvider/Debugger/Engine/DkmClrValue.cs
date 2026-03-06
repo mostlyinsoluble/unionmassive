@@ -35,8 +35,8 @@ namespace Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation
             string alias,
             DkmEvaluationResultFlags evalFlags,
             DkmClrValueFlags valueFlags,
-            DkmEvaluationResultCategory category = default(DkmEvaluationResultCategory),
-            DkmEvaluationResultAccessType access = default(DkmEvaluationResultAccessType),
+            DkmEvaluationResultCategory category = default,
+            DkmEvaluationResultAccessType access = default,
             ulong nativeComPointer = 0)
         {
             Debug.Assert((type == null) || !type.GetLmrType().IsTypeVariables() || (valueFlags == DkmClrValueFlags.Synthetic));

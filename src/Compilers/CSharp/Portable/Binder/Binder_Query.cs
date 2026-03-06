@@ -23,8 +23,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal BoundExpression BindQuery(QueryExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureQueryExpression.CheckFeatureAvailability(diagnostics, node.FromClause.FromKeyword);
-
             var fromClause = node.FromClause;
             var boundFromExpression = BindLeftOfPotentialColorColorMemberAccess(fromClause.Expression, diagnostics);
 
@@ -150,15 +148,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 correspondingAccessNode = query.Body.SelectOrGroup;
 
-                switch (query.Body.SelectOrGroup.Kind())
+                return query.Body.SelectOrGroup.Kind() switch
                 {
-                    case SyntaxKind.SelectClause:
-                        return "Select";
-                    case SyntaxKind.GroupClause:
-                        return "GroupBy";
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(query.Body.SelectOrGroup.Kind());
-                }
+                    SyntaxKind.SelectClause => "Select",
+                    SyntaxKind.GroupClause => "GroupBy",
+                    _ => throw ExceptionUtilities.UnexpectedValue(query.Body.SelectOrGroup.Kind()),
+                };
             }
         }
 
@@ -772,13 +767,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundBlock CreateLambdaBlockForQueryClause(ExpressionSyntax expression, BoundExpression result, BindingDiagnosticBag diagnostics)
         {
-            var locals = this.GetDeclaredLocalsForScope(expression);
-            if (locals.Any())
-            {
-                CheckFeatureAvailability(expression, MessageID.IDS_FeatureExpressionVariablesInQueriesAndInitializers, diagnostics, locals[0].GetFirstLocation());
-            }
-
-            return this.CreateBlockFromExpression(expression, locals, RefKind.None, result, expression, diagnostics);
+            return this.CreateBlockFromExpression(expression, this.GetDeclaredLocalsForScope(expression), RefKind.None, result, expression, diagnostics);
         }
 
         private BoundQueryClause MakeQueryClause(
@@ -882,7 +871,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #endif
             )
         {
-            return MakeQueryInvocation(node, receiver, methodName, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), ImmutableArray.Create(arg), diagnostics
+            return MakeQueryInvocation(node, receiver, methodName, default, default, ImmutableArray.Create(arg), diagnostics
 #if DEBUG
                 , expectedMethodName
 #endif
@@ -895,7 +884,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #endif
             )
         {
-            return MakeQueryInvocation(node, receiver, methodName, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), args, diagnostics
+            return MakeQueryInvocation(node, receiver, methodName, default, default, args, diagnostics
 #if DEBUG
                 , expectedMethodName
 #endif
@@ -930,8 +919,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 ultimateReceiver = ((BoundQueryClause)ultimateReceiver).Value;
             }
-            Debug.Assert(receiver.Type is object || ultimateReceiver.Type is null);
-            if ((object?)ultimateReceiver.Type == null)
+            Debug.Assert(receiver.Type is not null || ultimateReceiver.Type is null);
+            if (ultimateReceiver.Type is null)
             {
                 Debug.Assert(ultimateReceiver.Kind != BoundKind.MethodGroup || ultimateReceiver.HasAnyErrors);
 

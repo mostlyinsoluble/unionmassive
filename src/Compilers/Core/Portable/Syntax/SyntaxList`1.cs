@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (this.Count == 0)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
                 else
                 {
@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (this.Count == 0)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
                 else
                 {
@@ -345,7 +345,7 @@ namespace Microsoft.CodeAnalysis
         {
             if (items.Count == 0)
             {
-                return default(SyntaxList<TNode>);
+                return default;
             }
 
             var newGreen = GreenNode.CreateList(items, static n => n.Green);

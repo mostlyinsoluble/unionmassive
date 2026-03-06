@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.PointerDereference,
                 name: fullName ?? $"*{parent.Name}",
-                typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                typeDeclaringMemberAndInfo: default,
                 declaredTypeAndInfo: elementTypeAndInfo,
                 useDebuggerDisplay: false,
                 value: value,

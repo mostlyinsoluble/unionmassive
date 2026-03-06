@@ -27,15 +27,12 @@ internal sealed class CSharpImportAdder() : ImportAdderService
 {
     protected override INamespaceSymbol? GetExplicitNamespaceSymbol(SyntaxNode node, SemanticModel model)
     {
-        switch (node)
+        return node switch
         {
-            case QualifiedNameSyntax name:
-                return GetExplicitNamespaceSymbol(name, name.Left, model);
-            case MemberAccessExpressionSyntax memberAccess:
-                return GetExplicitNamespaceSymbol(memberAccess, memberAccess.Expression, model);
-        }
-
-        return null;
+            QualifiedNameSyntax name => GetExplicitNamespaceSymbol(name, name.Left, model),
+            MemberAccessExpressionSyntax memberAccess => GetExplicitNamespaceSymbol(memberAccess, memberAccess.Expression, model),
+            _ => null,
+        };
     }
 
     protected override Task AddPotentiallyConflictingImportsAsync(

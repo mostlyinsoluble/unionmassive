@@ -16,7 +16,7 @@ namespace Roslyn.Test.Utilities
     {
         private readonly HashSet<string> _existingFullPaths;
 
-        public VirtualizedRelativePathResolver(IEnumerable<string> existingFullPaths, string baseDirectory = null, ImmutableArray<string> searchPaths = default(ImmutableArray<string>))
+        public VirtualizedRelativePathResolver(IEnumerable<string> existingFullPaths, string baseDirectory = null, ImmutableArray<string> searchPaths = default)
             : base(searchPaths.NullToEmpty(), baseDirectory)
         {
             _existingFullPaths = new HashSet<string>(existingFullPaths, StringComparer.Ordinal);

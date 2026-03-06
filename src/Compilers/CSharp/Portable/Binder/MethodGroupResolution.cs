@@ -43,11 +43,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             LookupResultKind resultKind,
             ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
         {
-            Debug.Assert((methodGroup != null) || ((object)otherSymbol != null) || analyzedArguments == null); // analyzedArguments is only set if we have some result
+            Debug.Assert((methodGroup != null) || (otherSymbol is not null) || analyzedArguments == null); // analyzedArguments is only set if we have some result
             Debug.Assert((methodGroup == null) || (methodGroup.Methods.Count > 0));
-            Debug.Assert((methodGroup == null) || ((object)otherSymbol == null));
+            Debug.Assert((methodGroup == null) || (otherSymbol is null));
             // Methods should be represented in the method group.
-            Debug.Assert(((object)otherSymbol == null) || (otherSymbol.Kind != SymbolKind.Method));
+            Debug.Assert((otherSymbol is null) || (otherSymbol.Kind != SymbolKind.Method));
             Debug.Assert(resultKind != LookupResultKind.Ambiguous); // HasAnyApplicableMethod is expecting Viable methods.
             Debug.Assert(!diagnostics.Diagnostics.IsDefault);
             Debug.Assert(!diagnostics.Dependencies.IsDefault);
@@ -62,7 +62,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public bool IsEmpty
         {
-            get { return (this.MethodGroup == null) && ((object)this.OtherSymbol == null); }
+            get { return (this.MethodGroup == null) && (this.OtherSymbol is null); }
         }
 
         public bool HasAnyErrors

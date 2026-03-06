@@ -14,8 +14,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
     Partial Friend Class VisualBasicSyntaxTreeFactoryService
         Inherits AbstractSyntaxTreeFactoryService
 
-        Private Shared ReadOnly _parseOptionsWithLatestLanguageVersion As VisualBasicParseOptions = VisualBasicParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest)
-
         <ImportingConstructor>
         <Obsolete(MefConstruction.ImportingConstructorMessage, True)>
         Public Sub New()
@@ -26,14 +24,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         End Function
 
         Public Overrides Function TryParsePdbParseOptions(metadata As IReadOnlyDictionary(Of String, String)) As ParseOptions
-            Dim langVersionString As String = Nothing
-            Dim langVersion As LanguageVersion = Nothing
-
-            If Not metadata.TryGetValue("language-version", langVersionString) OrElse
-                   Not TryParse(langVersionString, langVersion) Then
-                langVersion = LanguageVersion.[Default]
-            End If
-
             Dim defineString As String = Nothing
             If Not metadata.TryGetValue("define", defineString) Then
                 Return Nothing
@@ -45,7 +35,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Return Nothing
             End If
 
-            Return New VisualBasicParseOptions(languageVersion:=langVersion, preprocessorSymbols:=preprocessorSymbols)
+            Return New VisualBasicParseOptions(preprocessorSymbols:=preprocessorSymbols)
         End Function
 
         Public Overrides Function OptionsDifferOnlyByPreprocessorDirectives(options1 As ParseOptions, options2 As ParseOptions) As Boolean
@@ -55,10 +45,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             ' The easy way to figure out if these only differ by a single field is to update one with the preprocessor symbols of the
             ' other, and then do an equality check from there; this is future proofed if another value is ever added.
             Return vbOptions1.WithPreprocessorSymbols(vbOptions2.PreprocessorSymbols) = vbOptions2
-        End Function
-
-        Public Overloads Overrides Function GetDefaultParseOptionsWithLatestLanguageVersion() As ParseOptions
-            Return _parseOptionsWithLatestLanguageVersion
         End Function
 
         Public Overrides Function ParseSyntaxTree(filePath As String, options As ParseOptions, text As SourceText, cancellationToken As CancellationToken) As SyntaxTree

@@ -575,10 +575,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
 
             If foundComment Then
                 Dim comment As SyntaxTrivia = ScanComment()
-                If Not CheckFeatureAvailability(Feature.CommentsAfterLineContinuation) Then
-                    comment = comment.WithDiagnostics({ErrorFactory.ErrorInfo(ERRID.ERR_CommentsAfterLineContinuationNotAvailable1,
-                        New VisualBasicRequiredLanguageVersion(Feature.CommentsAfterLineContinuation.GetLanguageVersion()))})
-                End If
                 tList.Add(comment)
                 ' Need to call CanGet here to prevent Peek reading past EndOfBuffer. This can happen when file ends with comment but no New Line.
                 If CanGet() Then
@@ -2122,16 +2118,7 @@ FullWidthRepeat2:
 
             If UnderscoreInWrongPlace Then
                 result = DirectCast(result.AddError(ErrorFactory.ErrorInfo(ERRID.ERR_Syntax)), SyntaxToken)
-            ElseIf LeadingUnderscoreUsed Then
-                result = CheckFeatureAvailability(result, Feature.LeadingDigitSeparator)
-            ElseIf UnderscoreUsed Then
-                result = CheckFeatureAvailability(result, Feature.DigitSeparators)
             End If
-
-            If base = LiteralBase.Binary Then
-                result = CheckFeatureAvailability(result, Feature.BinaryLiterals)
-            End If
-
             Return result
         End Function
 
@@ -2477,12 +2464,7 @@ FullWidthRepeat2:
             ' // Ok, we've got a valid value. Now make into an i8.
 
             If Not dateIsInvalid Then
-                Dim DateTimeValue As New DateTime(YearValue, MonthValue, DayValue, HourValue, MinuteValue, SecondValue)
-                Dim result = MakeDateLiteralToken(precedingTrivia, DateTimeValue, here)
-
-                If yearIsFirst Then
-                    result = Parser.CheckFeatureAvailability(Feature.YearFirstDateLiterals, result, Options.LanguageVersion)
-                End If
+                Dim result = MakeDateLiteralToken(precedingTrivia, New Date(YearValue, MonthValue, DayValue, HourValue, MinuteValue, SecondValue), here)
 
                 Return result
             Else
@@ -2581,10 +2563,6 @@ baddate:
                     ' NATURAL TEXT, NO INTERNING
                     Dim result As SyntaxToken = SyntaxFactory.StringLiteralToken(spelling, GetScratchText(scratch), precedingTrivia.Node, followingTrivia.Node)
 
-                    If haveNewLine Then
-                        result = Parser.CheckFeatureAvailability(Feature.MultilineStringLiterals, result, Options.LanguageVersion)
-                    End If
-
                     Return result
 
                 ElseIf IsNewLine(ch) Then
@@ -2681,33 +2659,6 @@ baddate:
 
         Private Function IsIdentifierStartCharacter(c As Char) As Boolean
             Return (_isScanningForExpressionCompiler AndAlso c = "$"c) OrElse SyntaxFacts.IsIdentifierStartCharacter(c)
-        End Function
-
-        Private Function CheckFeatureAvailability(token As SyntaxToken, feature As Feature) As SyntaxToken
-            If CheckFeatureAvailability(feature) Then
-                Return token
-            End If
-            Dim requiredVersion = New VisualBasicRequiredLanguageVersion(feature.GetLanguageVersion())
-            Dim errorInfo = ErrorFactory.ErrorInfo(ERRID.ERR_LanguageVersion,
-                                                   _options.LanguageVersion.GetErrorName(),
-                                                   ErrorFactory.ErrorInfo(feature.GetResourceId()),
-                                                   requiredVersion)
-            Return DirectCast(token.AddError(errorInfo), SyntaxToken)
-        End Function
-
-        Friend Function CheckFeatureAvailability(feature As Feature) As Boolean
-            Return CheckFeatureAvailability(Me.Options, feature)
-        End Function
-
-        Private Shared Function CheckFeatureAvailability(parseOptions As VisualBasicParseOptions, feature As Feature) As Boolean
-            Dim featureFlag = feature.GetFeatureFlag()
-            If featureFlag IsNot Nothing Then
-                Return parseOptions.HasFeature(featureFlag)
-            End If
-
-            Dim required = feature.GetLanguageVersion()
-            Dim actual = parseOptions.LanguageVersion
-            Return CInt(required) <= CInt(actual)
         End Function
     End Class
 End Namespace

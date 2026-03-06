@@ -21,11 +21,7 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
   </ItemGroup>
   <Choose>
-    <When Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-      </ItemGroup>
-    </When>
+    <When Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <Otherwise>
       <ItemGroup>
         <ProjectReference Include="..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
@@ -41,12 +37,15 @@
     <AdditionalFiles Include="PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
+  </ItemGroup>
 
   <Import Project="..\..\Dependencies\Collections\Microsoft.CodeAnalysis.Collections.projitems" Label="Shared" />
   <Import Project="..\..\Dependencies\PooledObjects\Microsoft.CodeAnalysis.PooledObjects.projitems" Label="Shared" />
   <Import Project="..\..\Dependencies\Threading\Microsoft.CodeAnalysis.Threading.projitems" Label="Shared" />
   <Import Project="..\..\Dependencies\Contracts\Microsoft.CodeAnalysis.Contracts.projitems" Label="Shared" />
 
-  <Import Project="..\..\Workspaces\SharedUtilitiesAndExtensions\Compiler\Extensions\Microsoft.CodeAnalysis.Extensions.projitems" Label="Shared"/>
+  <Import Project="..\..\Workspaces\SharedUtilitiesAndExtensions\Compiler\Extensions\Microsoft.CodeAnalysis.Extensions.projitems" Label="Shared" />
   <Import Project="..\..\Workspaces\SharedUtilitiesAndExtensions\Compiler\Core\CompilerExtensions.projitems" Label="Shared" />
 </Project>

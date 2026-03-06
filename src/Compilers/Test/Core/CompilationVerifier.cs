@@ -933,7 +933,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                         moduleData = new ModuleData(identity,
                                                     OutputKind.DynamicallyLinkedLibrary,
                                                     bytes,
-                                                    pdb: default(ImmutableArray<byte>),
+                                                    pdb: default,
                                                     inMemoryModule: true,
                                                     isCorLib);
                     }
@@ -941,7 +941,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     {
                         moduleData = new ModuleData(module.Name,
                                                     bytes,
-                                                    pdb: default(ImmutableArray<byte>),
+                                                    pdb: default,
                                                     inMemoryModule: true,
                                                     isCorLib: false);
                     }
@@ -982,7 +982,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     var moduleData = new ModuleData(identity,
                                                     OutputKind.DynamicallyLinkedLibrary,
                                                     emitData.Value.Assembly,
-                                                    pdb: default(ImmutableArray<byte>),
+                                                    pdb: default,
                                                     inMemoryModule: true,
                                                     isCorLib: corLibIdentity == identity);
                     fullNameSet.Add(moduleData.Id.FullName);

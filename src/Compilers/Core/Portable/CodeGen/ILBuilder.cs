@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
             this.LocalSlotManager = localSlotManager;
 
             _diagnostics = diagnostics;
-            _emitState = default(EmitState);
+            _emitState = default;
             _scopeManager = new LocalScopeManager();
 
             leaderBlock = _currentBlock = _scopeManager.CreateBlock(this);

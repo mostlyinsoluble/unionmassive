@@ -198,9 +198,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                             rewrittenReceiver,
                             property,
                             ImmutableArray<BoundExpression>.Empty,
-                            default(ImmutableArray<RefKind>),
+                            default,
                             false,
-                            default(ImmutableArray<int>),
+                            default,
                             rewrittenRight,
                             used,
                             assignmentKind);
@@ -393,7 +393,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // setter, and restore the temporary after the setter, so the
                 // assignment can be used as an embedded expression.
                 TypeSymbol? exprType = rewrittenRight.Type;
-                Debug.Assert(exprType is object);
+                Debug.Assert(exprType is not null);
 
                 LocalSymbol rhsTemp = _factory.SynthesizedLocal(exprType);
 

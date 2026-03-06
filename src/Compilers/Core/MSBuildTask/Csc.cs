@@ -688,10 +688,8 @@ namespace Microsoft.CodeAnalysis.BuildTasks
             }
             finally
             {
-                int errorCode;
-                string errorMessage;
 
-                success = cscHostObject.EndInitialization(out errorMessage, out errorCode);
+                success = cscHostObject.EndInitialization(out string errorMessage, out int errorCode);
 
                 if (HostCompilerSupportsAllParameters)
                 {

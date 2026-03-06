@@ -91,13 +91,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             // "traditional" switch statements and "pattern-based" switch statements.  We simulate that behavior
             // by testing to see if this switch would have been handled under the old rules by the old compiler.
 
-            // If we are in a recent enough language version, we treat the switch as a fully pattern-based switch
-            // for the purposes of flow analysis.
-            if (compilation.LanguageVersion >= MessageID.IDS_FeatureRecursivePatterns.RequiredVersion())
-            {
-                return false;
-            }
-
             if (!node.Expression.Type.IsValidV6SwitchGoverningType())
             {
                 return false;

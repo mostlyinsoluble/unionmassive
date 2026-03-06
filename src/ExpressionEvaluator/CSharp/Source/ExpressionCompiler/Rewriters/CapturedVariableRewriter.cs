@@ -128,8 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         private DisplayClassVariable GetVariable(string name)
         {
-            DisplayClassVariable variable;
-            _displayClassVariables.TryGetValue(name, out variable);
+            _displayClassVariables.TryGetValue(name, out var variable);
             return variable;
         }
     }

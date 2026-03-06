@@ -294,7 +294,7 @@ namespace Microsoft.CodeAnalysis.SymbolDisplay
                 // If we had 0 as the value, and there's an enum value equal to 0, then use that.
                 var zeroField = constantValueULong == 0
                     ? EnumField.FindValue(allFieldsAndValues, 0)
-                    : default(EnumField);
+                    : default;
                 if (!zeroField.IsDefault)
                 {
                     Debug.Assert(zeroField.IdentityOpt is not null);

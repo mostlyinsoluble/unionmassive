@@ -248,38 +248,27 @@ namespace Microsoft.CodeAnalysis
         // internal for testing purposes.
         internal static ReportDiagnostic MapSeverityToReport(DiagnosticSeverity severity)
         {
-            switch (severity)
+            return severity switch
             {
-                case DiagnosticSeverity.Hidden:
-                    return ReportDiagnostic.Hidden;
-                case DiagnosticSeverity.Info:
-                    return ReportDiagnostic.Info;
-                case DiagnosticSeverity.Warning:
-                    return ReportDiagnostic.Warn;
-                case DiagnosticSeverity.Error:
-                    return ReportDiagnostic.Error;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(severity);
-            }
+                DiagnosticSeverity.Hidden => ReportDiagnostic.Hidden,
+                DiagnosticSeverity.Info => ReportDiagnostic.Info,
+                DiagnosticSeverity.Warning => ReportDiagnostic.Warn,
+                DiagnosticSeverity.Error => ReportDiagnostic.Error,
+                _ => throw ExceptionUtilities.UnexpectedValue(severity),
+            };
         }
 
         internal static DiagnosticSeverity? MapReportToSeverity(ReportDiagnostic severity)
         {
-            switch (severity)
+            return severity switch
             {
-                case ReportDiagnostic.Error:
-                    return DiagnosticSeverity.Error;
-                case ReportDiagnostic.Warn:
-                    return DiagnosticSeverity.Warning;
-                case ReportDiagnostic.Info:
-                    return DiagnosticSeverity.Info;
-                case ReportDiagnostic.Hidden:
-                    return DiagnosticSeverity.Hidden;
-                case ReportDiagnostic.Suppress:
-                    return null;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(severity);
-            }
+                ReportDiagnostic.Error => (DiagnosticSeverity?)DiagnosticSeverity.Error,
+                ReportDiagnostic.Warn => (DiagnosticSeverity?)DiagnosticSeverity.Warning,
+                ReportDiagnostic.Info => (DiagnosticSeverity?)DiagnosticSeverity.Info,
+                ReportDiagnostic.Hidden => (DiagnosticSeverity?)DiagnosticSeverity.Hidden,
+                ReportDiagnostic.Suppress => null,
+                _ => throw ExceptionUtilities.UnexpectedValue(severity),
+            };
         }
 
         /// <summary>

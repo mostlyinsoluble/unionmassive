@@ -77,18 +77,6 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             var sourceFiles = Compiler.Arguments.SourceFiles;
 
-            if (Compiler.Arguments.DisplayVersion)
-            {
-                Compiler.PrintVersion(Console.Out);
-                return 0;
-            }
-
-            if (Compiler.Arguments.DisplayLangVersions)
-            {
-                Compiler.PrintLangVersions(Console.Out);
-                return 0;
-            }
-
             if (sourceFiles.IsEmpty && Compiler.Arguments.DisplayLogo)
             {
                 Compiler.PrintLogo(Console.Out);

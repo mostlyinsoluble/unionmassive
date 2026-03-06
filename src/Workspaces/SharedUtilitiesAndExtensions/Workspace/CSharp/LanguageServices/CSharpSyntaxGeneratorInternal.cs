@@ -270,27 +270,14 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
             return SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression);
         }
 
-        switch (type.SpecialType)
+        return type.SpecialType switch
         {
-            case SpecialType.System_Boolean:
-                return SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
-            case SpecialType.System_SByte:
-            case SpecialType.System_Byte:
-            case SpecialType.System_Int16:
-            case SpecialType.System_UInt16:
-            case SpecialType.System_Int32:
-            case SpecialType.System_UInt32:
-            case SpecialType.System_Int64:
-            case SpecialType.System_UInt64:
-            case SpecialType.System_Decimal:
-            case SpecialType.System_Single:
-            case SpecialType.System_Double:
-                return SyntaxFactory.LiteralExpression(
-                    SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal("0", 0));
-        }
-
-        // Default to a "default(<typename>)" expression.
-        return DefaultExpression(type.GenerateTypeSyntax());
+            SpecialType.System_Boolean => SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression),
+            SpecialType.System_SByte or SpecialType.System_Byte or SpecialType.System_Int16 or SpecialType.System_UInt16 or SpecialType.System_Int32 or SpecialType.System_UInt32 or SpecialType.System_Int64 or SpecialType.System_UInt64 or SpecialType.System_Decimal or SpecialType.System_Single or SpecialType.System_Double => SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal("0", 0)),
+            // Default to a "default(<typename>)" expression.
+            _ => DefaultExpression(type.GenerateTypeSyntax()),
+        };
     }
 
     public override SyntaxNode TypeExpression(ITypeSymbol typeSymbol, RefKind refKind)

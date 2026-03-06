@@ -298,11 +298,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override (CSharpAttributeData?, BoundAttribute?) EarlyDecodeWellKnownAttribute(ref EarlyDecodeWellKnownAttributeArguments<EarlyWellKnownAttributeBinder, NamedTypeSymbol, AttributeSyntax, AttributeLocation> arguments)
         {
-            CSharpAttributeData? attributeData;
-            BoundAttribute? boundAttribute;
-            ObsoleteAttributeData? obsoleteData;
 
-            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out attributeData, out boundAttribute, out obsoleteData))
+            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out CSharpAttributeData? attributeData, out BoundAttribute? boundAttribute, out ObsoleteAttributeData? obsoleteData))
             {
                 if (obsoleteData != null)
                 {
@@ -371,7 +368,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.RequiresUnsafeAttribute))
             {
-                if (ContainingModule.UseUpdatedMemorySafetyRules) MessageID.IDS_FeatureUnsafeEvolution.CheckFeatureAvailability(diagnostics, arguments.AttributeSyntaxOpt!);
                 arguments.GetOrCreateData<CommonEventWellKnownAttributeData>().HasRequiresUnsafeAttribute = true;
             }
         }
@@ -388,7 +384,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, compilation.SynthesizeDynamicAttribute(type.Type, type.CustomModifiers.Length));
             }
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(type.Type))
+            if (type.Type.ContainsNativeIntegerWrapperType())
             {
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeNativeIntegerAttribute(this, type.Type));
             }
@@ -601,8 +597,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                                         modifiers, defaultAccess, allowedModifiers, location, diagnostics, out modifierErrors,
                                                                         out hasExplicitAccessModifier);
 
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, explicitInterfaceImplementation, location, diagnostics);
-
             this.CheckUnsafeModifier(mods, diagnostics);
 
             ModifierUtils.ReportDefaultInterfaceImplementationModifiers(!isFieldLike, mods,
@@ -721,11 +715,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_NewVirtualInSealed, location, this, ContainingType);
             }
 
-            if (IsPartial)
-            {
-                ModifierUtils.CheckFeatureAvailabilityForPartialEventsAndConstructors(_location, diagnostics);
-            }
-
             diagnostics.Add(location, useSiteInfo);
         }
 
@@ -737,7 +726,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected static void CopyEventCustomModifiers(EventSymbol eventWithCustomModifiers, ref TypeWithAnnotations type, AssemblySymbol containingAssembly)
         {
-            RoslynDebug.Assert((object)eventWithCustomModifiers != null);
+            RoslynDebug.Assert(eventWithCustomModifiers is not null);
 
             TypeSymbol overriddenEventType = eventWithCustomModifiers.Type;
 
@@ -791,7 +780,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // If there could be more than one, we'd have to worry about conflicts, but that's impossible for source events.
                 Debug.Assert(explicitInterfaceImplementations.Length == 1);
                 // Don't have to worry about conflicting with the override rule, since explicit impls are never overrides (in source).
-                Debug.Assert((object?)this.OverriddenEvent == null);
+                Debug.Assert(this.OverriddenEvent is null);
 
                 return explicitInterfaceImplementations[0].IsWindowsRuntimeEvent;
             }
@@ -805,7 +794,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // If you override an event, then you're a WinRT event if and only if it's a WinRT event.
             EventSymbol? overriddenEvent = this.OverriddenEvent;
-            if ((object?)overriddenEvent != null)
+            if (overriddenEvent is not null)
             {
                 return overriddenEvent.IsWindowsRuntimeEvent;
             }
@@ -874,7 +863,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             this.CheckModifiersAndType(diagnostics);
             this.Type.CheckAllConstraints(compilation, conversions, location, diagnostics);
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(Type))
+            if (Type.ContainsNativeIntegerWrapperType())
             {
                 compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
             }
@@ -888,13 +877,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (NeedsSynthesizedRequiresUnsafeAttribute)
             {
                 Debug.Assert(CallerUnsafeMode == CallerUnsafeMode.Explicit);
-                MessageID.IDS_FeatureUnsafeEvolution.CheckFeatureAvailability(diagnostics, compilation, location);
                 Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_RequiresUnsafeAttribute__ctor, diagnostics, location);
             }
 
             EventSymbol? explicitlyImplementedEvent = ExplicitInterfaceImplementations.FirstOrDefault();
 
-            if (explicitlyImplementedEvent is object)
+            if (explicitlyImplementedEvent is not null)
             {
                 CheckExplicitImplementationAccessor(AddMethod, explicitlyImplementedEvent.AddMethod, explicitlyImplementedEvent, diagnostics);
                 CheckExplicitImplementationAccessor(RemoveMethod, explicitlyImplementedEvent.RemoveMethod, explicitlyImplementedEvent, diagnostics);
@@ -908,7 +896,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void CheckExplicitImplementationAccessor(MethodSymbol? thisAccessor, MethodSymbol? otherAccessor, EventSymbol explicitlyImplementedEvent, BindingDiagnosticBag diagnostics)
         {
-            if (!otherAccessor.IsImplementable() && thisAccessor is object)
+            if (!otherAccessor.IsImplementable() && thisAccessor is not null)
             {
                 diagnostics.Add(ErrorCode.ERR_ExplicitPropertyAddingAccessor, thisAccessor.GetFirstLocation(), thisAccessor, explicitlyImplementedEvent);
             }

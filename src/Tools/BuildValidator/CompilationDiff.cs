@@ -74,7 +74,7 @@ namespace BuildValidator
             get
             {
                 EnsureRebuildResult(RebuildResult.MiscError);
-                Debug.Assert(_message is object);
+                Debug.Assert(_message is not null);
                 return _message;
             }
         }
@@ -233,7 +233,7 @@ namespace BuildValidator
 
             void writeMissingReferences()
             {
-                Debug.Assert(_localReferenceResolver is object);
+                Debug.Assert(_localReferenceResolver is not null);
                 using var writer = new StreamWriter(Path.Combine(debugPath, "references.txt"), append: false);
                 foreach (var info in _references)
                 {
@@ -255,11 +255,11 @@ namespace BuildValidator
             void writeBinaryDiffArtifacts()
             {
                 Debug.Assert(Result == RebuildResult.BinaryDifference);
-                Debug.Assert(_originalPortableExecutableBytes is object);
-                Debug.Assert(_originalPdbReader is object);
-                Debug.Assert(_rebuildPortableExecutableBytes is object);
-                Debug.Assert(_rebuildPdbReader is object);
-                Debug.Assert(_rebuildCompilation is object);
+                Debug.Assert(_originalPortableExecutableBytes is not null);
+                Debug.Assert(_originalPdbReader is not null);
+                Debug.Assert(_rebuildPortableExecutableBytes is not null);
+                Debug.Assert(_rebuildPdbReader is not null);
+                Debug.Assert(_rebuildCompilation is not null);
 
                 var originalPeReader = new PEReader(_originalPortableExecutableBytes.ToImmutableArray());
                 var rebuildPeReader = new PEReader(_rebuildPortableExecutableBytes.ToImmutableArray());

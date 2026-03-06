@@ -186,9 +186,7 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
                                         {
                                             IOperation advanceExpression = ((IExpressionStatementOperation)advance).Operation;
 
-                                            Optional<object> advanceIncrementOpt;
-                                            BinaryOperatorKind? advanceOperationCode;
-                                            GetOperationKindAndValue(testVariable, advanceExpression, out advanceOperationCode, out advanceIncrementOpt);
+                                            GetOperationKindAndValue(testVariable, advanceExpression, out BinaryOperatorKind? advanceOperationCode, out Optional<object> advanceIncrementOpt);
 
                                             if (advanceIncrementOpt.HasValue && advanceOperationCode.HasValue)
                                             {

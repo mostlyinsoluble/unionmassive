@@ -30,7 +30,7 @@ static ReplayOptions ParseOptions(string[] args)
         { "b|binlogPath=", "The binary log to replay", v => binlogPath = v },
         { "o|outputDirectory=", "The directory to output the build results", v => outputDirectory = v },
         { "m|maxParallel=", "The maximum number of parallel builds", (int v) => maxParallel = v },
-        { "w|wait", "Wait for a key press after starting the server", o => wait = o is object },
+        { "w|wait", "Wait for a key press after starting the server", o => wait = o is not null },
         { "i|iterations=", "Perform the compilation multiple times", (int v) => iterations = v },
     };
 

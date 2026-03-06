@@ -26,22 +26,22 @@ namespace BuildBoss
         public override string ToString()
         {
             var element = new XElement("InternalsVisibleTo");
-            if (TargetAssembly is object)
+            if (TargetAssembly is not null)
             {
                 element.Add(new XAttribute("Include", TargetAssembly));
             }
 
-            if (PublicKey is object)
+            if (PublicKey is not null)
             {
                 element.Add(new XAttribute("Key", PublicKey));
             }
 
-            if (LoadsWithinVisualStudio is object)
+            if (LoadsWithinVisualStudio is not null)
             {
                 element.Add(new XAttribute("LoadsWithinVisualStudio", LoadsWithinVisualStudio));
             }
 
-            if (WorkItem is object)
+            if (WorkItem is not null)
             {
                 element.Add(new XAttribute("WorkItem", WorkItem));
             }

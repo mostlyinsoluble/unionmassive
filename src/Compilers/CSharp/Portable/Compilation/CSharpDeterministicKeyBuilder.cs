@@ -46,9 +46,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             base.WriteParseOptionsCore(writer, parseOptions);
 
-            writer.Write("languageVersion", csharpOptions.LanguageVersion);
-            writer.Write("specifiedLanguageVersion", csharpOptions.SpecifiedLanguageVersion);
-
             writer.WriteKey("preprocessorSymbols");
             writer.WriteArrayStart();
 

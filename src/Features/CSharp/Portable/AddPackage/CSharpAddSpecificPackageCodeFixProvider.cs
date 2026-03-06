@@ -29,11 +29,10 @@ internal sealed class CSharpAddSpecificPackageCodeFixProvider : AbstractAddSpeci
 
     protected override string GetAssemblyName(string id)
     {
-        switch (id)
+        return id switch
         {
-            case CS8179: return "System.ValueTuple";
-        }
-
-        return null;
+            CS8179 => "System.ValueTuple",
+            _ => null,
+        };
     }
 }

@@ -206,13 +206,9 @@ namespace Microsoft.CodeAnalysis
             bool newIsToken = _newNodes.Peek().IsToken;
 
             // look for exact match
-            int indexOfOldInNew;
-            int similarityOfOldInNew;
-            int indexOfNewInOld;
-            int similarityOfNewInOld;
 
-            FindBestMatch(_newNodes, _oldNodes.Peek(), out indexOfOldInNew, out similarityOfOldInNew);
-            FindBestMatch(_oldNodes, _newNodes.Peek(), out indexOfNewInOld, out similarityOfNewInOld);
+            FindBestMatch(_newNodes, _oldNodes.Peek(), out int indexOfOldInNew, out int similarityOfOldInNew);
+            FindBestMatch(_oldNodes, _newNodes.Peek(), out int indexOfNewInOld, out int similarityOfNewInOld);
 
             if (indexOfOldInNew == 0 && indexOfNewInOld == 0)
             {
@@ -249,9 +245,7 @@ namespace Microsoft.CodeAnalysis
                     if (indexOfOldInNew > 0)
                     {
                         // look ahead to see if the old node also appears again later in its own list
-                        int indexOfOldInOld;
-                        int similarityOfOldInOld;
-                        FindBestMatch(_oldNodes, _oldNodes.Peek(), out indexOfOldInOld, out similarityOfOldInOld, 1);
+                        FindBestMatch(_oldNodes, _oldNodes.Peek(), out int indexOfOldInOld, out int similarityOfOldInOld, 1);
 
                         // don't declare an insert if the node also appeared later in the original list
                         var oldHasSimilarSibling = (indexOfOldInOld >= 1 && similarityOfOldInOld >= similarityOfOldInNew);
@@ -442,19 +436,19 @@ namespace Microsoft.CodeAnalysis
 
                 foreach (var tr in node1.GetLeadingTrivia())
                 {
-                    Debug.Assert(tr.UnderlyingNode is object);
+                    Debug.Assert(tr.UnderlyingNode is not null);
                     _nodeSimilaritySet.Add(tr.UnderlyingNode);
                 }
 
                 foreach (var tr in node1.GetTrailingTrivia())
                 {
-                    Debug.Assert(tr.UnderlyingNode is object);
+                    Debug.Assert(tr.UnderlyingNode is not null);
                     _nodeSimilaritySet.Add(tr.UnderlyingNode);
                 }
 
                 foreach (var tr in node2.GetLeadingTrivia())
                 {
-                    Debug.Assert(tr.UnderlyingNode is object);
+                    Debug.Assert(tr.UnderlyingNode is not null);
                     if (_nodeSimilaritySet.Contains(tr.UnderlyingNode))
                     {
                         w += tr.FullSpan.Length;
@@ -463,7 +457,7 @@ namespace Microsoft.CodeAnalysis
 
                 foreach (var tr in node2.GetTrailingTrivia())
                 {
-                    Debug.Assert(tr.UnderlyingNode is object);
+                    Debug.Assert(tr.UnderlyingNode is not null);
                     if (_nodeSimilaritySet.Contains(tr.UnderlyingNode))
                     {
                         w += tr.FullSpan.Length;
@@ -474,7 +468,7 @@ namespace Microsoft.CodeAnalysis
             {
                 foreach (var n1 in node1.ChildNodesAndTokens())
                 {
-                    Debug.Assert(n1.UnderlyingNode is object);
+                    Debug.Assert(n1.UnderlyingNode is not null);
                     _nodeSimilaritySet.Add(n1.UnderlyingNode);
 
                     if (n1.IsToken)
@@ -485,7 +479,7 @@ namespace Microsoft.CodeAnalysis
 
                 foreach (var n2 in node2.ChildNodesAndTokens())
                 {
-                    Debug.Assert(n2.UnderlyingNode is object);
+                    Debug.Assert(n2.UnderlyingNode is not null);
                     if (_nodeSimilaritySet.Contains(n2.UnderlyingNode))
                     {
                         w += n2.FullSpan.Length;
@@ -753,9 +747,7 @@ namespace Microsoft.CodeAnalysis
                     CopyText(cr.OldNodes, oldText);
                     CopyText(cr.NewNodes, newText);
 
-                    int commonLeadingCount;
-                    int commonTrailingCount;
-                    GetCommonEdgeLengths(oldText, newText, out commonLeadingCount, out commonTrailingCount);
+                    GetCommonEdgeLengths(oldText, newText, out int commonLeadingCount, out int commonTrailingCount);
 
                     // did we have any common leading or trailing characters between the strings?
                     if (commonLeadingCount > 0 || commonTrailingCount > 0)

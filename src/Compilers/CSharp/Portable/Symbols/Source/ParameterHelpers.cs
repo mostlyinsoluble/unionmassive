@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             where TOwningSymbol : Symbol
         {
             Debug.Assert(!parsingFunctionPointer || owner is FunctionPointerMethodSymbol);
-            arglistToken = default(SyntaxToken);
+            arglistToken = default;
 
             int parameterIndex = 0;
             int firstDefault = -1;
@@ -208,7 +208,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (!parsingFunctionPointer)
             {
                 var methodOwner = owner as MethodSymbol;
-                var typeParameters = (object?)methodOwner != null ?
+                var typeParameters = methodOwner is not null ?
                     methodOwner.TypeParameters :
                     [];
 
@@ -225,8 +225,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 Debug.Assert(methodOwner?.MethodKind != MethodKind.LambdaMethod);
-                bool allowShadowingNames = withTypeParametersBinder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions) &&
-                    methodOwner?.MethodKind == MethodKind.LocalFunction;
+                bool allowShadowingNames = methodOwner?.MethodKind == MethodKind.LocalFunction;
 
                 withTypeParametersBinder.ValidateParameterNameConflicts(typeParameters, parametersForNameConflict, allowShadowingNames, diagnostics);
             }
@@ -383,48 +382,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (parameters.LastOrDefault(static (p) => p.IsParamsCollection) is { } parameter)
             {
                 compilation.EnsureParamCollectionAttributeExists(diagnostics, GetParameterLocation(parameter), modifyCompilation);
-            }
-        }
-
-        internal static void EnsureNativeIntegerAttributeExists(PEModuleBuilder moduleBuilder, ImmutableArray<ParameterSymbol> parameters)
-        {
-            Debug.Assert(moduleBuilder.Compilation.ShouldEmitNativeIntegerAttributes());
-            EnsureNativeIntegerAttributeExists(moduleBuilder.Compilation, parameters, diagnostics: null, modifyCompilation: false, moduleBuilder);
-        }
-
-        internal static void EnsureNativeIntegerAttributeExists(CSharpCompilation? compilation, ImmutableArray<ParameterSymbol> parameters, BindingDiagnosticBag diagnostics, bool modifyCompilation)
-        {
-            // These parameters might not come from a compilation (example: lambdas evaluated in EE).
-            // During rewriting, lowering will take care of flagging the appropriate PEModuleBuilder instead.
-            if (compilation == null)
-            {
-                return;
-            }
-
-            if (!compilation.ShouldEmitNativeIntegerAttributes())
-            {
-                return;
-            }
-
-            EnsureNativeIntegerAttributeExists(compilation, parameters, diagnostics, modifyCompilation, moduleBuilder: null);
-        }
-
-        private static void EnsureNativeIntegerAttributeExists(CSharpCompilation compilation, ImmutableArray<ParameterSymbol> parameters, BindingDiagnosticBag? diagnostics, bool modifyCompilation, PEModuleBuilder? moduleBuilder)
-        {
-            Debug.Assert(compilation.ShouldEmitNativeIntegerAttributes());
-            foreach (var parameter in parameters)
-            {
-                if (parameter.TypeWithAnnotations.ContainsNativeIntegerWrapperType())
-                {
-                    if (moduleBuilder is { })
-                    {
-                        moduleBuilder.EnsureNativeIntegerAttributeExists();
-                    }
-                    else
-                    {
-                        compilation.EnsureNativeIntegerAttributeExists(diagnostics, GetParameterLocation(parameter), modifyCompilation);
-                    }
-                }
             }
         }
 
@@ -614,12 +571,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (modifier.Kind())
                 {
                     case SyntaxKind.ThisKeyword:
-                        Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureExtensionMethod, diagnostics);
-
-                        if (seenRef || seenIn)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
 
                         // `this` on extension parameters was already reported elsewhere
                         if (parameterContext is ParameterContext.Lambda or ParameterContext.AnonymousMethod)
@@ -645,10 +596,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         break;
 
                     case SyntaxKind.RefKeyword:
-                        if (seenThis)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
 
                         if (seenRef)
                         {
@@ -735,8 +682,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                         if (parameterContext is ParameterContext.Lambda)
                         {
-                            MessageID.IDS_FeatureLambdaParamsArray.CheckFeatureAvailability(diagnostics, modifier);
-
                             if (parameter is ParameterSyntax { Type: null, Identifier.Text: var parameterIdentifier })
                             {
                                 diagnostics.Add(ErrorCode.ERR_ImplicitlyTypedParamsParameter, modifier, parameterIdentifier);
@@ -745,13 +690,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         break;
 
                     case SyntaxKind.InKeyword:
-                        Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureReadOnlyReferences, diagnostics);
-
-                        if (seenThis)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
-
                         if (seenIn)
                         {
                             addERR_DupParamMod(diagnostics, modifier);
@@ -774,9 +712,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                         break;
 
-                    case SyntaxKind.ScopedKeyword when parameterContext is not ParameterContext.FunctionPointer:
-                        ModifierUtils.CheckScopedModifierAvailability(parameter, modifier, diagnostics);
-
+                    case SyntaxKind.ScopedKeyword when parameterContext is not ParameterContext.FunctionPointer:                        
                         if (seenScoped)
                         {
                             addERR_DupParamMod(diagnostics, modifier);
@@ -812,7 +748,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                         else if (seenRef)
                         {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefReadonlyParameters, diagnostics);
                             seenReadonly = true;
                         }
                         break;
@@ -1011,7 +946,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 hasErrors = true;
             }
             else if (conversion.IsReference &&
-                (object)defaultExpression.Type != null &&
+                defaultExpression.Type is not null &&
                 defaultExpression.Type.SpecialType == SpecialType.System_String ||
                 conversion.IsBoxing)
             {
@@ -1125,7 +1060,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static MethodSymbol FindContainingGenericMethod(Symbol symbol)
         {
-            for (Symbol current = symbol; (object)current != null; current = current.ContainingSymbol)
+            for (Symbol current = symbol; current is not null; current = current.ContainingSymbol)
             {
                 if (current.Kind == SymbolKind.Method)
                 {
@@ -1144,9 +1079,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var refKind = RefKind.None;
             bool isScoped = false;
 
-            refnessKeyword = default(SyntaxToken);
-            paramsKeyword = default(SyntaxToken);
-            thisKeyword = default(SyntaxToken);
+            refnessKeyword = default;
+            paramsKeyword = default;
+            thisKeyword = default;
 
             foreach (var modifier in modifiers)
             {

@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\Core\Portable\Microsoft.CodeAnalysis.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="VBResources.resx" GenerateSource="true" Namespace="Microsoft.CodeAnalysis.VisualBasic" />
+    <EmbeddedResource Update="VBResources.resx" GenerateSource="false" Namespace="Microsoft.CodeAnalysis.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Symbols\EmbeddedSymbols\Embedded.vb" />
@@ -34,8 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BoundTree\BoundNodes.xml" />
-    <PublicAPI Include="PublicAPI.Shipped.txt" />
-    <PublicAPI Include="PublicAPI.Unshipped.txt" />
     <None Include="Generated\VisualBasic.Grammar.g4" />
     <None Include="Symbols\SymbolsAndNoPia.docx" />
     <None Include="Syntax\Syntax.xml" />

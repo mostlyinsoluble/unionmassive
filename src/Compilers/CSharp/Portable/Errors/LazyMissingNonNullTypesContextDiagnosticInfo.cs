@@ -63,14 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(questionToken.SyntaxTree != null);
             var tree = (CSharpSyntaxTree)questionToken.SyntaxTree;
 
-            const MessageID featureId = MessageID.IDS_FeatureNullableReferenceTypes;
-            var info = featureId.GetFeatureAvailabilityDiagnosticInfo(tree.Options);
-            if (info is object)
-            {
-                infos.Add(info);
-            }
-
-            if (info?.Severity != DiagnosticSeverity.Error && !binder.AreNullableAnnotationsEnabled(questionToken))
+            if (!binder.AreNullableAnnotationsEnabled(questionToken))
             {
                 var code = tree.IsGeneratedCode(binder.Compilation.Options.SyntaxTreeOptionsProvider, CancellationToken.None)
                     ? ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode
@@ -78,7 +71,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 infos.Add(new CSDiagnosticInfo(code));
             }
         }
-#nullable disable
 
         internal static bool IsNullableReference(TypeSymbol type)
             => type is null || !(type.IsValueType || type.IsErrorType());

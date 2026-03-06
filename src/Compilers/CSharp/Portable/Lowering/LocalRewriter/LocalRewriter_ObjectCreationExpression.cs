@@ -267,8 +267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(initializerExpression != null && !initializerExpression.HasErrors);
 
             // Create a temp and assign it with the object creation expression.
-            BoundAssignmentOperator boundAssignmentToTemp;
-            BoundLocal value = _factory.StoreToTemp(rewrittenExpression, out boundAssignmentToTemp, isKnownToReferToTempIfReferenceType: true);
+            BoundLocal value = _factory.StoreToTemp(rewrittenExpression, out BoundAssignmentOperator boundAssignmentToTemp, isKnownToReferToTempIfReferenceType: true);
 
             // Rewrite object/collection initializer expressions
             ArrayBuilder<BoundExpression>? dynamicSiteInitializers = null;
@@ -335,14 +334,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // if struct defines one.
             // Since we cannot know if T has a parameterless constructor statically, 
             // we must call Activator.CreateInstance unconditionally.
-            MethodSymbol? method;
 
-            if (!this.TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Activator__CreateInstance_T, out method))
+            if (!this.TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Activator__CreateInstance_T, out MethodSymbol? method))
             {
                 return new BoundDefaultExpression(syntax, type: typeParameter, hasErrors: true);
             }
 
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             method = method.Construct(ImmutableArray.Create<TypeSymbol>(typeParameter));
 
             method.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(_compilation, _compilation.Conversions, syntax.GetLocation(), _diagnostics));
@@ -353,13 +351,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown,
                 method,
                 ImmutableArray<BoundExpression>.Empty,
-                default(ImmutableArray<string?>),
-                default(ImmutableArray<RefKind>),
+                default,
+                default,
                 isDelegateCall: false,
                 expanded: false,
                 invokedAsExtensionMethod: false,
-                argsToParamsOpt: default(ImmutableArray<int>),
-                defaultArguments: default(BitVector),
+                argsToParamsOpt: default,
+                defaultArguments: default,
                 resultKind: LookupResultKind.Viable,
                 type: typeParameter);
 
@@ -415,7 +413,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var createInstance = _factory.WellKnownMethod(WellKnownMember.System_Activator__CreateInstance);
             BoundExpression rewrittenObjectCreation;
 
-            if ((object)createInstance != null)
+            if (createInstance is not null)
             {
                 BoundCall instance = _factory.Call(null, createInstance, callGetTypeFromCLSID);
                 Debug.Assert(instance.Type.IsObjectType());

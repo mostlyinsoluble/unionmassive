@@ -326,15 +326,11 @@ internal sealed partial class DiagnosticAnalyzerService
 
                 static bool IsUnusedImportDiagnostic(Diagnostic d)
                 {
-                    switch (d.Id)
+                    return d.Id switch
                     {
-                        case "CS8019":
-                        case "BC50000":
-                        case "BC50001":
-                            return true;
-                        default:
-                            return false;
-                    }
+                        "CS8019" or "BC50000" or "BC50001" => true,
+                        _ => false,
+                    };
                 }
 
                 // Exclude unused import diagnostics since they are never reported when a span is passed.

@@ -78,8 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             }
             else
             {
-                LocalSymbol lowercaseReturnValueAlias;
-                if (_lowercaseReturnValueAliases.TryGetValue(name, out lowercaseReturnValueAlias))
+                if (_lowercaseReturnValueAliases.TryGetValue(name, out var lowercaseReturnValueAlias))
                 {
                     result.MergeEqual(this.CheckViability(lowercaseReturnValueAlias, arity, options, null, diagnose, ref useSiteInfo, basesBeingResolved));
                 }

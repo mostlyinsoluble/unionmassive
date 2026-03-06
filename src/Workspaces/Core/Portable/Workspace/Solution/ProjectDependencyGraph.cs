@@ -489,7 +489,7 @@ public partial class ProjectDependencyGraph
         ImmutableHashSet<ProjectId> projectIds,
         ImmutableDictionary<ProjectId, ImmutableHashSet<ProjectId>> referencesMap)
     {
-        RoslynDebug.Assert(referencesMap is object);
+        RoslynDebug.Assert(referencesMap is not null);
 
         Debug.Assert(projectIds.Count >= referencesMap.Count);
         Debug.Assert(referencesMap.Keys.All(projectIds.Contains));
@@ -566,7 +566,7 @@ public partial class ProjectDependencyGraph
         // Check the dependency graph to see if project 'id' directly or transitively depends on 'projectId'.
         // If the information is not available, do not compute it.
         var forwardDependencies = TryGetProjectsThatThisProjectTransitivelyDependsOn(id);
-        if (forwardDependencies is object)
+        if (forwardDependencies is not null)
         {
             return forwardDependencies.Contains(potentialDependency);
         }

@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis
     [CollectionBuilder(typeof(SyntaxTriviaList), methodName: "Create")]
     public readonly partial struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadOnlyList<SyntaxTrivia>
     {
-        public static SyntaxTriviaList Empty => default(SyntaxTriviaList);
+        public static SyntaxTriviaList Empty => default;
 
         internal SyntaxTriviaList(in SyntaxToken token, GreenNode? node, int position, int index = 0)
         {
@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis
 
         public SyntaxTriviaList(SyntaxTrivia trivia)
         {
-            Token = default(SyntaxToken);
+            Token = default;
             Node = trivia.UnderlyingNode;
             Position = 0;
             Index = 0;
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (Node == null)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
 
                 return new TextSpan(this.Position, Node.FullWidth);
@@ -169,7 +169,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (Node == null)
                 {
-                    return default(TextSpan);
+                    return default;
                 }
 
                 return TextSpan.FromBounds(Position + Node.GetLeadingTriviaWidth(),
@@ -281,7 +281,7 @@ namespace Microsoft.CodeAnalysis
         /// <param name="trivia">The trivia to insert.</param>
         public SyntaxTriviaList Insert(int index, SyntaxTrivia trivia)
         {
-            if (trivia == default(SyntaxTrivia))
+            if (trivia == default)
             {
                 throw new ArgumentOutOfRangeException(nameof(trivia));
             }
@@ -370,7 +370,7 @@ namespace Microsoft.CodeAnalysis
 
             var list = this.ToList();
             list.RemoveAt(index);
-            return new SyntaxTriviaList(default(SyntaxToken), GreenNode.CreateList(list, static n => n.RequiredUnderlyingNode), 0, 0);
+            return new SyntaxTriviaList(default, GreenNode.CreateList(list, static n => n.RequiredUnderlyingNode), 0, 0);
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace Microsoft.CodeAnalysis
         /// <param name="newTrivia">The trivia to replace the element with.</param>
         public SyntaxTriviaList Replace(SyntaxTrivia triviaInList, SyntaxTrivia newTrivia)
         {
-            if (newTrivia == default(SyntaxTrivia))
+            if (newTrivia == default)
             {
                 throw new ArgumentOutOfRangeException(nameof(newTrivia));
             }
@@ -416,7 +416,7 @@ namespace Microsoft.CodeAnalysis
                 var list = this.ToList();
                 list.RemoveAt(index);
                 list.InsertRange(index, newTrivia);
-                return new SyntaxTriviaList(default(SyntaxToken), GreenNode.CreateList(list, static n => n.RequiredUnderlyingNode), 0, 0);
+                return new SyntaxTriviaList(default, GreenNode.CreateList(list, static n => n.RequiredUnderlyingNode), 0, 0);
             }
 
             throw new ArgumentOutOfRangeException(nameof(triviaInList));
@@ -450,7 +450,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         private GreenNode? GetGreenNodeAt(int i)
         {
-            Debug.Assert(Node is object);
+            Debug.Assert(Node is not null);
             return GetGreenNodeAt(Node, i);
         }
 

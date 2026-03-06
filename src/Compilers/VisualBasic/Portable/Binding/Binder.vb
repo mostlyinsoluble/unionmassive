@@ -959,21 +959,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 If symbol.IsShared AndAlso
                    symbol.RequiresImplementation() Then
                     ReportDiagnostic(diagnostics, node, ERRID.ERR_BadAbstractStaticMemberAccess)
-
-                ElseIf Not Compilation.Assembly.RuntimeSupportsDefaultInterfaceImplementation Then
-                    If Not symbol.IsShared AndAlso
-                       Not TypeOf symbol Is TypeSymbol AndAlso
-                       Not symbol.RequiresImplementation() Then
-                        ReportDiagnostic(diagnostics, node, ERRID.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation)
-                    Else
-                        Select Case symbol.DeclaredAccessibility
-                            Case Accessibility.Protected,
-                             Accessibility.ProtectedOrInternal,
-                             Accessibility.ProtectedAndInternal
-
-                                ReportDiagnostic(diagnostics, node, ERRID.ERR_RuntimeDoesNotSupportProtectedAccessForInterfaceMember)
-                        End Select
-                    End If
                 End If
             End If
         End Sub

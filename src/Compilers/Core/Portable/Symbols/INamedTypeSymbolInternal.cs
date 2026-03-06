@@ -70,15 +70,12 @@ namespace Microsoft.CodeAnalysis.Symbols
                 }
 
                 bool hasGenerics = type.IsGenericType;
-                switch (type.TypeKind)
+                return type.TypeKind switch
                 {
-                    case TypeKind.Enum:
-                        return (ThreeState.False, hasGenerics);
-                    case TypeKind.Struct:
-                        return (ThreeState.Unknown, hasGenerics);
-                    default:
-                        return (ThreeState.True, hasGenerics);
-                }
+                    TypeKind.Enum => (ThreeState.False, hasGenerics),
+                    TypeKind.Struct => (ThreeState.Unknown, hasGenerics),
+                    _ => (ThreeState.True, hasGenerics),
+                };
             }
         }
     }

@@ -2366,12 +2366,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.EditAndContinue
             Dim oldVBOptions = DirectCast(oldOptions, VisualBasicParseOptions)
             Dim newVBOptions = DirectCast(newOptions, VisualBasicParseOptions)
 
-            If oldVBOptions.LanguageVersion <> newVBOptions.LanguageVersion Then
-                Yield CreateProjectRudeEdit(ProjectSettingKind.LangVersion,
-                                            oldVBOptions.SpecifiedLanguageVersion.ToDisplayString(),
-                                            newVBOptions.SpecifiedLanguageVersion.ToDisplayString())
-            End If
-
             If Not oldVBOptions.PreprocessorSymbols.SequenceEqual(newVBOptions.PreprocessorSymbols) Then
                 Yield CreateProjectRudeEdit(ProjectSettingKind.DefineConstants,
                                             GetPreprocessorSymbolsDisplay(oldVBOptions.PreprocessorSymbols),

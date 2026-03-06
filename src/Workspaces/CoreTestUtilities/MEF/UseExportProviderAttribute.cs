@@ -124,7 +124,7 @@ public class UseExportProviderAttribute : BeforeAfterTestAttribute
             // Join remaining operations with a timeout
             using (var timeoutTokenSource = new CancellationTokenSource(CleanupTimeout))
             {
-                if (denyExecutionSynchronizationContext is object)
+                if (denyExecutionSynchronizationContext is not null)
                 {
                     // Immediately cancel the test if the synchronization context is improperly used
                     denyExecutionSynchronizationContext.InvalidSwitch += delegate { timeoutTokenSource.CancelAfter(0); };

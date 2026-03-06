@@ -529,9 +529,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
         Private Sub ValidateImport(type As TypeSymbol, info As GlobalImportInfo, diagnostics As BindingDiagnosticBag)
             Dim diagnosticsBuilder = ArrayBuilder(Of TypeParameterDiagnosticInfo).GetInstance()
             Dim useSiteDiagnosticsBuilder As ArrayBuilder(Of TypeParameterDiagnosticInfo) = Nothing
-            type.CheckAllConstraints(
-                DeclaringCompilation.LanguageVersion,
-                diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, ContainingAssembly))
 
             If useSiteDiagnosticsBuilder IsNot Nothing Then
                 diagnosticsBuilder.AddRange(useSiteDiagnosticsBuilder)

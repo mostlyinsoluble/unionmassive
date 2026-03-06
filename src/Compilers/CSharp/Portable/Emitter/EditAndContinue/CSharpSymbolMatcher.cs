@@ -765,27 +765,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     return false;
                 }
 
-                switch (type.Kind)
+                return type.Kind switch
                 {
-                    case SymbolKind.ArrayType:
-                        return AreArrayTypesEqual((ArrayTypeSymbol)type, (ArrayTypeSymbol)other);
-
-                    case SymbolKind.PointerType:
-                        return ArePointerTypesEqual((PointerTypeSymbol)type, (PointerTypeSymbol)other);
-
-                    case SymbolKind.FunctionPointerType:
-                        return AreFunctionPointerTypesEqual((FunctionPointerTypeSymbol)type, (FunctionPointerTypeSymbol)other);
-
-                    case SymbolKind.NamedType:
-                    case SymbolKind.ErrorType:
-                        return AreNamedTypesEqual((NamedTypeSymbol)type, (NamedTypeSymbol)other);
-
-                    case SymbolKind.TypeParameter:
-                        return AreTypeParametersEqual((TypeParameterSymbol)type, (TypeParameterSymbol)other);
-
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(type.Kind);
-                }
+                    SymbolKind.ArrayType => AreArrayTypesEqual((ArrayTypeSymbol)type, (ArrayTypeSymbol)other),
+                    SymbolKind.PointerType => ArePointerTypesEqual((PointerTypeSymbol)type, (PointerTypeSymbol)other),
+                    SymbolKind.FunctionPointerType => AreFunctionPointerTypesEqual((FunctionPointerTypeSymbol)type, (FunctionPointerTypeSymbol)other),
+                    SymbolKind.NamedType or SymbolKind.ErrorType => AreNamedTypesEqual((NamedTypeSymbol)type, (NamedTypeSymbol)other),
+                    SymbolKind.TypeParameter => AreTypeParametersEqual((TypeParameterSymbol)type, (TypeParameterSymbol)other),
+                    _ => throw ExceptionUtilities.UnexpectedValue(type.Kind),
+                };
             }
 
             private IReadOnlyDictionary<string, ImmutableArray<ISymbolInternal>> GetAllEmittedMembers(ISymbolInternal symbol)
@@ -962,7 +950,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             private CustomModifier VisitCustomModifier(CustomModifier modifier)
             {
                 var translatedType = (NamedTypeSymbol)this.Visit(((CSharpCustomModifier)modifier).ModifierSymbol);
-                Debug.Assert((object)translatedType != null);
+                Debug.Assert(translatedType is not null);
                 return modifier.IsOptional ?
                     CSharpCustomModifier.CreateOptional(translatedType) :
                     CSharpCustomModifier.CreateRequired(translatedType);

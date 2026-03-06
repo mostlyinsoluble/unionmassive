@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal ExecutableCodeBinder(SyntaxNode root, Symbol memberSymbol, Binder next, BinderFlags additionalFlags)
             : base(next, (next.Flags | additionalFlags) & ~BinderFlags.AllClearedAtExecutableCodeBoundary)
         {
-            Debug.Assert((object)memberSymbol == null ||
+            Debug.Assert(memberSymbol is null ||
                          (memberSymbol.Kind != SymbolKind.Local && memberSymbol.Kind != SymbolKind.RangeVariable && memberSymbol.Kind != SymbolKind.Parameter));
 
             _memberSymbol = memberSymbol;
@@ -57,8 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override Binder GetBinder(SyntaxNode node)
         {
-            Binder binder;
-            return this.BinderMap.TryGetValue(node, out binder) ? binder : Next.GetBinder(node);
+            return this.BinderMap.TryGetValue(node, out Binder binder) ? binder : Next.GetBinder(node);
         }
 
         private void ComputeBinderMap()
@@ -74,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 // Ensure that the member symbol is a method symbol.
-                if ((object)_memberSymbol != null && _root != null)
+                if (_memberSymbol is not null && _root != null)
                 {
                     map = LocalBinderFactory.BuildMap(_memberSymbol, _root, this, _binderUpdatedHandler);
                 }
@@ -130,13 +129,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // error CS1636: __arglist is not allowed in the parameter list of iterators
                 diagnostics.Add(ErrorCode.ERR_VarargsIterator, errorLocation);
             }
-
-            if (((iterator as SourceMemberMethodSymbol)?.IsUnsafe == true || (iterator as LocalFunctionSymbol)?.IsUnsafe == true)
-                && compilation.Options.AllowUnsafe) // Don't cascade
-            {
-                MessageID.IDS_FeatureRefUnsafeInIteratorAsync.CheckFeatureAvailability(diagnostics, compilation, errorLocation);
-            }
-
             var returnType = iterator.ReturnType;
             RefKind refKind = iterator.RefKind;
             TypeWithAnnotations elementType = InMethodBinder.GetIteratorElementTypeFromReturnType(compilation, refKind, returnType, errorLocation, diagnostics);

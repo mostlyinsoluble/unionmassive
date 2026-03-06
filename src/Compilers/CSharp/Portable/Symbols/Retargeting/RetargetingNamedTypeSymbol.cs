@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         private ImmutableArray<TypeParameterSymbol> _lazyTypeParameters;
 
         private NamedTypeSymbol _lazyBaseType = ErrorTypeSymbol.UnknownResultType;
-        private ImmutableArray<NamedTypeSymbol> _lazyInterfaces = default(ImmutableArray<NamedTypeSymbol>);
+        private ImmutableArray<NamedTypeSymbol> _lazyInterfaces = default;
 
         private NamedTypeSymbol _lazyDeclaredBaseType = ErrorTypeSymbol.UnknownResultType;
         private ImmutableArray<NamedTypeSymbol> _lazyDeclaredInterfaces;
@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         public RetargetingNamedTypeSymbol(RetargetingModuleSymbol retargetingModule, NamedTypeSymbol underlyingType, TupleExtraData tupleData = null)
             : base(underlyingType, tupleData)
         {
-            Debug.Assert((object)retargetingModule != null);
+            Debug.Assert(retargetingModule is not null);
             Debug.Assert(!(underlyingType is RetargetingNamedTypeSymbol));
 
             _retargetingModule = retargetingModule;
@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     else
                     {
                         ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters,
-                            this.RetargetingTranslator.Retarget(_underlyingType.TypeParameters), default(ImmutableArray<TypeParameterSymbol>));
+                            this.RetargetingTranslator.Retarget(_underlyingType.TypeParameters), default);
                     }
                 }
 
@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             get
             {
                 var underlying = _underlyingType.EnumUnderlyingType;
-                return (object)underlying == null ? null : this.RetargetingTranslator.Retarget(underlying, RetargetOptions.RetargetPrimitiveTypesByTypeCode); // comes from field's signature.
+                return underlying is null ? null : this.RetargetingTranslator.Retarget(underlying, RetargetOptions.RetargetPrimitiveTypesByTypeCode); // comes from field's signature.
             }
         }
 
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             foreach (MethodSymbol method in _underlyingType.GetMethodsToEmit())
             {
-                Debug.Assert((object)method != null);
+                Debug.Assert(method is not null);
 
                 int gapSize = isInterface ? Microsoft.CodeAnalysis.ModuleExtensions.GetVTableGapSize(method.MetadataName) : 0;
                 if (gapSize > 0)
@@ -317,17 +317,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 {
                     NamedTypeSymbol acyclicBase = GetDeclaredBaseType(null);
 
-                    if ((object)acyclicBase == null)
+                    if (acyclicBase is null)
                     {
                         // if base was not declared, get it from BaseType that should set it to some default
                         var underlyingBase = _underlyingType.BaseTypeNoUseSiteDiagnostics;
-                        if ((object)underlyingBase != null)
+                        if (underlyingBase is not null)
                         {
                             acyclicBase = this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName);
                         }
                     }
 
-                    if ((object)acyclicBase != null && BaseTypeAnalysis.TypeDependsOn(acyclicBase, this))
+                    if (acyclicBase is not null && BaseTypeAnalysis.TypeDependsOn(acyclicBase, this))
                     {
                         return CyclicInheritanceError(acyclicBase);
                     }
@@ -353,7 +353,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 ImmutableArray<NamedTypeSymbol> result = declaredInterfaces
                     .SelectAsArray(t => BaseTypeAnalysis.TypeDependsOn(t, this) ? CyclicInheritanceError(t) : t);
 
-                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyInterfaces, result, default(ImmutableArray<NamedTypeSymbol>));
+                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyInterfaces, result, default);
             }
 
             return _lazyInterfaces;
@@ -369,7 +369,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             if (ReferenceEquals(_lazyDeclaredBaseType, ErrorTypeSymbol.UnknownResultType))
             {
                 var underlyingBase = _underlyingType.GetDeclaredBaseType(basesBeingResolved);
-                var declaredBase = (object)underlyingBase != null ? this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName) : null;
+                var declaredBase = underlyingBase is not null ? this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName) : null;
                 Interlocked.CompareExchange(ref _lazyDeclaredBaseType, declaredBase, ErrorTypeSymbol.UnknownResultType);
             }
 
@@ -382,7 +382,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             {
                 var underlyingBaseInterfaces = _underlyingType.GetDeclaredInterfaces(basesBeingResolved);
                 var result = this.RetargetingTranslator.Retarget(underlyingBaseInterfaces);
-                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyDeclaredInterfaces, result, default(ImmutableArray<NamedTypeSymbol>));
+                ImmutableInterlocked.InterlockedCompareExchange(ref _lazyDeclaredInterfaces, result, default);
             }
 
             return _lazyDeclaredInterfaces;
@@ -404,7 +404,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             get
             {
                 NamedTypeSymbol coClass = _underlyingType.ComImportCoClass;
-                return (object)coClass == null ? null : this.RetargetingTranslator.Retarget(coClass, RetargetOptions.RetargetPrimitiveTypesByName);
+                return coClass is null ? null : this.RetargetingTranslator.Retarget(coClass, RetargetOptions.RetargetPrimitiveTypesByName);
             }
         }
 
@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                 var newBody = this.RetargetingTranslator.Retarget(body, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
                 var newImplemented = this.RetargetingTranslator.Retarget(implemented, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
 
-                if (newBody is object && newImplemented is object)
+                if (newBody is not null && newImplemented is not null)
                 {
                     yield return (newBody, newImplemented);
                 }

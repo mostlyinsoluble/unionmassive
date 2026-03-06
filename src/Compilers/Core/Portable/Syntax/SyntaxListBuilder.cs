@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.Syntax
 
         public void AddRange(SyntaxTokenList list, int offset, int length)
         {
-            Debug.Assert(list.Node is object);
+            Debug.Assert(list.Node is not null);
             this.AddRange(new SyntaxList<SyntaxNode>(list.Node.CreateRed()), offset, length);
         }
 
@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.Syntax
         {
             if (builder == null)
             {
-                return default(SyntaxList<SyntaxNode>);
+                return default;
             }
 
             return builder.ToList();

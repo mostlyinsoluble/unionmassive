@@ -441,7 +441,7 @@ namespace Microsoft.Cci
 
         public TypeReferenceWithAttributes(
             ITypeReference typeRef,
-            ImmutableArray<ICustomAttribute> attributes = default(ImmutableArray<ICustomAttribute>))
+            ImmutableArray<ICustomAttribute> attributes = default)
         {
             TypeRef = typeRef;
             Attributes = attributes.NullToEmpty();

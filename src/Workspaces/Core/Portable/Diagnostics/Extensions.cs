@@ -352,7 +352,7 @@ internal static partial class Extensions
     public static async Task<Checksum> GetDiagnosticChecksumAsync(this Project? project, CancellationToken cancellationToken)
     {
         if (project is null)
-            return default(Checksum);
+            return default;
 
         var lazyChecksum = s_projectToDiagnosticChecksum.GetValue(
             project,

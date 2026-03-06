@@ -45,24 +45,14 @@ internal sealed class AddedParameter : Parameter
         CallSiteKind = callSiteKind;
 
         // Populate the call site text for the UI
-        switch (CallSiteKind)
+        CallSiteValue = CallSiteKind switch
         {
-            case CallSiteKind.Value:
-            case CallSiteKind.ValueWithName:
-                CallSiteValue = callSiteValue;
-                break;
-            case CallSiteKind.Todo:
-                CallSiteValue = FeaturesResources.ChangeSignature_NewParameterIntroduceTODOVariable;
-                break;
-            case CallSiteKind.Omitted:
-                CallSiteValue = FeaturesResources.ChangeSignature_NewParameterOmitValue;
-                break;
-            case CallSiteKind.Inferred:
-                CallSiteValue = FeaturesResources.ChangeSignature_NewParameterInferValue;
-                break;
-            default:
-                throw ExceptionUtilities.Unreachable();
-        }
+            CallSiteKind.Value or CallSiteKind.ValueWithName => callSiteValue,
+            CallSiteKind.Todo => FeaturesResources.ChangeSignature_NewParameterIntroduceTODOVariable,
+            CallSiteKind.Omitted => FeaturesResources.ChangeSignature_NewParameterOmitValue,
+            CallSiteKind.Inferred => FeaturesResources.ChangeSignature_NewParameterInferValue,
+            _ => throw ExceptionUtilities.Unreachable(),
+        };
     }
 
     public override string Name { get; }

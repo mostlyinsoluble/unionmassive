@@ -170,8 +170,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override ImmutableArray<Symbol> GetMembers(ReadOnlyMemory<char> name)
         {
-            ImmutableArray<NamespaceOrTypeSymbol> members;
-            return this.GetNameToMembersMap().TryGetValue(name, out members)
+            return this.GetNameToMembersMap().TryGetValue(name, out ImmutableArray<NamespaceOrTypeSymbol> members)
                 ? members.Cast<NamespaceOrTypeSymbol, Symbol>()
                 : ImmutableArray<Symbol>.Empty;
         }
@@ -194,8 +193,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override ImmutableArray<NamedTypeSymbol> GetTypeMembers(ReadOnlyMemory<char> name)
         {
-            ImmutableArray<NamedTypeSymbol> members;
-            return this.GetNameToTypeMembersMap().TryGetValue(name, out members)
+            return this.GetNameToTypeMembersMap().TryGetValue(name, out ImmutableArray<NamedTypeSymbol> members)
                 ? members
                 : ImmutableArray<NamedTypeSymbol>.Empty;
         }
@@ -305,9 +303,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     var nts = symbol as SourceMemberContainerTypeSymbol;
                     // It should be impossible to have a type member of a source namespace symbol which is not a SourceMemberContainerTypeSymbol
-                    Debug.Assert((object)nts != null || symbol is not TypeSymbol);
+                    Debug.Assert(nts is not null || symbol is not TypeSymbol);
 
-                    var arity = ((object)nts != null) ? nts.Arity : 0;
+                    var arity = (nts is not null) ? nts.Arity : 0;
                     if (arity >= memberOfArity.Length)
                     {
                         Array.Resize(ref memberOfArity, arity + 1);
@@ -317,7 +315,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     var other = memberOfArity[arity];
 
-                    if ((object)other == null && (object)mergedAssemblyNamespace != null)
+                    if (other is null && mergedAssemblyNamespace is not null)
                     {
                         // Check for collision with declarations from added modules.
                         foreach (NamespaceSymbol constituent in mergedAssemblyNamespace.ConstituentNamespaces)
@@ -341,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                     }
 
-                    if ((object)other != null)
+                    if (other is not null)
                     {
                         // To decide whether type declarations are duplicates, we need to access members which are only meaningful on source original definition symbols.
                         Debug.Assert((object)nts?.OriginalDefinition == nts && (object)other.OriginalDefinition == other);
@@ -366,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     memberOfArity[arity] = symbol;
 
-                    if ((object)nts != null)
+                    if (nts is not null)
                     {
                         //types declared at the namespace level may only have declared accessibility of public or internal (Section 3.5.1)
                         Accessibility declaredAccessibility = nts.DeclaredAccessibility;
@@ -401,29 +399,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private NamespaceOrTypeSymbol BuildSymbol(MergedNamespaceOrTypeDeclaration declaration, BindingDiagnosticBag diagnostics)
         {
-            switch (declaration.Kind)
+            return declaration.Kind switch
             {
-                case DeclarationKind.Namespace:
-                    return new SourceNamespaceSymbol(_module, this, (MergedNamespaceDeclaration)declaration, diagnostics);
-
-                case DeclarationKind.Struct:
-                case DeclarationKind.Interface:
-                case DeclarationKind.Enum:
-                case DeclarationKind.Delegate:
-                case DeclarationKind.Class:
-                case DeclarationKind.Record:
-                case DeclarationKind.RecordStruct:
-                case DeclarationKind.Extension:
-                    return new SourceNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics);
-
-                case DeclarationKind.Script:
-                case DeclarationKind.Submission:
-                case DeclarationKind.ImplicitClass:
-                    return new ImplicitNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics);
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(declaration.Kind);
-            }
+                DeclarationKind.Namespace => new SourceNamespaceSymbol(_module, this, (MergedNamespaceDeclaration)declaration, diagnostics),
+                DeclarationKind.Struct or DeclarationKind.Interface or DeclarationKind.Enum or DeclarationKind.Delegate or DeclarationKind.Class or DeclarationKind.Record or DeclarationKind.RecordStruct or DeclarationKind.Extension => new SourceNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics),
+                DeclarationKind.Script or DeclarationKind.Submission or DeclarationKind.ImplicitClass => new ImplicitNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics),
+                _ => throw ExceptionUtilities.UnexpectedValue(declaration.Kind),
+            };
         }
 
         /// <summary>
@@ -442,7 +424,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         var type = member as NamedTypeSymbol;
 
-                        if ((object)type != null && type.SpecialType != SpecialType.None)
+                        if (type is not null && type.SpecialType != SpecialType.None)
                         {
                             containingAssembly.RegisterDeclaredSpecialType(type);
 
@@ -456,7 +438,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        public override bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default(CancellationToken))
+        public override bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default)
         {
             if (this.IsGlobalNamespace)
             {

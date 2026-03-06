@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.Text
             // We must compute the checksum and embedded text blob now while we still have the original bytes in hand.
             // We cannot re-encode to obtain checksum and blob as the encoding is not guaranteed to round-trip.
             var checksum = CalculateChecksum(stream, checksumAlgorithm);
-            var embeddedTextBlob = canBeEmbedded ? EmbeddedText.CreateBlob(stream) : default(ImmutableArray<byte>);
+            var embeddedTextBlob = canBeEmbedded ? EmbeddedText.CreateBlob(stream) : default;
             return new StringText(text, encoding, checksum, checksumAlgorithm, embeddedTextBlob);
         }
 
@@ -275,7 +275,7 @@ namespace Microsoft.CodeAnalysis.Text
             // We must compute the checksum and embedded text blob now while we still have the original bytes in hand.
             // We cannot re-encode to obtain checksum and blob as the encoding is not guaranteed to round-trip.
             var checksum = CalculateChecksum(buffer, 0, length, checksumAlgorithm);
-            var embeddedTextBlob = canBeEmbedded ? EmbeddedText.CreateBlob(new ArraySegment<byte>(buffer, 0, length)) : default(ImmutableArray<byte>);
+            var embeddedTextBlob = canBeEmbedded ? EmbeddedText.CreateBlob(new ArraySegment<byte>(buffer, 0, length)) : default;
             return new StringText(text, encoding, checksum, checksumAlgorithm, embeddedTextBlob);
         }
 
@@ -334,8 +334,7 @@ namespace Microsoft.CodeAnalysis.Text
         {
             RoslynDebug.Assert(buffer != null);
             RoslynDebug.Assert(encoding != null);
-            int preambleLength;
-            actualEncoding = TryReadByteOrderMark(buffer, length, out preambleLength) ?? encoding;
+            actualEncoding = TryReadByteOrderMark(buffer, length, out int preambleLength) ?? encoding;
             return actualEncoding.GetString(buffer, preambleLength, length - preambleLength);
         }
 
@@ -538,7 +537,7 @@ namespace Microsoft.CodeAnalysis.Text
         /// <summary>
         /// Write this <see cref="SourceText"/> to a text writer.
         /// </summary>
-        public void Write(TextWriter textWriter, CancellationToken cancellationToken = default(CancellationToken))
+        public void Write(TextWriter textWriter, CancellationToken cancellationToken = default)
         {
             this.Write(textWriter, new TextSpan(0, this.Length), cancellationToken);
         }
@@ -546,7 +545,7 @@ namespace Microsoft.CodeAnalysis.Text
         /// <summary>
         /// Write a span of text to a text writer.
         /// </summary>
-        public virtual void Write(TextWriter writer, TextSpan span, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual void Write(TextWriter writer, TextSpan span, CancellationToken cancellationToken = default)
         {
             CheckSubSpan(span);
 

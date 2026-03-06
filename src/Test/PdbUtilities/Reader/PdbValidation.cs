@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             string expectedValueSourcePath,
             bool expectedIsRawXml)
         {
-            Assert.NotEqual(default(DebugInformationFormat), format);
+            Assert.NotEqual(default, format);
             Assert.NotEqual(DebugInformationFormat.Embedded, format);
 
             // Include module custom debug info, specifically compilation options and references.

@@ -91,8 +91,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override bool TryGetThisParameter(out ParameterSymbol? thisParameter)
         {
-            ParameterSymbol? underlyingThisParameter;
-            if (!_underlyingMethod.TryGetThisParameter(out underlyingThisParameter))
+            if (!_underlyingMethod.TryGetThisParameter(out var underlyingThisParameter))
             {
                 thisParameter = null;
                 return false;

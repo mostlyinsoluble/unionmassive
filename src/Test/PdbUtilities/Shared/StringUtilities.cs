@@ -17,21 +17,11 @@ namespace Roslyn.Test
 
             foreach (char c in str)
             {
-                bool escape;
-                switch (CharUnicodeInfo.GetUnicodeCategory(c))
+                var escape = CharUnicodeInfo.GetUnicodeCategory(c) switch
                 {
-                    case UnicodeCategory.Control:
-                    case UnicodeCategory.OtherNotAssigned:
-                    case UnicodeCategory.ParagraphSeparator:
-                    case UnicodeCategory.Surrogate:
-                        escape = true;
-                        break;
-
-                    default:
-                        escape = c >= 0xFFFC;
-                        break;
-                }
-
+                    UnicodeCategory.Control or UnicodeCategory.OtherNotAssigned or UnicodeCategory.ParagraphSeparator or UnicodeCategory.Surrogate => true,
+                    _ => c >= 0xFFFC,
+                };
                 if (escape)
                 {
                     sb.AppendFormat("\\u{0:X4}", (int)c);

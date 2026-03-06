@@ -89,11 +89,10 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
 
                 foreach (var attrData in GetCustomAttributesToEmit(moduleBuilder))
                 {
-                    int signatureIndex;
                     ImmutableArray<TypedConstant> constructorArguments;
                     ImmutableArray<KeyValuePair<string, TypedConstant>> namedArguments;
 
-                    if (IsTargetAttribute(attrData, AttributeDescription.ParamArrayAttribute, out signatureIndex))
+                    if (IsTargetAttribute(attrData, AttributeDescription.ParamArrayAttribute, out int signatureIndex))
                     {
                         if (signatureIndex == 0 && TypeManager.TryGetAttributeArguments(attrData, out constructorArguments, out namedArguments, syntaxNodeOpt, diagnostics))
                         {

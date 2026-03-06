@@ -45,7 +45,7 @@ public static partial class Renamer
                 document.WithName(_analysis.OriginalDocumentName),
                 cancellationToken).ConfigureAwait(false);
 
-            if (matchingTypeDeclaration is object)
+            if (matchingTypeDeclaration is not null)
             {
                 var semanticModel = await document.GetRequiredSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                 var symbol = semanticModel.GetRequiredDeclaredSymbol(matchingTypeDeclaration, cancellationToken);

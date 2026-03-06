@@ -60,11 +60,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             PEMethodSymbol removeMethod,
             MultiDictionary<string, PEFieldSymbol> privateFieldNameToSymbols)
         {
-            RoslynDebug.Assert((object)moduleSymbol != null);
-            RoslynDebug.Assert((object)containingType != null);
+            RoslynDebug.Assert(moduleSymbol is not null);
+            RoslynDebug.Assert(containingType is not null);
             Debug.Assert(!handle.IsNil);
-            RoslynDebug.Assert((object)addMethod != null);
-            RoslynDebug.Assert((object)removeMethod != null);
+            RoslynDebug.Assert(addMethod is not null);
+            RoslynDebug.Assert(removeMethod is not null);
 
             _addMethod = addMethod;
             _removeMethod = removeMethod;
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             _containingType = containingType;
 
             EventAttributes mdFlags = 0;
-            EntityHandle eventType = default(EntityHandle);
+            EntityHandle eventType = default;
 
             try
             {
@@ -98,7 +98,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 const int targetSymbolCustomModifierCount = 0;
                 var typeSymbol = DynamicTypeDecoder.TransformType(originalEventType, targetSymbolCustomModifierCount, handle, moduleSymbol);
-                typeSymbol = NativeIntegerTypeDecoder.TransformType(typeSymbol, handle, moduleSymbol, _containingType);
 
                 // We start without annotation (they will be decoded below)
                 var type = TypeWithAnnotations.Create(typeSymbol);
@@ -129,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 _removeMethod.SetAssociatedEvent(this, MethodKind.EventRemove);
 
                 PEFieldSymbol? associatedField = GetAssociatedField(privateFieldNameToSymbols, isWindowsRuntimeEvent);
-                if ((object?)associatedField != null)
+                if (associatedField is not null)
                 {
                     _associatedFieldOpt = associatedField;
                     associatedField.SetAssociatedEvent(this);
@@ -484,9 +483,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             // CONSIDER: It would be nice if we could reuse this signature information in the PEMethodSymbol.
             var metadataDecoder = new MetadataDecoder(moduleSymbol, method);
-            SignatureHeader signatureHeader;
-            BadImageFormatException? mrEx;
-            var methodParams = metadataDecoder.GetSignatureForMethod(method.Handle, out signatureHeader, out mrEx, setParamHandles: false);
+            var methodParams = metadataDecoder.GetSignatureForMethod(method.Handle, out SignatureHeader signatureHeader, out BadImageFormatException? mrEx, setParamHandles: false);
 
             if (mrEx != null)
             {
@@ -496,7 +493,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             return metadataDecoder.DoesSignatureMatchEvent(eventType, methodParams);
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo? preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo? preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             return PEDocumentationCommentUtils.GetDocumentationComment(this, _containingType.ContainingPEModule, preferredCulture, cancellationToken, ref _lazyDocComment);
         }

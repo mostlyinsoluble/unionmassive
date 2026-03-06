@@ -69,7 +69,7 @@ namespace Roslyn.Test.PdbUtilities
             return CreateReader(new MemoryStream(pdbImage), (peImageOpt != null) ? new PEReader(new MemoryStream(peImageOpt)) : null);
         }
 
-        public static ISymUnmanagedReader5 CreateReader(ImmutableArray<byte> pdbImage, ImmutableArray<byte> peImageOpt = default(ImmutableArray<byte>))
+        public static ISymUnmanagedReader5 CreateReader(ImmutableArray<byte> pdbImage, ImmutableArray<byte> peImageOpt = default)
         {
             return CreateReader(new MemoryStream([.. pdbImage]), (peImageOpt.IsDefault) ? null : new PEReader(peImageOpt));
         }

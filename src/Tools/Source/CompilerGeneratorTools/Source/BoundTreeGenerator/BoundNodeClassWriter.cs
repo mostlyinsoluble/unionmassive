@@ -1691,17 +1691,11 @@ namespace BoundTreeGenerator
 
                             static bool typeIsUpdated(string type)
                             {
-                                switch (type.TrimEnd('?'))
+                                return type.TrimEnd('?') switch
                                 {
-                                    case "LabelSymbol":
-                                    case "GeneratedLabelSymbol":
-                                    case "AliasSymbol":
-                                    case "NamespaceSymbol":
-                                        return false;
-
-                                    default:
-                                        return true;
-                                }
+                                    "LabelSymbol" or "GeneratedLabelSymbol" or "AliasSymbol" or "NamespaceSymbol" => false,
+                                    _ => true,
+                                };
                             }
                         }
 
@@ -1745,17 +1739,14 @@ namespace BoundTreeGenerator
 
         private bool IsNodeList(string typeName)
         {
-            switch (_targetLang)
+            return _targetLang switch
             {
-                case TargetLanguage.CSharp:
-                    return typeName.StartsWith("IList<", StringComparison.Ordinal) ||
-                           typeName.StartsWith("ImmutableArray<", StringComparison.Ordinal);
-                case TargetLanguage.VB:
-                    return typeName.StartsWith("IList(Of", StringComparison.OrdinalIgnoreCase) ||
-                           typeName.StartsWith("ImmutableArray(Of", StringComparison.OrdinalIgnoreCase);
-                default:
-                    throw new ArgumentException("Unexpected target language", nameof(_targetLang));
-            }
+                TargetLanguage.CSharp => typeName.StartsWith("IList<", StringComparison.Ordinal) ||
+                                           typeName.StartsWith("ImmutableArray<", StringComparison.Ordinal),
+                TargetLanguage.VB => typeName.StartsWith("IList(Of", StringComparison.OrdinalIgnoreCase) ||
+                                           typeName.StartsWith("ImmutableArray(Of", StringComparison.OrdinalIgnoreCase),
+                _ => throw new ArgumentException("Unexpected target language", nameof(_targetLang)),
+            };
         }
 
         public bool IsNodeOrNodeList(string typeName)
@@ -1889,17 +1880,12 @@ namespace BoundTreeGenerator
         {
             if (IsKeyword(name))
             {
-                switch (_targetLang)
+                return _targetLang switch
                 {
-                    case TargetLanguage.CSharp:
-                        return "@" + name;
-
-                    case TargetLanguage.VB:
-                        return "[" + name + "]";
-
-                    default:
-                        throw new ArgumentException("Unexpected target language", nameof(_targetLang));
-                }
+                    TargetLanguage.CSharp => "@" + name,
+                    TargetLanguage.VB => "[" + name + "]",
+                    _ => throw new ArgumentException("Unexpected target language", nameof(_targetLang)),
+                };
             }
 
             return name;
@@ -1907,32 +1893,22 @@ namespace BoundTreeGenerator
 
         private bool IsKeyword(string name)
         {
-            switch (_targetLang)
+            return _targetLang switch
             {
-                case TargetLanguage.CSharp:
-                    return name.IsCSharpKeyword();
-
-                case TargetLanguage.VB:
-                    return name.IsVBKeyword();
-
-                default:
-                    throw new ArgumentException("Unexpected target language", nameof(_targetLang));
-            }
+                TargetLanguage.CSharp => name.IsCSharpKeyword(),
+                TargetLanguage.VB => name.IsVBKeyword(),
+                _ => throw new ArgumentException("Unexpected target language", nameof(_targetLang)),
+            };
         }
 
         private string GetVisitFunctionDeclaration(string nodeName, bool isOverride)
         {
-            switch (_targetLang)
+            return _targetLang switch
             {
-                case TargetLanguage.CSharp:
-                    return $"public {(isOverride ? "override" : "virtual")} BoundNode? Visit{StripBound(nodeName)}({nodeName} node)";
-
-                case TargetLanguage.VB:
-                    return $"Public {(isOverride ? "Overrides" : "Overridable")} Function Visit{StripBound(nodeName)}(node As {nodeName}) As BoundNode";
-
-                default:
-                    throw new ArgumentException("Unexpected target language", nameof(_targetLang));
-            }
+                TargetLanguage.CSharp => $"public {(isOverride ? "override" : "virtual")} BoundNode? Visit{StripBound(nodeName)}({nodeName} node)",
+                TargetLanguage.VB => $"Public {(isOverride ? "Overrides" : "Overridable")} Function Visit{StripBound(nodeName)}(node As {nodeName}) As BoundNode",
+                _ => throw new ArgumentException("Unexpected target language", nameof(_targetLang)),
+            };
         }
 
         private void WriteNodeVisitCall(Field field, bool forceVisit = false)
@@ -1978,252 +1954,20 @@ namespace BoundTreeGenerator
     {
         public static bool IsCSharpKeyword(this string name)
         {
-            switch (name)
+            return name switch
             {
-                case "bool":
-                case "byte":
-                case "sbyte":
-                case "short":
-                case "ushort":
-                case "int":
-                case "uint":
-                case "long":
-                case "ulong":
-                case "double":
-                case "float":
-                case "decimal":
-                case "string":
-                case "char":
-                case "object":
-                case "typeof":
-                case "sizeof":
-                case "null":
-                case "true":
-                case "false":
-                case "if":
-                case "else":
-                case "while":
-                case "for":
-                case "foreach":
-                case "do":
-                case "switch":
-                case "case":
-                case "default":
-                case "lock":
-                case "try":
-                case "throw":
-                case "catch":
-                case "finally":
-                case "goto":
-                case "break":
-                case "continue":
-                case "return":
-                case "public":
-                case "private":
-                case "internal":
-                case "protected":
-                case "static":
-                case "readonly":
-                case "sealed":
-                case "const":
-                case "new":
-                case "override":
-                case "abstract":
-                case "virtual":
-                case "partial":
-                case "ref":
-                case "out":
-                case "in":
-                case "where":
-                case "params":
-                case "this":
-                case "base":
-                case "namespace":
-                case "using":
-                case "class":
-                case "struct":
-                case "interface":
-                case "delegate":
-                case "checked":
-                case "get":
-                case "set":
-                case "add":
-                case "remove":
-                case "operator":
-                case "implicit":
-                case "explicit":
-                case "fixed":
-                case "extern":
-                case "event":
-                case "enum":
-                case "unsafe":
-                    return true;
-                default:
-                    return false;
-            }
+                "bool" or "byte" or "sbyte" or "short" or "ushort" or "int" or "uint" or "long" or "ulong" or "double" or "float" or "decimal" or "string" or "char" or "object" or "typeof" or "sizeof" or "null" or "true" or "false" or "if" or "else" or "while" or "for" or "foreach" or "do" or "switch" or "case" or "default" or "lock" or "try" or "throw" or "catch" or "finally" or "goto" or "break" or "continue" or "return" or "public" or "private" or "internal" or "protected" or "static" or "readonly" or "sealed" or "const" or "new" or "override" or "abstract" or "virtual" or "partial" or "ref" or "out" or "in" or "where" or "params" or "this" or "base" or "namespace" or "using" or "class" or "struct" or "interface" or "delegate" or "checked" or "get" or "set" or "add" or "remove" or "operator" or "implicit" or "explicit" or "fixed" or "extern" or "event" or "enum" or "unsafe" => true,
+                _ => false,
+            };
         }
 
         public static bool IsVBKeyword(this string name)
         {
-            switch (name.ToLowerInvariant())
+            return name.ToLowerInvariant() switch
             {
-                case "addhandler":
-                case "addressof":
-                case "alias":
-                case "and":
-                case "andalso":
-                case "as":
-                case "boolean":
-                case "byref":
-                case "byte":
-                case "byval":
-                case "call":
-                case "case":
-                case "catch":
-                case "cbool":
-                case "cbyte":
-                case "cchar":
-                case "cdate":
-                case "cdbl":
-                case "cdec":
-                case "char":
-                case "cint":
-                case "class":
-                case "clng":
-                case "cobj":
-                case "const":
-                case "continue":
-                case "csbyte":
-                case "cshort":
-                case "csng":
-                case "cstr":
-                case "ctype":
-                case "cuint":
-                case "culng":
-                case "cushort":
-                case "date":
-                case "decimal":
-                case "declare":
-                case "default":
-                case "delegate":
-                case "dim":
-                case "directcast":
-                case "do":
-                case "double":
-                case "each":
-                case "else":
-                case "elseif":
-                case "end":
-                case "endif":
-                case "enum":
-                case "erase":
-                case "error":
-                case "event":
-                case "exit":
-                case "false":
-                case "finally":
-                case "for":
-                case "friend":
-                case "function":
-                case "get":
-                case "gettype":
-                case "getxmlnamespace":
-                case "global":
-                case "gosub":
-                case "goto":
-                case "handles":
-                case "if":
-                case "implements":
-                case "imports":
-                case "in":
-                case "inherits":
-                case "integer":
-                case "interface":
-                case "is":
-                case "isnot":
-                case "let":
-                case "lib":
-                case "like":
-                case "long":
-                case "loop":
-                case "me":
-                case "mod":
-                case "module":
-                case "mustinherit":
-                case "mustoverride":
-                case "mybase":
-                case "myclass":
-                case "nameof":
-                case "namespace":
-                case "narrowing":
-                case "new":
-                case "next":
-                case "not":
-                case "nothing":
-                case "notinheritable":
-                case "notoverridable":
-                case "object":
-                case "of":
-                case "on":
-                case "operator":
-                case "option":
-                case "optional":
-                case "or":
-                case "orelse":
-                case "overloads":
-                case "overridable":
-                case "overrides":
-                case "paramarray":
-                case "partial":
-                case "private":
-                case "property":
-                case "protected":
-                case "public":
-                case "raiseevent":
-                case "readonly":
-                case "redim":
-                case "rem":
-                case "removehandler":
-                case "resume":
-                case "return":
-                case "sbyte":
-                case "select":
-                case "set":
-                case "shadows":
-                case "shared":
-                case "short":
-                case "single":
-                case "static":
-                case "step":
-                case "stop":
-                case "string":
-                case "structure":
-                case "sub":
-                case "synclock":
-                case "then":
-                case "throw":
-                case "to":
-                case "true":
-                case "try":
-                case "trycast":
-                case "typeof":
-                case "uinteger":
-                case "ulong":
-                case "ushort":
-                case "using":
-                case "variant":
-                case "wend":
-                case "when":
-                case "while":
-                case "widening":
-                case "with":
-                case "withevents":
-                case "writeonly":
-                case "xor":
-                    return true;
-                default:
-                    return false;
-            }
+                "addhandler" or "addressof" or "alias" or "and" or "andalso" or "as" or "boolean" or "byref" or "byte" or "byval" or "call" or "case" or "catch" or "cbool" or "cbyte" or "cchar" or "cdate" or "cdbl" or "cdec" or "char" or "cint" or "class" or "clng" or "cobj" or "const" or "continue" or "csbyte" or "cshort" or "csng" or "cstr" or "ctype" or "cuint" or "culng" or "cushort" or "date" or "decimal" or "declare" or "default" or "delegate" or "dim" or "directcast" or "do" or "double" or "each" or "else" or "elseif" or "end" or "endif" or "enum" or "erase" or "error" or "event" or "exit" or "false" or "finally" or "for" or "friend" or "function" or "get" or "gettype" or "getxmlnamespace" or "global" or "gosub" or "goto" or "handles" or "if" or "implements" or "imports" or "in" or "inherits" or "integer" or "interface" or "is" or "isnot" or "let" or "lib" or "like" or "long" or "loop" or "me" or "mod" or "module" or "mustinherit" or "mustoverride" or "mybase" or "myclass" or "nameof" or "namespace" or "narrowing" or "new" or "next" or "not" or "nothing" or "notinheritable" or "notoverridable" or "object" or "of" or "on" or "operator" or "option" or "optional" or "or" or "orelse" or "overloads" or "overridable" or "overrides" or "paramarray" or "partial" or "private" or "property" or "protected" or "public" or "raiseevent" or "readonly" or "redim" or "rem" or "removehandler" or "resume" or "return" or "sbyte" or "select" or "set" or "shadows" or "shared" or "short" or "single" or "static" or "step" or "stop" or "string" or "structure" or "sub" or "synclock" or "then" or "throw" or "to" or "true" or "try" or "trycast" or "typeof" or "uinteger" or "ulong" or "ushort" or "using" or "variant" or "wend" or "when" or "while" or "widening" or "with" or "withevents" or "writeonly" or "xor" => true,
+                _ => false,
+            };
         }
     }
 }

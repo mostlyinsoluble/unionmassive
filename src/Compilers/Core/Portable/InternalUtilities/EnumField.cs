@@ -65,7 +65,7 @@ namespace Roslyn.Utilities
                 }
             }
 
-            return default(EnumField);
+            return default;
         }
 
         private class EnumFieldComparer : IComparer<EnumField>

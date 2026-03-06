@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             // CreateVariable(Type type, string name)
             var method = PlaceholderLocalSymbol.GetIntrinsicMethod(compilation, ExpressionCompilerConstants.CreateVariableMethodName);
-            if ((object)method == null)
+            if (method is null)
             {
                 diagnostics.Add(ErrorCode.ERR_DeclarationExpressionNotPermitted, local.GetFirstLocation());
                 return;
@@ -108,8 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             var guidConstructor = (MethodSymbol)compilation.GetWellKnownTypeMember(WellKnownMember.System_Guid__ctor);
             var type = new BoundTypeOfOperator(syntax, new BoundTypeExpression(syntax, aliasOpt: null, type: local.Type), null, typeType);
             var name = new BoundLiteral(syntax, ConstantValue.Create(local.Name), stringType);
-            bool hasCustomTypeInfoPayload;
-            var customTypeInfoPayload = GetCustomTypeInfoPayload(local, syntax, compilation, out hasCustomTypeInfoPayload);
+            var customTypeInfoPayload = GetCustomTypeInfoPayload(local, syntax, compilation, out var hasCustomTypeInfoPayload);
             var customTypeInfoPayloadId = GetCustomTypeInfoPayloadId(syntax, guidConstructor, hasCustomTypeInfoPayload);
             var call = BoundCall.Synthesized(
                 syntax,

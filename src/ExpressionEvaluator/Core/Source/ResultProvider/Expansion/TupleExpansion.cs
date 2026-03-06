@@ -59,9 +59,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             var fields = GetFields();
             var defaultView = fields.DefaultView;
 
-            int startIndex2;
-            int count2;
-            GetIntersection(startIndex, count, index, defaultView.Count, out startIndex2, out count2);
+            GetIntersection(startIndex, count, index, defaultView.Count, out var startIndex2, out var count2);
 
             int offset = startIndex2 - index;
             for (int i = 0; i < count2; i++)
@@ -114,14 +112,13 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             // Ideally if the caller requests multiple items in a nested tuple
             // we should only evaluate Rest once, and should only calculate
             // the full name for Rest once.
-            string fullName;
             var fieldValue = GetValueAndFullName(
                 fullNameProvider,
                 inspectionContext,
                 value,
                 field,
                 parentFullName,
-                out fullName);
+                out var fullName);
             var name = field.Name;
             var typeDeclaringMemberAndInfo = default(TypeAndCustomInfo);
             var declaredTypeAndInfo = field.FieldTypeAndInfo;
@@ -371,7 +368,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return new EvalResult(
                 ExpansionKind.Explicit,
                 displayName,
-                default(TypeAndCustomInfo),
+                default,
                 _typeAndInfo,
                 useDebuggerDisplay: false,
                 value: value,

@@ -201,7 +201,7 @@ internal abstract class AbstractMergeNestedIfStatementsCodeRefactoringProvider
 
             // A statement should always be in a statement container, but we'll do a defensive check anyway so that
             // we don't crash if the helper is missing some cases or there's a new language feature it didn't account for.
-            Debug.Assert(blockFacts.GetStatementContainer(outerIfStatement) is object);
+            Debug.Assert(blockFacts.GetStatementContainer(outerIfStatement) is not null);
             if (blockFacts.GetStatementContainer(outerIfStatement) is not { } container)
             {
                 return false;

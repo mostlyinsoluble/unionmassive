@@ -166,7 +166,7 @@ internal sealed partial class AsynchronousOperationListenerProvider : IAsynchron
                 // we need to yield for the scheduler to run inlined tasks. If we are not processing events, we
                 // switch to the thread pool for the continuations since the yield will only let operations at the
                 // same or higher priority to execute prior to the continuation.
-                var continueOnCapturedContext = eventProcessingAction is object;
+                var continueOnCapturedContext = eventProcessingAction is not null;
                 await Task.Delay(smallTimeout).ConfigureAwait(continueOnCapturedContext);
 
                 if (startTime.Elapsed > timeout && timeout != Timeout.InfiniteTimeSpan)

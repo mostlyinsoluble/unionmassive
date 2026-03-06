@@ -163,21 +163,12 @@ internal static class NamedTypeGenerator
 
     private static MemberDeclarationSyntax RemoveAllMembers(MemberDeclarationSyntax declaration)
     {
-        switch (declaration.Kind())
+        return declaration.Kind() switch
         {
-            case SyntaxKind.EnumDeclaration:
-                return ((EnumDeclarationSyntax)declaration).WithMembers(default);
-
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.RecordDeclaration:
-                return ((TypeDeclarationSyntax)declaration).WithMembers(default);
-
-            default:
-                return declaration;
-        }
+            SyntaxKind.EnumDeclaration => ((EnumDeclarationSyntax)declaration).WithMembers(default),
+            SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.ClassDeclaration or SyntaxKind.RecordDeclaration => ((TypeDeclarationSyntax)declaration).WithMembers(default),
+            _ => declaration,
+        };
     }
 
     private static MemberDeclarationSyntax GetDeclarationSyntaxWithoutMembersWorker(

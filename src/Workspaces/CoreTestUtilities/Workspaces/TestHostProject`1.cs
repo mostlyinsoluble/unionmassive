@@ -286,25 +286,14 @@ public abstract class TestHostProject<TDocument> : AbstractTestHostProject
     // complaining about CS0507: "cannot change access modifiers when overriding 'access' inherited member".
     private static string GetDefaultExtension(OutputKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case OutputKind.ConsoleApplication:
-            case OutputKind.WindowsApplication:
-            case OutputKind.WindowsRuntimeApplication:
-                return ".exe";
-
-            case OutputKind.DynamicallyLinkedLibrary:
-                return ".dll";
-
-            case OutputKind.NetModule:
-                return ".netmodule";
-
-            case OutputKind.WindowsRuntimeMetadata:
-                return ".winmdobj";
-
-            default:
-                return ".dll";
-        }
+            OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication => ".exe",
+            OutputKind.DynamicallyLinkedLibrary => ".dll",
+            OutputKind.NetModule => ".netmodule",
+            OutputKind.WindowsRuntimeMetadata => ".winmdobj",
+            _ => ".dll",
+        };
     }
 
     private string GetTestOutputFilePath(string projectFilePath, string subdir)

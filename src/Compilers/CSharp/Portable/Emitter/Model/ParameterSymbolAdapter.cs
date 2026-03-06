@@ -260,7 +260,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                return default(ImmutableArray<byte>);
+                return default;
             }
         }
     }
@@ -271,12 +271,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal ParameterSymbolAdapter(ParameterSymbol underlyingParameterSymbol)
         {
             AdaptedParameterSymbol = underlyingParameterSymbol;
-
-            if (underlyingParameterSymbol is NativeIntegerParameterSymbol)
-            {
-                // Emit should use underlying symbol only.
-                throw ExceptionUtilities.Unreachable();
-            }
         }
 
         internal sealed override Symbol AdaptedSymbol => AdaptedParameterSymbol;

@@ -230,20 +230,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // These are conversions from-expression that
                 // must be performed on the original expression, not on a copy of it.
-                switch (kind)
+                return kind switch
                 {
-                    case ConversionKind.AnonymousFunction:       // a lambda cannot be saved without a target type
-                    case ConversionKind.MethodGroup:             // similarly for a method group
-                    case ConversionKind.InterpolatedString:      // an interpolated string must be saved in interpolated form
-                    case ConversionKind.SwitchExpression:        // a switch expression must have its arms converted
-                    case ConversionKind.StackAllocToPointerType: // a stack alloc is not well-defined without an enclosing conversion
-                    case ConversionKind.ConditionalExpression:   // a conditional expression must have its alternatives converted
-                    case ConversionKind.StackAllocToSpanType:
-                    case ConversionKind.ObjectCreation:
-                        return true;
-                    default:
-                        return false;
-                }
+                    // a lambda cannot be saved without a target type
+                    ConversionKind.AnonymousFunction or ConversionKind.MethodGroup or ConversionKind.InterpolatedString or ConversionKind.SwitchExpression or ConversionKind.StackAllocToPointerType or ConversionKind.ConditionalExpression or ConversionKind.StackAllocToSpanType or ConversionKind.ObjectCreation => true,
+                    _ => false,
+                };
             }
         }
 
@@ -293,14 +285,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             var outerEffects = ArrayBuilder<BoundExpression>.GetInstance();
             var innerEffects = ArrayBuilder<BoundExpression>.GetInstance();
 
-            BoundExpression leftHasValue, leftValue;
-            bool isLeftNullable;
-            MakeNullableParts(left, temps, innerEffects, outerEffects, saveHasValue: true, out leftHasValue, out leftValue, out isLeftNullable);
+            MakeNullableParts(left, temps, innerEffects, outerEffects, saveHasValue: true, out BoundExpression leftHasValue, out BoundExpression leftValue, out bool isLeftNullable);
 
-            BoundExpression rightHasValue, rightValue;
-            bool isRightNullable;
             // no need for local for right.HasValue since used once
-            MakeNullableParts(right, temps, innerEffects, outerEffects, saveHasValue: false, out rightHasValue, out rightValue, out isRightNullable);
+            MakeNullableParts(right, temps, innerEffects, outerEffects, saveHasValue: false, out BoundExpression rightHasValue, out BoundExpression rightValue, out bool isRightNullable);
 
             // Produces:
             //     ... logical expression using leftValue and rightValue ...

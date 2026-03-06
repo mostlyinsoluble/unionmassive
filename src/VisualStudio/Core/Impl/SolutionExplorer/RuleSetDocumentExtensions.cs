@@ -55,23 +55,16 @@ internal static class RuleSetDocumentExtensions
 
     private static string ConvertReportDiagnosticToAction(ReportDiagnostic value)
     {
-        switch (value)
+        return value switch
         {
-            case ReportDiagnostic.Default:
-                return "Default";
-            case ReportDiagnostic.Error:
-                return "Error";
-            case ReportDiagnostic.Warn:
-                return "Warning";
-            case ReportDiagnostic.Info:
-                return "Info";
-            case ReportDiagnostic.Hidden:
-                return "Hidden";
-            case ReportDiagnostic.Suppress:
-                return "None";
-            default:
-                throw ExceptionUtilities.Unreachable();
-        }
+            ReportDiagnostic.Default => "Default",
+            ReportDiagnostic.Error => "Error",
+            ReportDiagnostic.Warn => "Warning",
+            ReportDiagnostic.Info => "Info",
+            ReportDiagnostic.Hidden => "Hidden",
+            ReportDiagnostic.Suppress => "None",
+            _ => throw ExceptionUtilities.Unreachable(),
+        };
     }
 
     private static XElement FindOrCreateRuleElement(XElement rules, string id)

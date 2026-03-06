@@ -389,7 +389,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // Set up the current method locals
                     DeclareLocals(_currentScope, _topLevelMethod.Parameters);
                     // Treat 'this' as a formal parameter of the top-level method
-                    if (_topLevelMethod.TryGetThisParameter(out var thisParam) && (object)thisParam != null)
+                    if (_topLevelMethod.TryGetThisParameter(out var thisParam) && thisParam is not null)
                     {
                         DeclareLocals(_currentScope, ImmutableArray.Create<Symbol>(thisParam));
                     }
@@ -568,7 +568,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #nullable enable
                 private BoundNode? VisitNestedFunction(MethodSymbol functionSymbol, BoundBlock? body)
                 {
-                    RoslynDebug.Assert(functionSymbol is object);
+                    RoslynDebug.Assert(functionSymbol is not null);
 
                     if (body is null)
                     {

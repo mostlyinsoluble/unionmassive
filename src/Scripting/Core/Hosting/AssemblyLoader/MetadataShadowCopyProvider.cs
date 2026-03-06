@@ -238,8 +238,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             lock (Guard)
             {
-                CacheEntry<Metadata> existing;
-                if (_noShadowCopyCache.TryGetValue(key, out existing))
+                if (_noShadowCopyCache.TryGetValue(key, out var existing))
                 {
                     return existing.Public;
                 }
@@ -260,8 +259,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             lock (Guard)
             {
-                CacheEntry<Metadata> existing;
-                if (_noShadowCopyCache.TryGetValue(key, out existing))
+                if (_noShadowCopyCache.TryGetValue(key, out var existing))
                 {
                     newMetadata.Dispose();
                     return existing.Public;
@@ -301,8 +299,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             lock (Guard)
             {
-                CacheEntry<MetadataShadowCopy> existing;
-                if (CopyExistsOrIsSuppressed(key, out existing))
+                if (CopyExistsOrIsSuppressed(key, out var existing))
                 {
                     return existing.Public;
                 }
@@ -327,8 +324,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
             lock (Guard)
             {
-                CacheEntry<MetadataShadowCopy> existing;
-                if (CopyExistsOrIsSuppressed(key, out existing))
+                if (CopyExistsOrIsSuppressed(key, out var existing))
                 {
                     newCopy.Private.Dispose();
                     return existing.Public;
@@ -344,7 +340,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
         {
             if (_lazySuppressedFiles != null && _lazySuppressedFiles.Contains(key.FullPath))
             {
-                existing = default(CacheEntry<MetadataShadowCopy>);
+                existing = default;
                 return true;
             }
 
@@ -545,10 +541,8 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
             string assemblyDirectory = Path.GetDirectoryName(originalAssemblyPath);
             string assemblyFileName = Path.GetFileName(originalAssemblyPath);
 
-            string xmlSubdirectory;
-            string xmlFileName;
             if (docCultureOpt == null ||
-                !TryFindCollocatedDocumentationFile(assemblyDirectory, assemblyFileName, docCultureOpt, out xmlSubdirectory, out xmlFileName))
+                !TryFindCollocatedDocumentationFile(assemblyDirectory, assemblyFileName, docCultureOpt, out var xmlSubdirectory, out var xmlFileName))
             {
                 return null;
             }

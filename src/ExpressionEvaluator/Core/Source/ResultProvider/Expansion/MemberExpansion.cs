@@ -136,24 +136,20 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             }
 
             // Public and non-public instance members.
-            Expansion publicInstanceExpansion;
-            Expansion nonPublicInstanceExpansion;
             GetPublicAndNonPublicMembers(
                 instanceMembers,
                 customTypeInfoMap,
                 isProxyType,
-                out publicInstanceExpansion,
-                out nonPublicInstanceExpansion);
+                out var publicInstanceExpansion,
+                out var nonPublicInstanceExpansion);
 
             // Public and non-public static members.
-            Expansion publicStaticExpansion;
-            Expansion nonPublicStaticExpansion;
             GetPublicAndNonPublicMembers(
                 staticMembers,
                 customTypeInfoMap,
                 isProxyType,
-                out publicStaticExpansion,
-                out nonPublicStaticExpansion);
+                out var publicStaticExpansion,
+                out var nonPublicStaticExpansion);
 
             if (publicInstanceExpansion != null)
             {
@@ -298,9 +294,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             bool visitAll,
             ref int index)
         {
-            int startIndex2;
-            int count2;
-            GetIntersection(startIndex, count, index, _members.Length, out startIndex2, out count2);
+            GetIntersection(startIndex, count, index, _members.Length, out var startIndex2, out var count2);
 
             int offset = startIndex2 - index;
             for (int i = 0; i < count2; i++)
@@ -378,8 +372,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return new EvalResult(
                     ExpansionKind.NonPublicMembers,
                     name: Resources.NonPublicMembers,
-                    typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
-                    declaredTypeAndInfo: default(TypeAndCustomInfo),
+                    typeDeclaringMemberAndInfo: default,
+                    declaredTypeAndInfo: default,
                     useDebuggerDisplay: false,
                     value: value,
                     displayValue: null,
@@ -444,7 +438,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return new EvalResult(
                     ExpansionKind.StaticMembers,
                     name: resultProvider.StaticMembersString,
-                    typeDeclaringMemberAndInfo: default(TypeAndCustomInfo),
+                    typeDeclaringMemberAndInfo: default,
                     declaredTypeAndInfo: declaredTypeAndInfo,
                     useDebuggerDisplay: false,
                     value: value,
@@ -517,7 +511,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             return resultProvider.CreateDataItem(
                 inspectionContext,
                 memberDisplayName,
-                typeDeclaringMemberAndInfo: (member.IncludeTypeInMemberName || declaringType.IsInterface) ? new TypeAndCustomInfo(DkmClrType.Create(appDomain, declaringType), declaringTypeInfo) : default(TypeAndCustomInfo), // Note: Won't include DynamicAttribute.
+                typeDeclaringMemberAndInfo: (member.IncludeTypeInMemberName || declaringType.IsInterface) ? new TypeAndCustomInfo(DkmClrType.Create(appDomain, declaringType), declaringTypeInfo) : default, // Note: Won't include DynamicAttribute.
                 declaredTypeAndInfo: new TypeAndCustomInfo(DkmClrType.Create(appDomain, declaredType), declaredTypeInfo),
                 value: memberValue,
                 useDebuggerDisplay: parent != null,

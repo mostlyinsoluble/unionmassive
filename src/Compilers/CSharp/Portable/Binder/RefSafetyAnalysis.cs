@@ -279,19 +279,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // _placeholderScopes should contain all placeholders that may be used by GetValEscape() or CheckValEscape().
             // The following placeholders are not needed by those methods and can be ignored, however.
-            switch (placeholder)
+            return placeholder switch
             {
-                case BoundObjectOrCollectionValuePlaceholder:
-                    return true; // CheckValEscapeOfObjectInitializer() does not use BoundObjectOrCollectionValuePlaceholder.
-                case BoundInterpolatedStringHandlerPlaceholder:
-                    return true; // CheckInterpolatedStringHandlerConversionEscape() does not use BoundInterpolatedStringHandlerPlaceholder.
-                case BoundImplicitIndexerValuePlaceholder:
-                    return placeholder.Type?.SpecialType == SpecialType.System_Int32;
-                case BoundCapturedReceiverPlaceholder:
-                    return true; // BoundCapturedReceiverPlaceholder is created in GetInvocationArgumentsForEscape(), and was not part of the BoundNode tree.
-                default:
-                    return false;
-            }
+                BoundObjectOrCollectionValuePlaceholder => true,// CheckValEscapeOfObjectInitializer() does not use BoundObjectOrCollectionValuePlaceholder.
+                BoundInterpolatedStringHandlerPlaceholder => true,// CheckInterpolatedStringHandlerConversionEscape() does not use BoundInterpolatedStringHandlerPlaceholder.
+                BoundImplicitIndexerValuePlaceholder => placeholder.Type?.SpecialType == SpecialType.System_Int32,
+                BoundCapturedReceiverPlaceholder => true,// BoundCapturedReceiverPlaceholder is created in GetInvocationArgumentsForEscape(), and was not part of the BoundNode tree.
+                _ => false,
+            };
         }
 #endif
 
@@ -1253,14 +1248,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (node.EnumeratorInfoOpt is { InlineArraySpanType: not WellKnownType.Unknown and var spanType, InlineArrayUsedAsValue: false })
             {
-                ImmutableArray<BoundExpression> arguments;
-                ImmutableArray<RefKind> refKinds;
 
                 SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayConversionEquivalentSignatureMethod(
                     // Strip identity conversion added by compiler on top of inline array.
                     inlineArray: node.Expression is not BoundConversion { Conversion.IsIdentity: true, ExplicitCastInCode: false, Operand: BoundExpression operand } ? node.Expression : operand,
                     resultType: node.EnumeratorInfoOpt.GetEnumeratorInfo.Method.ContainingType,
-                    out arguments, out refKinds);
+                    out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                 collectionEscape = GetInvocationEscapeScope(
                     MethodInvocationInfo.FromInlineArrayConversion(equivalentSignatureMethod, arguments, refKinds, node.HasAnyErrors),
@@ -1342,7 +1335,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static void Error(BindingDiagnosticBag diagnostics, ErrorCode code, SyntaxNodeOrToken syntax, params object[] args)
         {
             var location = syntax.GetLocation();
-            RoslynDebug.Assert(location is object);
+            RoslynDebug.Assert(location is not null);
             Error(diagnostics, code, location, args);
         }
 

@@ -429,16 +429,11 @@ internal sealed class RemoteLanguageServiceWorkspace : CodeAnalysis.Workspace, I
     /// <inheritdoc />
     public override bool CanApplyChange(ApplyChangesKind feature)
     {
-        switch (feature)
+        return feature switch
         {
-            case ApplyChangesKind.ChangeDocument:
-            case ApplyChangesKind.AddDocument:
-            case ApplyChangesKind.RemoveDocument:
-                return true;
-
-            default:
-                return false;
-        }
+            ApplyChangesKind.ChangeDocument or ApplyChangesKind.AddDocument or ApplyChangesKind.RemoveDocument => true,
+            _ => false,
+        };
     }
 
     /// <inheritdoc />

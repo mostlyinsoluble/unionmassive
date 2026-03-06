@@ -30,7 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public MissingModuleSymbol(AssemblySymbol assembly, int ordinal)
         {
-            Debug.Assert((object)assembly != null);
+            Debug.Assert(assembly is not null);
             Debug.Assert(ordinal >= -1);
 
             this.assembly = assembly;
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             MissingModuleSymbol other = obj as MissingModuleSymbol;
 
-            return (object)other != null && assembly.Equals(other.assembly, compareKind);
+            return other is not null && assembly.Equals(other.assembly, compareKind);
         }
 
         public override ImmutableArray<Location> Locations
@@ -241,7 +241,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             MissingModuleSymbolWithName other = obj as MissingModuleSymbolWithName;
 
-            return (object)other != null && assembly.Equals(other.assembly, compareKind) && string.Equals(_name, other._name, StringComparison.OrdinalIgnoreCase);
+            return other is not null && assembly.Equals(other.assembly, compareKind) && string.Equals(_name, other._name, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

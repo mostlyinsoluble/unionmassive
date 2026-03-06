@@ -550,8 +550,7 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
 
         static string EncLogRowToString(EditAndContinueLogEntry row)
         {
-            TableIndex tableIndex;
-            MetadataTokens.TryGetTableIndex(row.Handle.Kind, out tableIndex);
+            MetadataTokens.TryGetTableIndex(row.Handle.Kind, out var tableIndex);
 
             return string.Format(
                 "Row({0}, TableIndex.{1}, EditAndContinueOperation.{2})",

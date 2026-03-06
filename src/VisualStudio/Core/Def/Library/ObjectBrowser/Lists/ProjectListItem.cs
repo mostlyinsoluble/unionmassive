@@ -20,15 +20,12 @@ internal sealed class ProjectListItem : ObjectListItem
 
     private static StandardGlyphGroup GetProjectGlyph(Project project)
     {
-        switch (project.Language)
+        return project.Language switch
         {
-            case LanguageNames.CSharp:
-                return StandardGlyphGroup.GlyphCoolProject;
-            case LanguageNames.VisualBasic:
-                return StandardGlyphGroup.GlyphVBProject;
-            default:
-                throw new InvalidOperationException("Unsupported language: " + project.Language);
-        }
+            LanguageNames.CSharp => StandardGlyphGroup.GlyphCoolProject,
+            LanguageNames.VisualBasic => StandardGlyphGroup.GlyphVBProject,
+            _ => throw new InvalidOperationException("Unsupported language: " + project.Language),
+        };
     }
 
     public override string DisplayText

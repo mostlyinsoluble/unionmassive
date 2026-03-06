@@ -41,9 +41,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Debug.Assert(sourceNamedType.ExtensionGroupingName is not null);
                 var groupingMetadataName = sourceNamedType.ExtensionGroupingName;
 
-                MultiDictionary<string, SourceNamedTypeSymbol>? markerMap;
 
-                if (!groupingMap.TryGetValue(groupingMetadataName, out markerMap))
+                if (!groupingMap.TryGetValue(groupingMetadataName, out MultiDictionary<string, SourceNamedTypeSymbol>? markerMap))
                 {
                     markerMap = new MultiDictionary<string, SourceNamedTypeSymbol>(EqualityComparer<string>.Default, ReferenceEqualityComparer.Instance);
                     groupingMap.Add(groupingMetadataName, markerMap);
@@ -750,7 +749,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         foreach (var method in type.GetMethodsToEmit())
                         {
-                            Debug.Assert((object)method != null);
+                            Debug.Assert(method is not null);
 
                             if (method.GetCciAdapter().ShouldInclude(context))
                             {
@@ -773,7 +772,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         foreach (PropertySymbol property in type.GetPropertiesToEmit())
                         {
-                            Debug.Assert((object)property != null);
+                            Debug.Assert(property is not null);
                             IPropertyDefinition definition = property.GetCciAdapter();
                             // If any accessor should be included, then the property should be included too
                             if (definition.ShouldInclude(context) || !definition.GetAccessors(context).IsEmpty())

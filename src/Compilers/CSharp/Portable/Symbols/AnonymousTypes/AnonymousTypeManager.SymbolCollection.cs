@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static void ReportErrorOnSymbol(Symbol symbol, BindingDiagnosticBag diagnostics, ref bool hasError)
         {
-            if ((object)symbol == null)
+            if (symbol is null)
             {
                 return;
             }
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static void ReportErrorOnSpecialMember(Symbol symbol, SpecialMember member, BindingDiagnosticBag diagnostics, ref bool hasError)
         {
-            if ((object)symbol == null)
+            if (symbol is null)
             {
                 MemberDescriptor memberDescriptor = SpecialMembers.GetDescriptor(member);
                 diagnostics.Add(ErrorCode.ERR_MissingPredefinedMember, NoLocation.Singleton,
@@ -91,7 +91,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static void ReportErrorOnWellKnownMember(Symbol symbol, WellKnownMember member, BindingDiagnosticBag diagnostics, ref bool hasError)
         {
-            if ((object)symbol == null)
+            if (symbol is null)
             {
                 MemberDescriptor memberDescriptor = WellKnownMembers.GetDescriptor(member);
                 diagnostics.Add(ErrorCode.ERR_MissingPredefinedMember, NoLocation.Singleton,

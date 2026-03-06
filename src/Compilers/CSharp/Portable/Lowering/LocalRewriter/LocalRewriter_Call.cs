@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var assembly = receiver.Type.ContainingAssembly;
 
-                if ((object)assembly != null && assembly.IsLinked)
+                if (assembly is not null && assembly.IsLinked)
                 {
                     foreach (var m in methods)
                     {
@@ -123,7 +123,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var assembly = receiver.Type.ContainingAssembly;
 
-                if ((object)assembly != null && assembly.IsLinked)
+                if (assembly is not null && assembly.IsLinked)
                 {
                     foreach (var p in properties)
                     {
@@ -241,8 +241,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 this._diagnostics.Add(ErrorCode.WRN_InterceptorSignatureMismatch, attributeLocation, method, interceptor);
             }
 
-            ParameterSymbol? methodThisParameter;
-            _ = method.TryGetInstanceExtensionParameter(out methodThisParameter) || method.TryGetThisParameter(out methodThisParameter);
+            _ = method.TryGetInstanceExtensionParameter(out ParameterSymbol? methodThisParameter) || method.TryGetThisParameter(out methodThisParameter);
 
             ParameterSymbol? interceptorThisParameterForCompare = needToReduce ? interceptor.Parameters[0] :
                 interceptor.TryGetThisParameter(out var interceptorThisParameter) ? interceptorThisParameter : null;
@@ -494,13 +493,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown,
                     method,
                     rewrittenArguments,
-                    argumentNamesOpt: default(ImmutableArray<string?>),
+                    argumentNamesOpt: default,
                     argumentRefKinds,
                     isDelegateCall: false,
                     expanded: false,
                     invokedAsExtensionMethod: false,
-                    argsToParamsOpt: default(ImmutableArray<int>),
-                    defaultArguments: default(BitVector),
+                    argsToParamsOpt: default,
+                    defaultArguments: default,
                     resultKind: resultKind,
                     type: method.ReturnType);
             }
@@ -511,13 +510,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown,
                     method,
                     rewrittenArguments,
-                    argumentNamesOpt: default(ImmutableArray<string?>),
+                    argumentNamesOpt: default,
                     argumentRefKinds,
                     node.IsDelegateCall,
                     expanded: false,
                     invokedAsExtensionMethod: false,
-                    argsToParamsOpt: default(ImmutableArray<int>),
-                    defaultArguments: default(BitVector),
+                    argsToParamsOpt: default,
+                    defaultArguments: default,
                     node.ResultKind,
                     method.ReturnType);
             }
@@ -545,7 +544,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 rewrittenReceiver: rewrittenReceiver,
                 method: method,
                 rewrittenArguments: rewrittenArguments,
-                argumentRefKinds: default(ImmutableArray<RefKind>),
+                argumentRefKinds: default,
                 resultKind: LookupResultKind.Viable,
                 temps: default);
         }
@@ -672,7 +671,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(argumentRefKindsOpt.IsDefault || argumentRefKindsOpt.Length == arguments.Length);
             var requiresInstanceReceiver = methodOrIndexer.RequiresInstanceReceiver() && methodOrIndexer is not MethodSymbol { MethodKind: MethodKind.Constructor } and not FunctionPointerMethodSymbol;
             Debug.Assert(!requiresInstanceReceiver || rewrittenReceiver != null || _inExpressionLambda);
-            Debug.Assert(!forceReceiverCapturing || (requiresInstanceReceiver && rewrittenReceiver != null && storesOpt is object));
+            Debug.Assert(!forceReceiverCapturing || (requiresInstanceReceiver && rewrittenReceiver != null && storesOpt is not null));
             Debug.Assert(!forceReceiverCapturing || methodOrIndexer is PropertySymbol);
 
             BoundLocal? receiverTemp = null;
@@ -682,7 +681,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 (requiresInstanceReceiver && arguments.Any(a => usesReceiver(a))))
             {
                 Debug.Assert(!_inExpressionLambda);
-                Debug.Assert(rewrittenReceiver is object);
+                Debug.Assert(rewrittenReceiver is not null);
                 Debug.Assert(rewrittenReceiver.Type is { });
 
                 RefKind refKind;
@@ -786,15 +785,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
 #if DEBUG
-                Debug.Assert(saveTempsOpt is object || tempsOpt?.Count is null or > 0);
+                Debug.Assert(saveTempsOpt is not null || tempsOpt?.Count is null or > 0);
 #endif
                 rewrittenArguments = visitedArgumentsBuilder.ToImmutableAndFree();
             }
 
-            if (receiverTemp is object)
+            if (receiverTemp is not null)
             {
-                Debug.Assert(assignmentToTemp is object);
-                Debug.Assert(tempsOpt is object);
+                Debug.Assert(assignmentToTemp is not null);
+                Debug.Assert(tempsOpt is not null);
 
                 BoundAssignmentOperator? extraRefInitialization = null;
 
@@ -809,9 +808,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     ReferToTempIfReferenceTypeReceiver(receiverTemp, ref assignmentToTemp, out extraRefInitialization, tempsOpt);
                 }
 
-                if (storesOpt is object)
+                if (storesOpt is not null)
                 {
-                    if (extraRefInitialization is object)
+                    if (extraRefInitialization is not null)
                     {
                         storesOpt.Add(extraRefInitialization);
                     }
@@ -823,7 +822,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     rewrittenReceiver = _factory.Sequence(
                         ImmutableArray<LocalSymbol>.Empty,
-                        extraRefInitialization is object ? ImmutableArray.Create<BoundExpression>(extraRefInitialization, assignmentToTemp) : ImmutableArray.Create<BoundExpression>(assignmentToTemp),
+                        extraRefInitialization is not null ? ImmutableArray.Create<BoundExpression>(extraRefInitialization, assignmentToTemp) : ImmutableArray.Create<BoundExpression>(assignmentToTemp),
                         receiverTemp);
                 }
             }
@@ -879,7 +878,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 case BoundInterpolatedStringArgumentPlaceholder.ExtensionReceiver:
                                     Debug.Assert(usesReceiver(argument));
                                     Debug.Assert(requiresInstanceReceiver);
-                                    Debug.Assert(receiverTemp is object);
+                                    Debug.Assert(receiverTemp is not null);
                                     local = receiverTemp;
                                     break;
 
@@ -993,7 +992,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(assignmentToTemp.IsRef);
 
             var receiverType = receiverTemp.Type;
-            Debug.Assert(receiverType is object);
+            Debug.Assert(receiverType is not null);
 
             // A case where T is actually a class must be handled specially.
             // Taking a reference to a class instance is fragile because the value behind the 
@@ -1346,7 +1345,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return refKinds.ToImmutable();
                 }
             }
-            return default(ImmutableArray<RefKind>);
+            return default;
         }
 
         private delegate BoundExpression ParamsArrayElementRewriter<TArg>(BoundExpression element, ref TArg arg);
@@ -1522,13 +1521,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                         initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown,
                 arrayEmpty,
                 ImmutableArray<BoundExpression>.Empty,
-                default(ImmutableArray<string?>),
-                default(ImmutableArray<RefKind>),
+                default,
+                default,
                 isDelegateCall: false,
                 expanded: false,
                 invokedAsExtensionMethod: false,
-                argsToParamsOpt: default(ImmutableArray<int>),
-                defaultArguments: default(BitVector),
+                argsToParamsOpt: default,
+                defaultArguments: default,
                 resultKind: LookupResultKind.Viable,
                 type: arrayEmpty.ReturnType);
         }
@@ -1719,8 +1718,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(localRefKind == RefKind.None);
                 }
 
-                BoundAssignmentOperator boundAssignmentToTemp;
-                BoundLocal boundTemp = _factory.StoreToTemp(argument, out boundAssignmentToTemp);
+                BoundLocal boundTemp = _factory.StoreToTemp(argument, out BoundAssignmentOperator boundAssignmentToTemp);
 
                 actualArguments[argIndex] = new BoundSequence(
                     argument.Syntax,

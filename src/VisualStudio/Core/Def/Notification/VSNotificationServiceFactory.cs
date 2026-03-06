@@ -118,21 +118,12 @@ internal sealed class VSNotificationServiceFactory : IWorkspaceServiceFactory
 
         private static OLEMSGICON SeverityToIcon(NotificationSeverity severity)
         {
-            OLEMSGICON result;
-            switch (severity)
+            var result = severity switch
             {
-                case NotificationSeverity.Information:
-                    result = OLEMSGICON.OLEMSGICON_INFO;
-                    break;
-                case NotificationSeverity.Warning:
-                    result = OLEMSGICON.OLEMSGICON_WARNING;
-                    break;
-                default:
-                    // Error
-                    result = OLEMSGICON.OLEMSGICON_CRITICAL;
-                    break;
-            }
-
+                NotificationSeverity.Information => OLEMSGICON.OLEMSGICON_INFO,
+                NotificationSeverity.Warning => OLEMSGICON.OLEMSGICON_WARNING,
+                _ => OLEMSGICON.OLEMSGICON_CRITICAL,// Error
+            };
             return result;
         }
     }

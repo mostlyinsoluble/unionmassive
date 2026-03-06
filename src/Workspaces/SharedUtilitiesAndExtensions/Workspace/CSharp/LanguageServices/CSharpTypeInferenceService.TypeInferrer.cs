@@ -1041,43 +1041,14 @@ internal partial class CSharpTypeInferenceService
             }
 
             // Otherwise pick some sane defaults for certain common cases.
-            switch (operatorToken.Kind())
+            return operatorToken.Kind() switch
             {
-                case SyntaxKind.BarToken:
-                case SyntaxKind.CaretToken:
-                case SyntaxKind.AmpersandToken:
-                case SyntaxKind.LessThanToken:
-                case SyntaxKind.LessThanEqualsToken:
-                case SyntaxKind.GreaterThanToken:
-                case SyntaxKind.GreaterThanEqualsToken:
-                case SyntaxKind.PlusToken:
-                case SyntaxKind.MinusToken:
-                case SyntaxKind.AsteriskToken:
-                case SyntaxKind.SlashToken:
-                case SyntaxKind.PercentToken:
-                case SyntaxKind.CaretEqualsToken:
-                case SyntaxKind.PlusEqualsToken:
-                case SyntaxKind.MinusEqualsToken:
-                case SyntaxKind.AsteriskEqualsToken:
-                case SyntaxKind.SlashEqualsToken:
-                case SyntaxKind.PercentEqualsToken:
-                case SyntaxKind.LessThanLessThanToken:
-                case SyntaxKind.GreaterThanGreaterThanToken:
-                case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
-                case SyntaxKind.LessThanLessThanEqualsToken:
-                case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-                case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
-                    return CreateResult(this.Compilation.GetSpecialType(SpecialType.System_Int32));
-
-                case SyntaxKind.BarEqualsToken:
-                case SyntaxKind.AmpersandEqualsToken:
-                    // NOTE(cyrusn): |= and &= can be used for both ints and bools  However, in the
-                    // case where there isn't enough information to determine which the user wanted,
-                    // I'm just defaulting to bool based on personal preference.
-                    return CreateResult(SpecialType.System_Boolean);
-            }
-
-            return [];
+                SyntaxKind.BarToken or SyntaxKind.CaretToken or SyntaxKind.AmpersandToken or SyntaxKind.LessThanToken or SyntaxKind.LessThanEqualsToken or SyntaxKind.GreaterThanToken or SyntaxKind.GreaterThanEqualsToken or SyntaxKind.PlusToken or SyntaxKind.MinusToken or SyntaxKind.AsteriskToken or SyntaxKind.SlashToken or SyntaxKind.PercentToken or SyntaxKind.CaretEqualsToken or SyntaxKind.PlusEqualsToken or SyntaxKind.MinusEqualsToken or SyntaxKind.AsteriskEqualsToken or SyntaxKind.SlashEqualsToken or SyntaxKind.PercentEqualsToken or SyntaxKind.LessThanLessThanToken or SyntaxKind.GreaterThanGreaterThanToken or SyntaxKind.GreaterThanGreaterThanGreaterThanToken or SyntaxKind.LessThanLessThanEqualsToken or SyntaxKind.GreaterThanGreaterThanEqualsToken or SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken => CreateResult(this.Compilation.GetSpecialType(SpecialType.System_Int32)),
+                SyntaxKind.BarEqualsToken or SyntaxKind.AmpersandEqualsToken => CreateResult(SpecialType.System_Boolean),// NOTE(cyrusn): |= and &= can be used for both ints and bools  However, in the
+                                                                                                                         // case where there isn't enough information to determine which the user wanted,
+                                                                                                                         // I'm just defaulting to bool based on personal preference.
+                _ => [],
+            };
         }
 
         private IEnumerable<TypeInferenceInfo> InferTypeInCastExpression(CastExpressionSyntax castExpression, ExpressionSyntax expressionOpt = null, SyntaxToken? previousToken = null)
@@ -1968,14 +1939,11 @@ internal partial class CSharpTypeInferenceService
             if (previousToken.HasValue)
                 return [];
 
-            switch (postfixUnaryExpressionSyntax.Kind())
+            return postfixUnaryExpressionSyntax.Kind() switch
             {
-                case SyntaxKind.PostDecrementExpression:
-                case SyntaxKind.PostIncrementExpression:
-                    return CreateResult(this.Compilation.GetSpecialType(SpecialType.System_Int32));
-            }
-
-            return [];
+                SyntaxKind.PostDecrementExpression or SyntaxKind.PostIncrementExpression => CreateResult(this.Compilation.GetSpecialType(SpecialType.System_Int32)),
+                _ => [],
+            };
         }
 
         private IEnumerable<TypeInferenceInfo> InferTypeInPrefixUnaryExpression(PrefixUnaryExpressionSyntax prefixUnaryExpression, SyntaxToken? previousToken = null)

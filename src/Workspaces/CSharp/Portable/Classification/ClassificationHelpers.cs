@@ -67,74 +67,21 @@ internal static class ClassificationHelpers
 
     public static bool IsControlKeywordKind(SyntaxKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case SyntaxKind.AwaitKeyword:
-            case SyntaxKind.BreakKeyword:
-            case SyntaxKind.CaseKeyword:
-            case SyntaxKind.CatchKeyword:
-            case SyntaxKind.ContinueKeyword:
-            case SyntaxKind.DefaultKeyword: // Include DefaultKeyword as it can be part of a DefaultSwitchLabel
-            case SyntaxKind.DoKeyword:
-            case SyntaxKind.ElseKeyword:
-            case SyntaxKind.FinallyKeyword:
-            case SyntaxKind.ForEachKeyword:
-            case SyntaxKind.ForKeyword:
-            case SyntaxKind.GotoKeyword:
-            case SyntaxKind.IfKeyword:
-            case SyntaxKind.InKeyword: // Include InKeyword as it can be part of an ForEachStatement
-            case SyntaxKind.ReturnKeyword:
-            case SyntaxKind.SwitchKeyword:
-            case SyntaxKind.ThrowKeyword:
-            case SyntaxKind.TryKeyword:
-            case SyntaxKind.WhenKeyword: // Include WhenKeyword as it can be part of a CatchFilterClause or a pattern WhenClause
-            case SyntaxKind.WhileKeyword:
-            case SyntaxKind.YieldKeyword:
-                return true;
-            default:
-                return false;
-        }
+            SyntaxKind.AwaitKeyword or SyntaxKind.BreakKeyword or SyntaxKind.CaseKeyword or SyntaxKind.CatchKeyword or SyntaxKind.ContinueKeyword or SyntaxKind.DefaultKeyword or SyntaxKind.DoKeyword or SyntaxKind.ElseKeyword or SyntaxKind.FinallyKeyword or SyntaxKind.ForEachKeyword or SyntaxKind.ForKeyword or SyntaxKind.GotoKeyword or SyntaxKind.IfKeyword or SyntaxKind.InKeyword or SyntaxKind.ReturnKeyword or SyntaxKind.SwitchKeyword or SyntaxKind.ThrowKeyword or SyntaxKind.TryKeyword or SyntaxKind.WhenKeyword or SyntaxKind.WhileKeyword or SyntaxKind.YieldKeyword => true,
+            _ => false,
+        };
     }
 
     public static bool IsControlStatementKind(SyntaxKind kind)
     {
-        switch (kind)
+        return kind switch
         {
             // Jump Statements
-            case SyntaxKind.BreakStatement:
-            case SyntaxKind.ContinueStatement:
-            case SyntaxKind.DoStatement:
-            case SyntaxKind.ForEachStatement:
-            case SyntaxKind.ForEachVariableStatement:
-            case SyntaxKind.ForStatement:
-            case SyntaxKind.GotoCaseStatement:
-            case SyntaxKind.GotoDefaultStatement:
-            case SyntaxKind.GotoStatement:
-            case SyntaxKind.ReturnStatement:
-            case SyntaxKind.ThrowStatement:
-            case SyntaxKind.WhileStatement:
-            case SyntaxKind.YieldBreakStatement:
-            case SyntaxKind.YieldReturnStatement:
-            // Checked Statements
-            case SyntaxKind.AwaitExpression:
-            case SyntaxKind.CasePatternSwitchLabel:
-            case SyntaxKind.CaseSwitchLabel:
-            case SyntaxKind.CatchClause:
-            case SyntaxKind.CatchFilterClause:
-            case SyntaxKind.DefaultSwitchLabel:
-            case SyntaxKind.ElseClause:
-            case SyntaxKind.FinallyClause:
-            case SyntaxKind.IfStatement:
-            case SyntaxKind.SwitchExpression:
-            case SyntaxKind.SwitchSection:
-            case SyntaxKind.SwitchStatement:
-            case SyntaxKind.ThrowExpression:
-            case SyntaxKind.TryStatement:
-            case SyntaxKind.WhenClause:
-                return true;
-            default:
-                return false;
-        }
+            SyntaxKind.BreakStatement or SyntaxKind.ContinueStatement or SyntaxKind.DoStatement or SyntaxKind.ForEachStatement or SyntaxKind.ForEachVariableStatement or SyntaxKind.ForStatement or SyntaxKind.GotoCaseStatement or SyntaxKind.GotoDefaultStatement or SyntaxKind.GotoStatement or SyntaxKind.ReturnStatement or SyntaxKind.ThrowStatement or SyntaxKind.WhileStatement or SyntaxKind.YieldBreakStatement or SyntaxKind.YieldReturnStatement or SyntaxKind.AwaitExpression or SyntaxKind.CasePatternSwitchLabel or SyntaxKind.CaseSwitchLabel or SyntaxKind.CatchClause or SyntaxKind.CatchFilterClause or SyntaxKind.DefaultSwitchLabel or SyntaxKind.ElseClause or SyntaxKind.FinallyClause or SyntaxKind.IfStatement or SyntaxKind.SwitchExpression or SyntaxKind.SwitchSection or SyntaxKind.SwitchStatement or SyntaxKind.ThrowExpression or SyntaxKind.TryStatement or SyntaxKind.WhenClause => true,
+            _ => false,
+        };
     }
 
     private static bool IsStringToken(SyntaxToken token)
@@ -394,56 +341,11 @@ internal static class ClassificationHelpers
 
     private static bool IsOperator(this SyntaxKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case SyntaxKind.TildeToken:
-            case SyntaxKind.ExclamationToken:
-            case SyntaxKind.PercentToken:
-            case SyntaxKind.CaretToken:
-            case SyntaxKind.AmpersandToken:
-            case SyntaxKind.AsteriskToken:
-            case SyntaxKind.MinusToken:
-            case SyntaxKind.PlusToken:
-            case SyntaxKind.EqualsToken:
-            case SyntaxKind.BarToken:
-            case SyntaxKind.ColonToken:
-            case SyntaxKind.LessThanToken:
-            case SyntaxKind.GreaterThanToken:
-            case SyntaxKind.DotToken:
-            case SyntaxKind.QuestionToken:
-            case SyntaxKind.SlashToken:
-            case SyntaxKind.BarBarToken:
-            case SyntaxKind.AmpersandAmpersandToken:
-            case SyntaxKind.MinusMinusToken:
-            case SyntaxKind.PlusPlusToken:
-            case SyntaxKind.ColonColonToken:
-            case SyntaxKind.QuestionQuestionToken:
-            case SyntaxKind.MinusGreaterThanToken:
-            case SyntaxKind.ExclamationEqualsToken:
-            case SyntaxKind.EqualsEqualsToken:
-            case SyntaxKind.EqualsGreaterThanToken:
-            case SyntaxKind.LessThanEqualsToken:
-            case SyntaxKind.LessThanLessThanToken:
-            case SyntaxKind.LessThanLessThanEqualsToken:
-            case SyntaxKind.GreaterThanEqualsToken:
-            case SyntaxKind.GreaterThanGreaterThanToken:
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
-            case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
-            case SyntaxKind.SlashEqualsToken:
-            case SyntaxKind.AsteriskEqualsToken:
-            case SyntaxKind.BarEqualsToken:
-            case SyntaxKind.AmpersandEqualsToken:
-            case SyntaxKind.PlusEqualsToken:
-            case SyntaxKind.MinusEqualsToken:
-            case SyntaxKind.CaretEqualsToken:
-            case SyntaxKind.PercentEqualsToken:
-            case SyntaxKind.QuestionQuestionEqualsToken:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.TildeToken or SyntaxKind.ExclamationToken or SyntaxKind.PercentToken or SyntaxKind.CaretToken or SyntaxKind.AmpersandToken or SyntaxKind.AsteriskToken or SyntaxKind.MinusToken or SyntaxKind.PlusToken or SyntaxKind.EqualsToken or SyntaxKind.BarToken or SyntaxKind.ColonToken or SyntaxKind.LessThanToken or SyntaxKind.GreaterThanToken or SyntaxKind.DotToken or SyntaxKind.QuestionToken or SyntaxKind.SlashToken or SyntaxKind.BarBarToken or SyntaxKind.AmpersandAmpersandToken or SyntaxKind.MinusMinusToken or SyntaxKind.PlusPlusToken or SyntaxKind.ColonColonToken or SyntaxKind.QuestionQuestionToken or SyntaxKind.MinusGreaterThanToken or SyntaxKind.ExclamationEqualsToken or SyntaxKind.EqualsEqualsToken or SyntaxKind.EqualsGreaterThanToken or SyntaxKind.LessThanEqualsToken or SyntaxKind.LessThanLessThanToken or SyntaxKind.LessThanLessThanEqualsToken or SyntaxKind.GreaterThanEqualsToken or SyntaxKind.GreaterThanGreaterThanToken or SyntaxKind.GreaterThanGreaterThanGreaterThanToken or SyntaxKind.GreaterThanGreaterThanEqualsToken or SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken or SyntaxKind.SlashEqualsToken or SyntaxKind.AsteriskEqualsToken or SyntaxKind.BarEqualsToken or SyntaxKind.AmpersandEqualsToken or SyntaxKind.PlusEqualsToken or SyntaxKind.MinusEqualsToken or SyntaxKind.CaretEqualsToken or SyntaxKind.PercentEqualsToken or SyntaxKind.QuestionQuestionEqualsToken => true,
+            _ => false,
+        };
     }
 
     private static bool IsActualContextualKeyword(SyntaxToken token)

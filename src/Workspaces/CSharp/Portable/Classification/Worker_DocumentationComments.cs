@@ -162,7 +162,7 @@ internal ref partial struct Worker
         }
         else if (token.Kind() != SyntaxKind.XmlTextLiteralNewLineToken)
         {
-            RoslynDebug.Assert(token.Parent is object);
+            RoslynDebug.Assert(token.Parent is not null);
             switch (token.Parent.Kind())
             {
                 case SyntaxKind.XmlText:

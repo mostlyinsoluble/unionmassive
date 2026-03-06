@@ -20,27 +20,19 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ImmutableArray<Symbol> symbols = BindCrefInternal(syntax, out ambiguityWinner, diagnostics);
             Debug.Assert(!symbols.IsDefault, "Prefer empty to null.");
-            Debug.Assert((symbols.Length > 1) == ((object?)ambiguityWinner != null), "ambiguityWinner should be set iff more than one symbol is returned.");
+            Debug.Assert((symbols.Length > 1) == (ambiguityWinner is not null), "ambiguityWinner should be set iff more than one symbol is returned.");
             return symbols;
         }
 
         private ImmutableArray<Symbol> BindCrefInternal(CrefSyntax syntax, out Symbol? ambiguityWinner, BindingDiagnosticBag diagnostics)
         {
-            switch (syntax.Kind())
+            return syntax.Kind() switch
             {
-                case SyntaxKind.TypeCref:
-                    return BindTypeCref((TypeCrefSyntax)syntax, out ambiguityWinner, diagnostics);
-                case SyntaxKind.QualifiedCref:
-                    return BindQualifiedCref((QualifiedCrefSyntax)syntax, out ambiguityWinner, diagnostics);
-                case SyntaxKind.NameMemberCref:
-                case SyntaxKind.IndexerMemberCref:
-                case SyntaxKind.OperatorMemberCref:
-                case SyntaxKind.ConversionOperatorMemberCref:
-                case SyntaxKind.ExtensionMemberCref:
-                    return BindMemberCref((MemberCrefSyntax)syntax, containerOpt: null, ambiguityWinner: out ambiguityWinner, diagnostics: diagnostics);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(syntax.Kind());
-            }
+                SyntaxKind.TypeCref => BindTypeCref((TypeCrefSyntax)syntax, out ambiguityWinner, diagnostics),
+                SyntaxKind.QualifiedCref => BindQualifiedCref((QualifiedCrefSyntax)syntax, out ambiguityWinner, diagnostics),
+                SyntaxKind.NameMemberCref or SyntaxKind.IndexerMemberCref or SyntaxKind.OperatorMemberCref or SyntaxKind.ConversionOperatorMemberCref or SyntaxKind.ExtensionMemberCref => BindMemberCref((MemberCrefSyntax)syntax, containerOpt: null, ambiguityWinner: out ambiguityWinner, diagnostics: diagnostics),
+                _ => throw ExceptionUtilities.UnexpectedValue(syntax.Kind()),
+            };
         }
 
         private ImmutableArray<Symbol> BindTypeCref(TypeCrefSyntax syntax, out Symbol? ambiguityWinner, BindingDiagnosticBag diagnostics)
@@ -94,13 +86,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // an umbrella diagnostic if the result is an error type.
             NamespaceOrTypeSymbol namespaceOrTypeSymbol = BindNamespaceOrTypeSymbol(syntax, BindingDiagnosticBag.Discarded).NamespaceOrTypeSymbol;
 
-            Debug.Assert((object)namespaceOrTypeSymbol != null);
+            Debug.Assert(namespaceOrTypeSymbol is not null);
             return namespaceOrTypeSymbol;
         }
 
         private ImmutableArray<Symbol> BindMemberCref(MemberCrefSyntax syntax, NamespaceOrTypeSymbol? containerOpt, out Symbol? ambiguityWinner, BindingDiagnosticBag diagnostics)
         {
-            if ((object?)containerOpt != null && containerOpt.Kind == SymbolKind.TypeParameter)
+            if (containerOpt is not null && containerOpt.Kind == SymbolKind.TypeParameter)
             {
                 // As in normal lookup (see CreateErrorIfLookupOnTypeParameter), you can't dot into a type parameter
                 // (though you can dot into an expression of type parameter type).
@@ -112,28 +104,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return ImmutableArray<Symbol>.Empty;
             }
 
-            ImmutableArray<Symbol> result;
-            switch (syntax.Kind())
+            var result = syntax.Kind() switch
             {
-                case SyntaxKind.NameMemberCref:
-                    result = BindNameMemberCref((NameMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics);
-                    break;
-                case SyntaxKind.IndexerMemberCref:
-                    result = BindIndexerMemberCref((IndexerMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics);
-                    break;
-                case SyntaxKind.OperatorMemberCref:
-                    result = BindOperatorMemberCref((OperatorMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics);
-                    break;
-                case SyntaxKind.ConversionOperatorMemberCref:
-                    result = BindConversionOperatorMemberCref((ConversionOperatorMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics);
-                    break;
-                case SyntaxKind.ExtensionMemberCref:
-                    result = BindExtensionMemberCref((ExtensionMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics);
-                    break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(syntax.Kind());
-            }
-
+                SyntaxKind.NameMemberCref => BindNameMemberCref((NameMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics),
+                SyntaxKind.IndexerMemberCref => BindIndexerMemberCref((IndexerMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics),
+                SyntaxKind.OperatorMemberCref => BindOperatorMemberCref((OperatorMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics),
+                SyntaxKind.ConversionOperatorMemberCref => BindConversionOperatorMemberCref((ConversionOperatorMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics),
+                SyntaxKind.ExtensionMemberCref => BindExtensionMemberCref((ExtensionMemberCrefSyntax)syntax, containerOpt, out ambiguityWinner, diagnostics),
+                _ => throw ExceptionUtilities.UnexpectedValue(syntax.Kind()),
+            };
             if (!result.Any())
             {
                 CrefSyntax crefSyntax = GetRootCrefSyntax(syntax);
@@ -162,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // If the name isn't a SimpleNameSyntax, then we must have a type name followed by a parameter list.
                 // Thus, we're looking for a constructor.
-                Debug.Assert((object?)containerOpt == null);
+                Debug.Assert(containerOpt is null);
 
                 // Could be an error type, but we'll just lookup fail below.
                 containerOpt = BindNamespaceOrTypeSymbolInCref(syntax.Name);
@@ -223,8 +202,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ImmutableArray<Symbol> BindExtensionMemberCref(ExtensionMemberCrefSyntax syntax, NamespaceOrTypeSymbol? containerOpt, out Symbol? ambiguityWinner, BindingDiagnosticBag diagnostics)
         {
-            CheckFeatureAvailability(syntax, MessageID.IDS_FeatureExtensions, diagnostics);
-
             int arity = 0;
             TypeArgumentListSyntax? typeArgumentListSyntax = null;
             CrefParameterListSyntax? parameters = null;
@@ -567,7 +544,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     result.Free(); // Won't be using this.
                     Debug.Assert(memberName == memberNameText);
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureNativeInt, diagnostics);
                     builder = ArrayBuilder<Symbol>.GetInstance();
                     builder.Add(this.GetSpecialType(memberName == "nint" ? SpecialType.System_IntPtr : SpecialType.System_UIntPtr, diagnostics, syntax).AsNativeInteger());
                 }
@@ -611,7 +587,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (arity == 0) // Member arity
                     {
                         NamedTypeSymbol? containerType = containerOpt as NamedTypeSymbol;
-                        if ((object?)containerType != null)
+                        if (containerType is not null)
                         {
                             // Case 1: If the name is qualified by a type with the same name, then we want a 
                             // constructor (unless the type is generic, the cref is on/in the type (but not 
@@ -622,21 +598,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 constructorType = containerType;
                             }
                         }
-                        else if ((object?)containerOpt == null && hasParameterList)
+                        else if (containerOpt is null && hasParameterList)
                         {
                             // Case 2: If the name is not qualified by anything, but we're in the scope
                             // of a type with the same name (regardless of arity), then we want a constructor,
                             // as long as there were parens after the member name.
 
                             NamedTypeSymbol? binderContainingType = this.ContainingType;
-                            if ((object?)binderContainingType != null && memberName == binderContainingType.Name)
+                            if (binderContainingType is not null && memberName == binderContainingType.Name)
                             {
                                 constructorType = binderContainingType;
                             }
                         }
                     }
 
-                    if ((object?)constructorType != null)
+                    if (constructorType is not null)
                     {
                         ImmutableArray<MethodSymbol> instanceConstructors = constructorType.InstanceConstructors;
                         int numInstanceConstructors = instanceConstructors.Length;
@@ -804,7 +780,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static bool IsNestedTypeOfUnconstructedGenericType(NamedTypeSymbol type)
         {
             NamedTypeSymbol containing = type.ContainingType;
-            while ((object)containing != null)
+            while (containing is not null)
             {
                 if (containing.Arity > 0 && containing.IsDefinition)
                 {
@@ -883,8 +859,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     unwrappedSymbols.Add(UnwrapAliasNoDiagnostics(wrapped));
                 }
 
-                BestSymbolInfo secondBest;
-                BestSymbolInfo best = GetBestSymbolInfo(unwrappedSymbols, out secondBest);
+                BestSymbolInfo best = GetBestSymbolInfo(unwrappedSymbols, out BestSymbolInfo secondBest);
 
                 Debug.Assert(!best.IsNone);
                 Debug.Assert(!secondBest.IsNone);
@@ -936,7 +911,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Symbol constructedCandidate = ConstructWithCrefTypeParameters(arity, typeArgumentListSyntax, candidate);
                 NamedTypeSymbol? constructedCandidateType = constructedCandidate as NamedTypeSymbol;
-                if ((object?)constructedCandidateType == null)
+                if (constructedCandidateType is null)
                 {
                     // Construct before overload resolution so the signatures will match.
                     candidates.Add(constructedCandidate);
@@ -1083,14 +1058,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arity > 0)
             {
-                Debug.Assert(typeArgumentListSyntax is object);
+                Debug.Assert(typeArgumentListSyntax is not null);
                 SeparatedSyntaxList<TypeSyntax> typeArgumentSyntaxes = typeArgumentListSyntax.Arguments;
                 var typeArgumentsWithAnnotations = ArrayBuilder<TypeWithAnnotations>.GetInstance(arity);
 
                 var unusedDiagnostics =
 #if DEBUG
                     BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
-                Debug.Assert(unusedDiagnostics.DiagnosticBag is object);
+                Debug.Assert(unusedDiagnostics.DiagnosticBag is not null);
 #else
                     BindingDiagnosticBag.Discarded;
 #endif
@@ -1136,11 +1111,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 RefKind refKind = parameter.RefKindKeyword.Kind().GetRefKind();
                 if (refKind == RefKind.Ref && parameter.ReadOnlyKeyword.IsKind(SyntaxKind.ReadOnlyKeyword))
                 {
-                    CheckFeatureAvailability(parameter.ReadOnlyKeyword, MessageID.IDS_FeatureRefReadonlyParameters, diagnostics, forceWarning: true);
                     refKind = RefKind.RefReadOnlyParameter;
                 }
 
-                Debug.Assert(parameterListSyntax.Parent is object);
+                Debug.Assert(parameterListSyntax.Parent is not null);
                 TypeSymbol type = BindCrefParameterOrReturnType(parameter.Type, (MemberCrefSyntax)parameterListSyntax.Parent, diagnostics);
 
                 parameterBuilder.Add(new SignatureOnlyParameterSymbol(TypeWithAnnotations.Create(type), ImmutableArray<CustomModifier>.Empty, isParamsArray: false, isParamsCollection: false, refKind: refKind));
@@ -1170,7 +1144,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var localDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, // Examined, but not reported.
                                                                     withDependencies: diagnostics.AccumulatesDependencies);
-            Debug.Assert(localDiagnostics.DiagnosticBag is object);
+            Debug.Assert(localDiagnostics.DiagnosticBag is not null);
 
             TypeSymbol type = parameterOrReturnTypeBinder.BindType(typeSyntax, localDiagnostics).Type;
 
@@ -1178,7 +1152,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (HasNonObsoleteError(localDiagnostics.DiagnosticBag))
                 {
-                    Debug.Assert(typeSyntax.Parent is object);
+                    Debug.Assert(typeSyntax.Parent is not null);
                     CrefSyntax crefSyntax = GetRootCrefSyntax(memberCrefSyntax);
                     if (typeSyntax.Parent.Kind() == SyntaxKind.ConversionOperatorMemberCref)
                     {

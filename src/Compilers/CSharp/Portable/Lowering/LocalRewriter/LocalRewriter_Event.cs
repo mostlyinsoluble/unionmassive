@@ -114,8 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression? clearCall = null;
             if (kind == EventAssignmentKind.Assignment)
             {
-                MethodSymbol? clearMethod;
-                if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_WindowsRuntimeMarshal__RemoveAllEventHandlers, out clearMethod))
+                if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_WindowsRuntimeMarshal__RemoveAllEventHandlers, out MethodSymbol? clearMethod))
                 {
                     clearCall = MakeCall(
                         syntax: syntax,
@@ -154,8 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression marshalCall;
 
-            MethodSymbol? marshalMethod;
-            if (TryGetWellKnownTypeMember(syntax, helper, out marshalMethod))
+            if (TryGetWellKnownTypeMember(syntax, helper, out MethodSymbol? marshalMethod))
             {
                 marshalMethod = marshalMethod.Construct(eventType);
 
@@ -247,8 +245,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression getOrCreateCall;
 
-            MethodSymbol? getOrCreateMethod;
-            if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_EventRegistrationTokenTable_T__GetOrCreateEventRegistrationTokenTable, out getOrCreateMethod))
+            if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_EventRegistrationTokenTable_T__GetOrCreateEventRegistrationTokenTable, out MethodSymbol? getOrCreateMethod))
             {
                 getOrCreateMethod = getOrCreateMethod.AsMember(fieldType);
 
@@ -265,12 +262,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 getOrCreateCall = new BoundBadExpression(syntax, LookupResultKind.NotInvocable, ImmutableArray<Symbol?>.Empty, ImmutableArray.Create<BoundExpression>(fieldAccess), ErrorTypeSymbol.UnknownResultType);
             }
 
-            PropertySymbol? invocationListProperty;
-            if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_EventRegistrationTokenTable_T__InvocationList, out invocationListProperty))
+            if (TryGetWellKnownTypeMember(syntax, WellKnownMember.System_Runtime_InteropServices_WindowsRuntime_EventRegistrationTokenTable_T__InvocationList, out PropertySymbol? invocationListProperty))
             {
                 MethodSymbol invocationListAccessor = invocationListProperty.GetMethod;
 
-                if ((object)invocationListAccessor == null)
+                if (invocationListAccessor is null)
                 {
                     string accessorName = SourcePropertyAccessorSymbol.GetAccessorName(invocationListProperty.Name,
                         getNotSet: true,
@@ -300,12 +296,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var ctor = _factory.WellKnownMethod(WellKnownMember.System_Runtime_InteropServices_ComAwareEventInfo__ctor);
 
-            if ((object)ctor != null)
+            if (ctor is not null)
             {
                 var addRemove = _factory.WellKnownMethod(node.IsAddition ? WellKnownMember.System_Runtime_InteropServices_ComAwareEventInfo__AddEventHandler :
                                                                           WellKnownMember.System_Runtime_InteropServices_ComAwareEventInfo__RemoveEventHandler);
 
-                if ((object)addRemove != null)
+                if (addRemove is not null)
                 {
                     TypeSymbol parameters0Type = addRemove.Parameters[0].Type;
                     Debug.Assert(parameters0Type.IsObjectType());

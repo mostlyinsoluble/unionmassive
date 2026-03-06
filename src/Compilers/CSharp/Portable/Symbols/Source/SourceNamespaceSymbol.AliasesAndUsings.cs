@@ -346,7 +346,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
 
                         // Report a conflict between global using aliases and extern aliases from other compilation units
-                        if (haveExternAliases && mergedAliases is object)
+                        if (haveExternAliases && mergedAliases is not null)
                         {
                             foreach (var singleDeclaration in _mergedDeclaration.Declarations)
                             {
@@ -424,21 +424,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazyExternAliases is null)
                 {
-                    SyntaxList<ExternAliasDirectiveSyntax> externAliasDirectives;
-                    switch (declarationSyntax)
+                    var externAliasDirectives = declarationSyntax switch
                     {
-                        case CompilationUnitSyntax compilationUnit:
-                            externAliasDirectives = compilationUnit.Externs;
-                            break;
-
-                        case BaseNamespaceDeclarationSyntax namespaceDecl:
-                            externAliasDirectives = namespaceDecl.Externs;
-                            break;
-
-                        default:
-                            throw ExceptionUtilities.UnexpectedValue(declarationSyntax);
-                    }
-
+                        CompilationUnitSyntax compilationUnit => compilationUnit.Externs,
+                        BaseNamespaceDeclarationSyntax namespaceDecl => namespaceDecl.Externs,
+                        _ => throw ExceptionUtilities.UnexpectedValue(declarationSyntax),
+                    };
                     if (!externAliasDirectives.Any())
                     {
 #if DEBUG
@@ -668,7 +659,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 diagnostics.Add(ErrorCode.WRN_GlobalAliasDefn, location);
                             }
 
-                            if (usingDirective.StaticKeyword != default(SyntaxToken))
+                            if (usingDirective.StaticKeyword != default)
                             {
                                 diagnostics.Add(ErrorCode.ERR_NoAliasHere, location);
                             }
@@ -743,24 +734,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 }
                                 else
                                 {
-                                    MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective, unsafeKeywordLocation);
                                     declaringSymbol.CheckUnsafeModifier(DeclarationModifiers.Unsafe, unsafeKeywordLocation, diagnostics);
                                 }
 
                                 needsUnsafeBinder = true;
                             }
-                            else
-                            {
-                                // Prior to C#12, allow the using static type to be an unsafe region.  This allows us to
-                                // maintain compat with prior versions of the compiler that allowed `using static
-                                // List<int*[]>;` to be written.  In 12.0 and onwards though, we require the code to
-                                // explicitly contain the `unsafe` keyword.
-                                if (!compilation.IsFeatureEnabled(MessageID.IDS_FeatureUsingTypeAlias))
-                                    needsUnsafeBinder = true;
-                            }
 
                             var directiveDiagnostics = BindingDiagnosticBag.GetInstance();
-                            Debug.Assert(directiveDiagnostics.DiagnosticBag is object);
+                            Debug.Assert(directiveDiagnostics.DiagnosticBag is not null);
                             Debug.Assert(directiveDiagnostics.DependenciesBag is object);
 
                             declarationBinderSafe ??= compilation.GetBinderFactory(declarationSyntax.SyntaxTree).GetBinder(usingDirective.NamespaceOrType).WithAdditionalFlags(BinderFlags.SuppressConstraintChecks);
@@ -783,7 +764,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             {
                                 Debug.Assert(directiveDiagnostics.DependenciesBag.IsEmpty());
 
-                                if (usingDirective.StaticKeyword != default(SyntaxToken))
+                                if (usingDirective.StaticKeyword != default)
                                 {
                                     diagnostics.Add(ErrorCode.ERR_BadUsingType, usingDirective.NamespaceOrType.Location, imported);
                                 }
@@ -801,14 +782,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             }
                             else if (imported.Kind == SymbolKind.NamedType)
                             {
-                                if (usingDirective.StaticKeyword == default(SyntaxToken))
+                                if (usingDirective.StaticKeyword == default)
                                 {
                                     diagnostics.Add(ErrorCode.ERR_BadUsingNamespace, usingDirective.NamespaceOrType.Location, imported);
                                 }
                                 else
                                 {
                                     var importedType = (NamedTypeSymbol)imported;
-                                    if (usingDirective.GlobalKeyword != default(SyntaxToken) && importedType.HasFileLocalTypes())
+                                    if (usingDirective.GlobalKeyword != default && importedType.HasFileLocalTypes())
                                     {
                                         diagnostics.Add(ErrorCode.ERR_GlobalUsingStaticFileType, usingDirective.NamespaceOrType.Location, imported);
                                     }
@@ -980,10 +961,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 // Check constraints within named aliases.
                 var diagnostics = BindingDiagnosticBag.GetInstance();
-                Debug.Assert(diagnostics.DiagnosticBag is object);
+                Debug.Assert(diagnostics.DiagnosticBag is not null);
                 Debug.Assert(diagnostics.DependenciesBag is object);
 
-                if (usingsAndDiagnostics.UsingAliasesMap is object)
+                if (usingsAndDiagnostics.UsingAliasesMap is not null)
                 {
                     // Force resolution of named aliases.
                     foreach (var (_, alias) in usingsAndDiagnostics.UsingAliasesMap)

@@ -234,7 +234,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal void CheckConstraints(BindingDiagnosticBag diagnostics)
         {
             var target = this.Target as TypeSymbol;
-            if ((object?)target != null && Locations.Length > 0)
+            if (target is not null && Locations.Length > 0)
             {
                 var corLibrary = this.ContainingAssembly.CorLibrary;
                 var conversions = corLibrary.TypeConversions;
@@ -256,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             AliasSymbol? other = obj as AliasSymbol;
 
-            return (object?)other != null &&
+            return other is not null &&
                 Equals(this.TryGetFirstLocation(), other.TryGetFirstLocation()) &&
                 Equals(this.ContainingSymbol, other.ContainingSymbol, compareKind);
         }
@@ -287,7 +287,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal AliasSymbolFromSyntax(SourceNamespaceSymbol containingSymbol, UsingDirectiveSyntax syntax)
             : base(syntax.Alias!.Name.Identifier.ValueText, containingSymbol, ImmutableArray.Create(syntax.Alias!.Name.Identifier.GetLocation()), isExtern: false)
         {
-            Debug.Assert(syntax.Alias is object);
+            Debug.Assert(syntax.Alias is not null);
 
             _directive = syntax.GetReference();
         }
@@ -338,7 +338,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     newDiagnostics.Free();
                     // Wait for diagnostics to have been reported if another thread resolves the alias
-                    _state.SpinWaitComplete(CompletionPart.AliasTarget, default(CancellationToken));
+                    _state.SpinWaitComplete(CompletionPart.AliasTarget, default);
                 }
             }
 
@@ -357,13 +357,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private NamespaceSymbol ResolveExternAliasTarget(BindingDiagnosticBag diagnostics)
         {
-            NamespaceSymbol? target;
-            if (!ContainingSymbol.DeclaringCompilation.GetExternAliasTarget(Name, out target))
+            if (!ContainingSymbol.DeclaringCompilation.GetExternAliasTarget(Name, out NamespaceSymbol? target))
             {
                 diagnostics.Add(ErrorCode.ERR_BadExternAlias, GetFirstLocation(), Name);
             }
 
-            RoslynDebug.Assert(target is object);
+            RoslynDebug.Assert(target is not null);
             RoslynDebug.Assert(target.IsGlobalNamespace);
 
             return target;
@@ -374,29 +373,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             BindingDiagnosticBag diagnostics,
             ConsList<TypeSymbol>? basesBeingResolved)
         {
-            if (usingDirective.UnsafeKeyword != default)
-            {
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.UnsafeKeyword);
-            }
-            else if (usingDirective.NamespaceOrType is not NameSyntax)
-            {
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.NamespaceOrType);
-            }
-
             var syntax = usingDirective.NamespaceOrType;
             var flags = BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks;
             if (usingDirective.UnsafeKeyword != default)
             {
                 this.CheckUnsafeModifier(DeclarationModifiers.Unsafe, usingDirective.UnsafeKeyword.GetLocation(), diagnostics);
                 flags |= BinderFlags.UnsafeRegion;
-            }
-            else
-            {
-                // Prior to C#12, allow the alias to be an unsafe region.  This allows us to maintain compat with prior
-                // versions of the compiler that allowed `using X = List<int*[]>` to be written.  In 12.0 and onwards
-                // though, we require the code to explicitly contain the `unsafe` keyword.
-                if (!DeclaringCompilation.IsFeatureEnabled(MessageID.IDS_FeatureUsingTypeAlias))
-                    flags |= BinderFlags.UnsafeRegion;
             }
 
             var declarationBinder = ContainingSymbol.DeclaringCompilation
@@ -414,15 +396,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_BadNullableReferenceTypeInUsingAlias, nullableType.QuestionToken.GetLocation());
             }
 
-            var namespaceOrType = annotatedNamespaceOrType.NamespaceOrTypeSymbol;
-            if (namespaceOrType is TypeSymbol { IsNativeIntegerWrapperType: true } &&
-                (usingDirective.NamespaceOrType.IsNint || usingDirective.NamespaceOrType.IsNuint))
-            {
-                // using X = nint;
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.NamespaceOrType);
-            }
-
-            return namespaceOrType;
+            return annotatedNamespaceOrType.NamespaceOrTypeSymbol;
         }
 
         internal override bool RequiresCompletion

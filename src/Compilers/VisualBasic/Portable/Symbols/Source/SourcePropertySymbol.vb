@@ -619,11 +619,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                                        ERRID.ERR_CannotApplyOverloadResolutionPriorityToOverride,
                                        ERRID.ERR_CannotApplyOverloadResolutionPriorityToMember),
                                     arguments.AttributeSyntaxOpt.GetLocation())
-                    Else
-                        InternalSyntax.Parser.CheckFeatureAvailability(diagnostics,
-                                                   arguments.AttributeSyntaxOpt.GetLocation(),
-                                                   DirectCast(arguments.AttributeSyntaxOpt.SyntaxTree.Options, VisualBasicParseOptions).LanguageVersion,
-                                                   InternalSyntax.Feature.OverloadResolutionPriority)
                     End If
 
                     Return
@@ -1247,8 +1242,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
             If (_lazyState And StateFlags.TypeConstraintsChecked) = 0 Then
                 Dim sourceModule = DirectCast(Me.ContainingModule, SourceModuleSymbol)
                 Dim diagnostics = BindingDiagnosticBag.GetInstance()
-                type.CheckAllConstraints(DeclaringCompilation.LanguageVersion,
-                                     GetFirstLocation(), diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, sourceModule.ContainingAssembly))
                 sourceModule.AtomicSetFlagAndStoreDiagnostics(_lazyState, StateFlags.TypeConstraintsChecked, 0, diagnostics)
                 diagnostics.Free()
             End If

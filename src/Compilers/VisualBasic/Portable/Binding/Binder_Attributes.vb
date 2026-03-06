@@ -488,13 +488,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                                                    AccessCheck.GetAccessibilityForErrorMessage(setMethod, Me.Compilation.Assembly)))
                                 hasErrors = True
                             End If
-
-                            If setMethod.IsInitOnly Then
-                                InternalSyntax.Parser.CheckFeatureAvailability(diagnostics,
-                                                   identifierName.Location,
-                                                   DirectCast(identifierName.SyntaxTree.Options, VisualBasicParseOptions).LanguageVersion,
-                                                   InternalSyntax.Feature.InitOnlySettersUsage)
-                            End If
                         End If
 
                     Case Else
@@ -799,16 +792,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                                     End If
                                     Return CreateErrorTypedConstant(node.Type)
                                 Else
-                                    If node.Syntax.Kind = SyntaxKind.PredefinedCastExpression Then
-                                        Dim cast = DirectCast(node.Syntax, PredefinedCastExpressionSyntax)
-
-                                        If cast.Keyword.Kind = SyntaxKind.CObjKeyword Then
-                                            InternalSyntax.Parser.CheckFeatureAvailability(diagBag,
-                                                                                           cast.Keyword.GetLocation(),
-                                                                                           DirectCast(cast.SyntaxTree, VisualBasicSyntaxTree).Options.LanguageVersion,
-                                                                                           InternalSyntax.Feature.CObjInAttributeArguments)
-                                        End If
-                                    End If
                                     node = conv.Operand
                                 End If
 

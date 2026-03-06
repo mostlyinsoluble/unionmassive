@@ -58,24 +58,13 @@ internal sealed partial class CSharpExtractMethodService
 
                     if (expression is NameSyntax)
                     {
-                        SimpleNameSyntax unqualifiedName;
-
-                        switch (expression.Kind())
+                        var unqualifiedName = expression.Kind() switch
                         {
-                            case SyntaxKind.IdentifierName:
-                            case SyntaxKind.GenericName:
-                                unqualifiedName = (SimpleNameSyntax)expression;
-                                break;
-                            case SyntaxKind.QualifiedName:
-                                unqualifiedName = ((QualifiedNameSyntax)expression).Right;
-                                break;
-                            case SyntaxKind.AliasQualifiedName:
-                                unqualifiedName = ((AliasQualifiedNameSyntax)expression).Name;
-                                break;
-                            default:
-                                throw new System.NotSupportedException("Unexpected name kind: " + expression.Kind().ToString());
-                        }
-
+                            SyntaxKind.IdentifierName or SyntaxKind.GenericName => (SimpleNameSyntax)expression,
+                            SyntaxKind.QualifiedName => ((QualifiedNameSyntax)expression).Right,
+                            SyntaxKind.AliasQualifiedName => ((AliasQualifiedNameSyntax)expression).Name,
+                            _ => throw new System.NotSupportedException("Unexpected name kind: " + expression.Kind().ToString()),
+                        };
                         var unqualifiedNameIdentifierValueText = unqualifiedName.Identifier.ValueText;
                         return (unqualifiedNameIdentifierValueText != null && unqualifiedNameIdentifierValueText.Length > 0) ?
                             MakeMethodName("Get", unqualifiedNameIdentifierValueText, methodName.Equals(NewMethodCamelCaseStr)) : methodName;

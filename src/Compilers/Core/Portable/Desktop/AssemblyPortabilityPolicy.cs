@@ -69,7 +69,7 @@ namespace Microsoft.CodeAnalysis
                     !ReadToChild(xml, 2, "assemblyBinding", ns) ||
                     !ReadToChild(xml, 3, "supportPortability", ns))
                 {
-                    return default(AssemblyPortabilityPolicy);
+                    return default;
                 }
 
                 // 31bf3856ad364e35

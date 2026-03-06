@@ -43,12 +43,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.UseIsNotExpression
             Dim node = syntaxContext.Node
             Dim syntaxTree = node.SyntaxTree
 
-            ' "x IsNot ...." is only available in VB 14.0 and above. Don't offer this refactoring
-            ' in projects targeting a lesser version.
-            If DirectCast(syntaxTree.Options, VisualBasicParseOptions).LanguageVersion < LanguageVersion.VisualBasic14 Then
-                Return
-            End If
-
             ' Bail immediately if the user has disabled this feature.
             Dim styleOption = syntaxContext.GetVisualBasicAnalyzerOptions().PreferIsNotExpression
             If Not styleOption.Value OrElse ShouldSkipAnalysis(syntaxContext, styleOption.Notification) Then

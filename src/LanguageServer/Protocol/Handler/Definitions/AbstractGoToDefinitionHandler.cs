@@ -110,40 +110,11 @@ internal abstract class AbstractGoToDefinitionHandler : ILspServiceDocumentReque
                 return true;
             }
 
-            switch (item.Glyph)
+            return item.Glyph switch
             {
-                case Glyph.ClassPublic:
-                case Glyph.ClassProtected:
-                case Glyph.ClassPrivate:
-                case Glyph.ClassInternal:
-                case Glyph.DelegatePublic:
-                case Glyph.DelegateProtected:
-                case Glyph.DelegatePrivate:
-                case Glyph.DelegateInternal:
-                case Glyph.EnumPublic:
-                case Glyph.EnumProtected:
-                case Glyph.EnumPrivate:
-                case Glyph.EnumInternal:
-                case Glyph.EventPublic:
-                case Glyph.EventProtected:
-                case Glyph.EventPrivate:
-                case Glyph.EventInternal:
-                case Glyph.InterfacePublic:
-                case Glyph.InterfaceProtected:
-                case Glyph.InterfacePrivate:
-                case Glyph.InterfaceInternal:
-                case Glyph.ModulePublic:
-                case Glyph.ModuleProtected:
-                case Glyph.ModulePrivate:
-                case Glyph.ModuleInternal:
-                case Glyph.StructurePublic:
-                case Glyph.StructureProtected:
-                case Glyph.StructurePrivate:
-                case Glyph.StructureInternal:
-                    return true;
-                default:
-                    return false;
-            }
+                Glyph.ClassPublic or Glyph.ClassProtected or Glyph.ClassPrivate or Glyph.ClassInternal or Glyph.DelegatePublic or Glyph.DelegateProtected or Glyph.DelegatePrivate or Glyph.DelegateInternal or Glyph.EnumPublic or Glyph.EnumProtected or Glyph.EnumPrivate or Glyph.EnumInternal or Glyph.EventPublic or Glyph.EventProtected or Glyph.EventPrivate or Glyph.EventInternal or Glyph.InterfacePublic or Glyph.InterfaceProtected or Glyph.InterfacePrivate or Glyph.InterfaceInternal or Glyph.ModulePublic or Glyph.ModuleProtected or Glyph.ModulePrivate or Glyph.ModuleInternal or Glyph.StructurePublic or Glyph.StructureProtected or Glyph.StructurePrivate or Glyph.StructureInternal => true,
+                _ => false,
+            };
         }
     }
 }

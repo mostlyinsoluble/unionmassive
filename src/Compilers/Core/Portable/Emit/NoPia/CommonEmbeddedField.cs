@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
             {
                 get
                 {
-                    return default(ImmutableArray<byte>);
+                    return default;
                 }
             }
 

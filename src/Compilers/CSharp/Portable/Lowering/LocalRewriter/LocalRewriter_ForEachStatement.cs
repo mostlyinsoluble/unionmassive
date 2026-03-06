@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (isAsync)
             {
                 disposeMethod = (MethodSymbol)Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_IAsyncDisposable__DisposeAsync, diagnostics, syntax: syntax);
-                return (object)disposeMethod != null;
+                return disposeMethod is not null;
             }
 
             return Binder.TryGetSpecialTypeMember(compilation, SpecialMember.System_IDisposable__Dispose, syntax, diagnostics, out disposeMethod);
@@ -622,7 +622,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Collection a = /*node.Expression*/;
             BoundStatement arrayVarDecl = MakeLocalDeclaration(forEachSyntax, collectionTemp, rewrittenExpression);
 
-            if (collectionVarInitializationPreamble is object)
+            if (collectionVarInitializationPreamble is not null)
             {
                 arrayVarDecl = new BoundStatementList(arrayVarDecl.Syntax, ImmutableArray.Create(collectionVarInitializationPreamble, arrayVarDecl)).MakeCompilerGenerated();
             }

@@ -302,7 +302,7 @@ internal static partial class ISymbolExtensions
             if (ElementNameIs(element, DocumentationCommentXmlNames.InheritdocElementName))
             {
                 var rewritten = RewriteInheritdocElement(symbol, visitedSymbols, compilation, element, cancellationToken);
-                if (rewritten is object)
+                if (rewritten is not null)
                 {
                     return rewritten;
                 }
@@ -349,8 +349,8 @@ internal static partial class ISymbolExtensions
         var candidate = GetCandidateSymbol(memberSymbol);
         var hasCandidateCref = candidate is object;
 
-        var hasCrefAttribute = crefAttribute is object;
-        var hasPathAttribute = pathAttribute is object;
+        var hasCrefAttribute = crefAttribute is not null;
+        var hasPathAttribute = pathAttribute is not null;
         if (!hasCrefAttribute && !hasCandidateCref)
         {
             // No cref available

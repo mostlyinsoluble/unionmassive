@@ -694,7 +694,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(!indexerAccess.Indexer.IsExtensionBlockMember());
                     BindDefaultArguments(indexerAccess.Syntax, parameters, extensionReceiver: null, argumentsBuilder, refKindsBuilderOpt, namesBuilder, ref argsToParams, out defaultArguments, indexerAccess.Expanded, enableCallerInfo: true, diagnostics: diagnostics);
 
-                    if (namesBuilder is object)
+                    if (namesBuilder is not null)
                     {
                         argumentNamesOpt = namesBuilder.SelectAsArray(item => item?.Name);
                         namesBuilder.Free();
@@ -878,7 +878,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Debug.Assert(methodGroup.ResultKind != LookupResultKind.Viable);
                     var receiver = methodGroup.ReceiverOpt;
-                    if ((object)otherSymbol != null && receiver?.Kind == BoundKind.TypeOrValueExpression)
+                    if (otherSymbol is not null && receiver?.Kind == BoundKind.TypeOrValueExpression)
                     {
                         // Since we're not accessing a method, this can't be a Color Color case, so TypeOrValueExpression should not have been used.
                         // CAVEAT: otherSymbol could be invalid in some way (e.g. inaccessible), in which case we would have fallen back on a
@@ -895,7 +895,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return new BoundBadExpression(
                         expr.Syntax,
                         methodGroup.ResultKind,
-                        (object)otherSymbol == null ? ImmutableArray<Symbol>.Empty : ImmutableArray.Create(otherSymbol),
+                        otherSymbol is null ? ImmutableArray<Symbol>.Empty : ImmutableArray.Create(otherSymbol),
                         receiver == null ? ImmutableArray<BoundExpression>.Empty : ImmutableArray.Create(AdjustBadExpressionChild(receiver)),
                         GetNonMethodMemberType(otherSymbol));
                 }
@@ -1129,18 +1129,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.ImplicitIndexerAccess:
                     var implicitIndexer = (BoundImplicitIndexerAccess)expr;
-                    switch (implicitIndexer.IndexerOrSliceAccess)
+                    return implicitIndexer.IndexerOrSliceAccess switch
                     {
-                        case BoundArrayAccess arrayAccess:
-                            return checkArrayAccessValueKind(node, valueKind, arrayAccess.Indices, diagnostics);
-
-                        case BoundCall sliceAccess:
-                            return CheckMethodReturnValueKind(sliceAccess.Method, sliceAccess.Syntax, node, valueKind, checkingReceiver, diagnostics);
-
-                        default:
-                            throw ExceptionUtilities.UnexpectedValue(implicitIndexer.IndexerOrSliceAccess.Kind);
-                    }
-
+                        BoundArrayAccess arrayAccess => checkArrayAccessValueKind(node, valueKind, arrayAccess.Indices, diagnostics),
+                        BoundCall sliceAccess => CheckMethodReturnValueKind(sliceAccess.Method, sliceAccess.Syntax, node, valueKind, checkingReceiver, diagnostics),
+                        _ => throw ExceptionUtilities.UnexpectedValue(implicitIndexer.IndexerOrSliceAccess.Kind),
+                    };
                 case BoundKind.InlineArrayAccess:
                     {
                         var elementAccess = (BoundInlineArrayAccess)expr;
@@ -1305,7 +1299,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Error(diagnostics, ErrorCode.WRN_AddressOfInAsync, node);
                 }
-                else if (this.IsDirectlyInIterator && Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync))
+                else if (this.IsDirectlyInIterator)
                 {
                     Error(diagnostics, ErrorCode.ERR_AddressOfInIterator, node);
                 }
@@ -1717,7 +1711,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var canModifyReadonly = false;
 
             Symbol containing = this.ContainingMemberOrLambda;
-            if ((object)containing != null &&
+            if (containing is not null &&
                 fieldIsStatic == containing.IsStatic &&
                 (fieldIsStatic || receiverIsThis) &&
                 (Compilation.FeatureStrictEnabled
@@ -1987,11 +1981,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Addendum: Assignment is also allowed for get-only autoprops in their constructor
 
-            BoundExpression receiver;
-            SyntaxNode propertySyntax;
-            var propertySymbol = GetPropertySymbol(expr, out receiver, out propertySyntax);
+            var propertySymbol = GetPropertySymbol(expr, out BoundExpression receiver, out SyntaxNode propertySyntax);
 
-            Debug.Assert((object)propertySymbol != null);
+            Debug.Assert(propertySymbol is not null);
             Debug.Assert(propertySyntax != null);
 
             if ((RequiresReferenceToLocation(valueKind) || checkingReceiver) &&
@@ -2049,18 +2041,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Error(diagnostics, ErrorCode.ERR_AssignmentInitOnly, node, propertySymbol);
                             return false;
                         }
-
-                        if (setMethod.DeclaringCompilation != this.Compilation)
-                        {
-                            // an error would have already been reported on declaring an init-only setter
-                            CheckFeatureAvailability(node, MessageID.IDS_FeatureInitOnlySetters, diagnostics);
-                        }
                     }
 
                     var accessThroughType = this.GetAccessThroughType(receiver);
-                    bool failedThroughTypeCheck;
                     CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-                    bool isAccessible = this.IsAccessible(setMethod, accessThroughType, out failedThroughTypeCheck, ref useSiteInfo);
+                    bool isAccessible = this.IsAccessible(setMethod, accessThroughType, out bool failedThroughTypeCheck, ref useSiteInfo);
                     diagnostics.Add(node, useSiteInfo);
 
                     if (!isAccessible)
@@ -2100,7 +2085,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var getMethod = propertySymbol.GetOwnOrInheritedGetMethod();
 
-                if ((object)getMethod == null)
+                if (getMethod is null)
                 {
                     Error(diagnostics, ErrorCode.ERR_PropertyLacksGet, node, propertySymbol);
                     return false;
@@ -2108,9 +2093,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     var accessThroughType = this.GetAccessThroughType(receiver);
-                    bool failedThroughTypeCheck;
                     CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-                    bool isAccessible = this.IsAccessible(getMethod, accessThroughType, out failedThroughTypeCheck, ref useSiteInfo);
+                    bool isAccessible = this.IsAccessible(getMethod, accessThroughType, out bool failedThroughTypeCheck, ref useSiteInfo);
                     diagnostics.Add(node, useSiteInfo);
 
                     if (!isAccessible)
@@ -3455,7 +3439,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private static void ReportReadonlyLocalError(SyntaxNode node, LocalSymbol local, BindValueKind kind, bool checkingReceiver, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert((object)local != null);
+            Debug.Assert(local is not null);
             Debug.Assert(kind != BindValueKind.RValue);
 
             MessageID cause;
@@ -3614,7 +3598,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private static void ReportReadOnlyFieldError(FieldSymbol field, SyntaxNode node, BindValueKind kind, bool checkingReceiver, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert((object)field != null);
+            Debug.Assert(field is not null);
             Debug.Assert(field.RefKind == RefKind.None ? RequiresAssignableVariable(kind) : RequiresRefAssignableVariable(kind));
             Debug.Assert(field.Type != (object)null);
 
@@ -3650,7 +3634,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static void ReportReadOnlyError(Symbol symbol, SyntaxNode node, BindValueKind kind, bool checkingReceiver, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert((object)symbol != null);
+            Debug.Assert(symbol is not null);
             Debug.Assert(RequiresAssignableVariable(kind));
 
             // It's clearer to say that the address can't be taken than to say that the parameter can't be modified
@@ -3901,9 +3885,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             break;
                         }
 
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         Debug.Assert(equivalentSignatureMethod.RefKind != RefKind.None);
 
@@ -4198,9 +4180,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             break;
                         }
 
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         Debug.Assert(equivalentSignatureMethod.RefKind != RefKind.None);
 
@@ -4528,9 +4508,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         var elementAccess = (BoundInlineArrayAccess)expr;
 
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         return GetInvocationEscapeScope(
                             MethodInvocationInfo.FromInlineArrayAccess(equivalentSignatureMethod, arguments, refKinds, elementAccess.HasAnyErrors),
@@ -4611,9 +4589,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (conversion.Conversion.IsInlineArray)
                     {
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayConversionEquivalentSignatureMethod(conversion, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayConversionEquivalentSignatureMethod(conversion, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         return GetInvocationEscapeScope(
                             MethodInvocationInfo.FromInlineArrayConversion(equivalentSignatureMethod, arguments, refKinds, conversion.HasAnyErrors),
@@ -5230,9 +5206,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         var elementAccess = (BoundInlineArrayAccess)expr;
 
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayAccessEquivalentSignatureMethod(elementAccess, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         return CheckInvocationEscape(
                             elementAccess.Syntax,
@@ -5355,9 +5329,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (conversion.Conversion.IsInlineArray)
                     {
-                        ImmutableArray<BoundExpression> arguments;
-                        ImmutableArray<RefKind> refKinds;
-                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayConversionEquivalentSignatureMethod(conversion, out arguments, out refKinds);
+                        SignatureOnlyMethodSymbol equivalentSignatureMethod = GetInlineArrayConversionEquivalentSignatureMethod(conversion, out ImmutableArray<BoundExpression> arguments, out ImmutableArray<RefKind> refKinds);
 
                         return CheckInvocationEscape(
                             conversion.Syntax,

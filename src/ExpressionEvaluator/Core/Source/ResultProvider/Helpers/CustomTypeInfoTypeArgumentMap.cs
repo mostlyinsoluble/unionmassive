@@ -64,9 +64,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 return s_empty;
             }
 
-            ReadOnlyCollection<byte> dynamicFlags;
-            ReadOnlyCollection<string> tupleElementNames;
-            CustomTypeInfo.Decode(typeInfo.PayloadTypeId, typeInfo.Payload, out dynamicFlags, out tupleElementNames);
+            CustomTypeInfo.Decode(typeInfo.PayloadTypeId, typeInfo.Payload, out var dynamicFlags, out var tupleElementNames);
             if (dynamicFlags == null && tupleElementNames == null)
             {
                 return s_empty;

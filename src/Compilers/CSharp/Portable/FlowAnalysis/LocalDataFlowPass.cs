@@ -85,8 +85,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             containingSlot = DescendThroughTupleRestFields(ref symbol, containingSlot, forceContainingSlotsToExist: false);
 
-            int slot;
-            return TryGetVariable(new VariableIdentifier(symbol, containingSlot), out slot) ? slot : -1;
+            return TryGetVariable(new VariableIdentifier(symbol, containingSlot), out int slot) ? slot : -1;
         }
 
         protected virtual bool IsEmptyStructType(TypeSymbol type)
@@ -113,10 +112,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             VariableIdentifier identifier = new VariableIdentifier(symbol, containingSlot);
-            int slot;
 
             // Since analysis may proceed in multiple passes, it is possible the slot is already assigned.
-            if (!TryGetVariable(identifier, out slot))
+            if (!TryGetVariable(identifier, out int slot))
             {
                 if (!createIfMissing)
                 {
@@ -214,7 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case BoundKind.ThisReference:
                 case BoundKind.BaseReference:
-                    return (object)MethodThisParameter != null ? GetOrCreateSlot(MethodThisParameter) : -1;
+                    return MethodThisParameter is not null ? GetOrCreateSlot(MethodThisParameter) : -1;
                 case BoundKind.Local:
                     return GetOrCreateSlot(((BoundLocal)node).LocalSymbol);
                 case BoundKind.Parameter:

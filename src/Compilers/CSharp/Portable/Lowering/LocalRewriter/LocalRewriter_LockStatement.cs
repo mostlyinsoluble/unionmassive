@@ -96,14 +96,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                     constantValueOpt: rewrittenArgument.ConstantValueOpt);
             }
 
-            BoundAssignmentOperator assignmentToLockTemp;
-            BoundLocal boundLockTemp = _factory.StoreToTemp(rewrittenArgument, out assignmentToLockTemp, syntaxOpt: lockSyntax, kind: SynthesizedLocalKind.Lock);
+            BoundLocal boundLockTemp = _factory.StoreToTemp(rewrittenArgument, out BoundAssignmentOperator assignmentToLockTemp, syntaxOpt: lockSyntax, kind: SynthesizedLocalKind.Lock);
 
             BoundStatement boundLockTempInit = new BoundExpressionStatement(lockSyntax, assignmentToLockTemp);
             BoundExpression exitCallExpr;
 
-            MethodSymbol? exitMethod;
-            if (TryGetWellKnownTypeMember(lockSyntax, WellKnownMember.System_Threading_Monitor__Exit, out exitMethod))
+            if (TryGetWellKnownTypeMember(lockSyntax, WellKnownMember.System_Threading_Monitor__Exit, out MethodSymbol? exitMethod))
             {
                 exitCallExpr = BoundCall.Synthesized(
                     lockSyntax,
@@ -119,9 +117,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundStatement exitCall = new BoundExpressionStatement(lockSyntax, exitCallExpr);
 
-            MethodSymbol? enterMethod;
 
-            if ((TryGetWellKnownTypeMember(lockSyntax, WellKnownMember.System_Threading_Monitor__Enter2, out enterMethod, isOptional: true) ||
+            if ((TryGetWellKnownTypeMember(lockSyntax, WellKnownMember.System_Threading_Monitor__Enter2, out MethodSymbol? enterMethod, isOptional: true) ||
                  TryGetWellKnownTypeMember(lockSyntax, WellKnownMember.System_Threading_Monitor__Enter, out enterMethod)) && // If we didn't find the overload introduced in .NET 4.0, then use the older one. 
                 enterMethod.ParameterCount == 2)
             {
@@ -139,11 +136,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // }
 
                 TypeSymbol boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
-                BoundAssignmentOperator assignmentToLockTakenTemp;
 
                 BoundLocal boundLockTakenTemp = _factory.StoreToTemp(
                     MakeLiteral(rewrittenArgument.Syntax, ConstantValue.False, boolType),
-                    store: out assignmentToLockTakenTemp,
+                    store: out BoundAssignmentOperator assignmentToLockTakenTemp,
                     syntaxOpt: lockSyntax,
                     kind: SynthesizedLocalKind.LockTaken);
 
@@ -196,7 +192,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 BoundExpression enterCallExpr;
 
-                if ((object?)enterMethod != null)
+                if (enterMethod is not null)
                 {
                     Debug.Assert(enterMethod.ParameterCount == 1);
 

@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static void CheckInterfaceVarianceSafety(this NamedTypeSymbol interfaceType, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert((object)interfaceType != null && interfaceType.IsInterface);
+            Debug.Assert(interfaceType is not null && interfaceType.IsInterface);
 
             foreach (NamedTypeSymbol baseInterface in interfaceType.InterfacesNoUseSiteDiagnostics())
             {
@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             NamedTypeSymbol container = GetEnclosingVariantInterface(member);
 
-            if (container is object)
+            if (container is not null)
             {
                 Debug.Assert(container.IsInterfaceType());
                 Debug.Assert(container.TypeParameters.Any(static tp => tp.Variance != VarianceKind.None));
@@ -98,7 +98,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static NamedTypeSymbol GetEnclosingVariantInterface(Symbol member)
         {
-            for (var container = member.ContainingType; container is object; container = container.ContainingType)
+            for (var container = member.ContainingType; container is not null; container = container.ContainingType)
             {
                 if (!container.IsInterfaceType())
                 {
@@ -173,14 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         private static bool SkipVarianceSafetyChecks(Symbol member)
-        {
-            if (member.IsStatic && !member.IsAbstract && !member.IsVirtual)
-            {
-                return MessageID.IDS_FeatureVarianceSafetyForStaticInterfaceMembers.RequiredVersion() <= member.DeclaringCompilation.LanguageVersion;
-            }
-
-            return false;
-        }
+            => member.IsStatic && !member.IsAbstract && !member.IsVirtual;
 
         /// <summary>
         /// Accumulate diagnostics related to the variance safety of an interface property.
@@ -192,8 +185,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            bool hasGetter = (object)property.GetMethod != null;
-            bool hasSetter = (object)property.SetMethod != null;
+            bool hasGetter = property.GetMethod is not null;
+            bool hasSetter = property.SetMethod is not null;
             if (hasGetter || hasSetter)
             {
                 IsVarianceUnsafe(
@@ -381,7 +374,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return false;
             }
 
-            while ((object)namedType != null)
+            while (namedType is not null)
             {
                 for (int i = 0; i < namedType.Arity; i++)
                 {
@@ -448,18 +441,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             MessageID expectedVariance)
             where T : Symbol
         {
-            MessageID actualVariance;
-            switch (unsafeTypeParameter.Variance)
+            var actualVariance = unsafeTypeParameter.Variance switch
             {
-                case VarianceKind.In:
-                    actualVariance = MessageID.IDS_Contravariant;
-                    break;
-                case VarianceKind.Out:
-                    actualVariance = MessageID.IDS_Covariant;
-                    break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(unsafeTypeParameter.Variance);
-            }
+                VarianceKind.In => MessageID.IDS_Contravariant,
+                VarianceKind.Out => MessageID.IDS_Covariant,
+                _ => throw ExceptionUtilities.UnexpectedValue(unsafeTypeParameter.Variance),
+            };
 
             // Get a location that roughly represents the unsafe type parameter use.
             // (Typically, the locationProvider will return the location of the entire type
@@ -474,8 +461,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // UNDONE: related location for use is much more useful
             if (!(context is TypeSymbol) && context.IsStatic && !context.IsAbstract && !context.IsVirtual)
             {
-                diagnostics.Add(ErrorCode.ERR_UnexpectedVarianceStaticMember, location, context, unsafeTypeParameter, actualVariance.Localize(), expectedVariance.Localize(),
-                                new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureVarianceSafetyForStaticInterfaceMembers.RequiredVersion()));
+                diagnostics.Add(ErrorCode.ERR_UnexpectedVarianceStaticMember, location, context, unsafeTypeParameter, actualVariance.Localize(), expectedVariance.Localize());
             }
             else
             {

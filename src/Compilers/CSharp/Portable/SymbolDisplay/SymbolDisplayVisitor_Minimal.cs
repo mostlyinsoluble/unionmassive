@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (boundSymbols.Length == 1)
                 {
                     var boundAlias = boundSymbols[0] as IAliasSymbol;
-                    if ((object?)boundAlias != null && alias.Target.Equals(symbol))
+                    if (boundAlias is not null && alias.Target.Equals(symbol))
                     {
                         builder.Add(CreatePart(SymbolDisplayPartKind.AliasName, alias, aliasName));
                         return true;
@@ -288,8 +288,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Format.MiscellaneousOptions.IncludesOption(SymbolDisplayMiscellaneousOptions.RemoveAttributeSuffix) &&
                 SemanticModelOpt.Compilation.IsAttributeType(symbol))
             {
-                string? nameWithoutAttributeSuffix;
-                if (symbolName.TryGetWithoutAttributeSuffix(out nameWithoutAttributeSuffix))
+                if (symbolName.TryGetWithoutAttributeSuffix(out string? nameWithoutAttributeSuffix))
                 {
                     var token = SyntaxFactory.ParseToken(nameWithoutAttributeSuffix);
                     if (token.IsKind(SyntaxKind.IdentifierToken))
@@ -319,8 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private IAliasSymbol? GetAliasSymbol(INamespaceOrTypeSymbol symbol)
         {
-            IAliasSymbol? result;
-            return AliasMap.TryGetValue(symbol, out result) ? result : null;
+            return AliasMap.TryGetValue(symbol, out IAliasSymbol? result) ? result : null;
         }
     }
 }

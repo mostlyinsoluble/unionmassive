@@ -204,18 +204,6 @@ namespace Microsoft.CodeAnalysis
         public bool DisplayHelp { get; internal set; }
 
         /// <summary>
-        /// If true, append the compiler version during
-        /// <see cref="CommonCompiler.Run"/>
-        /// </summary>
-        public bool DisplayVersion { get; internal set; }
-
-        /// <summary>
-        /// If true, prepend the compiler-supported language versions during
-        /// <see cref="CommonCompiler.Run"/>
-        /// </summary>
-        public bool DisplayLangVersions { get; internal set; }
-
-        /// <summary>
         /// The path to a Win32 resource.
         /// </summary>
         public string? Win32ResourceFile { get; internal set; }
@@ -494,7 +482,7 @@ namespace Microsoft.CodeAnalysis
             EventHandler<AnalyzerLoadFailureEventArgs> errorHandler = (o, e) =>
             {
                 var analyzerReference = o as AnalyzerFileReference;
-                RoslynDebug.Assert(analyzerReference is object);
+                RoslynDebug.Assert(analyzerReference is not null);
                 DiagnosticInfo? diagnostic;
                 switch (e.ErrorCode)
                 {

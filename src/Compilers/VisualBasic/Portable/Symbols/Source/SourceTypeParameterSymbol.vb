@@ -187,12 +187,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
 
                     Dim useSiteInfo As New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, containingAssembly)
                     constraintType.AddUseSiteInfo(useSiteInfo)
-
-                    If Not diagnostics.Add(location, useSiteInfo) Then
-                        constraintType.CheckAllConstraints(
-                            DeclaringCompilation.LanguageVersion,
-                            location, diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, containingAssembly))
-                    End If
+                    diagnostics.Add(location, useSiteInfo)
                 End If
             Next
         End Sub

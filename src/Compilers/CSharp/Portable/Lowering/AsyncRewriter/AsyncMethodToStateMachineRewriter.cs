@@ -107,16 +107,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private FieldSymbol GetAwaiterField(TypeSymbol awaiterType)
         {
-            FieldSymbol result;
 
             // Awaiters of the same type always share the same slot, regardless of what await expressions they belong to.
             // Even in case of nested await expressions only one awaiter is active.
             // So we don't need to tie the awaiter variable to a particular await expression and only use its type
             // to find the previous awaiter field.
-            if (!_awaiterFields.TryGetValue(awaiterType, out result))
+            if (!_awaiterFields.TryGetValue(awaiterType, out FieldSymbol result))
             {
-                int slotIndex;
-                if (slotAllocator == null || !slotAllocator.TryGetPreviousAwaiterSlotIndex(F.ModuleBuilderOpt.Translate(awaiterType, F.Syntax, F.Diagnostics.DiagnosticBag), F.Diagnostics.DiagnosticBag, out slotIndex))
+                if (slotAllocator == null || !slotAllocator.TryGetPreviousAwaiterSlotIndex(F.ModuleBuilderOpt.Translate(awaiterType, F.Syntax, F.Diagnostics.DiagnosticBag), F.Diagnostics.DiagnosticBag, out int slotIndex))
                 {
                     slotIndex = _nextAwaiterId++;
                 }
@@ -143,8 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             F.CurrentFunction = moveNextMethod;
             BoundStatement rewrittenBody = VisitBody(body);
 
-            ImmutableArray<StateMachineFieldSymbol> rootScopeHoistedLocals;
-            TryUnwrapBoundStateMachineScope(ref rewrittenBody, out rootScopeHoistedLocals);
+            TryUnwrapBoundStateMachineScope(ref rewrittenBody, out ImmutableArray<StateMachineFieldSymbol> rootScopeHoistedLocals);
 
             var bodyBuilder = ArrayBuilder<BoundStatement>.GetInstance();
 
@@ -195,8 +192,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var locals = ArrayBuilder<LocalSymbol>.GetInstance();
             locals.Add(cachedState);
-            if ((object)cachedThis != null) locals.Add(cachedThis);
-            if ((object)_exprRetValue != null) locals.Add(_exprRetValue);
+            if (cachedThis is not null) locals.Add(cachedThis);
+            if (_exprRetValue is not null) locals.Add(_exprRetValue);
 
             var newBody =
                 F.SequencePoint(
@@ -364,7 +361,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             resultPlace = (BoundExpression)Visit(resultPlace);
             MethodSymbol getResult = VisitMethodSymbol(node.AwaitableInfo.GetResult);
-            MethodSymbol isCompletedMethod = ((object)node.AwaitableInfo.IsCompleted != null) ? VisitMethodSymbol(node.AwaitableInfo.IsCompleted.GetMethod) : null;
+            MethodSymbol isCompletedMethod = (node.AwaitableInfo.IsCompleted is not null) ? VisitMethodSymbol(node.AwaitableInfo.IsCompleted.GetMethod) : null;
             TypeSymbol type = VisitType(node.Type);
 
             if (awaitablePlaceholder != null)
@@ -423,7 +420,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             string methodName = null,
             bool resultsDiscarded = false)
         {
-            if ((object)methodSymbol != null)
+            if (methodSymbol is not null)
             {
                 // non-dynamic:
                 Debug.Assert(receiver != null);

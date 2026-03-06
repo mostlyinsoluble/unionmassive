@@ -64,15 +64,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
                     Return
                 End If
 
-                If token.Kind = SyntaxKind.CommaToken Then
-                    ' Consider refining this logic to mandate completion with an argument name, if preceded by an out-of-position name
-                    ' See https://github.com/dotnet/roslyn/issues/20657
-                    Dim languageVersion = DirectCast(document.Project.ParseOptions, VisualBasicParseOptions).LanguageVersion
-                    If languageVersion < LanguageVersion.VisualBasic15_5 AndAlso token.IsMandatoryNamedParameterPosition() Then
-                        context.IsExclusive = True
-                    End If
-                End If
-
                 Dim semanticModel = Await document.ReuseExistingSpeculativeModelAsync(argumentList, cancellationToken).ConfigureAwait(False)
                 Dim parameterLists = GetParameterLists(semanticModel, position, argumentList.Parent, cancellationToken)
                 If parameterLists Is Nothing Then

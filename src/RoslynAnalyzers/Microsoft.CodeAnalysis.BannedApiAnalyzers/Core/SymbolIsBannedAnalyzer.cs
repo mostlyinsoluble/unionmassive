@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
@@ -20,23 +19,23 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
     {
         public static readonly DiagnosticDescriptor SymbolIsBannedRule = new(
             id: DiagnosticIds.SymbolIsBannedRuleId,
-            title: CreateLocalizableResourceString(nameof(SymbolIsBannedTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(SymbolIsBannedMessage)),
+            title: new LocalizableResourceString(nameof(SymbolIsBannedTitle), ResourceManager, typeof(BannedApiAnalyzerResources)),
+            messageFormat: new LocalizableResourceString(nameof(SymbolIsBannedMessage), ResourceManager, typeof(BannedApiAnalyzerResources)),
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(SymbolIsBannedDescription)),
+            description: new LocalizableResourceString(nameof(SymbolIsBannedDescription), ResourceManager, typeof(BannedApiAnalyzerResources)),
             helpLinkUri: "https://github.com/dotnet/roslyn/blob/main/src/RoslynAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers/BannedApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTagsExtensions.Telemetry);
 
         public static readonly DiagnosticDescriptor DuplicateBannedSymbolRule = new(
             id: DiagnosticIds.DuplicateBannedSymbolRuleId,
-            title: CreateLocalizableResourceString(nameof(DuplicateBannedSymbolTitle)),
-            messageFormat: CreateLocalizableResourceString(nameof(DuplicateBannedSymbolMessage)),
+            title: new LocalizableResourceString(nameof(DuplicateBannedSymbolTitle), ResourceManager, typeof(BannedApiAnalyzerResources)),
+            messageFormat: new LocalizableResourceString(nameof(DuplicateBannedSymbolMessage), ResourceManager, typeof(BannedApiAnalyzerResources)),
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: CreateLocalizableResourceString(nameof(DuplicateBannedSymbolDescription)),
+            description: new LocalizableResourceString(nameof(DuplicateBannedSymbolDescription), ResourceManager, typeof(BannedApiAnalyzerResources)),
             helpLinkUri: "https://github.com/dotnet/roslyn/blob/main/src/RoslynAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers/BannedApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
     }

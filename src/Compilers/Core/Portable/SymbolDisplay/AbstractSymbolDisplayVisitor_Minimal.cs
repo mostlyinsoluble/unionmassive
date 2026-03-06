@@ -64,20 +64,12 @@ namespace Microsoft.CodeAnalysis.SymbolDisplay
             ISymbol? singleSymbol = null;
             foreach (ISymbol candidate in candidates)
             {
-                int arity;
-                switch (candidate.Kind)
+                var arity = candidate.Kind switch
                 {
-                    case SymbolKind.NamedType:
-                        arity = ((INamedTypeSymbol)candidate).Arity;
-                        break;
-                    case SymbolKind.Method:
-                        arity = ((IMethodSymbol)candidate).Arity;
-                        break;
-                    default:
-                        arity = 0;
-                        break;
-                }
-
+                    SymbolKind.NamedType => ((INamedTypeSymbol)candidate).Arity,
+                    SymbolKind.Method => ((IMethodSymbol)candidate).Arity,
+                    _ => 0,
+                };
                 if (arity == desiredArity)
                 {
                     if (singleSymbol == null)

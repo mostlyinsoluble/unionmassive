@@ -394,57 +394,29 @@ internal static partial class SyntaxNodeExtensions
 
     public static bool IsBreakableConstruct(this SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.DoStatement:
-            case SyntaxKind.WhileStatement:
-            case SyntaxKind.SwitchStatement:
-            case SyntaxKind.ForStatement:
-            case SyntaxKind.ForEachStatement:
-            case SyntaxKind.ForEachVariableStatement:
-                return true;
-        }
-
-        return false;
+            SyntaxKind.DoStatement or SyntaxKind.WhileStatement or SyntaxKind.SwitchStatement or SyntaxKind.ForStatement or SyntaxKind.ForEachStatement or SyntaxKind.ForEachVariableStatement => true,
+            _ => false,
+        };
     }
 
     public static bool IsContinuableConstruct(this SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.DoStatement:
-            case SyntaxKind.WhileStatement:
-            case SyntaxKind.ForStatement:
-            case SyntaxKind.ForEachStatement:
-            case SyntaxKind.ForEachVariableStatement:
-                return true;
-        }
-
-        return false;
+            SyntaxKind.DoStatement or SyntaxKind.WhileStatement or SyntaxKind.ForStatement or SyntaxKind.ForEachStatement or SyntaxKind.ForEachVariableStatement => true,
+            _ => false,
+        };
     }
 
     public static bool IsReturnableConstruct(this SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.AnonymousMethodExpression:
-            case SyntaxKind.SimpleLambdaExpression:
-            case SyntaxKind.ParenthesizedLambdaExpression:
-            case SyntaxKind.LocalFunctionStatement:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-            case SyntaxKind.InitAccessorDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.AddAccessorDeclaration:
-            case SyntaxKind.RemoveAccessorDeclaration:
-                return true;
-        }
-
-        return false;
+            SyntaxKind.AnonymousMethodExpression or SyntaxKind.SimpleLambdaExpression or SyntaxKind.ParenthesizedLambdaExpression or SyntaxKind.LocalFunctionStatement or SyntaxKind.MethodDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration or SyntaxKind.InitAccessorDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.AddAccessorDeclaration or SyntaxKind.RemoveAccessorDeclaration => true,
+            _ => false,
+        };
     }
 
     public static bool ContainsYield(this SyntaxNode node)

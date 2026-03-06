@@ -82,9 +82,9 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                 throw new InvalidOperationException();
             }
 
-            Debug.Assert(_cancellationTokenSource is object);
-            Debug.Assert(_queue is object);
-            Debug.Assert(_listenTasks is object);
+            Debug.Assert(_cancellationTokenSource is not null);
+            Debug.Assert(_queue is not null);
+            Debug.Assert(_listenTasks is not null);
 
             try
             {
@@ -139,11 +139,11 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                 throw new InvalidOperationException();
             }
 
-            Debug.Assert(_cancellationTokenSource is object);
-            Debug.Assert(_queue is object);
+            Debug.Assert(_cancellationTokenSource is not null);
+            Debug.Assert(_queue is not null);
 
             var listenResult = await _queue.DequeueAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
-            if (listenResult.Exception is object)
+            if (listenResult.Exception is not null)
             {
                 throw new Exception("Error occurred listening for connections", listenResult.Exception);
             }

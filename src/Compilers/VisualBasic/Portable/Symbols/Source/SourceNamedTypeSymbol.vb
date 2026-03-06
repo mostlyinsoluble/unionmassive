@@ -1633,9 +1633,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                     Dim location = singleDeclaration.NameLocation
                     diagnostics = BindingDiagnosticBag.GetInstance()
 
-                    localBase.CheckAllConstraints(
-                        DeclaringCompilation.LanguageVersion,
-                        location, diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, m_containingModule.ContainingAssembly))
+                    localBase.CheckAllConstraints(location, diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, m_containingModule.ContainingAssembly))
 
                     If IsGenericType Then
                         ' Check that generic type does not derive from System.Attribute. 
@@ -1687,9 +1685,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                     Dim location = singleDeclaration.NameLocation
                     diagnostics = BindingDiagnosticBag.GetInstance()
                     For Each [interface] In localInterfaces
-                        [interface].CheckAllConstraints(
-                            DeclaringCompilation.LanguageVersion,
-                            location, diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, m_containingModule.ContainingAssembly))
+                        [interface].CheckAllConstraints(location, diagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, m_containingModule.ContainingAssembly))
                     Next
                 End If
             End If
@@ -1746,11 +1742,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
             End If
 
             Dim diagnostics As BindingDiagnosticBag = Nothing
-
-            If HasExtendedLayoutAttribute And Not ContainingAssembly.RuntimeSupportsExtendedLayout Then
-                diagnostics = BindingDiagnosticBag.GetInstance()
-                diagnostics.Add(ERRID.ERR_RuntimeDoesNotSupportExtendedLayoutTypes, GetFirstLocation(), Me)
-            End If
 
             If HasStructLayoutAttribute AndAlso HasExtendedLayoutAttribute Then
                 If diagnostics Is Nothing Then

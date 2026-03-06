@@ -56,8 +56,8 @@ namespace Microsoft.CodeAnalysis
 
         private AssemblyIdentity(AssemblyIdentity other, Version version)
         {
-            Debug.Assert((object)other != null);
-            Debug.Assert((object)version != null);
+            Debug.Assert(other is not null);
+            Debug.Assert(version is not null);
 
             _contentType = other.ContentType;
             _name = other._name;

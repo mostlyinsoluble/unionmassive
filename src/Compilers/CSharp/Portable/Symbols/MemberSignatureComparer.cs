@@ -550,15 +550,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static bool HaveSameReturnTypes(Symbol member1, TypeMap? typeMap1, Symbol member2, TypeMap? typeMap2, TypeCompareKind typeComparison)
         {
-            RefKind refKind1;
-            TypeWithAnnotations unsubstitutedReturnType1;
-            ImmutableArray<CustomModifier> refCustomModifiers1;
-            member1.GetTypeOrReturnType(out refKind1, out unsubstitutedReturnType1, out refCustomModifiers1);
+            member1.GetTypeOrReturnType(out RefKind refKind1, out TypeWithAnnotations unsubstitutedReturnType1, out ImmutableArray<CustomModifier> refCustomModifiers1);
 
-            RefKind refKind2;
-            TypeWithAnnotations unsubstitutedReturnType2;
-            ImmutableArray<CustomModifier> refCustomModifiers2;
-            member2.GetTypeOrReturnType(out refKind2, out unsubstitutedReturnType2, out refCustomModifiers2);
+            member2.GetTypeOrReturnType(out RefKind refKind2, out TypeWithAnnotations unsubstitutedReturnType2, out ImmutableArray<CustomModifier> refCustomModifiers2);
 
             // short-circuit type map building in the easiest cases
             if (refKind1 != refKind2)
@@ -839,16 +833,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static Cci.CallingConvention GetCallingConvention(Symbol member)
         {
-            switch (member.Kind)
+            return member.Kind switch
             {
-                case SymbolKind.Method:
-                    return ((MethodSymbol)member).CallingConvention;
-                case SymbolKind.Property: //NOTE: Not using PropertySymbol.CallingConvention
-                case SymbolKind.Event:
-                    return member.IsStatic ? 0 : Cci.CallingConvention.HasThis;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(member.Kind);
-            }
+                SymbolKind.Method => ((MethodSymbol)member).CallingConvention,
+                //NOTE: Not using PropertySymbol.CallingConvention
+                SymbolKind.Property or SymbolKind.Event => member.IsStatic ? 0 : Cci.CallingConvention.HasThis,
+                _ => throw ExceptionUtilities.UnexpectedValue(member.Kind),
+            };
         }
 
         private static bool IsVarargMethod(Symbol member)

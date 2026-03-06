@@ -601,19 +601,15 @@ namespace Microsoft.CodeAnalysis.Operations
 
         internal IOperation? CreateBoundPropertyReferenceInstance(BoundNode boundNode)
         {
-            switch (boundNode)
+            return boundNode switch
             {
-                case BoundPropertyAccess boundPropertyAccess:
-                    return CreateReceiverOperation(boundPropertyAccess.ReceiverOpt, boundPropertyAccess.PropertySymbol);
-                case BoundObjectInitializerMember boundObjectInitializerMember:
-                    return boundObjectInitializerMember.MemberSymbol?.IsStatic == true ?
-                        null :
-                        CreateImplicitReceiver(boundObjectInitializerMember.Syntax, boundObjectInitializerMember.ReceiverType);
-                case BoundIndexerAccess boundIndexerAccess:
-                    return CreateReceiverOperation(boundIndexerAccess.ReceiverOpt, boundIndexerAccess.ExpressionSymbol);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(boundNode.Kind);
-            }
+                BoundPropertyAccess boundPropertyAccess => CreateReceiverOperation(boundPropertyAccess.ReceiverOpt, boundPropertyAccess.PropertySymbol),
+                BoundObjectInitializerMember boundObjectInitializerMember => boundObjectInitializerMember.MemberSymbol?.IsStatic == true ?
+                                        null :
+                                        CreateImplicitReceiver(boundObjectInitializerMember.Syntax, boundObjectInitializerMember.ReceiverType),
+                BoundIndexerAccess boundIndexerAccess => CreateReceiverOperation(boundIndexerAccess.ReceiverOpt, boundIndexerAccess.ExpressionSymbol),
+                _ => throw ExceptionUtilities.UnexpectedValue(boundNode.Kind),
+            };
         }
 
         private IPropertyReferenceOperation CreateBoundPropertyAccessOperation(BoundPropertyAccess boundPropertyAccess)
@@ -773,19 +769,14 @@ namespace Microsoft.CodeAnalysis.Operations
 
         internal IOperation CreateBoundDynamicInvocationExpressionReceiver(BoundNode receiver)
         {
-            switch (receiver)
+            return receiver switch
             {
-                case BoundObjectOrCollectionValuePlaceholder implicitReceiver:
-                    return CreateBoundDynamicMemberAccessOperation(implicitReceiver, typeArgumentsOpt: ImmutableArray<TypeSymbol>.Empty, memberName: "Add",
-                                                                   implicitReceiver.Syntax, type: null, isImplicit: true);
-
-                case BoundMethodGroup methodGroup:
-                    return CreateBoundDynamicMemberAccessOperation(methodGroup.ReceiverOpt, TypeMap.AsTypeSymbols(methodGroup.TypeArgumentsOpt), methodGroup.Name,
-                                                                   methodGroup.Syntax, methodGroup.GetPublicTypeSymbol(), methodGroup.WasCompilerGenerated);
-
-                default:
-                    return Create(receiver);
-            }
+                BoundObjectOrCollectionValuePlaceholder implicitReceiver => CreateBoundDynamicMemberAccessOperation(implicitReceiver, typeArgumentsOpt: ImmutableArray<TypeSymbol>.Empty, memberName: "Add",
+                                                                                   implicitReceiver.Syntax, type: null, isImplicit: true),
+                BoundMethodGroup methodGroup => CreateBoundDynamicMemberAccessOperation(methodGroup.ReceiverOpt, TypeMap.AsTypeSymbols(methodGroup.TypeArgumentsOpt), methodGroup.Name,
+                                                                                   methodGroup.Syntax, methodGroup.GetPublicTypeSymbol(), methodGroup.WasCompilerGenerated),
+                _ => Create(receiver),
+            };
         }
 
         private IDynamicInvocationOperation CreateBoundDynamicInvocationExpressionOperation(BoundDynamicInvocation boundDynamicInvocation)
@@ -802,17 +793,12 @@ namespace Microsoft.CodeAnalysis.Operations
 
         internal IOperation CreateBoundDynamicIndexerAccessExpressionReceiver(BoundExpression indexer)
         {
-            switch (indexer)
+            return indexer switch
             {
-                case BoundDynamicIndexerAccess boundDynamicIndexerAccess:
-                    return Create(boundDynamicIndexerAccess.Receiver);
-
-                case BoundObjectInitializerMember boundObjectInitializerMember:
-                    return CreateImplicitReceiver(boundObjectInitializerMember.Syntax, boundObjectInitializerMember.ReceiverType);
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(indexer.Kind);
-            }
+                BoundDynamicIndexerAccess boundDynamicIndexerAccess => Create(boundDynamicIndexerAccess.Receiver),
+                BoundObjectInitializerMember boundObjectInitializerMember => CreateImplicitReceiver(boundObjectInitializerMember.Syntax, boundObjectInitializerMember.ReceiverType),
+                _ => throw ExceptionUtilities.UnexpectedValue(indexer.Kind),
+            };
         }
 
         internal ImmutableArray<IOperation> CreateBoundDynamicIndexerAccessArguments(BoundExpression indexer)
@@ -868,7 +854,7 @@ namespace Microsoft.CodeAnalysis.Operations
             ITypeSymbol? type = boundObjectInitializerMember.GetPublicTypeSymbol();
             bool isImplicit = boundObjectInitializerMember.WasCompilerGenerated;
 
-            if ((object?)memberSymbol == null)
+            if (memberSymbol is null)
             {
                 Debug.Assert(boundObjectInitializerMember.Type.IsDynamic());
 
@@ -1048,7 +1034,7 @@ namespace Microsoft.CodeAnalysis.Operations
 
                 if (boundConversion.Type is FunctionPointerTypeSymbol)
                 {
-                    Debug.Assert(boundConversion.SymbolOpt is object);
+                    Debug.Assert(boundConversion.SymbolOpt is not null);
                     return new AddressOfOperation(
                         CreateBoundMethodGroupSingleMethodOperation((BoundMethodGroup)boundConversion.Operand, boundConversion.SymbolOpt, suppressVirtualCalls: false),
                         _semanticModel, syntax, type, boundConversion.WasCompilerGenerated);
@@ -1248,21 +1234,13 @@ namespace Microsoft.CodeAnalysis.Operations
 
             static MethodSymbol? getConstructMethod(BoundCollectionExpression expr)
             {
-                switch (expr.CollectionTypeKind)
+                return expr.CollectionTypeKind switch
                 {
-                    case CollectionExpressionTypeKind.None:
-                    case CollectionExpressionTypeKind.Array:
-                    case CollectionExpressionTypeKind.ReadOnlySpan:
-                    case CollectionExpressionTypeKind.Span:
-                        return null;
-                    case CollectionExpressionTypeKind.ArrayInterface:
-                    case CollectionExpressionTypeKind.ImplementsIEnumerable:
-                        return (expr.CollectionCreation as BoundObjectCreationExpression)?.Constructor;
-                    case CollectionExpressionTypeKind.CollectionBuilder:
-                        return expr.CollectionBuilderMethod;
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(expr.CollectionTypeKind);
-                }
+                    CollectionExpressionTypeKind.None or CollectionExpressionTypeKind.Array or CollectionExpressionTypeKind.ReadOnlySpan or CollectionExpressionTypeKind.Span => null,
+                    CollectionExpressionTypeKind.ArrayInterface or CollectionExpressionTypeKind.ImplementsIEnumerable => (expr.CollectionCreation as BoundObjectCreationExpression)?.Constructor,
+                    CollectionExpressionTypeKind.CollectionBuilder => expr.CollectionBuilderMethod,
+                    _ => throw ExceptionUtilities.UnexpectedValue(expr.CollectionTypeKind),
+                };
             }
 
             static ImmutableArray<IOperation> getConstructArguments(
@@ -1959,7 +1937,7 @@ namespace Microsoft.CodeAnalysis.Operations
                                                     BoundNode.GetConversion(boundForEachStatement.ElementConversion, boundForEachStatement.ElementPlaceholder),
                                                     getEnumeratorArguments: createArgumentOperations(enumeratorInfoOpt.GetEnumeratorInfo),
                                                     moveNextArguments: createArgumentOperations(enumeratorInfoOpt.MoveNextInfo),
-                                                    disposeArguments: enumeratorInfoOpt.PatternDisposeInfo is object
+                                                    disposeArguments: enumeratorInfoOpt.PatternDisposeInfo is not null
                                                         ? CreateDisposeArguments(enumeratorInfoOpt.PatternDisposeInfo)
                                                         : default);
             }
@@ -2070,12 +2048,12 @@ namespace Microsoft.CodeAnalysis.Operations
         private IUsingOperation CreateBoundUsingStatementOperation(BoundUsingStatement boundUsingStatement)
         {
             Debug.Assert((boundUsingStatement.DeclarationsOpt == null) != (boundUsingStatement.ExpressionOpt == null));
-            Debug.Assert(boundUsingStatement.ExpressionOpt is object || boundUsingStatement.Locals.Length > 0);
+            Debug.Assert(boundUsingStatement.ExpressionOpt is not null || boundUsingStatement.Locals.Length > 0);
             IOperation resources = Create(boundUsingStatement.DeclarationsOpt ?? (BoundNode)boundUsingStatement.ExpressionOpt!);
             IOperation body = Create(boundUsingStatement.Body);
             ImmutableArray<ILocalSymbol> locals = boundUsingStatement.Locals.GetPublicSymbols();
             bool isAsynchronous = boundUsingStatement.AwaitOpt != null;
-            DisposeOperationInfo disposeOperationInfo = boundUsingStatement.PatternDisposeInfoOpt is object
+            DisposeOperationInfo disposeOperationInfo = boundUsingStatement.PatternDisposeInfoOpt is not null
                                                          ? new DisposeOperationInfo(
                                                                  disposeMethod: boundUsingStatement.PatternDisposeInfoOpt.Method.GetPublicSymbol(),
                                                                  disposeArguments: CreateDisposeArguments(boundUsingStatement.PatternDisposeInfoOpt))
@@ -2213,8 +2191,8 @@ namespace Microsoft.CodeAnalysis.Operations
             {
                 return new UsingDeclarationOperation(
                     variableDeclaration,
-                    isAsynchronous: usingDecl.AwaitOpt is object,
-                    disposeInfo: usingDecl.PatternDisposeInfoOpt is object
+                    isAsynchronous: usingDecl.AwaitOpt is not null,
+                    disposeInfo: usingDecl.PatternDisposeInfoOpt is not null
                                    ? new DisposeOperationInfo(
                                            disposeMethod: usingDecl.PatternDisposeInfoOpt.Method.GetPublicSymbol(),
                                            disposeArguments: CreateDisposeArguments(usingDecl.PatternDisposeInfoOpt))

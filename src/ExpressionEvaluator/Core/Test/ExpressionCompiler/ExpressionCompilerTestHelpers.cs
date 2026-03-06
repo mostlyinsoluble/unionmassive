@@ -70,16 +70,14 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             CompilationTestData testData = null,
             DiagnosticFormatter formatter = null)
         {
-            ResultProperties resultProperties;
-            ImmutableArray<AssemblyIdentity> missingAssemblyIdentities;
             var result = context.CompileAssignment(
                 target,
                 expr,
                 ImmutableArray<Alias>.Empty,
                 formatter ?? DebuggerDiagnosticFormatter.Instance,
-                out resultProperties,
+                out var resultProperties,
                 out error,
-                out missingAssemblyIdentities,
+                out var missingAssemblyIdentities,
                 EnsureEnglishUICulture.PreferredOrNull,
                 testData);
             Assert.Empty(missingAssemblyIdentities);
@@ -91,10 +89,10 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                     ? DkmClrCompilationResultFlags.PotentialSideEffect
                     : DkmClrCompilationResultFlags.PotentialSideEffect | DkmClrCompilationResultFlags.ReadOnlyResult;
             Assert.Equal(expectedFlags, resultProperties.Flags);
-            Assert.Equal(default(DkmEvaluationResultCategory), resultProperties.Category);
-            Assert.Equal(default(DkmEvaluationResultAccessType), resultProperties.AccessType);
-            Assert.Equal(default(DkmEvaluationResultStorageType), resultProperties.StorageType);
-            Assert.Equal(default(DkmEvaluationResultTypeModifierFlags), resultProperties.ModifierFlags);
+            Assert.Equal(default, resultProperties.Category);
+            Assert.Equal(default, resultProperties.AccessType);
+            Assert.Equal(default, resultProperties.StorageType);
+            Assert.Equal(default, resultProperties.ModifierFlags);
             return result;
         }
 
@@ -114,8 +112,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             var result = context.CompileAssignment(target, expr, aliases, diagnostics, out resultProperties, testData);
             if (diagnostics.HasAnyErrors())
             {
-                bool useReferencedModulesOnly;
-                error = context.GetErrorMessageAndMissingAssemblyIdentities(diagnostics, formatter, preferredUICulture, EvaluationContextBase.SystemCoreIdentity, out useReferencedModulesOnly, out missingAssemblyIdentities);
+                error = context.GetErrorMessageAndMissingAssemblyIdentities(diagnostics, formatter, preferredUICulture, EvaluationContextBase.SystemCoreIdentity, out var useReferencedModulesOnly, out missingAssemblyIdentities);
             }
             else
             {
@@ -154,8 +151,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             CompilationTestData testData = null,
             DiagnosticFormatter formatter = null)
         {
-            ResultProperties resultProperties;
-            return CompileExpression(context, expr, out resultProperties, out error, testData, formatter);
+            return CompileExpression(context, expr, out var resultProperties, out error, testData, formatter);
         }
 
         internal static CompileResult CompileExpression(
@@ -166,7 +162,6 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             CompilationTestData testData = null,
             DiagnosticFormatter formatter = null)
         {
-            ImmutableArray<AssemblyIdentity> missingAssemblyIdentities;
             var result = context.CompileExpression(
                 expr,
                 DkmEvaluationFlags.TreatAsExpression,
@@ -174,7 +169,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                 formatter ?? DebuggerDiagnosticFormatter.Instance,
                 out resultProperties,
                 out error,
-                out missingAssemblyIdentities,
+                out var missingAssemblyIdentities,
                 EnsureEnglishUICulture.PreferredOrNull,
                 testData);
             Assert.Empty(missingAssemblyIdentities);
@@ -190,16 +185,14 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             CompilationTestData testData = null,
             DiagnosticFormatter formatter = null)
         {
-            ResultProperties resultProperties;
-            ImmutableArray<AssemblyIdentity> missingAssemblyIdentities;
             var result = evaluationContext.CompileExpression(
                 expr,
                 compilationFlags,
                 aliases,
                 formatter ?? DebuggerDiagnosticFormatter.Instance,
-                out resultProperties,
+                out var resultProperties,
                 out error,
-                out missingAssemblyIdentities,
+                out var missingAssemblyIdentities,
                 EnsureEnglishUICulture.PreferredOrNull,
                 testData);
             Assert.Empty(missingAssemblyIdentities);
@@ -228,8 +221,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
             var result = evaluationContext.CompileExpression(expr, compilationFlags, aliases, diagnostics, out resultProperties, testData);
             if (diagnostics.HasAnyErrors())
             {
-                bool useReferencedModulesOnly;
-                error = evaluationContext.GetErrorMessageAndMissingAssemblyIdentities(diagnostics, formatter, preferredUICulture, EvaluationContextBase.SystemCoreIdentity, out useReferencedModulesOnly, out missingAssemblyIdentities);
+                error = evaluationContext.GetErrorMessageAndMissingAssemblyIdentities(diagnostics, formatter, preferredUICulture, EvaluationContextBase.SystemCoreIdentity, out var useReferencedModulesOnly, out missingAssemblyIdentities);
             }
             else
             {
@@ -274,13 +266,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                 (context, diagnostics) =>
                 {
                     var td = new CompilationTestData();
-                    ResultProperties resultProperties;
                     var compileResult = context.CompileExpression(
                         expr,
                         DkmEvaluationFlags.TreatAsExpression,
                         aliases,
                         diagnostics,
-                        out resultProperties,
+                        out var resultProperties,
                         td);
                     return new CompileExpressionResult(compileResult, td);
                 },
@@ -358,8 +349,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                 foreach (var local in scope.GetLocals())
                 {
                     var name = local.GetName();
-                    int slot;
-                    local.GetAddressField1(out slot);
+                    local.GetAddressField1(out var slot);
                     while (names.Count <= slot)
                     {
                         names.Add(null);
@@ -495,9 +485,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
 
         internal static ModuleInstance GetModuleInstanceForIL(string ilSource)
         {
-            ImmutableArray<byte> peBytes;
-            ImmutableArray<byte> pdbBytes;
-            CommonTestBase.EmitILToArray(ilSource, appendDefaultHeader: true, includePdb: true, assemblyBytes: out peBytes, pdbBytes: out pdbBytes);
+            CommonTestBase.EmitILToArray(ilSource, appendDefaultHeader: true, includePdb: true, assemblyBytes: out var peBytes, pdbBytes: out var pdbBytes);
             return ModuleInstance.Create(peBytes, SymReaderFactory.CreateReader(pdbBytes), includeLocalSignatures: true);
         }
 
@@ -798,7 +786,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                 null,
                 null,
                 null,
-                default(CancellationToken));
+                default);
 
             // Wrap the module builder in a module builder that
             // reports the "System.Object" type as having no base type.
@@ -808,7 +796,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                 emittingPdb: pdbPath != null,
                 diagnostics: diagnostics,
                 filterOpt: null,
-                cancellationToken: default(CancellationToken));
+                cancellationToken: default);
 
             using (var peStream = new MemoryStream())
             {
@@ -825,7 +813,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
                         isDeterministic: false,
                         emitTestCoverageData: false,
                         privateKeyOpt: null,
-                        cancellationToken: default(CancellationToken));
+                        cancellationToken: default);
 
                     peBytes = peStream.ToImmutable();
                     pdbBytes = pdbStream.ToImmutable();

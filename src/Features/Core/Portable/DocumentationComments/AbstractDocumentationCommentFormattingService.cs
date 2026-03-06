@@ -359,7 +359,7 @@ internal abstract class AbstractDocumentationCommentFormattingService : IDocumen
             else
             {
                 navigationTarget = GetNavigationTarget(element, state.SemanticModel, state.Position, state.Format);
-                if (navigationTarget is object)
+                if (navigationTarget is not null)
                 {
                     state.PushNavigationTarget(navigationTarget.Value.target, navigationTarget.Value.hint);
                 }
@@ -450,7 +450,7 @@ internal abstract class AbstractDocumentationCommentFormattingService : IDocumen
             state.PopStyle();
         }
 
-        if (navigationTarget is object)
+        if (navigationTarget is not null)
         {
             state.PopNavigationTarget();
         }

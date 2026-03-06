@@ -58,8 +58,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         public RetargetingMethodSymbol(RetargetingModuleSymbol retargetingModule, MethodSymbol underlyingMethod)
         {
-            Debug.Assert((object)retargetingModule != null);
-            Debug.Assert((object)underlyingMethod != null);
+            Debug.Assert(retargetingModule is not null);
+            Debug.Assert(underlyingMethod is not null);
             Debug.Assert(!(underlyingMethod is RetargetingMethodSymbol));
 
             _retargetingModule = retargetingModule;
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     else
                     {
                         ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters,
-                            this.RetargetingTranslator.Retarget(_underlyingMethod.TypeParameters), default(ImmutableArray<TypeParameterSymbol>));
+                            this.RetargetingTranslator.Retarget(_underlyingMethod.TypeParameters), default);
                     }
                 }
 
@@ -188,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             get
             {
                 var associatedPropertyOrEvent = _underlyingMethod.AssociatedSymbol;
-                return (object)associatedPropertyOrEvent == null ? null : this.RetargetingTranslator.Retarget(associatedPropertyOrEvent);
+                return associatedPropertyOrEvent is null ? null : this.RetargetingTranslator.Retarget(associatedPropertyOrEvent);
             }
         }
 
@@ -306,7 +306,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     ImmutableInterlocked.InterlockedCompareExchange(
                         ref _lazyExplicitInterfaceImplementations,
                         this.RetargetExplicitInterfaceImplementations(),
-                        default(ImmutableArray<MethodSymbol>));
+                        default);
                 }
                 return _lazyExplicitInterfaceImplementations;
             }
@@ -328,7 +328,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             for (int i = 0; i < impls.Length; i++)
             {
                 var retargeted = this.RetargetingTranslator.Retarget(impls[i], MemberSignatureComparer.RetargetedExplicitImplementationComparer);
-                if ((object)retargeted != null)
+                if (retargeted is not null)
                 {
                     builder.Add(retargeted);
                 }

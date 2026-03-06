@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         // we'll create proxies for these variables later:
                         Debug.Assert(synthesizedKind == SynthesizedLocalKind.Spill ||
-                                     (synthesizedKind == SynthesizedLocalKind.ForEachArray && local.Type.HasInlineArrayAttribute(out _) && local.Type.TryGetInlineArrayElementField() is object));
+                                     (synthesizedKind == SynthesizedLocalKind.ForEachArray && local.Type.HasInlineArrayAttribute(out _) && local.Type.TryGetInlineArrayElementField() is not null));
                         continue;
                     }
 
@@ -199,14 +199,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                             id = new LocalDebugId(syntaxOffset, ordinal);
 
                             // map local id to the previous id, if available:
-                            int previousSlotIndex;
                             if (mapToPreviousFields && slotAllocatorOpt.TryGetPreviousHoistedLocalSlotIndex(
                                 declaratorSyntax,
                                 F.ModuleBuilderOpt.Translate(fieldType, declaratorSyntax, diagnostics.DiagnosticBag),
                                 synthesizedKind,
                                 id,
                                 diagnostics.DiagnosticBag,
-                                out previousSlotIndex))
+                                out int previousSlotIndex))
                             {
                                 slotIndex = previousSlotIndex;
                             }
@@ -310,10 +309,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             // starting with the "this" proxy
             if (!method.IsStatic)
             {
-                Debug.Assert((object)method.ThisParameter != null);
+                Debug.Assert(method.ThisParameter is not null);
 
-                CapturedSymbolReplacement proxy;
-                if (proxies.TryGetValue(method.ThisParameter, out proxy))
+                if (proxies.TryGetValue(method.ThisParameter, out CapturedSymbolReplacement proxy))
                 {
                     var leftExpression = proxy.Replacement(
                         F.Syntax,
@@ -326,8 +324,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (var parameter in method.Parameters)
             {
-                CapturedSymbolReplacement proxy;
-                if (proxies.TryGetValue(parameter, out proxy))
+                if (proxies.TryGetValue(parameter, out CapturedSymbolReplacement proxy))
                 {
                     var leftExpression = proxy.Replacement(
                         F.Syntax,
@@ -384,10 +381,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Environment.CurrentManagedThreadId. If that method is not present (pre 4.5) fall back to the old behavior.
 
             var currentManagedThreadIdProperty = (PropertySymbol)F.WellKnownMember(WellKnownMember.System_Environment__CurrentManagedThreadId, isOptional: true);
-            if ((object)currentManagedThreadIdProperty != null)
+            if (currentManagedThreadIdProperty is not null)
             {
                 MethodSymbol currentManagedThreadIdMethod = currentManagedThreadIdProperty.GetMethod;
-                if ((object)currentManagedThreadIdMethod != null)
+                if (currentManagedThreadIdMethod is not null)
                 {
                     return F.Call(null, currentManagedThreadIdMethod);
                 }
@@ -430,7 +427,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var thisInitialized = F.GenerateLabel("thisInitialized");
 
-            if ((object)initialThreadIdField != null)
+            if (initialThreadIdField is not null)
             {
                 managedThreadId = MakeCurrentThreadId();
 
@@ -466,8 +463,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!method.IsStatic)
             {
                 // starting with "this"
-                CapturedSymbolReplacement proxy;
-                if (copyDest.TryGetValue(method.ThisParameter, out proxy))
+                if (copyDest.TryGetValue(method.ThisParameter, out CapturedSymbolReplacement proxy))
                 {
                     var leftExpression = proxy.Replacement(
                         F.Syntax,
@@ -484,8 +480,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (var parameter in method.Parameters)
             {
-                CapturedSymbolReplacement proxy;
-                if (copyDest.TryGetValue(parameter, out proxy))
+                if (copyDest.TryGetValue(parameter, out CapturedSymbolReplacement proxy))
                 {
                     // result.parameter
                     BoundExpression resultParameter = proxy.Replacement(
@@ -529,8 +524,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         protected bool CanGetThreadId()
         {
-            return (object)F.WellKnownMember(WellKnownMember.System_Threading_Thread__ManagedThreadId, isOptional: true) != null ||
-                (object)F.WellKnownMember(WellKnownMember.System_Environment__CurrentManagedThreadId, isOptional: true) != null;
+            return F.WellKnownMember(WellKnownMember.System_Threading_Thread__ManagedThreadId, isOptional: true) is not null ||
+                F.WellKnownMember(WellKnownMember.System_Environment__CurrentManagedThreadId, isOptional: true) is not null;
         }
     }
 }

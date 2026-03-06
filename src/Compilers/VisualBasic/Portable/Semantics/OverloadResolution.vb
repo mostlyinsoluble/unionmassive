@@ -963,7 +963,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             Dim applicableNarrowingCandidateCount As Integer = 0
             Dim applicableInstanceCandidateCount As Integer = 0
             Dim someCandidatesHaveOverloadResolutionPriority As Boolean = False
-            Dim respectOverloadResolutionPriority As Boolean = InternalSyntax.Parser.CheckFeatureAvailability(binder.Compilation.LanguageVersion, InternalSyntax.Feature.OverloadResolutionPriority)
+            Dim respectOverloadResolutionPriority As Boolean = True
 
             If respectOverloadResolutionPriority AndAlso binder.IsEarlyAttributeBinder Then
                 Dim possiblyConstructor = TryCast(binder.ContainingMember, MethodSymbol)
@@ -1104,7 +1104,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             ' Therefore, this simple check gets to them as well without explicitly traversing the overrides hierarchy.
             Dim someCandidatesHaveOverloadResolutionPriority As Boolean =
                 binder.BindingLocation <> BindingLocation.Attribute AndAlso
-                InternalSyntax.Parser.CheckFeatureAvailability(binder.Compilation.LanguageVersion, InternalSyntax.Feature.OverloadResolutionPriority) AndAlso
                 candidates.Any(Function(candidate) candidate.OverloadResolutionPriority <> 0)
 
             CollectOverloadedCandidates(binder, results, candidates, ImmutableArray(Of TypeSymbol).Empty,
@@ -3254,7 +3253,7 @@ Bailout:
                 If method.IsGenericMethod Then
                     Dim diagnosticsBuilder = ArrayBuilder(Of TypeParameterDiagnosticInfo).GetInstance()
                     Dim useSiteDiagnosticsBuilder As ArrayBuilder(Of TypeParameterDiagnosticInfo) = Nothing
-                    Dim satisfiedConstraints = method.CheckConstraints(binder.Compilation.LanguageVersion, diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=useSiteInfo)
+                    Dim satisfiedConstraints = method.CheckConstraints(diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=useSiteInfo)
                     diagnosticsBuilder.Free()
 
                     If useSiteDiagnosticsBuilder IsNot Nothing AndAlso useSiteDiagnosticsBuilder.Count > 0 Then

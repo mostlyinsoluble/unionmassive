@@ -36,8 +36,7 @@ namespace Roslyn.Compilers.Extension
 
             var packagePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            string localRegistryRoot;
-            reg.GetLocalRegistryRoot(out localRegistryRoot);
+            reg.GetLocalRegistryRoot(out string localRegistryRoot);
             var registryParts = localRegistryRoot.Split('\\');
 
             // Is it a valid Hive looks similar to:  

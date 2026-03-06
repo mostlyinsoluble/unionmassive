@@ -116,9 +116,8 @@ namespace Microsoft.CodeAnalysis
                 ImmutableArray<byte> newPublicKeyToken,
                 AssemblyVersion newVersion)
             {
-                List<Value>? values;
                 var key = new Key(name, publicKeyToken);
-                if (!TryGetValue(key, out values))
+                if (!TryGetValue(key, out List<Value>? values))
                 {
                     Add(key, values = new List<Value>());
                 }
@@ -136,9 +135,8 @@ namespace Microsoft.CodeAnalysis
                 AssemblyVersion newVersion,
                 bool isPortable)
             {
-                List<Value>? values;
                 var key = new Key(name, publicKeyToken);
-                if (!TryGetValue(key, out values))
+                if (!TryGetValue(key, out List<Value>? values))
                 {
                     Add(key, values = new List<Value>());
                 }
@@ -148,8 +146,7 @@ namespace Microsoft.CodeAnalysis
 
             public bool TryGetValue(AssemblyIdentity identity, out Value value)
             {
-                List<Value>? values;
-                if (!TryGetValue(new Key(identity.Name, identity.PublicKeyToken), out values))
+                if (!TryGetValue(new Key(identity.Name, identity.PublicKeyToken), out List<Value>? values))
                 {
                     value = default;
                     return false;
@@ -161,7 +158,7 @@ namespace Microsoft.CodeAnalysis
                     var version = (AssemblyVersion)identity.Version;
                     if (value.VersionHigh.Major == 0)
                     {
-                        Debug.Assert(value.VersionHigh == default(AssemblyVersion));
+                        Debug.Assert(value.VersionHigh == default);
                         if (version == value.VersionLow)
                         {
                             return true;

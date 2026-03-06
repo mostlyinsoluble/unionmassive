@@ -436,11 +436,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                 statement = SyntaxFactory.DisableWarningDirectiveTrivia(
                     hashToken, enableOrDisableKeyword, warningKeyword, errorCodes.ToList)
             End If
-
-            If statement IsNot Nothing Then
-                statement = CheckFeatureAvailability(Feature.WarningDirectives, statement)
-            End If
-
             Me._pool.Free(errorCodes)
             Return statement
         End Function

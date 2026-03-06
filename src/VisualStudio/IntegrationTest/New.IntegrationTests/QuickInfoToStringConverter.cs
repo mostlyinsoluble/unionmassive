@@ -33,23 +33,12 @@ public static class QuickInfoToStringConverter
             case ITextBuffer textBuffer:
                 return textBuffer.CurrentSnapshot.GetText();
             case ContainerElement containerElement:
-                string separator;
-                switch (containerElement.Style)
+                var separator = containerElement.Style switch
                 {
-                    case ContainerElementStyle.Wrapped:
-                        separator = "";
-                        break;
-
-                    case ContainerElementStyle.Stacked | ContainerElementStyle.VerticalPadding:
-                        separator = Environment.NewLine + Environment.NewLine;
-                        break;
-
-                    case ContainerElementStyle.Stacked:
-                    default:
-                        separator = Environment.NewLine;
-                        break;
-                }
-
+                    ContainerElementStyle.Wrapped => "",
+                    ContainerElementStyle.Stacked | ContainerElementStyle.VerticalPadding => Environment.NewLine + Environment.NewLine,
+                    _ => Environment.NewLine,
+                };
                 return string.Join(separator, containerElement.Elements.Select(GetStringFromItem));
             case ClassifiedTextElement classifiedTextElement:
                 return string.Join("", classifiedTextElement.Runs.Select(GetStringFromItem));

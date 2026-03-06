@@ -234,7 +234,6 @@ internal sealed class VisualStudioDiagnosticListSuppressionStateService : IVisua
                         continue;
                     }
 
-                    Document? document = null;
                     var hasLocation =
                         entryHandle.TryGetValue(StandardTableColumnDefinitions.DocumentName, out filePath) && !string.IsNullOrEmpty(filePath) &&
                         entryHandle.TryGetValue(StandardTableColumnDefinitions.Line, out line) && line >= 0;
@@ -254,7 +253,7 @@ internal sealed class VisualStudioDiagnosticListSuppressionStateService : IVisua
                         filePathToDocumentMap[project] = filePathMap;
                     }
 
-                    if (!filePathMap.TryGetValue(filePath, out document))
+                    if (!filePathMap.TryGetValue(filePath, out var document))
                     {
                         // bail out
                         continue;

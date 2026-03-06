@@ -168,9 +168,9 @@ namespace RunTests
                 { "include=", "Expression for including unit test dlls: default *.UnitTests.dll", s => includeFilter.Add(s) },
                 { "exclude=", "Expression for excluding unit test dlls: default is empty", s => excludeFilter.Add(s) },
                 { "arch=", "Architecture to test on: x86, x64 or arm64", s => architecture = s },
-                { "html", "Include HTML file output", o => includeHtml = o is object },
-                { "sequential", "Run tests sequentially", o => sequential = o is object },
-                { "helix", "Run tests on Helix", o => helix = o is object },
+                { "html", "Include HTML file output", o => includeHtml = o is not null },
+                { "sequential", "Run tests sequentially", o => sequential = o is not null },
+                { "helix", "Run tests on Helix", o => helix = o is not null },
                 { "helixQueueName=", "Name of the Helix queue to run tests on", s => helixQueueName = s },
                 { "helixApiAccessToken=", "Access token for internal helix queues", s => helixApiAccessToken = s },
                 { "testfilter=", "xUnit string to pass to --filter, e.g. FullyQualifiedName~TestClass1|Category=CategoryA", s => testFilter = s },
@@ -180,7 +180,7 @@ namespace RunTests
                 { "display=", "Display", (Display d) => display = d },
                 { "artifactspath=", "Path to the artifacts directory", s => artifactsPath = s },
                 { "procdumppath=", "Path to procdump", s => procDumpFilePath = s },
-                { "collectdumps", "Whether or not to gather dumps on timeouts and crashes", o => collectDumps = o is object },
+                { "collectdumps", "Whether or not to gather dumps on timeouts and crashes", o => collectDumps = o is not null },
                 { "accessToken=", "Pipeline access token with permissions to view test history", s => accessToken = s },
                 { "projectUri=", "ADO project containing the pipeline", s => projectUri = s },
                 { "pipelineDefinitionId=", "Pipeline definition id", s => pipelineDefinitionId = s },
@@ -261,7 +261,7 @@ namespace RunTests
             static string? TryGetArtifactsPath()
             {
                 var path = AppContext.BaseDirectory;
-                while (path is object && Path.GetFileName(path) != "artifacts")
+                while (path is not null && Path.GetFileName(path) != "artifacts")
                 {
                     path = Path.GetDirectoryName(path);
                 }

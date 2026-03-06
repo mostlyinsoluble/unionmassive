@@ -16,8 +16,6 @@ internal interface ISyntaxTreeFactoryService : ILanguageService
 {
     ParseOptions GetDefaultParseOptions();
 
-    ParseOptions GetDefaultParseOptionsWithLatestLanguageVersion();
-
     ParseOptions TryParsePdbParseOptions(IReadOnlyDictionary<string, string> compilationOptionsMetadata);
 
     /// <summary>

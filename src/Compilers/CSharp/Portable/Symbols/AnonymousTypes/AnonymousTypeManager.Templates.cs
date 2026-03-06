@@ -158,8 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var key = new SynthesizedDelegateKey(parameterCount, refKinds, returnsVoid, generation);
             Debug.Assert(key.Name != null);
 
-            AnonymousDelegateTemplateSymbol? synthesizedDelegate;
-            if (this.AnonymousDelegates.TryGetValue(key, out synthesizedDelegate))
+            if (this.AnonymousDelegates.TryGetValue(key, out AnonymousDelegateTemplateSymbol? synthesizedDelegate))
             {
                 return synthesizedDelegate;
             }
@@ -184,9 +183,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // If all parameter types and return type are valid type arguments, construct
             // the delegate type from a generic template. Otherwise, use a non-generic template.
             bool useUpdatedEscapeRules = Compilation.SourceModule.UseUpdatedEscapeRules;
-            bool runtimeSupportsByRefLikeGenerics = Compilation.SourceAssembly.RuntimeSupportsByRefLikeGenerics;
 
-            if (allValidTypeArguments(useUpdatedEscapeRules, runtimeSupportsByRefLikeGenerics, typeDescr, out var needsIndexedName))
+            if (allValidTypeArguments(useUpdatedEscapeRules, true, typeDescr, out var needsIndexedName))
             {
                 var fields = typeDescr.Fields;
                 Debug.Assert(fields.All(f => hasDefaultScope(useUpdatedEscapeRules, f)));
@@ -272,8 +270,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 var key = getTemplateKey(typeDescr, typeParameters);
 
                 // Get anonymous delegate template
-                AnonymousDelegateTemplateSymbol? template;
-                if (!this.AnonymousDelegates.TryGetValue(key, out template))
+                if (!this.AnonymousDelegates.TryGetValue(key, out AnonymousDelegateTemplateSymbol? template))
                 {
                     template = this.AnonymousDelegates.GetOrAdd(key, new AnonymousDelegateTemplateSymbol(this, typeDescr, typeParameters));
                 }
@@ -427,8 +424,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             typeDescr.AssertIsGood();
 
             // Get anonymous type template
-            AnonymousTypeTemplateSymbol? template;
-            if (!this.AnonymousTypeTemplates.TryGetValue(typeDescr.Key, out template))
+            if (!this.AnonymousTypeTemplates.TryGetValue(typeDescr.Key, out AnonymousTypeTemplateSymbol? template))
             {
                 // NOTE: the newly created template may be thrown away if another thread wins
                 template = this.AnonymousTypeTemplates.GetOrAdd(typeDescr.Key, new AnonymousTypeTemplateSymbol(this, typeDescr));
@@ -720,7 +716,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static ImmutableArray<MethodSymbol> GetAnonymousTypeHiddenMethods(NamedTypeSymbol type)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             return ((AnonymousTypeTemplateSymbol)type).SpecialMembers;
         }
 
@@ -729,7 +725,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static NamedTypeSymbol TranslateAnonymousTypeSymbol(NamedTypeSymbol type)
         {
-            Debug.Assert((object)type != null);
+            Debug.Assert(type is not null);
             Debug.Assert(type.IsAnonymousType);
 
             var anonymous = (AnonymousTypeOrDelegatePublicSymbol)type;
@@ -741,7 +737,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static MethodSymbol TranslateAnonymousTypeMethodSymbol(MethodSymbol method)
         {
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             NamedTypeSymbol translatedType = TranslateAnonymousTypeSymbol(method.ContainingType);
             // find a method in anonymous type template by name
             foreach (var member in ((NamedTypeSymbol)translatedType.OriginalDefinition).GetMembers(method.Name))

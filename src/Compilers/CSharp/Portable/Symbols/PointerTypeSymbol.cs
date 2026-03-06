@@ -238,7 +238,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            if ((object?)other == null || !other._pointedAtType.Equals(_pointedAtType, comparison))
+            if (other is null || !other._pointedAtType.Equals(_pointedAtType, comparison))
             {
                 return false;
             }
@@ -254,9 +254,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override bool ApplyNullableTransforms(byte defaultTransformFlag, ImmutableArray<byte> transforms, ref int position, out TypeSymbol result)
         {
             TypeWithAnnotations oldPointedAtType = PointedAtTypeWithAnnotations;
-            TypeWithAnnotations newPointedAtType;
 
-            if (!oldPointedAtType.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position, out newPointedAtType))
+            if (!oldPointedAtType.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position, out TypeWithAnnotations newPointedAtType))
             {
                 result = this;
                 return false;

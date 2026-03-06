@@ -223,19 +223,14 @@ internal sealed class ReferenceCodeLensProvider : IAsyncCodeLensDataPointProvide
 
             static string GetCodeElementKindsString(CodeElementKinds kind)
             {
-                switch (kind)
+                return kind switch
                 {
-                    case CodeElementKinds.Method:
-                        return FeaturesResources.method;
-                    case CodeElementKinds.Type:
-                        return FeaturesResources.type;
-                    case CodeElementKinds.Property:
-                        return FeaturesResources.property_;
-                    default:
-                        // code lens engine will catch and ignore exception
-                        // basically not showing data point
-                        throw new NotSupportedException(nameof(kind));
-                }
+                    CodeElementKinds.Method => FeaturesResources.method,
+                    CodeElementKinds.Type => FeaturesResources.type,
+                    CodeElementKinds.Property => FeaturesResources.property_,
+                    _ => throw new NotSupportedException(nameof(kind)),// code lens engine will catch and ignore exception
+                                                                       // basically not showing data point
+                };
             }
         }
 

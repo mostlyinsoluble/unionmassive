@@ -81,21 +81,14 @@ internal readonly struct InlineRenameReplacement
 
     private static InlineRenameReplacementKind GetReplacementKind(RelatedLocation location)
     {
-        switch (location.Type)
+        return location.Type switch
         {
-            case RelatedLocationType.NoConflict:
-                return InlineRenameReplacementKind.NoConflict;
-            case RelatedLocationType.ResolvedReferenceConflict:
-                return InlineRenameReplacementKind.ResolvedReferenceConflict;
-            case RelatedLocationType.ResolvedNonReferenceConflict:
-                return InlineRenameReplacementKind.ResolvedNonReferenceConflict;
-            case RelatedLocationType.UnresolvableConflict:
-            case RelatedLocationType.UnresolvedConflict:
-                return InlineRenameReplacementKind.UnresolvedConflict;
-            default:
-            case RelatedLocationType.PossiblyResolvableConflict:
-                throw ExceptionUtilities.UnexpectedValue(location.Type);
-        }
+            RelatedLocationType.NoConflict => InlineRenameReplacementKind.NoConflict,
+            RelatedLocationType.ResolvedReferenceConflict => InlineRenameReplacementKind.ResolvedReferenceConflict,
+            RelatedLocationType.ResolvedNonReferenceConflict => InlineRenameReplacementKind.ResolvedNonReferenceConflict,
+            RelatedLocationType.UnresolvableConflict or RelatedLocationType.UnresolvedConflict => InlineRenameReplacementKind.UnresolvedConflict,
+            _ => throw ExceptionUtilities.UnexpectedValue(location.Type),
+        };
     }
 }
 

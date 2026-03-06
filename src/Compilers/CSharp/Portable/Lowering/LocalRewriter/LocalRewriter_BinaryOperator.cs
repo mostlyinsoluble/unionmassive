@@ -80,8 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return node.Update(operatorKind, node.LogicalOperator, node.TrueOperator, node.FalseOperator, trueFalseOperandPlaceholder: null, trueFalseOperandConversion: null, node.ConstrainedToTypeOpt, node.ResultKind, originalUserDefinedOperatorsOpt: default, loweredLeft, loweredRight, type);
             }
 
-            BoundAssignmentOperator tempAssignment;
-            var boundTemp = _factory.StoreToTemp(loweredLeft, out tempAssignment);
+            var boundTemp = _factory.StoreToTemp(loweredLeft, out BoundAssignmentOperator tempAssignment);
 
             // T.false(temp)
             var falseOperatorCall = BoundCall.Synthesized(syntax, receiverOpt: node.ConstrainedToTypeOpt is null ? null : new BoundTypeExpression(syntax, aliasOpt: null, node.ConstrainedToTypeOpt),
@@ -659,8 +658,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundLocal? temp;
             if (constantLeft == null && loweredLeft.Kind != BoundKind.Local && loweredLeft.Kind != BoundKind.Parameter)
             {
-                BoundAssignmentOperator assignment;
-                var local = _factory.StoreToTemp(loweredLeft, out assignment);
+                var local = _factory.StoreToTemp(loweredLeft, out BoundAssignmentOperator assignment);
                 loweredLeft = local;
                 tempAssignment = assignment;
                 temp = local;
@@ -1216,30 +1214,21 @@ namespace Microsoft.CodeAnalysis.CSharp
             // TODO: Build a better temporary-storage management system that decides whether or not
             // TODO: to store a temporary.
 
-            BoundAssignmentOperator tempAssignmentX;
-            BoundLocal boundTempX = _factory.StoreToTemp(xNonNull ?? loweredLeft, out tempAssignmentX);
-            BoundAssignmentOperator tempAssignmentY;
-            BoundLocal boundTempY = _factory.StoreToTemp(yNonNull ?? loweredRight, out tempAssignmentY);
+            BoundLocal boundTempX = _factory.StoreToTemp(xNonNull ?? loweredLeft, out BoundAssignmentOperator tempAssignmentX);
+            BoundLocal boundTempY = _factory.StoreToTemp(yNonNull ?? loweredRight, out BoundAssignmentOperator tempAssignmentY);
 
             BoundExpression callX_GetValueOrDefault = MakeOptimizedGetValueOrDefault(syntax, boundTempX);
             BoundExpression callY_GetValueOrDefault = MakeOptimizedGetValueOrDefault(syntax, boundTempY);
             BoundExpression callX_HasValue = MakeOptimizedHasValue(syntax, boundTempX);
             BoundExpression callY_HasValue = MakeOptimizedHasValue(syntax, boundTempY);
+            BinaryOperatorKind operatorKind = kind.Operator();
 
             // tempx.HasValue == tempy.HasValue
-            BinaryOperatorKind conditionOperator;
-            BinaryOperatorKind operatorKind = kind.Operator();
-            switch (operatorKind)
+            var conditionOperator = operatorKind switch
             {
-                case BinaryOperatorKind.Equal:
-                case BinaryOperatorKind.NotEqual:
-                    conditionOperator = BinaryOperatorKind.BoolEqual;
-                    break;
-                default:
-                    conditionOperator = BinaryOperatorKind.BoolAnd;
-                    break;
-            }
-
+                BinaryOperatorKind.Equal or BinaryOperatorKind.NotEqual => BinaryOperatorKind.BoolEqual,
+                _ => BinaryOperatorKind.BoolAnd,
+            };
             TypeSymbol boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
 
             BoundExpression condition = MakeBinaryOperator(
@@ -1510,8 +1499,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (CanChangeValueBetweenReads(operand))
             {
-                BoundAssignmentOperator tempAssignment;
-                var tempAccess = _factory.StoreToTemp(operand, out tempAssignment, kind: kind);
+                var tempAccess = _factory.StoreToTemp(operand, out BoundAssignmentOperator tempAssignment, kind: kind);
                 sideeffects.Add(tempAssignment);
                 locals.Add(tempAccess.LocalSymbol);
                 operand = tempAccess;
@@ -1734,8 +1722,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             //
             // respectively.
 
-            BoundAssignmentOperator tempAssignment;
-            BoundLocal boundTemp = _factory.StoreToTemp(notAlwaysNull, out tempAssignment);
+            BoundLocal boundTemp = _factory.StoreToTemp(notAlwaysNull, out BoundAssignmentOperator tempAssignment);
             BoundExpression condition = MakeOptimizedGetValueOrDefault(syntax, boundTemp);
             BoundExpression consequence = kind == BinaryOperatorKind.LiftedBoolAnd ? nullBool : boundTemp;
             BoundExpression alternative = kind == BinaryOperatorKind.LiftedBoolAnd ? boundTemp : nullBool;
@@ -1791,10 +1778,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // One is definitely not null and the other might be null.
 
-            BoundAssignmentOperator tempAssignmentX;
-            BoundLocal boundTempX = _factory.StoreToTemp(leftNonNull ?? left, out tempAssignmentX);
-            BoundAssignmentOperator tempAssignmentY;
-            BoundLocal boundTempY = _factory.StoreToTemp(rightNonNull ?? right, out tempAssignmentY);
+            BoundLocal boundTempX = _factory.StoreToTemp(leftNonNull ?? left, out BoundAssignmentOperator tempAssignmentX);
+            BoundLocal boundTempY = _factory.StoreToTemp(rightNonNull ?? right, out BoundAssignmentOperator tempAssignmentY);
             BoundExpression nonNullTemp = leftNonNull == null ? boundTempY : boundTempX;
             BoundExpression maybeNullTemp = leftNonNull == null ? boundTempX : boundTempY;
             BoundExpression condition = nonNullTemp;
@@ -1845,10 +1830,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // CONSIDER: Consider realizing these using | instead of ||. 
             // CONSIDER: The operations are extremely low cost and the added bulk to the code might not be worthwhile.
 
-            BoundAssignmentOperator tempAssignmentX;
-            BoundLocal boundTempX = _factory.StoreToTemp(loweredLeft, out tempAssignmentX);
-            BoundAssignmentOperator tempAssignmentY;
-            BoundLocal boundTempY = _factory.StoreToTemp(loweredRight, out tempAssignmentY);
+            BoundLocal boundTempX = _factory.StoreToTemp(loweredLeft, out BoundAssignmentOperator tempAssignmentX);
+            BoundLocal boundTempY = _factory.StoreToTemp(loweredRight, out BoundAssignmentOperator tempAssignmentY);
 
             TypeSymbol boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
 
@@ -1957,7 +1940,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(loweredLeft != null);
             Debug.Assert(loweredRight != null);
-            Debug.Assert((object)returnType != null);
+            Debug.Assert(returnType is not null);
             Debug.Assert(returnType.SpecialType == SpecialType.System_Boolean);
             Debug.Assert(loweredLeft.IsLiteralNull() != loweredRight.IsLiteralNull());
 
@@ -2019,7 +2002,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var method = UnsafeGetSpecialTypeMethod(syntax, member);
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
 
             return BoundCall.Synthesized(syntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, loweredLeft, loweredRight);
         }
@@ -2032,7 +2015,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 method = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
                 if (loweredRight.IsLiteralNull() ||
                     loweredLeft.IsLiteralNull() ||
-                    (object)(method = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member)) == null)
+                    (method = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member)) is null)
                 {
                     // use reference equality in the absence of overloaded operators for System.Delegate.
                     operatorKind = (operatorKind & (~BinaryOperatorKind.Delegate)) | BinaryOperatorKind.Object;
@@ -2044,9 +2027,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 method = UnsafeGetSpecialTypeMethod(syntax, member);
             }
 
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             BoundExpression call = _inExpressionLambda
-                ? new BoundBinaryOperator(syntax, operatorKind, null, method, constrainedToTypeOpt: null, default(LookupResultKind), loweredLeft, loweredRight, method.ReturnType)
+                ? new BoundBinaryOperator(syntax, operatorKind, null, method, constrainedToTypeOpt: null, default, loweredLeft, loweredRight, method.ReturnType)
                 : (BoundExpression)BoundCall.Synthesized(syntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, loweredLeft, loweredRight);
             BoundExpression result = method.ReturnType.SpecialType == SpecialType.System_Delegate ?
                 MakeConversionNode(syntax, call, Conversion.ExplicitReference, type, @checked: false) :
@@ -2058,29 +2041,25 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(loweredLeft.Type is { SpecialType: SpecialType.System_Decimal });
             Debug.Assert(loweredRight.Type is { SpecialType: SpecialType.System_Decimal });
-
-            SpecialMember member;
-
-            switch (operatorKind)
+            var member = operatorKind switch
             {
-                case BinaryOperatorKind.DecimalAddition: member = SpecialMember.System_Decimal__op_Addition; break;
-                case BinaryOperatorKind.DecimalSubtraction: member = SpecialMember.System_Decimal__op_Subtraction; break;
-                case BinaryOperatorKind.DecimalMultiplication: member = SpecialMember.System_Decimal__op_Multiply; break;
-                case BinaryOperatorKind.DecimalDivision: member = SpecialMember.System_Decimal__op_Division; break;
-                case BinaryOperatorKind.DecimalRemainder: member = SpecialMember.System_Decimal__op_Modulus; break;
-                case BinaryOperatorKind.DecimalEqual: member = SpecialMember.System_Decimal__op_Equality; break;
-                case BinaryOperatorKind.DecimalNotEqual: member = SpecialMember.System_Decimal__op_Inequality; break;
-                case BinaryOperatorKind.DecimalLessThan: member = SpecialMember.System_Decimal__op_LessThan; break;
-                case BinaryOperatorKind.DecimalLessThanOrEqual: member = SpecialMember.System_Decimal__op_LessThanOrEqual; break;
-                case BinaryOperatorKind.DecimalGreaterThan: member = SpecialMember.System_Decimal__op_GreaterThan; break;
-                case BinaryOperatorKind.DecimalGreaterThanOrEqual: member = SpecialMember.System_Decimal__op_GreaterThanOrEqual; break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(operatorKind);
-            }
+                BinaryOperatorKind.DecimalAddition => SpecialMember.System_Decimal__op_Addition,
+                BinaryOperatorKind.DecimalSubtraction => SpecialMember.System_Decimal__op_Subtraction,
+                BinaryOperatorKind.DecimalMultiplication => SpecialMember.System_Decimal__op_Multiply,
+                BinaryOperatorKind.DecimalDivision => SpecialMember.System_Decimal__op_Division,
+                BinaryOperatorKind.DecimalRemainder => SpecialMember.System_Decimal__op_Modulus,
+                BinaryOperatorKind.DecimalEqual => SpecialMember.System_Decimal__op_Equality,
+                BinaryOperatorKind.DecimalNotEqual => SpecialMember.System_Decimal__op_Inequality,
+                BinaryOperatorKind.DecimalLessThan => SpecialMember.System_Decimal__op_LessThan,
+                BinaryOperatorKind.DecimalLessThanOrEqual => SpecialMember.System_Decimal__op_LessThanOrEqual,
+                BinaryOperatorKind.DecimalGreaterThan => SpecialMember.System_Decimal__op_GreaterThan,
+                BinaryOperatorKind.DecimalGreaterThanOrEqual => SpecialMember.System_Decimal__op_GreaterThanOrEqual,
+                _ => throw ExceptionUtilities.UnexpectedValue(operatorKind),
+            };
 
             // call Operator (left, right)
             var method = UnsafeGetSpecialTypeMethod(syntax, member);
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
 
             return BoundCall.Synthesized(syntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, loweredLeft, loweredRight);
         }

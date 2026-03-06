@@ -435,19 +435,11 @@ internal static partial class ExpressionSyntaxExtensions
 
     private static bool CanReplace(ISymbol symbol)
     {
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Field:
-            case SymbolKind.Local:
-            case SymbolKind.Method:
-            case SymbolKind.Parameter:
-            case SymbolKind.Property:
-            case SymbolKind.RangeVariable:
-            case SymbolKind.FunctionPointerType:
-                return true;
-        }
-
-        return false;
+            SymbolKind.Field or SymbolKind.Local or SymbolKind.Method or SymbolKind.Parameter or SymbolKind.Property or SymbolKind.RangeVariable or SymbolKind.FunctionPointerType => true,
+            _ => false,
+        };
     }
 
     public static bool CanReplaceWithRValue(
@@ -692,160 +684,43 @@ internal static partial class ExpressionSyntaxExtensions
 
     public static OperatorPrecedence GetOperatorPrecedence(this ExpressionSyntax expression)
     {
-        switch (expression.Kind())
+        return expression.Kind() switch
         {
-            case SyntaxKind.SimpleMemberAccessExpression:
-            case SyntaxKind.ConditionalAccessExpression:
-            case SyntaxKind.InvocationExpression:
-            case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.PostIncrementExpression:
-            case SyntaxKind.PostDecrementExpression:
-            case SyntaxKind.ObjectCreationExpression:
-            case SyntaxKind.ImplicitObjectCreationExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.DefaultExpression:
-            case SyntaxKind.CheckedExpression:
-            case SyntaxKind.UncheckedExpression:
-            case SyntaxKind.AnonymousMethodExpression:
-            case SyntaxKind.SuppressNullableWarningExpression:
-            // unsafe code
-            case SyntaxKind.SizeOfExpression:
-            case SyntaxKind.PointerMemberAccessExpression:
-                // From C# spec, 7.3.1:
-                // Primary: x.y  x?.y  x?[y]  f(x)  a[x]  x++  x--  new  typeof  default  checked  unchecked  delegate  x! 
-
-                return OperatorPrecedence.Primary;
-
-            case SyntaxKind.UnaryPlusExpression:
-            case SyntaxKind.UnaryMinusExpression:
-            case SyntaxKind.LogicalNotExpression:
-            case SyntaxKind.BitwiseNotExpression:
-            case SyntaxKind.PreIncrementExpression:
-            case SyntaxKind.PreDecrementExpression:
-            case SyntaxKind.CastExpression:
-            case SyntaxKind.AwaitExpression:
-            // unsafe code.
-            case SyntaxKind.PointerIndirectionExpression:
-            case SyntaxKind.AddressOfExpression:
-
-                // From C# spec, 7.3.1:
-                // Unary: +  -  !  ~  ++x  --x  (T)x  await Task
-
-                return OperatorPrecedence.Unary;
-
-            case SyntaxKind.RangeExpression:
-                // From C# spec, https://github.com/dotnet/csharplang/blob/main/proposals/csharp-8.0/ranges.md#systemrange
-                // Range: ..
-
-                return OperatorPrecedence.Range;
-
-            case SyntaxKind.MultiplyExpression:
-            case SyntaxKind.DivideExpression:
-            case SyntaxKind.ModuloExpression:
-                // From C# spec, 7.3.1:
-                // Multiplicative: *  /  %
-
-                return OperatorPrecedence.Multiplicative;
-
-            case SyntaxKind.AddExpression:
-            case SyntaxKind.SubtractExpression:
-                // From C# spec, 7.3.1:
-                // Additive: +  -
-
-                return OperatorPrecedence.Additive;
-
-            case SyntaxKind.LeftShiftExpression:
-            case SyntaxKind.RightShiftExpression:
-                // From C# spec, 7.3.1:
-                // Shift: <<  >>
-
-                return OperatorPrecedence.Shift;
-
-            case SyntaxKind.LessThanExpression:
-            case SyntaxKind.GreaterThanExpression:
-            case SyntaxKind.LessThanOrEqualExpression:
-            case SyntaxKind.GreaterThanOrEqualExpression:
-            case SyntaxKind.IsExpression:
-            case SyntaxKind.AsExpression:
-            case SyntaxKind.IsPatternExpression:
-                // From C# spec, 7.3.1:
-                // Relational and type testing: <  >  <=  >=  is  as
-
-                return OperatorPrecedence.RelationalAndTypeTesting;
-
-            case SyntaxKind.EqualsExpression:
-            case SyntaxKind.NotEqualsExpression:
-                // From C# spec, 7.3.1:
-                // Equality: ==  !=
-
-                return OperatorPrecedence.Equality;
-
-            case SyntaxKind.BitwiseAndExpression:
-                // From C# spec, 7.3.1:
-                // Logical AND: &
-
-                return OperatorPrecedence.LogicalAnd;
-
-            case SyntaxKind.ExclusiveOrExpression:
-                // From C# spec, 7.3.1:
-                // Logical XOR: ^
-
-                return OperatorPrecedence.LogicalXor;
-
-            case SyntaxKind.BitwiseOrExpression:
-                // From C# spec, 7.3.1:
-                // Logical OR: |
-
-                return OperatorPrecedence.LogicalOr;
-
-            case SyntaxKind.LogicalAndExpression:
-                // From C# spec, 7.3.1:
-                // Conditional AND: &&
-
-                return OperatorPrecedence.ConditionalAnd;
-
-            case SyntaxKind.LogicalOrExpression:
-                // From C# spec, 7.3.1:
-                // Conditional AND: ||
-
-                return OperatorPrecedence.ConditionalOr;
-
-            case SyntaxKind.CoalesceExpression:
-                // From C# spec, 7.3.1:
-                // Null coalescing: ??
-
-                return OperatorPrecedence.NullCoalescing;
-
-            case SyntaxKind.ConditionalExpression:
-                // From C# spec, 7.3.1:
-                // Conditional: ?:
-
-                return OperatorPrecedence.Conditional;
-
-            case SyntaxKind.SimpleAssignmentExpression:
-            case SyntaxKind.MultiplyAssignmentExpression:
-            case SyntaxKind.DivideAssignmentExpression:
-            case SyntaxKind.ModuloAssignmentExpression:
-            case SyntaxKind.AddAssignmentExpression:
-            case SyntaxKind.SubtractAssignmentExpression:
-            case SyntaxKind.LeftShiftAssignmentExpression:
-            case SyntaxKind.RightShiftAssignmentExpression:
-            case SyntaxKind.AndAssignmentExpression:
-            case SyntaxKind.ExclusiveOrAssignmentExpression:
-            case SyntaxKind.OrAssignmentExpression:
-            case SyntaxKind.SimpleLambdaExpression:
-            case SyntaxKind.ParenthesizedLambdaExpression:
-                // From C# spec, 7.3.1:
-                // Conditional: ?:
-
-                return OperatorPrecedence.AssignmentAndLambdaExpression;
-
-            case SyntaxKind.SwitchExpression:
-                return OperatorPrecedence.Switch;
-
-            default:
-                return OperatorPrecedence.None;
-        }
+            SyntaxKind.SimpleMemberAccessExpression or SyntaxKind.ConditionalAccessExpression or SyntaxKind.InvocationExpression or SyntaxKind.ElementAccessExpression or SyntaxKind.PostIncrementExpression or SyntaxKind.PostDecrementExpression or SyntaxKind.ObjectCreationExpression or SyntaxKind.ImplicitObjectCreationExpression or SyntaxKind.TypeOfExpression or SyntaxKind.DefaultExpression or SyntaxKind.CheckedExpression or SyntaxKind.UncheckedExpression or SyntaxKind.AnonymousMethodExpression or SyntaxKind.SuppressNullableWarningExpression or SyntaxKind.SizeOfExpression or SyntaxKind.PointerMemberAccessExpression => OperatorPrecedence.Primary,// From C# spec, 7.3.1:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // Primary: x.y  x?.y  x?[y]  f(x)  a[x]  x++  x--  new  typeof  default  checked  unchecked  delegate  x! 
+            SyntaxKind.UnaryPlusExpression or SyntaxKind.UnaryMinusExpression or SyntaxKind.LogicalNotExpression or SyntaxKind.BitwiseNotExpression or SyntaxKind.PreIncrementExpression or SyntaxKind.PreDecrementExpression or SyntaxKind.CastExpression or SyntaxKind.AwaitExpression or SyntaxKind.PointerIndirectionExpression or SyntaxKind.AddressOfExpression => OperatorPrecedence.Unary,// From C# spec, 7.3.1:
+                                                                                                                                                                                                                                                                                                                                                                                                  // Unary: +  -  !  ~  ++x  --x  (T)x  await Task
+            SyntaxKind.RangeExpression => OperatorPrecedence.Range,// From C# spec, https://github.com/dotnet/csharplang/blob/main/proposals/csharp-8.0/ranges.md#systemrange
+                                                                   // Range: ..
+            SyntaxKind.MultiplyExpression or SyntaxKind.DivideExpression or SyntaxKind.ModuloExpression => OperatorPrecedence.Multiplicative,// From C# spec, 7.3.1:
+                                                                                                                                             // Multiplicative: *  /  %
+            SyntaxKind.AddExpression or SyntaxKind.SubtractExpression => OperatorPrecedence.Additive,// From C# spec, 7.3.1:
+                                                                                                     // Additive: +  -
+            SyntaxKind.LeftShiftExpression or SyntaxKind.RightShiftExpression => OperatorPrecedence.Shift,// From C# spec, 7.3.1:
+                                                                                                          // Shift: <<  >>
+            SyntaxKind.LessThanExpression or SyntaxKind.GreaterThanExpression or SyntaxKind.LessThanOrEqualExpression or SyntaxKind.GreaterThanOrEqualExpression or SyntaxKind.IsExpression or SyntaxKind.AsExpression or SyntaxKind.IsPatternExpression => OperatorPrecedence.RelationalAndTypeTesting,// From C# spec, 7.3.1:
+                                                                                                                                                                                                                                                                                                        // Relational and type testing: <  >  <=  >=  is  as
+            SyntaxKind.EqualsExpression or SyntaxKind.NotEqualsExpression => OperatorPrecedence.Equality,// From C# spec, 7.3.1:
+                                                                                                         // Equality: ==  !=
+            SyntaxKind.BitwiseAndExpression => OperatorPrecedence.LogicalAnd,// From C# spec, 7.3.1:
+                                                                             // Logical AND: &
+            SyntaxKind.ExclusiveOrExpression => OperatorPrecedence.LogicalXor,// From C# spec, 7.3.1:
+                                                                              // Logical XOR: ^
+            SyntaxKind.BitwiseOrExpression => OperatorPrecedence.LogicalOr,// From C# spec, 7.3.1:
+                                                                           // Logical OR: |
+            SyntaxKind.LogicalAndExpression => OperatorPrecedence.ConditionalAnd,// From C# spec, 7.3.1:
+                                                                                 // Conditional AND: &&
+            SyntaxKind.LogicalOrExpression => OperatorPrecedence.ConditionalOr,// From C# spec, 7.3.1:
+                                                                               // Conditional AND: ||
+            SyntaxKind.CoalesceExpression => OperatorPrecedence.NullCoalescing,// From C# spec, 7.3.1:
+                                                                               // Null coalescing: ??
+            SyntaxKind.ConditionalExpression => OperatorPrecedence.Conditional,// From C# spec, 7.3.1:
+                                                                               // Conditional: ?:
+            SyntaxKind.SimpleAssignmentExpression or SyntaxKind.MultiplyAssignmentExpression or SyntaxKind.DivideAssignmentExpression or SyntaxKind.ModuloAssignmentExpression or SyntaxKind.AddAssignmentExpression or SyntaxKind.SubtractAssignmentExpression or SyntaxKind.LeftShiftAssignmentExpression or SyntaxKind.RightShiftAssignmentExpression or SyntaxKind.AndAssignmentExpression or SyntaxKind.ExclusiveOrAssignmentExpression or SyntaxKind.OrAssignmentExpression or SyntaxKind.SimpleLambdaExpression or SyntaxKind.ParenthesizedLambdaExpression => OperatorPrecedence.AssignmentAndLambdaExpression,// From C# spec, 7.3.1:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       // Conditional: ?:
+            SyntaxKind.SwitchExpression => OperatorPrecedence.Switch,
+            _ => OperatorPrecedence.None,
+        };
     }
 
     public static bool TryConvertToStatement(

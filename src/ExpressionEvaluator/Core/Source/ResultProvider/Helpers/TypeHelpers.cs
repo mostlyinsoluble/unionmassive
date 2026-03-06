@@ -156,8 +156,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                         DkmClrDebuggerBrowsableAttributeState? browsableStateValue = null;
                         if (browsableState != null)
                         {
-                            DkmClrDebuggerBrowsableAttributeState value;
-                            if (browsableState.TryGetValue(memberName, out value))
+                            if (browsableState.TryGetValue(memberName, out var value))
                             {
                                 browsableStateValue = value;
                             }
@@ -227,14 +226,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal static bool IsVisibleMember(MemberInfo member)
         {
-            switch (member.MemberType)
+            return member.MemberType switch
             {
-                case MemberTypes.Field:
-                    return true;
-                case MemberTypes.Property:
-                    return GetNonIndexerGetMethod((PropertyInfo)member) != null;
-            }
-            return false;
+                MemberTypes.Field => true,
+                MemberTypes.Property => GetNonIndexerGetMethod((PropertyInfo)member) != null,
+                _ => false,
+            };
         }
 
         /// <summary>
@@ -457,8 +454,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                     }
 
                     var restType = typeArguments[n - 1];
-                    int restCardinality;
-                    if (restType.IsTupleCompatible(out restCardinality))
+                    if (restType.IsTupleCompatible(out var restCardinality))
                     {
                         cardinality = n - 1 + restCardinality;
                         return true;
@@ -473,8 +469,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         // Returns cardinality if tuple type, otherwise 0.
         internal static int GetTupleCardinalityIfAny(this Type type)
         {
-            int cardinality;
-            type.IsTupleCompatible(out cardinality);
+            type.IsTupleCompatible(out var cardinality);
             return cardinality;
         }
 
@@ -612,9 +607,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
                 displayInfo = displayInfo.WithFavoritesInfo(favoritesInfo);
             }
 
-            DkmClrType attributeTarget;
-            DkmClrDebuggerDisplayAttribute attribute;
-            if (clrType.TryGetEvalAttribute(out attributeTarget, out attribute)) // First, as in dev12.
+            if (clrType.TryGetEvalAttribute(out var attributeTarget, out
+            DkmClrDebuggerDisplayAttribute attribute)) // First, as in dev12.
             {
                 displayInfo = displayInfo.WithDebuggerDisplayAttribute(attribute, attributeTarget);
             }
@@ -668,9 +662,9 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             // CONSIDER: If needed, we could probably compute a new DynamicAttribute for
             // the proxy type based on the DynamicAttribute of the argument.
-            DkmClrType attributeTarget;
-            DkmClrDebuggerTypeProxyAttribute attribute;
-            if (type.TryGetEvalAttribute(out attributeTarget, out attribute))
+            if (type.TryGetEvalAttribute(out var attributeTarget, out             // CONSIDER: If needed, we could probably compute a new DynamicAttribute for
+            // the proxy type based on the DynamicAttribute of the argument.
+            DkmClrDebuggerTypeProxyAttribute attribute))
             {
                 var targetedType = attributeTarget.GetLmrType();
                 var proxyType = attribute.ProxyType;

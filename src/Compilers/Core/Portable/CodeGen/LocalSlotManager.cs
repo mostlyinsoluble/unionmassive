@@ -135,9 +135,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
             ImmutableArray<string> tupleElementNames,
             bool isSlotReusable)
         {
-            LocalDefinition? local;
 
-            if (!isSlotReusable || !FreeSlots.TryPop(new LocalSignature(type, constraints), out local))
+            if (!isSlotReusable || !FreeSlots.TryPop(new LocalSignature(type, constraints), out LocalDefinition? local))
             {
                 local = this.DeclareLocalImpl(type, symbol, name, kind, id, pdbAttributes, constraints, dynamicTransformFlags, tupleElementNames);
             }

@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     result = new MissingMetadataTypeSymbol.TopLevel(this.Assembly.Modules[0], ref emittedName, type, errorInfo);
                 }
 
-                if (Interlocked.CompareExchange(ref _lazyWellKnownTypes[index], result, null) is object)
+                if (Interlocked.CompareExchange(ref _lazyWellKnownTypes[index], result, null) is not null)
                 {
                     Debug.Assert(
                         TypeSymbol.Equals(result, _lazyWellKnownTypes[index], TypeCompareKind.ConsiderEverything2) || (_lazyWellKnownTypes[index]!.IsErrorType() && result.IsErrorType())
@@ -299,7 +299,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 if (member.Kind != targetSymbolKind || member.IsStatic != isStatic ||
-                    !(member.DeclaredAccessibility == Accessibility.Public || (accessWithinOpt is object && Symbol.IsSymbolAccessible(member, accessWithinOpt))))
+                    !(member.DeclaredAccessibility == Accessibility.Public || (accessWithinOpt is not null && Symbol.IsSymbolAccessible(member, accessWithinOpt))))
                 {
                     continue;
                 }
@@ -360,7 +360,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 // ambiguity
-                if (result is object)
+                if (result is not null)
                 {
                     result = null;
                     break;
@@ -446,7 +446,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var ctorSymbol = (MethodSymbol)this.GetSpecialTypeMember(constructor);
 
-            if ((object)ctorSymbol == null)
+            if (ctorSymbol is null)
             {
                 Debug.Assert(isOptionalUse);
                 return null;
@@ -461,10 +461,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal SynthesizedAttributeData? SynthesizeDecimalConstantAttribute(decimal value)
         {
-            bool isNegative;
-            byte scale;
-            uint low, mid, high;
-            value.GetBits(out isNegative, out scale, out low, out mid, out high);
+            value.GetBits(out bool isNegative, out byte scale, out uint low, out uint mid, out uint high);
             var systemByte = GetSpecialType(SpecialType.System_Byte);
             Debug.Assert(!systemByte.HasUseSiteError);
 
@@ -571,12 +568,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             EnsureEmbeddableAttributeExists(EmbeddableAttributes.NullableContextAttribute, diagnostics, location, modifyCompilation);
         }
 
-        internal void EnsureNativeIntegerAttributeExists(BindingDiagnosticBag? diagnostics, Location location, bool modifyCompilation)
-        {
-            Debug.Assert(ShouldEmitNativeIntegerAttributes());
-            EnsureEmbeddableAttributeExists(EmbeddableAttributes.NativeIntegerAttribute, diagnostics, location, modifyCompilation);
-        }
-
         internal void EnsureScopedRefAttributeExists(BindingDiagnosticBag? diagnostics, Location location, bool modifyCompilation)
         {
             EnsureEmbeddableAttributeExists(EmbeddableAttributes.ScopedRefAttribute, diagnostics, location, modifyCompilation);
@@ -634,16 +625,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         locationOpt,
                         WellKnownType.System_Runtime_CompilerServices_NullablePublicOnlyAttribute,
                         WellKnownMember.System_Runtime_CompilerServices_NullablePublicOnlyAttribute__ctor);
-
-                case EmbeddableAttributes.NativeIntegerAttribute:
-                    // If the type exists, we'll check both constructors, regardless of which one(s) we'll eventually need.
-                    Debug.Assert(ShouldEmitNativeIntegerAttributes());
-                    return CheckIfAttributeShouldBeEmbedded(
-                        diagnosticsOpt,
-                        locationOpt,
-                        WellKnownType.System_Runtime_CompilerServices_NativeIntegerAttribute,
-                        WellKnownMember.System_Runtime_CompilerServices_NativeIntegerAttribute__ctor,
-                        WellKnownMember.System_Runtime_CompilerServices_NativeIntegerAttribute__ctorTransformFlags);
 
                 case EmbeddableAttributes.ScopedRefAttribute:
                     return CheckIfAttributeShouldBeEmbedded(
@@ -728,14 +709,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal SynthesizedAttributeData? SynthesizeDebuggableAttribute()
         {
             TypeSymbol debuggableAttribute = GetWellKnownType(WellKnownType.System_Diagnostics_DebuggableAttribute);
-            Debug.Assert((object)debuggableAttribute != null, "GetWellKnownType unexpectedly returned null");
+            Debug.Assert(debuggableAttribute is not null, "GetWellKnownType unexpectedly returned null");
             if (debuggableAttribute is MissingMetadataTypeSymbol)
             {
                 return null;
             }
 
             TypeSymbol debuggingModesType = GetWellKnownType(WellKnownType.System_Diagnostics_DebuggableAttribute__DebuggingModes);
-            RoslynDebug.Assert((object)debuggingModesType != null, "GetWellKnownType unexpectedly returned null");
+            RoslynDebug.Assert(debuggingModesType is not null, "GetWellKnownType unexpectedly returned null");
             if (debuggingModesType is MissingMetadataTypeSymbol)
             {
                 return null;
@@ -804,7 +785,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <remarks>This method is port of AttrBind::CompileDynamicAttr from the native C# compiler.</remarks>
         internal SynthesizedAttributeData? SynthesizeDynamicAttribute(TypeSymbol type, int customModifiersCount, RefKind refKindOpt = RefKind.None)
         {
-            RoslynDebug.Assert((object)type != null);
+            RoslynDebug.Assert(type is not null);
             Debug.Assert(type.ContainsDynamic());
 
             if (type.IsDynamic() && refKindOpt == RefKind.None && customModifiersCount == 0)
@@ -814,7 +795,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 NamedTypeSymbol booleanType = GetSpecialType(SpecialType.System_Boolean);
-                RoslynDebug.Assert((object)booleanType != null);
+                RoslynDebug.Assert(booleanType is not null);
                 var transformFlags = DynamicTransformsEncoder.Encode(type, refKindOpt, customModifiersCount, booleanType);
                 var boolArray = ArrayTypeSymbol.CreateSZArray(booleanType.ContainingAssembly, TypeWithAnnotations.Create(booleanType));
                 var arguments = ImmutableArray.Create(new TypedConstant(boolArray, transformFlags));
@@ -824,11 +805,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal SynthesizedAttributeData? SynthesizeTupleNamesAttribute(TypeSymbol type)
         {
-            RoslynDebug.Assert((object)type != null);
+            RoslynDebug.Assert(type is not null);
             Debug.Assert(type.ContainsTuple());
 
             var stringType = GetSpecialType(SpecialType.System_String);
-            RoslynDebug.Assert((object)stringType != null);
+            RoslynDebug.Assert(stringType is not null);
             var names = TupleNamesEncoder.Encode(type, stringType);
 
             Debug.Assert(!names.IsDefault, "should not need the attribute when no tuple names");
@@ -1070,7 +1051,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             internal static void Encode(ArrayBuilder<bool> builder, TypeSymbol type)
             {
-                Debug.Assert(type.ContainingAssembly?.RuntimeSupportsNumericIntPtr != true);
+                Debug.Assert(false);
                 type.VisitType((typeSymbol, builder, isNested) => AddFlags(typeSymbol, builder), builder);
             }
 
@@ -1133,7 +1114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     return null;
                 }
-                if ((object)named.ContainingType != null)
+                if (named.ContainingType is not null)
                 {
                     return null;
                 }
@@ -1147,7 +1128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return null;
                 }
                 NamedTypeSymbol named = (NamedTypeSymbol)type;
-                if ((object)named.ContainingType != null)
+                if (named.ContainingType is not null)
                 {
                     return null;
                 }

@@ -21,15 +21,12 @@ internal sealed class CSharpQualifyMemberAccessCodeFixProvider() : AbstractQuali
     protected override SimpleNameSyntax? GetNode(Diagnostic diagnostic, CancellationToken cancellationToken)
     {
         var node = diagnostic.Location.FindNode(getInnermostNodeForTie: true, cancellationToken);
-        switch (node)
+        return node switch
         {
-            case SimpleNameSyntax simpleNameSyntax:
-                return simpleNameSyntax;
-            case InvocationExpressionSyntax invocationExpressionSyntax:
-                return invocationExpressionSyntax.Expression as SimpleNameSyntax;
-            default:
-                return null;
-        }
+            SimpleNameSyntax simpleNameSyntax => simpleNameSyntax,
+            InvocationExpressionSyntax invocationExpressionSyntax => invocationExpressionSyntax.Expression as SimpleNameSyntax,
+            _ => null,
+        };
     }
 
     protected override string GetTitle() => CSharpCodeFixesResources.Add_this;

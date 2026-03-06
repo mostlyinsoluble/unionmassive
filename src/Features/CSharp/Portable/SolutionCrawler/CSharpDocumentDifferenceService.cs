@@ -18,22 +18,16 @@ internal sealed class CSharpDocumentDifferenceService() : AbstractDocumentDiffer
 {
     protected override bool IsContainedInMemberBody(SyntaxNode node, TextSpan span)
     {
-        switch (node)
+        return node switch
         {
-            case ConstructorDeclarationSyntax constructor:
-                return (constructor.Body != null && GetBlockBodySpan(constructor.Body).Contains(span)) ||
-                       (constructor.Initializer != null && constructor.Initializer.Span.Contains(span));
-            case BaseMethodDeclarationSyntax method:
-                return method.Body != null && GetBlockBodySpan(method.Body).Contains(span);
-            case BasePropertyDeclarationSyntax property:
-                return property.AccessorList != null && property.AccessorList.Span.Contains(span);
-            case EnumMemberDeclarationSyntax @enum:
-                return @enum.EqualsValue != null && @enum.EqualsValue.Span.Contains(span);
-            case BaseFieldDeclarationSyntax field:
-                return field.Declaration != null && field.Declaration.Span.Contains(span);
-        }
-
-        return false;
+            ConstructorDeclarationSyntax constructor => (constructor.Body != null && GetBlockBodySpan(constructor.Body).Contains(span)) ||
+                                   (constructor.Initializer != null && constructor.Initializer.Span.Contains(span)),
+            BaseMethodDeclarationSyntax method => method.Body != null && GetBlockBodySpan(method.Body).Contains(span),
+            BasePropertyDeclarationSyntax property => property.AccessorList != null && property.AccessorList.Span.Contains(span),
+            EnumMemberDeclarationSyntax @enum => @enum.EqualsValue != null && @enum.EqualsValue.Span.Contains(span),
+            BaseFieldDeclarationSyntax field => field.Declaration != null && field.Declaration.Span.Contains(span),
+            _ => false,
+        };
     }
 
     private static TextSpan GetBlockBodySpan(BlockSyntax body)

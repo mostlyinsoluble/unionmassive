@@ -143,7 +143,7 @@ namespace Microsoft.CodeAnalysis
 
                 // Apply the includeAction on this ruleset.
                 effectiveRuleset = effectiveRuleset.WithEffectiveAction(ruleSetInclude.Action);
-                Debug.Assert(effectiveRuleset is object);
+                Debug.Assert(effectiveRuleset is not null);
 
                 // If the included ruleset's global option is stricter, then make that the effective option.
                 if (IsStricterThan(effectiveRuleset.GeneralDiagnosticOption, effectiveGeneralOption))
@@ -224,23 +224,16 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         private static bool IsStricterThan(ReportDiagnostic action1, ReportDiagnostic action2)
         {
-            switch (action2)
+            return action2 switch
             {
-                case ReportDiagnostic.Suppress:
-                    return true;
-                case ReportDiagnostic.Default:
-                    return action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error || action1 == ReportDiagnostic.Info || action1 == ReportDiagnostic.Hidden;
-                case ReportDiagnostic.Hidden:
-                    return action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error || action1 == ReportDiagnostic.Info;
-                case ReportDiagnostic.Info:
-                    return action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error;
-                case ReportDiagnostic.Warn:
-                    return action1 == ReportDiagnostic.Error;
-                case ReportDiagnostic.Error:
-                    return false;
-                default:
-                    return false;
-            }
+                ReportDiagnostic.Suppress => true,
+                ReportDiagnostic.Default => action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error || action1 == ReportDiagnostic.Info || action1 == ReportDiagnostic.Hidden,
+                ReportDiagnostic.Hidden => action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error || action1 == ReportDiagnostic.Info,
+                ReportDiagnostic.Info => action1 == ReportDiagnostic.Warn || action1 == ReportDiagnostic.Error,
+                ReportDiagnostic.Warn => action1 == ReportDiagnostic.Error,
+                ReportDiagnostic.Error => false,
+                _ => false,
+            };
         }
 
         /// <summary>

@@ -180,11 +180,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         ''' </summary>
         Private _lazyCompilationUnitCompletedTrees As HashSet(Of SyntaxTree)
 
-        ''' <summary>
-        ''' The common language version among the trees of the compilation.
-        ''' </summary>
-        Private ReadOnly _languageVersion As LanguageVersion
-
         Public Overrides ReadOnly Property Language As String
             Get
                 Return LanguageNames.VisualBasic
@@ -212,15 +207,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         Public Shadows ReadOnly Property Options As VisualBasicCompilationOptions
             Get
                 Return _options
-            End Get
-        End Property
-
-        ''' <summary>
-        ''' The language version that was used to parse the syntax trees of this compilation.
-        ''' </summary>
-        Public ReadOnly Property LanguageVersion As LanguageVersion
-            Get
-                Return _languageVersion
             End Get
         End Property
 
@@ -261,14 +247,10 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                             ' we need to make one.
                             Dim text As String = EmbeddedResources.VbMyTemplateText
 
-                            ' The My template regularly makes use of more recent language features.  Care is
-                            ' taken to ensure these are compatible with 2.0 runtimes so there is no danger
-                            ' with allowing the newer syntax here.
-                            Dim options = parseOptions.WithLanguageVersion(LanguageVersion.Default)
                             tree = VisualBasicSyntaxTree.ParseText(
                                 SourceText.From(text, encoding:=Nothing, SourceHashAlgorithms.Default),
                                 isMyTemplate:=True,
-                                options,
+                                parseOptions,
                                 path:=Nothing)
 
                             If tree.GetDiagnostics().Any() Then
@@ -449,7 +431,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
             _embeddedTrees = embeddedTrees
             _declarationTable = declarationTable
             _anonymousTypeManager = New AnonymousTypeManager(Me)
-            _languageVersion = CommonLanguageVersion(syntaxTrees)
 
             _scriptClass = New Lazy(Of ImplicitNamedTypeSymbol)(AddressOf BindScriptClass)
 
@@ -484,22 +465,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 diagnostics.Add(ERRID.ERR_DebugEntryPointNotSourceMethodDefinition, Location.None)
             End If
         End Sub
-
-        Private Function CommonLanguageVersion(syntaxTrees As ImmutableArray(Of SyntaxTree)) As LanguageVersion
-            ' We don't check m_Options.ParseOptions.LanguageVersion for consistency, because
-            ' it isn't consistent in practice.  In fact sometimes m_Options.ParseOptions is Nothing.
-            Dim result As LanguageVersion? = Nothing
-            For Each tree In syntaxTrees
-                Dim version = CType(tree.Options, VisualBasicParseOptions).LanguageVersion
-                If result Is Nothing Then
-                    result = version
-                ElseIf result <> version Then
-                    Throw New ArgumentException(CodeAnalysisResources.InconsistentLanguageVersions, NameOf(syntaxTrees))
-                End If
-            Next
-
-            Return If(result, LanguageVersion.Default.MapSpecifiedToEffectiveVersion)
-        End Function
 
         ''' <summary>
         ''' Create a duplicate of this compilation with different symbol instances
@@ -756,9 +721,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
         End Function
 
         Friend Overrides Sub SerializePdbEmbeddedCompilationOptions(builder As BlobBuilder)
-            ' LanguageVersion should already be mapped to an effective version at this point
-            Debug.Assert(LanguageVersion.MapSpecifiedToEffectiveVersion() = LanguageVersion)
-            WriteValue(builder, CompilationOptionNames.LanguageVersion, LanguageVersion.ToDisplayString())
             WriteValue(builder, CompilationOptionNames.Checked, Options.CheckOverflow.ToString())
             WriteValue(builder, CompilationOptionNames.OptionStrict, Options.OptionStrict.ToString())
             WriteValue(builder, CompilationOptionNames.OptionInfer, Options.OptionInfer.ToString())
@@ -3187,10 +3149,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
                 Case Else
                     Return False
             End Select
-        End Function
-
-        Private Protected Overrides Function SupportsRuntimeCapabilityCore(capability As RuntimeCapability) As Boolean
-            Return Me.Assembly.SupportsRuntimeCapability(capability)
         End Function
 
 #End Region

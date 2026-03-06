@@ -249,17 +249,13 @@ namespace Microsoft.VisualStudio.Debugger.Clr
 
         private static DkmClrDebuggerBrowsableAttributeState ConvertBrowsableState(DebuggerBrowsableState state)
         {
-            switch (state)
+            return state switch
             {
-                case DebuggerBrowsableState.Never:
-                    return DkmClrDebuggerBrowsableAttributeState.Never;
-                case DebuggerBrowsableState.Collapsed:
-                    return DkmClrDebuggerBrowsableAttributeState.Collapsed;
-                case DebuggerBrowsableState.RootHidden:
-                    return DkmClrDebuggerBrowsableAttributeState.RootHidden;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(state);
-            }
+                DebuggerBrowsableState.Never => DkmClrDebuggerBrowsableAttributeState.Never,
+                DebuggerBrowsableState.Collapsed => DkmClrDebuggerBrowsableAttributeState.Collapsed,
+                DebuggerBrowsableState.RootHidden => DkmClrDebuggerBrowsableAttributeState.RootHidden,
+                _ => throw ExceptionUtilities.UnexpectedValue(state),
+            };
         }
 
         private static DkmClrDebuggerDisplayAttribute GetDebuggerDisplayAttribute(System.Type type)

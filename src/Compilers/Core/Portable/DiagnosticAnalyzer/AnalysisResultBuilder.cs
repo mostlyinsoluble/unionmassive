@@ -347,15 +347,13 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                     continue;
                 }
 
-                Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>? allDiagnostics;
-                if (!lazyLocalDiagnostics.TryGetValue(key, out allDiagnostics))
+                if (!lazyLocalDiagnostics.TryGetValue(key, out Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>? allDiagnostics))
                 {
                     allDiagnostics = new Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>();
                     lazyLocalDiagnostics[key] = allDiagnostics;
                 }
 
-                ImmutableArray<Diagnostic>.Builder? analyzerDiagnostics;
-                if (!allDiagnostics.TryGetValue(analyzer, out analyzerDiagnostics))
+                if (!allDiagnostics.TryGetValue(analyzer, out ImmutableArray<Diagnostic>.Builder? analyzerDiagnostics))
                 {
                     analyzerDiagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
                     allDiagnostics[analyzer] = analyzerDiagnostics;
@@ -374,8 +372,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
             _nonLocalDiagnosticsOpt = _nonLocalDiagnosticsOpt ?? new Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>();
 
-            ImmutableArray<Diagnostic>.Builder? currentDiagnostics;
-            if (!_nonLocalDiagnosticsOpt.TryGetValue(analyzer, out currentDiagnostics))
+            if (!_nonLocalDiagnosticsOpt.TryGetValue(analyzer, out ImmutableArray<Diagnostic>.Builder? currentDiagnostics))
             {
                 currentDiagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
                 _nonLocalDiagnosticsOpt[analyzer] = currentDiagnostics;
@@ -473,8 +470,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             ImmutableArray<Diagnostic>.Builder builder)
             where TKey : class
         {
-            Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>? diagnosticsForTree;
-            if (key != null && localDiagnostics != null && localDiagnostics.TryGetValue(key, out diagnosticsForTree))
+            if (key != null && localDiagnostics != null && localDiagnostics.TryGetValue(key, out Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>? diagnosticsForTree))
             {
                 AddDiagnostics_NoLock(diagnosticsForTree, analyzers, builder);
             }
@@ -489,8 +485,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
             foreach (var analyzer in analyzers)
             {
-                ImmutableArray<Diagnostic>.Builder? diagnosticsByAnalyzer;
-                if (diagnostics.TryGetValue(analyzer, out diagnosticsByAnalyzer))
+                if (diagnostics.TryGetValue(analyzer, out ImmutableArray<Diagnostic>.Builder? diagnosticsByAnalyzer))
                 {
                     builder.AddRange(diagnosticsByAnalyzer);
                 }

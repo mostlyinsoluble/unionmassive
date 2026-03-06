@@ -23,7 +23,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // doc comment as it appears in source), so it won't affect what we cache.
             if (lazyXmlText == null)
             {
-                string xmlText = DocumentationCommentCompiler.GetDocumentationCommentXml(symbol, expandIncludes, default(CancellationToken));
+                string xmlText = DocumentationCommentCompiler.GetDocumentationCommentXml(symbol, expandIncludes, default);
                 Interlocked.CompareExchange(ref lazyXmlText, xmlText, null);
             }
 
@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (syntaxNode.Kind() == SyntaxKind.VariableDeclarator)
             {
                 CSharpSyntaxNode curr = syntaxNode;
-                while ((object)curr != null)
+                while (curr is not null)
                 {
                     SyntaxKind kind = curr.Kind();
                     if (kind == SyntaxKind.FieldDeclaration || kind == SyntaxKind.EventFieldDeclaration)
@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     curr = curr.Parent;
                 }
 
-                if ((object)curr != null)
+                if (curr is not null)
                 {
                     syntaxNode = curr;
                 }

@@ -177,7 +177,7 @@ internal sealed class UseExpressionBodyCodeRefactoringProvider() : SyntaxEditorB
         var parent = declaration is AccessorDeclarationSyntax
             ? declaration.Parent
             : declaration;
-        RoslynDebug.Assert(parent is object);
+        RoslynDebug.Assert(parent is not null);
         var updatedParent = parent.ReplaceNode(declaration, updatedDeclaration)
                                   .WithAdditionalAnnotations(Formatter.Annotation);
 

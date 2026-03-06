@@ -423,8 +423,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         internal Cci.IFieldReference GetOrAddInstrumentationPayloadRoot(int analysisKind, Cci.ITypeReference payloadRootType)
         {
-            InstrumentationPayloadRootField? payloadRootField;
-            if (!_instrumentationPayloadRootFields.TryGetValue(analysisKind, out payloadRootField))
+            if (!_instrumentationPayloadRootFields.TryGetValue(analysisKind, out InstrumentationPayloadRootField? payloadRootField))
             {
                 Debug.Assert(!IsFrozen);
                 payloadRootField = _instrumentationPayloadRootFields.GetOrAdd(analysisKind, kind => new InstrumentationPayloadRootField(this, kind, payloadRootType));
@@ -465,8 +464,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         // Get method by name, if one exists. Otherwise return null.
         internal Cci.IMethodDefinition? GetMethod(string name)
         {
-            Cci.IMethodDefinition? method;
-            _synthesizedMethods.TryGetValue(name, out method);
+            _synthesizedMethods.TryGetValue(name, out Cci.IMethodDefinition? method);
             return method;
         }
 
@@ -569,7 +567,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
             public int Compare(SynthesizedStaticField? x, SynthesizedStaticField? y)
             {
-                RoslynDebug.Assert(x is object && y is object);
+                RoslynDebug.Assert(x is not null && y is not null);
 
                 // Fields are always synthesized with non-null names.
                 RoslynDebug.Assert(x.Name != null && y.Name != null);
@@ -822,7 +820,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         public Cci.IMarshallingInformation? MarshallingInformation => null;
 
-        public ImmutableArray<byte> MarshallingDescriptor => default(ImmutableArray<byte>);
+        public ImmutableArray<byte> MarshallingDescriptor => default;
 
         public int Offset
         {
@@ -889,7 +887,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         {
         }
 
-        public override ImmutableArray<byte> MappedData => default(ImmutableArray<byte>);
+        public override ImmutableArray<byte> MappedData => default;
         public override bool IsReadOnly => true;
     }
 
@@ -910,7 +908,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         {
         }
 
-        public override ImmutableArray<byte> MappedData => default(ImmutableArray<byte>);
+        public override ImmutableArray<byte> MappedData => default;
         public override bool IsReadOnly => true;
     }
 
@@ -942,7 +940,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         {
         }
 
-        public override ImmutableArray<byte> MappedData => default(ImmutableArray<byte>);
+        public override ImmutableArray<byte> MappedData => default;
         public override bool IsReadOnly => false;
     }
 

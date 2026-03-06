@@ -509,19 +509,11 @@ internal static class ParenthesizedExpressionSyntaxExtensions
 
     private static bool IsAssociative(SyntaxKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case SyntaxKind.AddExpression:
-            case SyntaxKind.MultiplyExpression:
-            case SyntaxKind.BitwiseOrExpression:
-            case SyntaxKind.ExclusiveOrExpression:
-            case SyntaxKind.LogicalOrExpression:
-            case SyntaxKind.BitwiseAndExpression:
-            case SyntaxKind.LogicalAndExpression:
-                return true;
-        }
-
-        return false;
+            SyntaxKind.AddExpression or SyntaxKind.MultiplyExpression or SyntaxKind.BitwiseOrExpression or SyntaxKind.ExclusiveOrExpression or SyntaxKind.LogicalOrExpression or SyntaxKind.BitwiseAndExpression or SyntaxKind.LogicalAndExpression => true,
+            _ => false,
+        };
     }
 
     private static bool RemovalMayIntroduceCastAmbiguity(ParenthesizedExpressionSyntax node)

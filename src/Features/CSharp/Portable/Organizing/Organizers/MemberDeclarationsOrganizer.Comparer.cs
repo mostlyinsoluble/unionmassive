@@ -143,39 +143,21 @@ internal static partial class MemberDeclarationsOrganizer
 
         private static OuterOrdering GetOuterOrdering(MemberDeclarationSyntax x)
         {
-            switch (x.Kind())
+            return x.Kind() switch
             {
-                case SyntaxKind.FieldDeclaration:
-                    return OuterOrdering.Fields;
-                case SyntaxKind.EventFieldDeclaration:
-                    return OuterOrdering.EventFields;
-                case SyntaxKind.ConstructorDeclaration:
-                    return OuterOrdering.Constructors;
-                case SyntaxKind.DestructorDeclaration:
-                    return OuterOrdering.Destructors;
-                case SyntaxKind.PropertyDeclaration:
-                    return OuterOrdering.Properties;
-                case SyntaxKind.EventDeclaration:
-                    return OuterOrdering.Events;
-                case SyntaxKind.IndexerDeclaration:
-                    return OuterOrdering.Indexers;
-                case SyntaxKind.OperatorDeclaration:
-                    return OuterOrdering.Operators;
-                case SyntaxKind.ConversionOperatorDeclaration:
-                    return OuterOrdering.ConversionOperators;
-                case SyntaxKind.MethodDeclaration:
-                    return OuterOrdering.Methods;
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.InterfaceDeclaration:
-                case SyntaxKind.StructDeclaration:
-                case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.DelegateDeclaration:
-                case SyntaxKind.RecordDeclaration:
-                case SyntaxKind.RecordStructDeclaration:
-                    return OuterOrdering.Types;
-                default:
-                    return OuterOrdering.Remaining;
-            }
+                SyntaxKind.FieldDeclaration => OuterOrdering.Fields,
+                SyntaxKind.EventFieldDeclaration => OuterOrdering.EventFields,
+                SyntaxKind.ConstructorDeclaration => OuterOrdering.Constructors,
+                SyntaxKind.DestructorDeclaration => OuterOrdering.Destructors,
+                SyntaxKind.PropertyDeclaration => OuterOrdering.Properties,
+                SyntaxKind.EventDeclaration => OuterOrdering.Events,
+                SyntaxKind.IndexerDeclaration => OuterOrdering.Indexers,
+                SyntaxKind.OperatorDeclaration => OuterOrdering.Operators,
+                SyntaxKind.ConversionOperatorDeclaration => OuterOrdering.ConversionOperators,
+                SyntaxKind.MethodDeclaration => OuterOrdering.Methods,
+                SyntaxKind.ClassDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.EnumDeclaration or SyntaxKind.DelegateDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration => OuterOrdering.Types,
+                _ => OuterOrdering.Remaining,
+            };
         }
 
         private static bool ShouldCompareByName(MemberDeclarationSyntax x)
@@ -184,16 +166,11 @@ internal static partial class MemberDeclarationsOrganizer
             // Note:  Conversion operators should not be sorted by name either, but it's not
             //        necessary to deal with that here, because GetNameToken cannot return a
             //        name for them (there's only a NameSyntax, not a Token).
-            switch (x.Kind())
+            return x.Kind() switch
             {
-                case SyntaxKind.ConstructorDeclaration:
-                case SyntaxKind.DestructorDeclaration:
-                case SyntaxKind.IndexerDeclaration:
-                case SyntaxKind.OperatorDeclaration:
-                    return false;
-                default:
-                    return true;
-            }
+                SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.OperatorDeclaration => false,
+                _ => true,
+            };
         }
     }
 }

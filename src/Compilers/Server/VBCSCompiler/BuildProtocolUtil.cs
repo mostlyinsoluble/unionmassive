@@ -17,10 +17,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
     {
         internal static RunRequest GetRunRequest(BuildRequest req)
         {
-            string? currentDirectory;
-            string? libDirectory;
-            string? tempDirectory;
-            string[] arguments = GetCommandLineArguments(req, out currentDirectory, out tempDirectory, out libDirectory);
+            string[] arguments = GetCommandLineArguments(req, out string? currentDirectory, out string? tempDirectory, out string? libDirectory);
             string language = "";
             switch (req.Language)
             {
@@ -58,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                 }
                 else if (arg.ArgumentId == BuildProtocolConstants.ArgumentId.CommandLineArgument)
                 {
-                    if (arg.Value is object)
+                    if (arg.Value is not null)
                     {
                         int argIndex = arg.ArgumentIndex;
                         while (argIndex >= commandLineArguments.Count)

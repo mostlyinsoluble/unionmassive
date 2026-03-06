@@ -32,8 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             _breakLabel = new GeneratedLabelSymbol("break");
         }
 
-        protected bool PatternsEnabled =>
-            ((CSharpParseOptions)SwitchSyntax.SyntaxTree.Options)?.IsFeatureEnabled(MessageID.IDS_FeaturePatternMatching) != false;
+        protected bool PatternsEnabled => true;
 
         protected BoundExpression SwitchGoverningExpression
         {
@@ -105,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 object key;
                 var constantValue = label.SwitchCaseLabelConstant;
-                if ((object)constantValue != null && !constantValue.IsBad)
+                if (constantValue is not null && !constantValue.IsBad)
                 {
                     // Case labels with a non-null constant value are indexed on their ConstantValue.
                     key = KeyForConstant(constantValue);
@@ -276,7 +275,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static readonly object s_nullKey = new object();
         protected static object KeyForConstant(ConstantValue constantValue)
         {
-            Debug.Assert((object)constantValue != null);
+            Debug.Assert(constantValue is not null);
             switch (constantValue)
             {
                 case { IsNull: true }:
@@ -302,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Invalid case labels (with null constant value) are indexed on the label syntax.
 
             object key;
-            if ((object)constantValue != null && !constantValue.IsBad)
+            if (constantValue is not null && !constantValue.IsBad)
             {
                 key = KeyForConstant(constantValue);
             }
@@ -329,10 +328,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             var labelsMap = LabelsByValue;
             if (labelsMap != null)
             {
-                SourceLabelSymbol label;
-                if (labelsMap.TryGetValue(key, out label))
+                if (labelsMap.TryGetValue(key, out SourceLabelSymbol label))
                 {
-                    Debug.Assert((object)label != null);
+                    Debug.Assert(label is not null);
                     return label;
                 }
             }
@@ -394,7 +392,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var switchGoverningExpression = binder.BindRValueWithoutTargetType(node, diagnostics);
             var switchGoverningType = switchGoverningExpression.Type;
 
-            if ((object)switchGoverningType != null && !switchGoverningType.IsErrorType())
+            if (switchGoverningType is not null && !switchGoverningType.IsErrorType())
             {
                 // SPEC:    The governing type of a switch statement is established by the switch expression.
                 // SPEC:    1) If the type of the switch expression is sbyte, byte, short, ushort, int, uint,
@@ -409,22 +407,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (switchGoverningType.IsValidV6SwitchGoverningType())
                 {
-                    // Condition (1) satisfied
-
-                    // Note: dev11 actually checks the stripped type, but nullable was introduced at the same
-                    // time, so it doesn't really matter.
-                    if (switchGoverningType.SpecialType == SpecialType.System_Boolean)
-                    {
-                        CheckFeatureAvailability(node, MessageID.IDS_FeatureSwitchOnBool, diagnostics);
-                    }
-
                     return switchGoverningExpression;
                 }
                 else
                 {
-                    TypeSymbol resultantGoverningType;
                     CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-                    Conversion conversion = binder.Conversions.ClassifyImplicitUserDefinedConversionForV6SwitchGoverningType(switchGoverningType, out resultantGoverningType, ref useSiteInfo);
+                    Conversion conversion = binder.Conversions.ClassifyImplicitUserDefinedConversionForV6SwitchGoverningType(switchGoverningType, out TypeSymbol resultantGoverningType, ref useSiteInfo);
                     diagnostics.Add(node, useSiteInfo);
                     if (conversion.IsValid)
                     {
@@ -454,7 +442,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!switchGoverningExpression.HasAnyErrors)
             {
-                Debug.Assert((object)switchGoverningExpression.Type == null || switchGoverningExpression.Type.IsVoidType());
+                Debug.Assert(switchGoverningExpression.Type is null || switchGoverningExpression.Type.IsVoidType());
                 diagnostics.Add(ErrorCode.ERR_SwitchExpressionValueExpected, node.Location, switchGoverningExpression.Display);
             }
 
@@ -535,7 +523,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     matchedLabelSymbol = GetDefaultLabel();
                 }
 
-                if ((object)matchedLabelSymbol == null)
+                if (matchedLabelSymbol is null)
                 {
                     if (!hasErrors)
                     {

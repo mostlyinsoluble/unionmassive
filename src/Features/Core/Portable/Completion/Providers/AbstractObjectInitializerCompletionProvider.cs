@@ -139,31 +139,14 @@ internal abstract class AbstractObjectInitializerCompletionProvider : LSPComplet
 
             // We avoid some types that are common and easy to rule out
             var definition = type.OriginalDefinition;
-            switch (definition.SpecialType)
+            return definition.SpecialType switch
             {
-                case SpecialType.System_Enum:
-                case SpecialType.System_String:
-                case SpecialType.System_Object:
-                case SpecialType.System_Delegate:
-                case SpecialType.System_MulticastDelegate:
-
-                // We cannot use collection initializers in symbols of type `System.Array` (as opposed to actual
-                // instantiations like `int[]`).
-                case SpecialType.System_Array:
-
-                // We cannot add to an enumerable or enumerator
-                // so we cannot use a collection initializer
-                case SpecialType.System_Collections_IEnumerable:
-                case SpecialType.System_Collections_IEnumerator:
-                case SpecialType.System_Collections_Generic_IEnumerable_T:
-                case SpecialType.System_Collections_Generic_IEnumerator_T:
-                    return false;
-            }
-
-            // - Delegate types have no settable members, which is the case for Delegate and MulticastDelegate too
-            // - Non-settable struct members cannot be used in object initializers
-            // - Pointers and function pointers do not have accessible members
-            return type.TypeKind is not (TypeKind.Delegate or TypeKind.Struct or TypeKind.FunctionPointer or TypeKind.Pointer);
+                SpecialType.System_Enum or SpecialType.System_String or SpecialType.System_Object or SpecialType.System_Delegate or SpecialType.System_MulticastDelegate or SpecialType.System_Array or SpecialType.System_Collections_IEnumerable or SpecialType.System_Collections_IEnumerator or SpecialType.System_Collections_Generic_IEnumerable_T or SpecialType.System_Collections_Generic_IEnumerator_T => false,
+                // - Delegate types have no settable members, which is the case for Delegate and MulticastDelegate too
+                // - Non-settable struct members cannot be used in object initializers
+                // - Pointers and function pointers do not have accessible members
+                _ => type.TypeKind is not (TypeKind.Delegate or TypeKind.Struct or TypeKind.FunctionPointer or TypeKind.Pointer),
+            };
         }
     }
 }

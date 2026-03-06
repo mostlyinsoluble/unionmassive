@@ -118,18 +118,11 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                                                        declarations,
                                                        optionalTerminator)
 
-            Dim regionsAreAllowedEverywhere = Not haveRegionDirectives OrElse Parser.CheckFeatureAvailability(Feature.RegionsEverywhere)
+            If notClosedIfDirectives IsNot Nothing OrElse notClosedRegionDirectives IsNot Nothing OrElse notClosedExternalSourceDirective IsNot Nothing Then
+                result = DiagnosticRewriter.Rewrite(result, notClosedIfDirectives, notClosedRegionDirectives, True, notClosedExternalSourceDirective, Parser)
 
-            If notClosedIfDirectives IsNot Nothing OrElse notClosedRegionDirectives IsNot Nothing OrElse notClosedExternalSourceDirective IsNot Nothing OrElse
-               Not regionsAreAllowedEverywhere Then
-                result = DiagnosticRewriter.Rewrite(result, notClosedIfDirectives, notClosedRegionDirectives, regionsAreAllowedEverywhere, notClosedExternalSourceDirective, Parser)
-
-                If notClosedIfDirectives IsNot Nothing Then
-                    notClosedIfDirectives.Free()
-                End If
-                If notClosedRegionDirectives IsNot Nothing Then
-                    notClosedRegionDirectives.Free()
-                End If
+                notClosedIfDirectives?.Free()
+                notClosedRegionDirectives?.Free()
             End If
 
             FreeStatements()
@@ -469,11 +462,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
                         End If
                     End If
                 End If
-
-                If reportAnError Then
-                    rewritten = _parser.ReportFeatureUnavailable(Feature.RegionsEverywhere, rewritten)
-                End If
-
                 Return rewritten
             End Function
 

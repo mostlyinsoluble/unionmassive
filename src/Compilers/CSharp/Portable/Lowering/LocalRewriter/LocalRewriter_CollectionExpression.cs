@@ -426,8 +426,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(rewrittenReceiver is { });
 
             // Create a temp for the collection.
-            BoundAssignmentOperator assignmentToTemp;
-            BoundLocal temp = _factory.StoreToTemp(rewrittenReceiver, out assignmentToTemp);
+            BoundLocal temp = _factory.StoreToTemp(rewrittenReceiver, out BoundAssignmentOperator assignmentToTemp);
             var sideEffects = ArrayBuilder<BoundExpression>.GetInstance(elements.Length + 1);
             sideEffects.Add(assignmentToTemp);
 
@@ -497,8 +496,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(node.CollectionCreation is null);
 
-                int numberIncludingLastSpread;
-                bool useKnownLength = ShouldUseKnownLength(node, out numberIncludingLastSpread);
+                bool useKnownLength = ShouldUseKnownLength(node, out int numberIncludingLastSpread);
 
                 if (elements.Length == 0)
                 {
@@ -628,9 +626,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static bool ShouldUseInlineArray(BoundCollectionExpressionBase node, CSharpCompilation compilation)
         {
-            return !node.HasSpreadElements(out _, out _) &&
-                node.Elements.Length > 0 &&
-                compilation.Assembly.RuntimeSupportsInlineArrayTypes;
+            return !node.HasSpreadElements(out _, out _) && node.Elements.Length > 0;
         }
 
         private BoundExpression CreateAndPopulateSpanFromInlineArray(
@@ -643,7 +639,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(elements.All(e => e is BoundExpression));
             Debug.Assert(_factory.ModuleBuilderOpt is { });
             Debug.Assert(_diagnostics.DiagnosticBag is { });
-            Debug.Assert(_compilation.Assembly.RuntimeSupportsInlineArrayTypes);
             Debug.Assert(_additionalLocals is { });
 
             int arrayLength = elements.Length;
@@ -673,8 +668,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Create an inline array and assign to a local.
             // var tmp = new <>y__InlineArrayN<ElementType>();
-            BoundAssignmentOperator assignmentToTemp;
-            BoundLocal inlineArrayLocal = _factory.StoreToTemp(new BoundDefaultExpression(syntax, inlineArrayType), out assignmentToTemp);
+            BoundLocal inlineArrayLocal = _factory.StoreToTemp(new BoundDefaultExpression(syntax, inlineArrayType), out BoundAssignmentOperator assignmentToTemp);
             var sideEffects = ArrayBuilder<BoundExpression>.GetInstance();
             sideEffects.Add(assignmentToTemp);
             _additionalLocals.Add(inlineArrayLocal.LocalSymbol);
@@ -731,9 +725,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // using the known length for simple concatenation of two elements [e, ..y] or [..x, ..y].
             // Temporaries are only needed up to the last spread, so this also allows [..x, e1, e2, ...].
             const int maxTemporaries = 3;
-            int n;
-            bool hasKnownLength;
-            node.HasSpreadElements(out n, out hasKnownLength);
+            node.HasSpreadElements(out int n, out bool hasKnownLength);
             if (hasKnownLength && n <= maxTemporaries)
             {
                 numberIncludingLastSpread = n;
@@ -827,8 +819,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var syntax = node.Syntax;
             var elements = node.Elements;
 
-            int numberIncludingLastSpread;
-            if (!ShouldUseKnownLength(node, out numberIncludingLastSpread))
+            if (!ShouldUseKnownLength(node, out int numberIncludingLastSpread))
             {
                 // Should have been handled by the caller.
                 throw ExceptionUtilities.UnexpectedValue(node);
@@ -1385,8 +1376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             for (int i = 0; i < numberIncludingLastSpread; i++)
             {
                 var rewrittenExpression = RewriteCollectionExpressionElementExpression(elements[i]);
-                BoundAssignmentOperator assignmentToTemp;
-                BoundLocal temp = _factory.StoreToTemp(rewrittenExpression, out assignmentToTemp);
+                BoundLocal temp = _factory.StoreToTemp(rewrittenExpression, out BoundAssignmentOperator assignmentToTemp);
                 locals.Add(temp);
                 sideEffects.Add(assignmentToTemp);
             }

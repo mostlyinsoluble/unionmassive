@@ -85,22 +85,13 @@ public sealed class ExternalCodeAccessorFunction : AbstractExternalCodeMember, E
     {
         get
         {
-            switch (MethodSymbol.MethodKind)
+            return MethodSymbol.MethodKind switch
             {
-                case MethodKind.PropertyGet:
-                case MethodKind.EventRemove:
-                    return EnvDTE.vsCMFunction.vsCMFunctionPropertyGet;
-
-                case MethodKind.PropertySet:
-                case MethodKind.EventAdd:
-                    return EnvDTE.vsCMFunction.vsCMFunctionPropertySet;
-
-                case MethodKind.EventRaise:
-                    return EnvDTE.vsCMFunction.vsCMFunctionOther;
-
-                default:
-                    throw Exceptions.ThrowEUnexpected();
-            }
+                MethodKind.PropertyGet or MethodKind.EventRemove => EnvDTE.vsCMFunction.vsCMFunctionPropertyGet,
+                MethodKind.PropertySet or MethodKind.EventAdd => EnvDTE.vsCMFunction.vsCMFunctionPropertySet,
+                MethodKind.EventRaise => EnvDTE.vsCMFunction.vsCMFunctionOther,
+                _ => throw Exceptions.ThrowEUnexpected(),
+            };
         }
     }
 

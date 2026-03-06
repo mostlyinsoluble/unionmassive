@@ -27,7 +27,7 @@ namespace Roslyn.Utilities
                     x => x.Item2,
                     comparer)
             );
-            if (globalOption.key is object)
+            if (globalOption.key is not null)
             {
                 _globalOptions = new Dictionary<string, ReportDiagnostic>(Section.PropertiesKeyComparer) { { globalOption.key, globalOption.diagnostic } };
             }
@@ -82,7 +82,7 @@ namespace Roslyn.Utilities
 
         public override bool TryGetGlobalDiagnosticValue(string diagnosticId, CancellationToken cancellationToken, out ReportDiagnostic severity)
         {
-            if (_globalOptions is object &&
+            if (_globalOptions is not null &&
                 _globalOptions.TryGetValue(diagnosticId, out severity))
             {
                 return true;

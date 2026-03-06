@@ -104,21 +104,18 @@ namespace Microsoft.Cci
             // Since we are producing a full assembly, we should not have a module version ID
             // imposed ahead-of time. Instead we will compute a deterministic module version ID
             // based on the contents of the generated stream.
-            Debug.Assert(properties.PersistentIdentifier == default(Guid));
+            Debug.Assert(properties.PersistentIdentifier == default);
 
             var emitBuilders = new EmitBuilders();
-            Blob mvidFixup, mvidStringFixup;
             mdWriter.BuildMetadataAndIL(
                 nativePdbWriterOpt,
                 emitBuilders.IlBlobBuilder,
                 out emitBuilders.MappedFieldDataBlobBuilder,
                 out emitBuilders.ManagedResourceBlobBuilder,
-                out mvidFixup,
-                out mvidStringFixup);
+                out Blob mvidFixup,
+                out Blob mvidStringFixup);
 
-            MethodDefinitionHandle entryPointHandle;
-            MethodDefinitionHandle debugEntryPointHandle;
-            mdWriter.GetEntryPoints(out entryPointHandle, out debugEntryPointHandle);
+            mdWriter.GetEntryPoints(out MethodDefinitionHandle entryPointHandle, out MethodDefinitionHandle debugEntryPointHandle);
 
             if (!debugEntryPointHandle.IsNil)
             {

@@ -48,12 +48,12 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             {
                 throw new ArgumentException("Specified value must be greater than zero.", nameof(occurrence));
             }
-            SyntaxNodeOrToken foundNode = default(SyntaxNodeOrToken);
+            SyntaxNodeOrToken foundNode = default;
             if (TryFindNodeOrToken(syntaxTree.GetCompilationUnitRoot(), kind, ref occurrence, ref foundNode))
             {
                 return foundNode;
             }
-            return default(SyntaxNodeOrToken);
+            return default;
         }
 
         private static bool TryFindNodeOrToken(SyntaxNodeOrToken node, SyntaxKind kind, ref int occurrence, ref SyntaxNodeOrToken foundNode)
@@ -219,8 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 
         public static ImmutableArray<Symbol> GetMembers(this Compilation compilation, string qualifiedName)
         {
-            NamespaceOrTypeSymbol lastContainer;
-            var members = GetMembers(((CSharpCompilation)compilation).GlobalNamespace, qualifiedName, out lastContainer);
+            var members = GetMembers(((CSharpCompilation)compilation).GlobalNamespace, qualifiedName, out NamespaceOrTypeSymbol lastContainer);
             if (members.IsEmpty)
             {
                 Assert.True(false, string.Format("Could not find member named '{0}'.  Available members:\r\n{1}",
@@ -283,8 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 
         public static Symbol GetMember(this NamespaceOrTypeSymbol container, string qualifiedName)
         {
-            NamespaceOrTypeSymbol lastContainer;
-            var members = GetMembers(container, qualifiedName, out lastContainer);
+            var members = GetMembers(container, qualifiedName, out NamespaceOrTypeSymbol lastContainer);
             if (members.Length == 0)
             {
                 return null;
@@ -299,8 +297,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 
         public static ISymbol GetMember(this INamespaceOrTypeSymbol container, string qualifiedName)
         {
-            INamespaceOrTypeSymbol lastContainer;
-            var members = GetMembers(container, qualifiedName, out lastContainer);
+            var members = GetMembers(container, qualifiedName, out INamespaceOrTypeSymbol lastContainer);
             if (members.Length == 0)
             {
                 return null;
@@ -433,7 +430,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
                     return expected.Equals(arg.Value);
                 case TypedConstantKind.Type:
                     var typeSym = arg.ValueInternal as TypeSymbol;
-                    if ((object)typeSym == null)
+                    if (typeSym is null)
                     {
                         return false;
                     }
@@ -641,7 +638,7 @@ internal static class Extensions
     /// This method is provided as a convenience for testing the SemanticModel.GetDeclaredSymbol implementation.
     /// </summary>
     /// <param name="declaration">This parameter will be type checked, and a NotSupportedException will be thrown if the type is not currently supported by an overload of GetDeclaredSymbol.</param>
-    internal static Symbol GetDeclaredSymbolFromSyntaxNode(this CSharpSemanticModel model, Microsoft.CodeAnalysis.SyntaxNode declaration, CancellationToken cancellationToken = default(CancellationToken))
+    internal static Symbol GetDeclaredSymbolFromSyntaxNode(this CSharpSemanticModel model, Microsoft.CodeAnalysis.SyntaxNode declaration, CancellationToken cancellationToken = default)
     {
         // NOTE: Do not add types to this condition unless you have verified that there is an overload of SemanticModel.GetDeclaredSymbol
         //       that supports the type you're adding.
@@ -754,17 +751,13 @@ internal static class Extensions
 
     public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol member)
     {
-        switch (member.Kind)
+        return member.Kind switch
         {
-            case SymbolKind.Method:
-                return ((IMethodSymbol)member).Parameters;
-            case SymbolKind.Property:
-                return ((IPropertySymbol)member).Parameters;
-            case SymbolKind.Event:
-                return ImmutableArray<IParameterSymbol>.Empty;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(member.Kind);
-        }
+            SymbolKind.Method => ((IMethodSymbol)member).Parameters,
+            SymbolKind.Property => ((IPropertySymbol)member).Parameters,
+            SymbolKind.Event => ImmutableArray<IParameterSymbol>.Empty,
+            _ => throw ExceptionUtilities.UnexpectedValue(member.Kind),
+        };
     }
 
     public static bool IsUnboundGenericType(this ITypeSymbol type)
@@ -813,25 +806,17 @@ internal static class Extensions
 
     public static ITypeSymbol GetTypeOrReturnType(this ISymbol symbol)
     {
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Field:
-                return ((IFieldSymbol)symbol).Type;
-            case SymbolKind.Method:
-                return ((IMethodSymbol)symbol).ReturnType;
-            case SymbolKind.Property:
-                return ((IPropertySymbol)symbol).Type;
-            case SymbolKind.Event:
-                return ((IEventSymbol)symbol).Type;
-            case SymbolKind.Local:
-                return ((ILocalSymbol)symbol).Type;
-            case SymbolKind.Parameter:
-                return ((IParameterSymbol)symbol).Type;
-            case SymbolKind.ErrorType:
-                return (ITypeSymbol)symbol;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(symbol.Kind);
-        }
+            SymbolKind.Field => ((IFieldSymbol)symbol).Type,
+            SymbolKind.Method => ((IMethodSymbol)symbol).ReturnType,
+            SymbolKind.Property => ((IPropertySymbol)symbol).Type,
+            SymbolKind.Event => ((IEventSymbol)symbol).Type,
+            SymbolKind.Local => ((ILocalSymbol)symbol).Type,
+            SymbolKind.Parameter => ((IParameterSymbol)symbol).Type,
+            SymbolKind.ErrorType => (ITypeSymbol)symbol,
+            _ => throw ExceptionUtilities.UnexpectedValue(symbol.Kind),
+        };
     }
 
     public static ITypeSymbol EnumUnderlyingTypeOrSelf(this ITypeSymbol type)
@@ -842,22 +827,17 @@ internal static class Extensions
     public static INamedTypeSymbol GetEnumUnderlyingType(this ITypeSymbol type)
     {
         var namedType = type as INamedTypeSymbol;
-        return ((object)namedType != null) ? namedType.EnumUnderlyingType : null;
+        return (namedType is not null) ? namedType.EnumUnderlyingType : null;
     }
 
     public static ISymbol ConstructedFrom(this ISymbol symbol)
     {
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.NamedType:
-                return ((INamedTypeSymbol)symbol).ConstructedFrom;
-
-            case SymbolKind.Method:
-                return ((IMethodSymbol)symbol).ConstructedFrom;
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(symbol.Kind);
-        }
+            SymbolKind.NamedType => ((INamedTypeSymbol)symbol).ConstructedFrom,
+            SymbolKind.Method => ((IMethodSymbol)symbol).ConstructedFrom,
+            _ => throw ExceptionUtilities.UnexpectedValue(symbol.Kind),
+        };
     }
 
     public static INamespaceSymbol GetNestedNamespace(this INamespaceSymbol ns, string name)

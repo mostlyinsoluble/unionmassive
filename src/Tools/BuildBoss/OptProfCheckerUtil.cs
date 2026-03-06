@@ -78,7 +78,7 @@ namespace BuildBoss
             {
                 string container = test["container"].ToString();
                 var filteredTests = test["filteredTestCases"];
-                if (filteredTests is object)
+                if (filteredTests is not null)
                 {
                     foreach (var filteredTest in filteredTests)
                     {

@@ -16,15 +16,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         internal static Expansion CreateExpansion(ArrayBuilder<Expansion> expansions)
         {
-            switch (expansions.Count)
+            return expansions.Count switch
             {
-                case 0:
-                    return null;
-                case 1:
-                    return expansions[0];
-                default:
-                    return new AggregateExpansion(expansions.ToArray());
-            }
+                0 => null,
+                1 => expansions[0],
+                _ => new AggregateExpansion(expansions.ToArray()),
+            };
         }
 
         internal AggregateExpansion(Expansion[] expansions)

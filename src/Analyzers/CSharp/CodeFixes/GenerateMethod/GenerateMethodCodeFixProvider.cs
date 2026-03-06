@@ -64,17 +64,13 @@ internal sealed class GenerateMethodCodeFixProvider() : AbstractGenerateMemberCo
 
     protected override SyntaxNode? GetTargetNode(SyntaxNode node)
     {
-        switch (node)
+        return node switch
         {
-            case InvocationExpressionSyntax invocation:
-                return invocation.Expression.GetRightmostName();
-            case MemberBindingExpressionSyntax memberBindingExpression:
-                return memberBindingExpression.Name;
-            case AssignmentExpressionSyntax assignment:
-                return assignment.Right;
-        }
-
-        return node;
+            InvocationExpressionSyntax invocation => invocation.Expression.GetRightmostName(),
+            MemberBindingExpressionSyntax memberBindingExpression => memberBindingExpression.Name,
+            AssignmentExpressionSyntax assignment => assignment.Right,
+            _ => node,
+        };
     }
 
     protected override Task<ImmutableArray<CodeAction>> GetCodeActionsAsync(

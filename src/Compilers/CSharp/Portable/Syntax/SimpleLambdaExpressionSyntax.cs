@@ -45,13 +45,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         /// <summary>Creates a new SimpleLambdaExpressionSyntax instance.</summary>
         public static SimpleLambdaExpressionSyntax SimpleLambdaExpression(ParameterSyntax parameter)
-            => SyntaxFactory.SimpleLambdaExpression(default, default(SyntaxTokenList), parameter, SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken), null, null);
+            => SyntaxFactory.SimpleLambdaExpression(default, default, parameter, SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken), null, null);
 
         public static SimpleLambdaExpressionSyntax SimpleLambdaExpression(SyntaxToken asyncKeyword, ParameterSyntax parameter, SyntaxToken arrowToken, BlockSyntax? block, ExpressionSyntax? expressionBody)
             => SimpleLambdaExpression(attributeLists: default, TokenList(asyncKeyword), parameter, arrowToken, block, expressionBody);
 
         public static SimpleLambdaExpressionSyntax SimpleLambdaExpression(ParameterSyntax parameter, BlockSyntax? block, ExpressionSyntax? expressionBody)
-            => SimpleLambdaExpression(attributeLists: default, default(SyntaxTokenList), parameter, block, expressionBody);
+            => SimpleLambdaExpression(attributeLists: default, default, parameter, block, expressionBody);
 
         public static SimpleLambdaExpressionSyntax SimpleLambdaExpression(SyntaxTokenList modifiers, ParameterSyntax parameter, SyntaxToken arrowToken, BlockSyntax? block, ExpressionSyntax? expressionBody)
             => SimpleLambdaExpression(attributeLists: default, modifiers, parameter, arrowToken, block, expressionBody);

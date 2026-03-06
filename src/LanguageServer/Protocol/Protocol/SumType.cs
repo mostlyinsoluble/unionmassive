@@ -179,7 +179,7 @@ internal struct SumType<T1, T2> : ISumType, IEquatable<SumType<T1, T2>>
         }
 
 #pragma warning disable CS8603 // Possible null reference return.
-        return default(TResult);
+        return default;
 #pragma warning restore CS8603 // Possible null reference return.
     }
 
@@ -462,7 +462,7 @@ internal struct SumType<T1, T2, T3> : ISumType, IEquatable<SumType<T1, T2, T3>>
         }
 
 #pragma warning disable CS8603 // Possible null reference return.
-        return default(TResult);
+        return default;
 #pragma warning restore CS8603 // Possible null reference return.
     }
 
@@ -843,7 +843,7 @@ internal struct SumType<T1, T2, T3, T4> : ISumType, IEquatable<SumType<T1, T2, T
         }
 
 #pragma warning disable CS8603 // Possible null reference return.
-        return default(TResult);
+        return default;
 #pragma warning restore CS8603 // Possible null reference return.
     }
 

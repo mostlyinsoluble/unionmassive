@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected void SetConditionalState(TLocalState whenTrue, TLocalState whenFalse)
         {
             IsConditionalState = true;
-            State = default(TLocalState);
+            State = default;
             StateWhenTrue = whenTrue;
             StateWhenFalse = whenFalse;
         }
@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected void SetState(TLocalState newState)
         {
             Debug.Assert(newState != null);
-            StateWhenTrue = StateWhenFalse = default(TLocalState);
+            StateWhenTrue = StateWhenFalse = default;
             IsConditionalState = false;
             State = newState;
         }
@@ -468,7 +468,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             get
             {
                 var method = _symbol as MethodSymbol;
-                return (object)method == null ? ImmutableArray<ParameterSymbol>.Empty : method.Parameters;
+                return method is null ? ImmutableArray<ParameterSymbol>.Empty : method.Parameters;
             }
         }
 
@@ -494,7 +494,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected bool ShouldAnalyzeOutParameters(out Location location)
         {
             var method = _symbol as MethodSymbol;
-            if ((object)method == null || method.Locations.Length != 1)
+            if (method is null || method.Locations.Length != 1)
             {
                 location = null;
                 return false;
@@ -513,8 +513,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <returns></returns>
         protected virtual TLocalState LabelState(LabelSymbol label)
         {
-            TLocalState result;
-            if (_labels.TryGetValue(label, out result))
+            if (_labels.TryGetValue(label, out TLocalState result))
             {
                 return result;
             }
@@ -641,7 +640,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Unsplit();
                 SetConditionalState(UnreachableState(), this.State);
             }
-            else if ((object)node.Type == null || node.Type.SpecialType != SpecialType.System_Boolean)
+            else if (node.Type is null || node.Type.SpecialType != SpecialType.System_Boolean)
             {
                 // a dynamic type or a type with operator true/false
                 Unsplit();
@@ -693,8 +692,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private void LoopHead(BoundLoopStatement node)
         {
-            TLocalState previousState;
-            if (_loopHeadState.TryGetValue(node, out previousState))
+            if (_loopHeadState.TryGetValue(node, out TLocalState previousState))
             {
                 Join(ref this.State, ref previousState);
             }
@@ -1129,7 +1127,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundNode VisitTupleExpression(BoundTupleExpression node)
         {
-            VisitArguments(node.Arguments, default(ImmutableArray<RefKind>), null, default, false);
+            VisitArguments(node.Arguments, default, null, default, false);
             return null;
         }
 
@@ -1334,7 +1332,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // whose condition is not true, then the call has no effect and it is ignored for the purposes of
             // definite assignment analysis.
             bool callsAreOmitted = node.Method.CallsAreOmitted(node.SyntaxTree);
-            TLocalState savedState = default(TLocalState);
+            TLocalState savedState = default;
 
             if (callsAreOmitted)
             {
@@ -1437,7 +1435,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 WriteArgument(receiverOpt, RefKind.Ref, method: null);
             }
             else if (method.TryGetThisParameter(out var thisParameter)
-                && thisParameter is object
+                && thisParameter is not null
                 && !TypeIsImmutable(thisParameter.Type))
             {
                 var thisRefKind = thisParameter.RefKind;
@@ -1456,26 +1454,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <returns></returns>
         private static bool TypeIsImmutable(TypeSymbol t)
         {
-            switch (t.SpecialType)
+            return t.SpecialType switch
             {
-                case SpecialType.System_Boolean:
-                case SpecialType.System_Char:
-                case SpecialType.System_SByte:
-                case SpecialType.System_Byte:
-                case SpecialType.System_Int16:
-                case SpecialType.System_UInt16:
-                case SpecialType.System_Int32:
-                case SpecialType.System_UInt32:
-                case SpecialType.System_Int64:
-                case SpecialType.System_UInt64:
-                case SpecialType.System_Decimal:
-                case SpecialType.System_Single:
-                case SpecialType.System_Double:
-                case SpecialType.System_DateTime:
-                    return true;
-                default:
-                    return t.IsNullableType();
-            }
+                SpecialType.System_Boolean or SpecialType.System_Char or SpecialType.System_SByte or SpecialType.System_Byte or SpecialType.System_Int16 or SpecialType.System_UInt16 or SpecialType.System_Int32 or SpecialType.System_UInt32 or SpecialType.System_Int64 or SpecialType.System_UInt64 or SpecialType.System_Decimal or SpecialType.System_Single or SpecialType.System_Double or SpecialType.System_DateTime => true,
+                _ => t.IsNullableType(),
+            };
         }
 
         public override BoundNode VisitIndexerAccess(BoundIndexerAccess node)
@@ -1483,7 +1466,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var method = GetReadMethod(node.Indexer);
             VisitReceiverBeforeCall(node.ReceiverOpt, method);
             VisitArguments(node.Arguments, node.ArgumentRefKindsOpt, method, node.ArgsToParamsOpt, node.Expanded);
-            if ((object)method != null)
+            if (method is not null)
             {
                 VisitReceiverAfterCall(node.ReceiverOpt, method);
             }
@@ -1654,7 +1637,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitTypeOrValueExpression(BoundTypeOrValueExpression node)
         {
-            Debug.Assert(node is not BoundTypeOrValueExpression, "The Binder is expected to resolve the member access in the most appropriate way, even in an error scenario.");
+            Debug.Assert(node is null, "The Binder is expected to resolve the member access in the most appropriate way, even in an error scenario.");
             return null;
         }
 
@@ -1741,7 +1724,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.ConversionKind == ConversionKind.MethodGroup)
             {
-                if (node.IsExtensionMethod || ((object)node.SymbolOpt != null && node.SymbolOpt.RequiresInstanceReceiver))
+                if (node.IsExtensionMethod || (node.SymbolOpt is not null && node.SymbolOpt.RequiresInstanceReceiver))
                 {
                     BoundExpression receiver = ((BoundMethodGroup)node.Operand).ReceiverOpt;
                     // A method group's "implicit this" is only used for instance methods.
@@ -2238,13 +2221,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void VisitFieldAccessInternal(BoundExpression receiverOpt, FieldSymbol fieldSymbol)
         {
-            bool asLvalue = (object)fieldSymbol != null &&
+            bool asLvalue = fieldSymbol is not null &&
                 (fieldSymbol.IsFixedSizeBuffer ||
                 !fieldSymbol.IsStatic &&
                 fieldSymbol.ContainingType.TypeKind == TypeKind.Struct &&
                 receiverOpt != null &&
                 receiverOpt.Kind != BoundKind.TypeExpression &&
-                (object)receiverOpt.Type != null &&
+                receiverOpt.Type is not null &&
                 !receiverOpt.Type.IsPrimitiveRecursiveStruct());
             if (asLvalue)
             {
@@ -2660,7 +2643,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static bool isKnownNullOrNotNull(BoundExpression expr)
             {
-                return expr.ConstantValueOpt is object
+                return expr.ConstantValueOpt is not null
                     || (expr is BoundConversion { ConversionKind: ConversionKind.ExplicitNullable or ConversionKind.ImplicitNullable } conv
                         && conv.Operand.Type!.IsNonNullableValueType());
             }
@@ -3042,7 +3025,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var method = conversion.Method;
-            Debug.Assert(method is object);
+            Debug.Assert(method is not null);
             Debug.Assert(method.ParameterCount is 1);
             var param = method.Parameters[0];
             return param.Type.IsNonNullableValueType();
@@ -3126,7 +3109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Join(ref savedState, ref State);
                 }
 
-                Debug.Assert(expr is BoundExpression);
+                Debug.Assert(expr is not null);
                 VisitRvalue(expr);
 
                 stateWhenNotNull = State;
@@ -3564,7 +3547,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitAnonymousObjectCreationExpression(BoundAnonymousObjectCreationExpression node)
         {
             //  visit arguments as r-values
-            VisitArguments(node.Arguments, default(ImmutableArray<RefKind>), node.Constructor, default, false);
+            VisitArguments(node.Arguments, default, node.Constructor, default, false);
 
             return null;
         }
@@ -3648,13 +3631,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 TLocalState savedState = savedState = this.State.Clone();
                 SetUnreachable();
 
-                VisitArguments(node.Arguments, default(ImmutableArray<RefKind>), node.AddMethod, node.ArgsToParamsOpt, node.Expanded);
+                VisitArguments(node.Arguments, default, node.AddMethod, node.ArgsToParamsOpt, node.Expanded);
 
                 this.State = savedState;
             }
             else
             {
-                VisitArguments(node.Arguments, default(ImmutableArray<RefKind>), node.AddMethod, node.ArgsToParamsOpt, node.Expanded);
+                VisitArguments(node.Arguments, default, node.AddMethod, node.ArgsToParamsOpt, node.Expanded);
             }
 
             return null;
@@ -3662,7 +3645,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitDynamicCollectionElementInitializer(BoundDynamicCollectionElementInitializer node)
         {
-            VisitArguments(node.Arguments, default(ImmutableArray<RefKind>), method: null, default, false);
+            VisitArguments(node.Arguments, default, method: null, default, false);
             return null;
         }
 

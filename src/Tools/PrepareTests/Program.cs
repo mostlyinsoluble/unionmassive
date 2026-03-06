@@ -23,7 +23,7 @@ internal static class Program
         {
             { "source=", "Path to binaries", s => source = s },
             { "destination=", "Output path", s => destination = s },
-            { "unix", "If true, prepares tests for unix environment instead of Windows", o => isUnix = o is object },
+            { "unix", "If true, prepares tests for unix environment instead of Windows", o => isUnix = o is not null },
             { "dotnetPath=", "Path to the dotnet CLI", s => dotnetPath = s },
         };
         options.Parse(args);

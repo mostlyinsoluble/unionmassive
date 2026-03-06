@@ -251,7 +251,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override TypeLayout Layout
         {
-            get { return default(TypeLayout); }
+            get { return default; }
         }
 
         internal override System.Runtime.InteropServices.CharSet MarshallingCharSet

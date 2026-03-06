@@ -237,7 +237,7 @@ namespace IOperationGenerator
 
         private void WriteComments(Comments? comments, IEnumerable<string> operationKinds, bool writeReservedRemark)
         {
-            if (comments is object)
+            if (comments is not null)
             {
                 bool hasWrittenRemarks = false;
 
@@ -314,7 +314,7 @@ namespace IOperationGenerator
             WriteLine("None = 0x0,");
 
             Dictionary<int, IEnumerable<(OperationKindEntry, AbstractNode)>> explicitKinds = _tree.Types.OfType<AbstractNode>()
-                .Where(n => n.OperationKind?.Entries is object)
+                .Where(n => n.OperationKind?.Entries is not null)
                 .SelectMany(n => n.OperationKind!.Entries.Select(e => (entry: e, node: n)))
                 .GroupBy(e => e.entry.Value)
                 .ToDictionary(g => g.Key, g => g.Select(k => (entryName: k.entry, k.node)));
@@ -376,7 +376,7 @@ namespace IOperationGenerator
 
             void writeEnumElement(string kind, int value, string operationName, string? extraText, bool editorBrowsable, string? obsoleteMessage, string? obsoleteError, string? experimentalUrl)
             {
-                WriteLine($"/// <summary>Indicates an <see cref=\"{operationName}\"/>.{(extraText is object ? $" {extraText}" : "")}</summary>");
+                WriteLine($"/// <summary>Indicates an <see cref=\"{operationName}\"/>.{(extraText is not null ? $" {extraText}" : "")}</summary>");
 
                 if (!editorBrowsable)
                 {
@@ -388,7 +388,7 @@ namespace IOperationGenerator
                     WriteExperimentalAttribute(experimentalUrl);
                 }
 
-                if (obsoleteMessage is object)
+                if (obsoleteMessage is not null)
                 {
                     WriteLine($"[Obsolete({obsoleteMessage}, error: {obsoleteError})]");
                 }
@@ -1072,7 +1072,7 @@ namespace IOperationGenerator
 
         private void WriteObsoleteIfNecessary(ObsoleteTag? tag)
         {
-            if (tag is object)
+            if (tag is not null)
             {
                 WriteLine($"[Obsolete({tag.Message}, error: {tag.ErrorText})]");
             }
@@ -1175,89 +1175,11 @@ namespace IOperationGenerator
 
         internal static bool IsCSharpKeyword(this string name)
         {
-            switch (name)
+            return name switch
             {
-                case "bool":
-                case "byte":
-                case "sbyte":
-                case "short":
-                case "ushort":
-                case "int":
-                case "uint":
-                case "long":
-                case "ulong":
-                case "double":
-                case "float":
-                case "decimal":
-                case "string":
-                case "char":
-                case "object":
-                case "typeof":
-                case "sizeof":
-                case "null":
-                case "true":
-                case "false":
-                case "if":
-                case "else":
-                case "while":
-                case "for":
-                case "foreach":
-                case "do":
-                case "switch":
-                case "case":
-                case "default":
-                case "lock":
-                case "try":
-                case "throw":
-                case "catch":
-                case "finally":
-                case "goto":
-                case "break":
-                case "continue":
-                case "return":
-                case "public":
-                case "private":
-                case "internal":
-                case "protected":
-                case "static":
-                case "readonly":
-                case "sealed":
-                case "const":
-                case "new":
-                case "override":
-                case "abstract":
-                case "virtual":
-                case "partial":
-                case "ref":
-                case "out":
-                case "in":
-                case "where":
-                case "params":
-                case "this":
-                case "base":
-                case "namespace":
-                case "using":
-                case "class":
-                case "struct":
-                case "interface":
-                case "delegate":
-                case "checked":
-                case "get":
-                case "set":
-                case "add":
-                case "remove":
-                case "operator":
-                case "implicit":
-                case "explicit":
-                case "fixed":
-                case "extern":
-                case "event":
-                case "enum":
-                case "unsafe":
-                    return true;
-                default:
-                    return false;
-            }
+                "bool" or "byte" or "sbyte" or "short" or "ushort" or "int" or "uint" or "long" or "ulong" or "double" or "float" or "decimal" or "string" or "char" or "object" or "typeof" or "sizeof" or "null" or "true" or "false" or "if" or "else" or "while" or "for" or "foreach" or "do" or "switch" or "case" or "default" or "lock" or "try" or "throw" or "catch" or "finally" or "goto" or "break" or "continue" or "return" or "public" or "private" or "internal" or "protected" or "static" or "readonly" or "sealed" or "const" or "new" or "override" or "abstract" or "virtual" or "partial" or "ref" or "out" or "in" or "where" or "params" or "this" or "base" or "namespace" or "using" or "class" or "struct" or "interface" or "delegate" or "checked" or "get" or "set" or "add" or "remove" or "operator" or "implicit" or "explicit" or "fixed" or "extern" or "event" or "enum" or "unsafe" => true,
+                _ => false,
+            };
         }
     }
 }

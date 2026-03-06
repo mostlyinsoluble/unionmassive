@@ -258,27 +258,25 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal UnaryOperatorSignature GetSignature(UnaryOperatorKind kind)
         {
-            TypeSymbol opType;
-            switch (kind.OperandTypes())
+            TypeSymbol opType = kind.OperandTypes() switch
             {
-                case UnaryOperatorKind.SByte: opType = _compilation.GetSpecialType(SpecialType.System_SByte); break;
-                case UnaryOperatorKind.Byte: opType = _compilation.GetSpecialType(SpecialType.System_Byte); break;
-                case UnaryOperatorKind.Short: opType = _compilation.GetSpecialType(SpecialType.System_Int16); break;
-                case UnaryOperatorKind.UShort: opType = _compilation.GetSpecialType(SpecialType.System_UInt16); break;
-                case UnaryOperatorKind.Int: opType = _compilation.GetSpecialType(SpecialType.System_Int32); break;
-                case UnaryOperatorKind.UInt: opType = _compilation.GetSpecialType(SpecialType.System_UInt32); break;
-                case UnaryOperatorKind.Long: opType = _compilation.GetSpecialType(SpecialType.System_Int64); break;
-                case UnaryOperatorKind.ULong: opType = _compilation.GetSpecialType(SpecialType.System_UInt64); break;
-                case UnaryOperatorKind.NInt: opType = _compilation.CreateNativeIntegerTypeSymbol(signed: true); break;
-                case UnaryOperatorKind.NUInt: opType = _compilation.CreateNativeIntegerTypeSymbol(signed: false); break;
-                case UnaryOperatorKind.Char: opType = _compilation.GetSpecialType(SpecialType.System_Char); break;
-                case UnaryOperatorKind.Float: opType = _compilation.GetSpecialType(SpecialType.System_Single); break;
-                case UnaryOperatorKind.Double: opType = _compilation.GetSpecialType(SpecialType.System_Double); break;
-                case UnaryOperatorKind.Decimal: opType = _compilation.GetSpecialType(SpecialType.System_Decimal); break;
-                case UnaryOperatorKind.Bool: opType = _compilation.GetSpecialType(SpecialType.System_Boolean); break;
-                default: throw ExceptionUtilities.UnexpectedValue(kind.OperandTypes());
-            }
-
+                UnaryOperatorKind.SByte => _compilation.GetSpecialType(SpecialType.System_SByte),
+                UnaryOperatorKind.Byte => _compilation.GetSpecialType(SpecialType.System_Byte),
+                UnaryOperatorKind.Short => _compilation.GetSpecialType(SpecialType.System_Int16),
+                UnaryOperatorKind.UShort => _compilation.GetSpecialType(SpecialType.System_UInt16),
+                UnaryOperatorKind.Int => _compilation.GetSpecialType(SpecialType.System_Int32),
+                UnaryOperatorKind.UInt => _compilation.GetSpecialType(SpecialType.System_UInt32),
+                UnaryOperatorKind.Long => _compilation.GetSpecialType(SpecialType.System_Int64),
+                UnaryOperatorKind.ULong => _compilation.GetSpecialType(SpecialType.System_UInt64),
+                UnaryOperatorKind.NInt => _compilation.CreateNativeIntegerTypeSymbol(signed: true),
+                UnaryOperatorKind.NUInt => _compilation.CreateNativeIntegerTypeSymbol(signed: false),
+                UnaryOperatorKind.Char => _compilation.GetSpecialType(SpecialType.System_Char),
+                UnaryOperatorKind.Float => _compilation.GetSpecialType(SpecialType.System_Single),
+                UnaryOperatorKind.Double => _compilation.GetSpecialType(SpecialType.System_Double),
+                UnaryOperatorKind.Decimal => _compilation.GetSpecialType(SpecialType.System_Decimal),
+                UnaryOperatorKind.Bool => _compilation.GetSpecialType(SpecialType.System_Boolean),
+                _ => throw ExceptionUtilities.UnexpectedValue(kind.OperandTypes()),
+            };
             if (kind.IsLifted())
             {
                 opType = _compilation.GetOrCreateNullableType(opType);
@@ -875,7 +873,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // effective base class of the type parameter is used to determine the conversion
             // to the other argument type. (See ExpressionBinder::GetRefEqualSigs.)
 
-            if (((object)leftType != null) && leftType.IsTypeParameter())
+            if ((leftType is not null) && leftType.IsTypeParameter())
             {
                 if (leftType.IsValueType || (!leftType.IsReferenceType && !rightIsNull))
                 {
@@ -883,10 +881,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 leftType = ((TypeParameterSymbol)leftType).EffectiveBaseClass(ref useSiteInfo);
-                Debug.Assert((object)leftType != null);
+                Debug.Assert(leftType is not null);
             }
 
-            if (((object)rightType != null) && rightType.IsTypeParameter())
+            if ((rightType is not null) && rightType.IsTypeParameter())
             {
                 if (rightType.IsValueType || (!rightType.IsReferenceType && !leftIsNull))
                 {
@@ -894,16 +892,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 rightType = ((TypeParameterSymbol)rightType).EffectiveBaseClass(ref useSiteInfo);
-                Debug.Assert((object)rightType != null);
+                Debug.Assert(rightType is not null);
             }
 
-            var leftIsReferenceType = ((object)leftType != null) && leftType.IsReferenceType;
+            var leftIsReferenceType = (leftType is not null) && leftType.IsReferenceType;
             if (!leftIsReferenceType && !leftIsNull && !leftIsDefault)
             {
                 return false;
             }
 
-            var rightIsReferenceType = ((object)rightType != null) && rightType.IsReferenceType;
+            var rightIsReferenceType = (rightType is not null) && rightType.IsReferenceType;
             if (!rightIsReferenceType && !rightIsNull && !rightIsDefault)
             {
                 return false;

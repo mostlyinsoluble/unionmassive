@@ -194,16 +194,12 @@ internal sealed partial class ChangeSignatureDialogViewModel
         {
             get
             {
-                switch (ParameterSymbol.Language)
+                return ParameterSymbol.Language switch
                 {
-                    case LanguageNames.CSharp:
-                        return ModifierText("out", "ref", "ref readonly", "in", "params", "this");
-                    case LanguageNames.VisualBasic:
-                        return ModifierText(@out: null, "ByRef", refReadonly: null, @in: null, "ParamArray", "Me");
-                    default:
-                        return string.Empty;
-                }
-
+                    LanguageNames.CSharp => ModifierText("out", "ref", "ref readonly", "in", "params", "this"),
+                    LanguageNames.VisualBasic => ModifierText(@out: null, "ByRef", refReadonly: null, @in: null, "ParamArray", "Me"),
+                    _ => string.Empty,
+                };
                 string ModifierText(string? @out, string? @ref, string? refReadonly, string? @in, string? @params, string? @this)
                 {
                     switch (ParameterSymbol.RefKind)
@@ -247,16 +243,12 @@ internal sealed partial class ChangeSignatureDialogViewModel
                     return string.Empty;
                 }
 
-                switch (ParameterSymbol.Language)
+                return ParameterSymbol.Language switch
                 {
-                    case LanguageNames.CSharp:
-                        return NullText("null", "default");
-                    case LanguageNames.VisualBasic:
-                        return NullText("Nothing", "Nothing");
-                }
-
-                return string.Empty;
-
+                    LanguageNames.CSharp => NullText("null", "default"),
+                    LanguageNames.VisualBasic => NullText("Nothing", "Nothing"),
+                    _ => string.Empty,
+                };
                 string NullText(string @null, string @default)
                 {
                     return ParameterSymbol.ExplicitDefaultValue == null ? (ParameterSymbol.Type.IsReferenceType ? @null : @default) :

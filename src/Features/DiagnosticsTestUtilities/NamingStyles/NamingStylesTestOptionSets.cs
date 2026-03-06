@@ -108,20 +108,13 @@ internal sealed class NamingStylesTestOptionSets
 
     internal static SymbolSpecification.SymbolKindOrTypeKind ToSymbolKindOrTypeKind(object symbolOrTypeKind)
     {
-        switch (symbolOrTypeKind)
+        return symbolOrTypeKind switch
         {
-            case TypeKind typeKind:
-                return new SymbolSpecification.SymbolKindOrTypeKind(typeKind);
-
-            case SymbolKind symbolKind:
-                return new SymbolSpecification.SymbolKindOrTypeKind(symbolKind);
-
-            case MethodKind methodKind:
-                return new SymbolSpecification.SymbolKindOrTypeKind(methodKind);
-
-            default:
-                throw ExceptionUtilities.UnexpectedValue(symbolOrTypeKind);
-        }
+            TypeKind typeKind => new SymbolSpecification.SymbolKindOrTypeKind(typeKind),
+            SymbolKind symbolKind => new SymbolSpecification.SymbolKindOrTypeKind(symbolKind),
+            MethodKind methodKind => new SymbolSpecification.SymbolKindOrTypeKind(methodKind),
+            _ => throw ExceptionUtilities.UnexpectedValue(symbolOrTypeKind),
+        };
     }
 
     internal OptionsCollection AccessibilitiesArePascalCase(ImmutableArray<Accessibility> accessibilities)

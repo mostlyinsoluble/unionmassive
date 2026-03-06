@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // on the assumption that they will be updated appropriately.
                     overriddenOrExplicitlyImplementedMethod = this.OverriddenMethod;
 
-                    if ((object)overriddenOrExplicitlyImplementedMethod != null)
+                    if (overriddenOrExplicitlyImplementedMethod is not null)
                     {
                         CustomModifierUtils.CopyMethodCustomModifiers(overriddenOrExplicitlyImplementedMethod, this, out _lazyReturnType,
                                                                       out _lazyRefCustomModifiers,
@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ParameterHelpers.EnsureRefKindAttributesExist(compilation, Parameters, diagnostics, modifyCompilation: true);
             ParameterHelpers.EnsureParamCollectionAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(ReturnType))
+            if (ReturnType.ContainsNativeIntegerWrapperType())
             {
                 compilation.EnsureNativeIntegerAttributeExists(diagnostics, getReturnTypeLocation(), modifyCompilation: true);
             }

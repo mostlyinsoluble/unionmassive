@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal void Clear()
         {
-            _bestResult = default(MemberResolutionResult<TMember>);
+            _bestResult = default;
             _bestResultState = ThreeState.Unknown;
             this.ResultsBuilder.Clear();
         }
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static ThreeState TryGetBestResult(ArrayBuilder<MemberResolutionResult<TMember>> allResults, out MemberResolutionResult<TMember> best)
         {
-            best = default(MemberResolutionResult<TMember>);
+            best = default;
             ThreeState haveBest = ThreeState.False;
 
             foreach (var pair in allResults)
@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (haveBest == ThreeState.True)
                     {
                         Debug.Assert(false, "How did we manage to get two methods in the overload resolution results that were both better than every other method?");
-                        best = default(MemberResolutionResult<TMember>);
+                        best = default;
                         return ThreeState.False;
                     }
 
@@ -391,8 +391,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // otherwise we'd report errors about losing candidates, effectively "pulling in" unnecessary assemblies.
 
             bool supportedRequiredParameterMissingConflicts = false;
-            MemberResolutionResult<TMember> firstSupported = default(MemberResolutionResult<TMember>);
-            MemberResolutionResult<TMember> firstUnsupported = default(MemberResolutionResult<TMember>);
+            MemberResolutionResult<TMember> firstSupported = default;
+            MemberResolutionResult<TMember> firstUnsupported = default;
 
             var supportedInPriorityOrder = new MemberResolutionResult<TMember>[7]; // from highest to lowest priority
             const int duplicateNamedArgumentPriority = 0;
@@ -748,7 +748,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (var pair in constraintFailure.Result.ConstraintFailureDiagnostics)
             {
-                if (pair.UseSiteInfo.DiagnosticInfo is object)
+                if (pair.UseSiteInfo.DiagnosticInfo is not null)
                 {
                     diagnostics.Add(new CSDiagnostic(pair.UseSiteInfo.DiagnosticInfo, location));
                 }
@@ -897,7 +897,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // error CS1739: The best overload for 'M' does not have a parameter named 'x'
             // Error CS1746: The delegate 'D' does not have a parameter named 'x'
 
-            ErrorCode code = (object)delegateTypeBeingInvoked != null ?
+            ErrorCode code = delegateTypeBeingInvoked is not null ?
                 ErrorCode.ERR_BadNamedArgumentForDelegateInvoke :
                 ErrorCode.ERR_BadNamedArgument;
 
@@ -1292,8 +1292,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (refArg != refParameter &&
                 !(refArg == RefKind.None && refParameter == RefKind.In) &&
-                !(refArg == RefKind.Ref && refParameter == RefKind.In && binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters)) &&
-                !(refParameter == RefKind.RefReadOnlyParameter && refArg is RefKind.None or RefKind.Ref or RefKind.In))
+                !(refArg == RefKind.Ref && refParameter == RefKind.In &&
+                !(refParameter == RefKind.RefReadOnlyParameter && refArg is RefKind.None or RefKind.Ref or RefKind.In)))
             {
                 // Special case for 'string literal -> interpolated string handler' for better user experience
                 // Skip if parameter's ref kind is 'out' since it is invalid ref kind for passing interpolated string
@@ -1302,17 +1302,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     // CS9205: Expected interpolated string
                     diagnostics.Add(ErrorCode.ERR_ExpectedInterpolatedString, sourceLocation);
-                }
-                else if (refArg == RefKind.Ref && refParameter == RefKind.In && !binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters))
-                {
-                    //  Argument {0} may not be passed with the 'ref' keyword in language version {1}. To pass 'ref' arguments to 'in' parameters, upgrade to language version {2} or greater.
-                    diagnostics.Add(
-                        ErrorCode.ERR_BadArgExtraRefLangVersion,
-                        sourceLocation,
-                        symbols,
-                        arg + 1,
-                        binder.Compilation.LanguageVersion.ToDisplayString(),
-                        new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureRefReadonlyParameters.RequiredVersion()));
                 }
                 else if (refParameter is RefKind.None or RefKind.In or RefKind.RefReadOnlyParameter)
                 {
@@ -1429,14 +1418,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool HadAmbiguousWorseMethods(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location, bool isQuery, BoundExpression receiver, string name, bool isExtension)
         {
-            MemberResolutionResult<TMember> worseResult1;
-            MemberResolutionResult<TMember> worseResult2;
 
             // UNDONE: It is unfortunate that we simply choose the first two methods as the 
             // UNDONE: two to say that are ambiguous; they might not actually be ambiguous
             // UNDONE: with each other. We might consider building a better heuristic here.
 
-            int nWorse = TryGetFirstTwoWorseResults(out worseResult1, out worseResult2);
+            int nWorse = TryGetFirstTwoWorseResults(out MemberResolutionResult<TMember> worseResult1, out MemberResolutionResult<TMember> worseResult2);
             if (nWorse <= 1)
             {
                 Debug.Assert(nWorse == 0, "How is it that there is exactly one applicable but worse method, and exactly zero applicable best methods?  What was better than this thing?");
@@ -1469,8 +1456,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             int count = 0;
             bool foundFirst = false;
             bool foundSecond = false;
-            first = default(MemberResolutionResult<TMember>);
-            second = default(MemberResolutionResult<TMember>);
+            first = default;
+            second = default;
 
             foreach (var res in this.ResultsBuilder)
             {
@@ -1495,9 +1482,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool HadAmbiguousBestMethods(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, ImmutableArray<Symbol> symbols, Location location, bool isExtension)
         {
-            MemberResolutionResult<TMember> validResult1;
-            MemberResolutionResult<TMember> validResult2;
-            var nValid = TryGetFirstTwoValidResults(out validResult1, out validResult2);
+            var nValid = TryGetFirstTwoValidResults(out MemberResolutionResult<TMember> validResult1, out MemberResolutionResult<TMember> validResult2);
             if (nValid <= 1)
             {
                 Debug.Assert(nValid == 0, "Why are we doing error reporting on an overload resolution problem that had one valid result?");
@@ -1525,8 +1510,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             int count = 0;
             bool foundFirst = false;
             bool foundSecond = false;
-            first = default(MemberResolutionResult<TMember>);
-            second = default(MemberResolutionResult<TMember>);
+            first = default;
+            second = default;
 
             foreach (var res in this.ResultsBuilder)
             {
@@ -1580,7 +1565,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            return default(MemberResolutionResult<TMember>);
+            return default;
         }
 
 #if DEBUG

@@ -77,15 +77,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 #pragma warning disable 0252
             if ((object?)_lazyAttributeClass == ErrorTypeSymbol.UnknownResultType)
             {
-                TypeSymbol? attributeClass;
-                MethodSymbol? attributeConstructor;
 
-                if (!_decoder.GetCustomAttribute(_handle, out attributeClass, out attributeConstructor))
+                if (!_decoder.GetCustomAttribute(_handle, out TypeSymbol? attributeClass, out MethodSymbol? attributeConstructor))
                 {
                     // TODO: should we create CSErrorTypeSymbol for attribute class??
                     _lazyHasErrors = ThreeState.True;
                 }
-                else if ((object)attributeClass == null || attributeClass.IsErrorType() || (object)attributeConstructor == null)
+                else if (attributeClass is null || attributeClass.IsErrorType() || attributeConstructor is null)
                 {
                     _lazyHasErrors = ThreeState.True;
                 }
@@ -100,10 +98,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (RoslynImmutableInterlocked.VolatileRead(in _lazyConstructorArguments).IsDefault || RoslynImmutableInterlocked.VolatileRead(in _lazyNamedArguments).IsDefault)
             {
-                TypedConstant[]? lazyConstructorArguments = null;
-                KeyValuePair<string, TypedConstant>[]? lazyNamedArguments = null;
 
-                if (!_decoder.GetCustomAttribute(_handle, AttributeConstructor, out lazyConstructorArguments, out lazyNamedArguments))
+                if (!_decoder.GetCustomAttribute(_handle, AttributeConstructor, out TypedConstant[]? lazyConstructorArguments, out KeyValuePair<string, TypedConstant>[]? lazyNamedArguments))
                 {
                     _lazyHasErrors = ThreeState.True;
                 }
@@ -178,27 +174,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (HasErrors)
                 {
-                    switch (AttributeConstructor)
+                    return AttributeConstructor switch
                     {
-                        case { HasUseSiteError: true } attributeConstructor:
-                            return attributeConstructor.GetUseSiteInfo().DiagnosticInfo;
-
-                        case { }:
-                            return new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty);
-
-                        default:
-                            switch (AttributeClass)
-                            {
-                                case { HasUseSiteError: true } attributeClass:
-                                    return attributeClass.GetUseSiteInfo().DiagnosticInfo;
-
-                                case { } attributeClass:
-                                    return new CSDiagnosticInfo(ErrorCode.ERR_MissingPredefinedMember, attributeClass, WellKnownMemberNames.InstanceConstructorName);
-
-                                default:
-                                    return new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty);
-                            }
-                    }
+                        { HasUseSiteError: true } attributeConstructor => attributeConstructor.GetUseSiteInfo().DiagnosticInfo,
+                        { } => new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty),
+                        _ => AttributeClass switch
+                        {
+                            { HasUseSiteError: true } attributeClass => attributeClass.GetUseSiteInfo().DiagnosticInfo,
+                            { } attributeClass => new CSDiagnosticInfo(ErrorCode.ERR_MissingPredefinedMember, attributeClass, WellKnownMemberNames.InstanceConstructorName),
+                            _ => new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty),
+                        },
+                    };
                 }
                 else
                 {

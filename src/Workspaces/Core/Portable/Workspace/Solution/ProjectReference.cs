@@ -47,7 +47,7 @@ public sealed class ProjectReference : IEquatable<ProjectReference>
             return true;
         }
 
-        return reference is object &&
+        return reference is not null &&
                ProjectId == reference.ProjectId &&
                Aliases.SequenceEqual(reference.Aliases) &&
                EmbedInteropTypes == reference.EmbedInteropTypes;

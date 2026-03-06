@@ -211,23 +211,16 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static MemberInfo GetMember(System.Reflection.MemberInfo member)
         {
-            switch (member.MemberType)
+            return member.MemberType switch
             {
-                case System.Reflection.MemberTypes.Constructor:
-                    return new ConstructorInfoImpl((System.Reflection.ConstructorInfo)member);
-                case System.Reflection.MemberTypes.Event:
-                    return new EventInfoImpl((System.Reflection.EventInfo)member);
-                case System.Reflection.MemberTypes.Field:
-                    return new FieldInfoImpl((System.Reflection.FieldInfo)member);
-                case System.Reflection.MemberTypes.Method:
-                    return new MethodInfoImpl((System.Reflection.MethodInfo)member);
-                case System.Reflection.MemberTypes.NestedType:
-                    return new TypeImpl((System.Reflection.TypeInfo)member);
-                case System.Reflection.MemberTypes.Property:
-                    return new PropertyInfoImpl((System.Reflection.PropertyInfo)member);
-                default:
-                    throw new NotImplementedException(member.MemberType.ToString());
-            }
+                System.Reflection.MemberTypes.Constructor => new ConstructorInfoImpl((System.Reflection.ConstructorInfo)member),
+                System.Reflection.MemberTypes.Event => new EventInfoImpl((System.Reflection.EventInfo)member),
+                System.Reflection.MemberTypes.Field => new FieldInfoImpl((System.Reflection.FieldInfo)member),
+                System.Reflection.MemberTypes.Method => new MethodInfoImpl((System.Reflection.MethodInfo)member),
+                System.Reflection.MemberTypes.NestedType => new TypeImpl((System.Reflection.TypeInfo)member),
+                System.Reflection.MemberTypes.Property => new PropertyInfoImpl((System.Reflection.PropertyInfo)member),
+                _ => throw new NotImplementedException(member.MemberType.ToString()),
+            };
         }
 
         public override MethodInfo[] GetMethods(BindingFlags flags)

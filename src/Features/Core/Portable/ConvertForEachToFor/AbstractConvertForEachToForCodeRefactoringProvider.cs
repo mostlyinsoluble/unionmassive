@@ -371,17 +371,11 @@ internal abstract class AbstractConvertForEachToForCodeRefactoringProvider<
         // to
         // var array = new int[] { ... }
         // foreach(var a in array)
-        switch (operation.Kind)
+        return operation.Kind switch
         {
-            case OperationKind.LocalReference:
-            case OperationKind.FieldReference:
-            case OperationKind.ParameterReference:
-            case OperationKind.PropertyReference:
-            case OperationKind.ArrayElementReference:
-                return false;
-            default:
-                return true;
-        }
+            OperationKind.LocalReference or OperationKind.FieldReference or OperationKind.ParameterReference or OperationKind.PropertyReference or OperationKind.ArrayElementReference => false,
+            _ => true,
+        };
     }
 
     private static IOperation RemoveImplicitConversion(IOperation collection)

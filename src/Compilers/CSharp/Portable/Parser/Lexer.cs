@@ -213,24 +213,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             get
             {
-                switch (ModeOf(_mode))
+                return ModeOf(_mode) switch
                 {
-                    case LexerMode.XmlDocComment:
-                    case LexerMode.XmlElementTag:
-                    case LexerMode.XmlAttributeTextQuote:
-                    case LexerMode.XmlAttributeTextDoubleQuote:
-                    case LexerMode.XmlCrefQuote:
-                    case LexerMode.XmlCrefDoubleQuote:
-                    case LexerMode.XmlNameQuote:
-                    case LexerMode.XmlNameDoubleQuote:
-                    case LexerMode.XmlCDataSectionText:
-                    case LexerMode.XmlCommentText:
-                    case LexerMode.XmlProcessingInstructionText:
-                    case LexerMode.XmlCharacter:
-                        return true;
-                    default:
-                        return false;
-                }
+                    LexerMode.XmlDocComment or LexerMode.XmlElementTag or LexerMode.XmlAttributeTextQuote or LexerMode.XmlAttributeTextDoubleQuote or LexerMode.XmlCrefQuote or LexerMode.XmlCrefDoubleQuote or LexerMode.XmlNameQuote or LexerMode.XmlNameDoubleQuote or LexerMode.XmlCDataSectionText or LexerMode.XmlCommentText or LexerMode.XmlProcessingInstructionText or LexerMode.XmlCharacter => true,
+                    _ => false,
+                };
             }
         }
 
@@ -260,33 +247,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     return this.LexDirectiveToken();
             }
 
-            switch (ModeOf(_mode))
+            return ModeOf(_mode) switch
             {
-                case LexerMode.XmlDocComment:
-                    return this.LexXmlToken();
-                case LexerMode.XmlElementTag:
-                    return this.LexXmlElementTagToken();
-                case LexerMode.XmlAttributeTextQuote:
-                case LexerMode.XmlAttributeTextDoubleQuote:
-                    return this.LexXmlAttributeTextToken();
-                case LexerMode.XmlCDataSectionText:
-                    return this.LexXmlCDataSectionTextToken();
-                case LexerMode.XmlCommentText:
-                    return this.LexXmlCommentTextToken();
-                case LexerMode.XmlProcessingInstructionText:
-                    return this.LexXmlProcessingInstructionTextToken();
-                case LexerMode.XmlCrefQuote:
-                case LexerMode.XmlCrefDoubleQuote:
-                    return this.LexXmlCrefOrNameToken();
-                case LexerMode.XmlNameQuote:
-                case LexerMode.XmlNameDoubleQuote:
-                    // Same lexing as a cref attribute, just treat the identifiers a little differently.
-                    return this.LexXmlCrefOrNameToken();
-                case LexerMode.XmlCharacter:
-                    return this.LexXmlCharacter();
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(ModeOf(_mode));
-            }
+                LexerMode.XmlDocComment => this.LexXmlToken(),
+                LexerMode.XmlElementTag => this.LexXmlElementTagToken(),
+                LexerMode.XmlAttributeTextQuote or LexerMode.XmlAttributeTextDoubleQuote => this.LexXmlAttributeTextToken(),
+                LexerMode.XmlCDataSectionText => this.LexXmlCDataSectionTextToken(),
+                LexerMode.XmlCommentText => this.LexXmlCommentTextToken(),
+                LexerMode.XmlProcessingInstructionText => this.LexXmlProcessingInstructionTextToken(),
+                LexerMode.XmlCrefQuote or LexerMode.XmlCrefDoubleQuote => this.LexXmlCrefOrNameToken(),
+                LexerMode.XmlNameQuote or LexerMode.XmlNameDoubleQuote => this.LexXmlCrefOrNameToken(),// Same lexing as a cref attribute, just treat the identifiers a little differently.
+                LexerMode.XmlCharacter => this.LexXmlCharacter(),
+                _ => throw ExceptionUtilities.UnexpectedValue(ModeOf(_mode)),
+            };
         }
 
         private SyntaxToken LexSyntaxToken()
@@ -312,7 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             _leadingTriviaCache.Clear();
             this.LexSyntaxTrivia(isFollowingToken: TextWindow.Position > 0, isTrailing: false, triviaList: ref _leadingTriviaCache);
-            return new SyntaxTriviaList(default(Microsoft.CodeAnalysis.SyntaxToken),
+            return new SyntaxTriviaList(default,
                 _leadingTriviaCache.ToListNode(), position: 0, index: 0);
         }
 
@@ -320,7 +293,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             _trailingTriviaCache.Clear();
             this.LexSyntaxTrivia(isFollowingToken: true, isTrailing: true, triviaList: ref _trailingTriviaCache);
-            return new SyntaxTriviaList(default(Microsoft.CodeAnalysis.SyntaxToken),
+            return new SyntaxTriviaList(default,
                 _trailingTriviaCache.ToListNode(), position: 0, index: 0);
         }
 
@@ -344,33 +317,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         token = SyntaxFactory.Identifier(info.ContextualKind, leadingNode, info.Text, info.StringValue, trailingNode);
                         break;
                     case SyntaxKind.NumericLiteralToken:
-                        switch (info.ValueKind)
+                        token = info.ValueKind switch
                         {
-                            case SpecialType.System_Int32:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.IntValue, trailingNode);
-                                break;
-                            case SpecialType.System_UInt32:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.UintValue, trailingNode);
-                                break;
-                            case SpecialType.System_Int64:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.LongValue, trailingNode);
-                                break;
-                            case SpecialType.System_UInt64:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.UlongValue, trailingNode);
-                                break;
-                            case SpecialType.System_Single:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.FloatValue, trailingNode);
-                                break;
-                            case SpecialType.System_Double:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.DoubleValue, trailingNode);
-                                break;
-                            case SpecialType.System_Decimal:
-                                token = SyntaxFactory.Literal(leadingNode, info.Text, info.DecimalValue, trailingNode);
-                                break;
-                            default:
-                                throw ExceptionUtilities.UnexpectedValue(info.ValueKind);
-                        }
-
+                            SpecialType.System_Int32 => SyntaxFactory.Literal(leadingNode, info.Text, info.IntValue, trailingNode),
+                            SpecialType.System_UInt32 => SyntaxFactory.Literal(leadingNode, info.Text, info.UintValue, trailingNode),
+                            SpecialType.System_Int64 => SyntaxFactory.Literal(leadingNode, info.Text, info.LongValue, trailingNode),
+                            SpecialType.System_UInt64 => SyntaxFactory.Literal(leadingNode, info.Text, info.UlongValue, trailingNode),
+                            SpecialType.System_Single => SyntaxFactory.Literal(leadingNode, info.Text, info.FloatValue, trailingNode),
+                            SpecialType.System_Double => SyntaxFactory.Literal(leadingNode, info.Text, info.DoubleValue, trailingNode),
+                            SpecialType.System_Decimal => SyntaxFactory.Literal(leadingNode, info.Text, info.DecimalValue, trailingNode),
+                            _ => throw ExceptionUtilities.UnexpectedValue(info.ValueKind),
+                        };
                         break;
                     case SyntaxKind.InterpolatedStringToken:
                         // we do not record a separate "value" for an interpolated string token, as it must be rescanned during parsing.
@@ -777,15 +734,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             return false;
         }
 
-        private void CheckFeatureAvailability(MessageID feature)
-        {
-            var info = feature.GetFeatureAvailabilityDiagnosticInfo(Options);
-            if (info != null)
-            {
-                AddError(info.Code, info.Arguments);
-            }
-        }
-
         private bool ScanInteger()
         {
             int start = TextWindow.Position;
@@ -869,7 +817,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
                 else if (ch == 'b' || ch == 'B')
                 {
-                    CheckFeatureAvailability(MessageID.IDS_FeatureBinaryLiteral);
                     TextWindow.AdvanceChar(2);
                     isBinary = true;
                 }
@@ -1023,14 +970,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 this.AddError(MakeError(start, TextWindow.Position - start, ErrorCode.ERR_InvalidNumber));
             }
-            else if (firstCharWasUnderscore)
-            {
-                CheckFeatureAvailability(MessageID.IDS_FeatureLeadingDigitSeparator);
-            }
-            else if (usedUnderscore)
-            {
-                CheckFeatureAvailability(MessageID.IDS_FeatureDigitSeparator);
-            }
 
             info.Kind = SyntaxKind.NumericLiteralToken;
             info.Text = this.GetInternedLexemeText();
@@ -1177,8 +1116,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         //used in directives
         private int GetValueInt32(string text, bool isHex)
         {
-            int result;
-            if (!Int32.TryParse(text, isHex ? NumberStyles.AllowHexSpecifier : NumberStyles.None, CultureInfo.InvariantCulture, out result))
+            if (!Int32.TryParse(text, isHex ? NumberStyles.AllowHexSpecifier : NumberStyles.None, CultureInfo.InvariantCulture, out int result))
             {
                 //we've already lexed the literal, so the error must be from overflow
                 this.AddError(MakeError(ErrorCode.ERR_IntOverflow));
@@ -1209,8 +1147,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private double GetValueDouble(string text)
         {
-            double result;
-            if (!RealParser.TryParseDouble(text, out result))
+            if (!RealParser.TryParseDouble(text, out double result))
             {
                 //we've already lexed the literal, so the error must be from overflow
                 this.AddError(MakeError(ErrorCode.ERR_FloatOverflow, "double"));
@@ -1221,8 +1158,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private float GetValueSingle(string text)
         {
-            float result;
-            if (!RealParser.TryParseFloat(text, out result))
+            if (!RealParser.TryParseFloat(text, out float result))
             {
                 //we've already lexed the literal, so the error must be from overflow
                 this.AddError(MakeError(ErrorCode.ERR_FloatOverflow, "float"));
@@ -1256,8 +1192,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             //     rounded up to 0.1000000000000000000000000001.)
             //     [Bug #568494]
 
-            decimal result;
-            if (!decimal.TryParse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out result))
+            if (!decimal.TryParse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out decimal result))
             {
                 //we've already lexed the literal, so the error must be from overflow
                 this.AddError(this.MakeError(start, end - start, ErrorCode.ERR_FloatOverflow, "decimal"));
@@ -1537,8 +1472,7 @@ top:
                                 {
                                     if (isEscaped)
                                     {
-                                        SyntaxDiagnosticInfo? error;
-                                        NextCharOrUnicodeEscape(out surrogateCharacter, out error);
+                                        NextCharOrUnicodeEscape(out surrogateCharacter, out SyntaxDiagnosticInfo? error);
                                         AddError(error);
                                     }
                                     else
@@ -1561,8 +1495,7 @@ top:
 
                 if (isEscaped)
                 {
-                    SyntaxDiagnosticInfo? error;
-                    NextCharOrUnicodeEscape(out surrogateCharacter, out error);
+                    NextCharOrUnicodeEscape(out surrogateCharacter, out SyntaxDiagnosticInfo? error);
                     AddError(error);
                 }
                 else
@@ -1699,8 +1632,7 @@ top:
                             TextWindow.Reset(beforeConsumed);
                             // ^^^^^^^ otherwise \u005Cu1234 looks just like \u1234! (i.e. escape within escape)
                             isEscaped = true;
-                            SyntaxDiagnosticInfo? error;
-                            consumedChar = NextUnicodeEscape(out consumedSurrogate, out error);
+                            consumedChar = NextUnicodeEscape(out consumedSurrogate, out SyntaxDiagnosticInfo? error);
                             AddCrefError(error);
                             goto top;
                         }
@@ -2043,8 +1975,7 @@ LoopExit:
 
             void lexMultiLineComment(ref SyntaxListBuilder triviaList, char delimiter)
             {
-                bool isTerminated;
-                this.ScanMultiLineComment(out isTerminated, delimiter);
+                this.ScanMultiLineComment(out bool isTerminated, delimiter);
                 if (!isTerminated)
                 {
                     // The comment didn't end.  Report an error at the start point.
@@ -2351,8 +2282,7 @@ top:
         {
             while (true)
             {
-                bool hasFollowingDirective;
-                var text = this.LexDisabledText(out hasFollowingDirective);
+                var text = this.LexDisabledText(out bool hasFollowingDirective);
                 if (text != null)
                 {
                     this.AddTrivia(text, ref triviaList);
@@ -2466,7 +2396,7 @@ top:
         private SyntaxToken LexDirectiveToken()
         {
             this.Start();
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
             this.ScanDirectiveToken(ref info);
             var errors = this.GetErrors();
 
@@ -2693,8 +2623,7 @@ top:
                         // unknown single character
                         if (isEscaped)
                         {
-                            SyntaxDiagnosticInfo? error;
-                            NextCharOrUnicodeEscape(out surrogateCharacter, out error);
+                            NextCharOrUnicodeEscape(out surrogateCharacter, out SyntaxDiagnosticInfo? error);
                             AddError(error);
                         }
                         else
@@ -2824,7 +2753,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlToken()
         {
-            TokenInfo xmlTokenInfo = default(TokenInfo);
+            TokenInfo xmlTokenInfo = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTrivia(ref leading);
@@ -3033,8 +2962,7 @@ top:
 
                 if (MatchesProductionForXmlChar(charValue))
                 {
-                    char lowSurrogate;
-                    char highSurrogate = GetCharsFromUtf32(charValue, out lowSurrogate);
+                    char highSurrogate = GetCharsFromUtf32(charValue, out char lowSurrogate);
 
                     _builder.Append(highSurrogate);
                     if (lowSurrogate != SlidingTextWindow.InvalidCharacter)
@@ -3180,7 +3108,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlElementTagToken()
         {
-            TokenInfo tagInfo = default(TokenInfo);
+            TokenInfo tagInfo = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTriviaWithWhitespace(ref leading);
@@ -3366,7 +3294,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlAttributeTextToken()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTrivia(ref leading);
@@ -3519,7 +3447,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlCharacter()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             //TODO: Dev11 allows C# comments and newlines in cref trivia (DevDiv #530523).
             SyntaxListBuilder? leading = null;
@@ -3575,7 +3503,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlCrefOrNameToken()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             //TODO: Dev11 allows C# comments and newlines in cref trivia (DevDiv #530523).
             SyntaxListBuilder? leading = null;
@@ -3819,8 +3747,7 @@ top:
                     // but I don't want to add an assert because XML character classification is expensive.
                     // check to see if it is an actual keyword
                     // NOTE: name attribute values don't respect keywords - everything is an identifier.
-                    SyntaxKind keywordKind;
-                    if (!InXmlNameAttributeValue && !info.IsVerbatim && !info.HasIdentifierEscapeSequence && _cache.TryGetKeywordKind(info.StringValue!, out keywordKind))
+                    if (!InXmlNameAttributeValue && !info.IsVerbatim && !info.HasIdentifierEscapeSequence && _cache.TryGetKeywordKind(info.StringValue!, out SyntaxKind keywordKind))
                     {
                         if (SyntaxFacts.IsContextualKeyword(keywordKind))
                         {
@@ -3908,9 +3835,7 @@ top:
             {
                 int pos = TextWindow.Position;
 
-                char nextChar;
-                char nextSurrogate;
-                if (TryScanXmlEntity(out nextChar, out nextSurrogate)
+                if (TryScanXmlEntity(out char nextChar, out char nextSurrogate)
                     && nextChar == ch && nextSurrogate == SlidingTextWindow.InvalidCharacter)
                 {
                     return true;
@@ -3930,16 +3855,11 @@ top:
         {
             get
             {
-                switch (_mode & LexerMode.MaskLexMode)
+                return (_mode & LexerMode.MaskLexMode) switch
                 {
-                    case LexerMode.XmlCrefQuote:
-                    case LexerMode.XmlCrefDoubleQuote:
-                    case LexerMode.XmlNameQuote:
-                    case LexerMode.XmlNameDoubleQuote:
-                        return true;
-                    default:
-                        return false;
-                }
+                    LexerMode.XmlCrefQuote or LexerMode.XmlCrefDoubleQuote or LexerMode.XmlNameQuote or LexerMode.XmlNameDoubleQuote => true,
+                    _ => false,
+                };
             }
         }
 
@@ -3951,14 +3871,11 @@ top:
         {
             get
             {
-                switch (_mode & LexerMode.MaskLexMode)
+                return (_mode & LexerMode.MaskLexMode) switch
                 {
-                    case LexerMode.XmlNameQuote:
-                    case LexerMode.XmlNameDoubleQuote:
-                        return true;
-                    default:
-                        return false;
-                }
+                    LexerMode.XmlNameQuote or LexerMode.XmlNameDoubleQuote => true,
+                    _ => false,
+                };
             }
         }
 
@@ -3988,7 +3905,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlCDataSectionTextToken()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTrivia(ref leading);
@@ -4110,7 +4027,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlCommentTextToken()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTrivia(ref leading);
@@ -4240,7 +4157,7 @@ top:
         /// </summary>
         private SyntaxToken LexXmlProcessingInstructionTextToken()
         {
-            TokenInfo info = default(TokenInfo);
+            TokenInfo info = default;
 
             SyntaxListBuilder? leading = null;
             this.LexXmlDocCommentLeadingTrivia(ref leading);
@@ -4596,8 +4513,7 @@ top:
             int position = TextWindow.Position;
 
             // if we're peeking, then we don't want to change the position
-            SyntaxDiagnosticInfo? info;
-            var ch = ScanUnicodeEscape(peek: true, surrogateCharacter: out surrogateCharacter, info: out info);
+            var ch = ScanUnicodeEscape(peek: true, surrogateCharacter: out surrogateCharacter, info: out SyntaxDiagnosticInfo? info);
             Debug.Assert(info == null, "Never produce a diagnostic while peeking.");
             TextWindow.Reset(position);
             return ch;

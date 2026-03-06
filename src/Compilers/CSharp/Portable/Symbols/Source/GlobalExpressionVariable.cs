@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override OneOrMany<SyntaxList<AttributeListSyntax>> GetAttributeDeclarations() => OneOrMany<SyntaxList<AttributeListSyntax>>.Empty;
         protected override TypeSyntax TypeSyntax => (TypeSyntax)_typeSyntaxOpt?.GetSyntax();
-        protected override SyntaxTokenList ModifiersTokenList => default(SyntaxTokenList);
+        protected override SyntaxTokenList ModifiersTokenList => default;
         public override bool HasInitializer => false;
         protected override ConstantValue MakeConstantValue(
             HashSet<SourceFieldSymbolWithSyntaxReference> dependencies,
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // In the event that we race to set the type of a field, we should
             // always deduce the same type, unless the cached type is an error.
 
-            Debug.Assert((object)originalType == null ||
+            Debug.Assert(originalType is null ||
                 originalType.IsErrorType() ||
                 TypeSymbol.Equals(originalType, type.Type, TypeCompareKind.ConsiderEverything2));
 
@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 var nodeToBind = _nodeToBind.GetSyntax();
 
-                if ((object)_containingFieldOpt != null && nodeToBind.Kind() != SyntaxKind.VariableDeclarator)
+                if (_containingFieldOpt is not null && nodeToBind.Kind() != SyntaxKind.VariableDeclarator)
                 {
                     binder = binder.WithContainingMemberOrLambda(_containingFieldOpt).WithAdditionalFlags(BinderFlags.FieldInitializer);
                 }

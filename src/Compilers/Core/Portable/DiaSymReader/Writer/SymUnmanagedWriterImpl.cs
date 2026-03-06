@@ -169,7 +169,7 @@ namespace Microsoft.DiaSymReader
 
             _documentWriters.Add(documentWriter);
 
-            if (algorithmId != default(Guid) && checksum.Length > 0)
+            if (algorithmId != default && checksum.Length > 0)
             {
                 try
                 {

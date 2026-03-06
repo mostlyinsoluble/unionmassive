@@ -49,21 +49,15 @@ internal sealed class ObjectContentConverter : JsonConverter<object>
             var data = jsonDocument.RootElement;
             var type = data.GetProperty(TypeProperty).GetString() ?? throw new JsonException();
 
-            switch (type)
+            return type switch
             {
-                case nameof(ImageId):
-                    return ImageIdConverter.Instance.Read(ref clonedReader, typeof(ImageId), options);
-                case nameof(ImageElement):
-                    return ImageElementConverter.Instance.Read(ref clonedReader, typeof(ImageElement), options);
-                case nameof(ContainerElement):
-                    return ContainerElementConverter.Instance.Read(ref clonedReader, typeof(ContainerElementConverter), options);
-                case nameof(ClassifiedTextElement):
-                    return ClassifiedTextElementConverter.Instance.Read(ref clonedReader, typeof(ClassifiedTextElementConverter), options);
-                case nameof(ClassifiedTextRun):
-                    return ClassifiedTextRunConverter.Instance.Read(ref clonedReader, typeof(ClassifiedTextRunConverter), options);
-                default:
-                    return data;
-            }
+                nameof(ImageId) => ImageIdConverter.Instance.Read(ref clonedReader, typeof(ImageId), options),
+                nameof(ImageElement) => ImageElementConverter.Instance.Read(ref clonedReader, typeof(ImageElement), options),
+                nameof(ContainerElement) => ContainerElementConverter.Instance.Read(ref clonedReader, typeof(ContainerElementConverter), options),
+                nameof(ClassifiedTextElement) => ClassifiedTextElementConverter.Instance.Read(ref clonedReader, typeof(ClassifiedTextElementConverter), options),
+                nameof(ClassifiedTextRun) => ClassifiedTextRunConverter.Instance.Read(ref clonedReader, typeof(ClassifiedTextRunConverter), options),
+                _ => data,
+            };
         }
         else if (reader.TokenType == JsonTokenType.String)
         {

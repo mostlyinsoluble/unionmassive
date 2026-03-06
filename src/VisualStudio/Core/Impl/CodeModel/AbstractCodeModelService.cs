@@ -217,23 +217,15 @@ internal abstract partial class AbstractCodeModelService : ICodeModelService
                 return (EnvDTE.CodeElement)ExternalCodeNamespace.Create(state, projectId, (INamespaceSymbol)symbol);
             case SymbolKind.NamedType:
                 var namedType = (INamedTypeSymbol)symbol;
-                switch (namedType.TypeKind)
+                return namedType.TypeKind switch
                 {
-                    case TypeKind.Class:
-                    case TypeKind.Module:
-                        return (EnvDTE.CodeElement)ExternalCodeClass.Create(state, projectId, namedType);
-                    case TypeKind.Delegate:
-                        return (EnvDTE.CodeElement)ExternalCodeDelegate.Create(state, projectId, namedType);
-                    case TypeKind.Enum:
-                        return (EnvDTE.CodeElement)ExternalCodeEnum.Create(state, projectId, namedType);
-                    case TypeKind.Interface:
-                        return (EnvDTE.CodeElement)ExternalCodeInterface.Create(state, projectId, namedType);
-                    case TypeKind.Struct:
-                        return (EnvDTE.CodeElement)ExternalCodeStruct.Create(state, projectId, namedType);
-                    default:
-                        throw Exceptions.ThrowEFail();
-                }
-
+                    TypeKind.Class or TypeKind.Module => (EnvDTE.CodeElement)ExternalCodeClass.Create(state, projectId, namedType),
+                    TypeKind.Delegate => (EnvDTE.CodeElement)ExternalCodeDelegate.Create(state, projectId, namedType),
+                    TypeKind.Enum => (EnvDTE.CodeElement)ExternalCodeEnum.Create(state, projectId, namedType),
+                    TypeKind.Interface => (EnvDTE.CodeElement)ExternalCodeInterface.Create(state, projectId, namedType),
+                    TypeKind.Struct => (EnvDTE.CodeElement)ExternalCodeStruct.Create(state, projectId, namedType),
+                    _ => throw Exceptions.ThrowEFail(),
+                };
             case SymbolKind.Property:
                 var propertySymbol = (IPropertySymbol)symbol;
                 return propertySymbol.IsWithEvents

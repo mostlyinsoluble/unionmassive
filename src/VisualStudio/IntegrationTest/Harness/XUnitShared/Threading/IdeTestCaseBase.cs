@@ -103,42 +103,17 @@ namespace Xunit.Threading
 
         internal static bool IsInstalled(VisualStudioVersion visualStudioVersion)
         {
-            int majorVersion;
-
-            switch (visualStudioVersion)
+            var majorVersion = visualStudioVersion switch
             {
-                case VisualStudioVersion.VS2012:
-                    majorVersion = 11;
-                    break;
-
-                case VisualStudioVersion.VS2013:
-                    majorVersion = 12;
-                    break;
-
-                case VisualStudioVersion.VS2015:
-                    majorVersion = 14;
-                    break;
-
-                case VisualStudioVersion.VS2017:
-                    majorVersion = 15;
-                    break;
-
-                case VisualStudioVersion.VS2019:
-                    majorVersion = 16;
-                    break;
-
-                case VisualStudioVersion.VS2022:
-                    majorVersion = 17;
-                    break;
-
-                case VisualStudioVersion.VS18:
-                    majorVersion = 18;
-                    break;
-
-                default:
-                    throw new ArgumentException();
-            }
-
+                VisualStudioVersion.VS2012 => 11,
+                VisualStudioVersion.VS2013 => 12,
+                VisualStudioVersion.VS2015 => 14,
+                VisualStudioVersion.VS2017 => 15,
+                VisualStudioVersion.VS2019 => 16,
+                VisualStudioVersion.VS2022 => 17,
+                VisualStudioVersion.VS18 => 18,
+                _ => throw new ArgumentException(),
+            };
             var instances = VisualStudioInstanceFactory.EnumerateVisualStudioInstances();
             return instances.Any(i => i.Item2.Major == majorVersion);
         }

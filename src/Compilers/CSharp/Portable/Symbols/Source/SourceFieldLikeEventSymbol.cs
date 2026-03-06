@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             : base(containingType, declaratorSyntax, modifiers, isFieldLike: true, interfaceSpecifierSyntaxOpt: null,
                    nameTokenSyntax: declaratorSyntax.Identifier, diagnostics: diagnostics)
         {
-            Debug.Assert(declaratorSyntax.Parent is object);
+            Debug.Assert(declaratorSyntax.Parent is not null);
 
             _name = declaratorSyntax.Identifier.ValueText;
 
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (this.IsOverride)
             {
                 EventSymbol? overriddenEvent = this.OverriddenEvent;
-                if ((object?)overriddenEvent != null)
+                if (overriddenEvent is not null)
                 {
                     CopyEventCustomModifiers(overriddenEvent, ref _type, ContainingAssembly);
                 }
@@ -99,27 +99,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_FieldlikeEventsInRoStruct, this.GetFirstLocation());
             }
 
-            if (inInterfaceType)
-            {
-                if ((IsAbstract || IsVirtual) && IsStatic)
-                {
-                    if (!ContainingAssembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, this.GetFirstLocation());
-                    }
-                }
-                else if (this.IsExtern || this.IsStatic)
-                {
-                    if (!ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, this.GetFirstLocation());
-                    }
-                }
-                else if (!this.IsAbstract && !this.IsPartialDefinition)
-                {
-                    diagnostics.Add(ErrorCode.ERR_EventNeedsBothAccessors, this.GetFirstLocation(), this);
-                }
-            }
+            if (inInterfaceType
+                && (!IsAbstract && !IsVirtual || !IsStatic)
+                && !this.IsExtern && !this.IsStatic && !this.IsAbstract && !this.IsPartialDefinition)
+                diagnostics.Add(ErrorCode.ERR_EventNeedsBothAccessors, this.GetFirstLocation(), this);
 
             if (this.IsPartialDefinition)
             {
@@ -211,7 +194,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void ForceComplete(SourceLocation? locationOpt, Predicate<Symbol>? filter, CancellationToken cancellationToken)
         {
-            if ((object?)this.AssociatedField != null)
+            if (this.AssociatedField is not null)
             {
                 this.AssociatedField.ForceComplete(locationOpt, filter, cancellationToken);
             }
@@ -240,8 +223,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     isExpressionBodied: false)
             {
                 Debug.Assert(ev.IsPartialDefinition);
-
-                CheckFeatureAvailabilityAndRuntimeSupport(ev.CSharpSyntaxNode, ev.Location, hasBody: false, diagnostics: diagnostics);
             }
 
             public override Accessibility DeclaredAccessibility => AssociatedEvent.DeclaredAccessibility;

@@ -89,35 +89,12 @@ internal sealed partial class CSharpCodeModelService : AbstractCodeModelService
 
     private static bool IsNameableNode(SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.RecordDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.DelegateDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.EnumMemberDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.NamespaceDeclaration:
-            case SyntaxKind.FileScopedNamespaceDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-                return true;
-
-            case SyntaxKind.VariableDeclarator:
-                // Could be a regular field or an event field.
-                return node.FirstAncestorOrSelf<BaseFieldDeclarationSyntax>() != null;
-
-            default:
-                return false;
-        }
+            SyntaxKind.ClassDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.DelegateDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.EnumDeclaration or SyntaxKind.EnumMemberDeclaration or SyntaxKind.EventDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.NamespaceDeclaration or SyntaxKind.FileScopedNamespaceDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration => true,
+            SyntaxKind.VariableDeclarator => node.FirstAncestorOrSelf<BaseFieldDeclarationSyntax>() != null,// Could be a regular field or an event field.
+            _ => false,
+        };
     }
 
     public override EnvDTE.vsCMElement GetElementKind(SyntaxNode node)
@@ -1477,16 +1454,11 @@ internal sealed partial class CSharpCodeModelService : AbstractCodeModelService
 
     public override bool IsAccessorNode(SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-            case SyntaxKind.AddAccessorDeclaration:
-            case SyntaxKind.RemoveAccessorDeclaration:
-                return true;
-        }
-
-        return false;
+            SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration or SyntaxKind.AddAccessorDeclaration or SyntaxKind.RemoveAccessorDeclaration => true,
+            _ => false,
+        };
     }
 
     public override MethodKind GetAccessorKind(SyntaxNode node)
@@ -2186,34 +2158,16 @@ internal sealed partial class CSharpCodeModelService : AbstractCodeModelService
 
     public override EnvDTE.vsCMFunction GetFunctionKind(IMethodSymbol symbol)
     {
-        switch (symbol.MethodKind)
+        return symbol.MethodKind switch
         {
-            case MethodKind.Ordinary:
-            case MethodKind.ExplicitInterfaceImplementation:
-                return EnvDTE.vsCMFunction.vsCMFunctionFunction;
-
-            case MethodKind.Constructor:
-            case MethodKind.StaticConstructor:
-                return EnvDTE.vsCMFunction.vsCMFunctionConstructor;
-
-            case MethodKind.Destructor:
-                return EnvDTE.vsCMFunction.vsCMFunctionDestructor;
-
-            case MethodKind.UserDefinedOperator:
-            case MethodKind.Conversion:
-                return EnvDTE.vsCMFunction.vsCMFunctionOperator;
-
-            case MethodKind.PropertyGet:
-            case MethodKind.EventRemove:
-                return EnvDTE.vsCMFunction.vsCMFunctionPropertyGet;
-
-            case MethodKind.PropertySet:
-            case MethodKind.EventAdd:
-                return EnvDTE.vsCMFunction.vsCMFunctionPropertySet;
-
-            default:
-                throw Exceptions.ThrowEUnexpected();
-        }
+            MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation => EnvDTE.vsCMFunction.vsCMFunctionFunction,
+            MethodKind.Constructor or MethodKind.StaticConstructor => EnvDTE.vsCMFunction.vsCMFunctionConstructor,
+            MethodKind.Destructor => EnvDTE.vsCMFunction.vsCMFunctionDestructor,
+            MethodKind.UserDefinedOperator or MethodKind.Conversion => EnvDTE.vsCMFunction.vsCMFunctionOperator,
+            MethodKind.PropertyGet or MethodKind.EventRemove => EnvDTE.vsCMFunction.vsCMFunctionPropertyGet,
+            MethodKind.PropertySet or MethodKind.EventAdd => EnvDTE.vsCMFunction.vsCMFunctionPropertySet,
+            _ => throw Exceptions.ThrowEUnexpected(),
+        };
     }
 
     public override EnvDTE80.vsCMInheritanceKind GetInheritanceKind(SyntaxNode typeNode, INamedTypeSymbol typeSymbol)
@@ -2994,17 +2948,11 @@ internal sealed partial class CSharpCodeModelService : AbstractCodeModelService
                 return Accessibility.Private;
 
             case SymbolKind.NamedType:
-                switch (destination)
+                return destination switch
                 {
-                    case CodeGenerationDestination.ClassType:
-                    case CodeGenerationDestination.EnumType:
-                    case CodeGenerationDestination.InterfaceType:
-                    case CodeGenerationDestination.StructType:
-                        return Accessibility.Private;
-                    default:
-                        return Accessibility.Internal;
-                }
-
+                    CodeGenerationDestination.ClassType or CodeGenerationDestination.EnumType or CodeGenerationDestination.InterfaceType or CodeGenerationDestination.StructType => Accessibility.Private,
+                    _ => Accessibility.Internal,
+                };
             default:
                 Debug.Fail("Invalid symbol kind: " + targetSymbolKind);
                 throw Exceptions.ThrowEFail();
@@ -3491,31 +3439,11 @@ internal sealed partial class CSharpCodeModelService : AbstractCodeModelService
 
     protected override bool IsCodeModelNode(SyntaxNode node)
     {
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.CompilationUnit:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.DelegateDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.EnumMemberDeclaration:
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.NamespaceDeclaration:
-            case SyntaxKind.FileScopedNamespaceDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.UsingDirective:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.ClassDeclaration or SyntaxKind.CompilationUnit or SyntaxKind.ConstructorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.DelegateDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.EnumDeclaration or SyntaxKind.EnumMemberDeclaration or SyntaxKind.FieldDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.NamespaceDeclaration or SyntaxKind.FileScopedNamespaceDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.UsingDirective => true,
+            _ => false,
+        };
     }
 
     public override bool IsNamespace(SyntaxNode node)

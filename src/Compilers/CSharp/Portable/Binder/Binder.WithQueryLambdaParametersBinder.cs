@@ -39,8 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(!qv.IsTransparent);
 
                 BoundExpression translation;
-                ImmutableArray<string> path;
-                if (_rangeVariableMap.TryGetValue(qv, out path))
+                if (_rangeVariableMap.TryGetValue(qv, out ImmutableArray<string> path))
                 {
                     if (path.IsEmpty)
                     {
@@ -72,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             private BoundExpression SelectField(SimpleNameSyntax node, BoundExpression receiver, string name, BindingDiagnosticBag diagnostics)
             {
                 var receiverType = receiver.Type as NamedTypeSymbol;
-                if ((object)receiverType == null || !receiverType.IsAnonymousType)
+                if (receiverType is null || !receiverType.IsAnonymousType)
                 {
                     // We only construct transparent query variables using anonymous types, so if we're trying to navigate through
                     // some other type, we must have some query API where the types don't match up as expected.
@@ -96,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 LookupMembersWithFallback(lookupResult, receiver.Type, name, 0, ref useSiteInfo, basesBeingResolved: null, options: options);
                 diagnostics.Add(node, useSiteInfo);
 
-                var result = BindMemberOfType(node, node, name, 0, invoked: false, indexed: false, receiver, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), lookupResult, BoundMethodGroupFlags.None, diagnostics);
+                var result = BindMemberOfType(node, node, name, 0, invoked: false, indexed: false, receiver, default, default, lookupResult, BoundMethodGroupFlags.None, diagnostics);
                 lookupResult.Free();
                 return result;
             }

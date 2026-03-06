@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
                 elem.Add(new XAttribute("Of", typeParams));
             }
 
-            if ((object)t.BaseType() != null)
+            if (t.BaseType() is not null)
             {
                 elem.Add(new XAttribute("base", t.BaseType().ToTestDisplayString()));
             }
@@ -108,9 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 
                 var actualPermissionSetBytes = metadataReader.GetBlobBytes(actual.PermissionSet);
                 var actualPermissionSet = new string(actualPermissionSetBytes.Select(b => (char)b).ToArray());
-                string actualParentName;
-                SymbolKind actualParentKind;
-                GetAttributeParentNameAndKind(metadataReader, actual.Parent, out actualParentName, out actualParentKind);
+                GetAttributeParentNameAndKind(metadataReader, actual.Parent, out string actualParentName, out SymbolKind actualParentKind);
 
                 actualEntries.Add(new DeclSecurityEntry()
                 {

@@ -1842,10 +1842,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
             Dim yieldKeyword As KeywordSyntax = Nothing
 
             TryIdentifierAsContextualKeyword(CurrentToken, yieldKeyword)
-
             Debug.Assert(yieldKeyword IsNot Nothing AndAlso yieldKeyword.Kind = SyntaxKind.YieldKeyword)
-
-            yieldKeyword = CheckFeatureAvailability(Feature.Iterators, yieldKeyword)
             GetNextToken()
 
             Dim expression As ExpressionSyntax = ParseExpressionCore()

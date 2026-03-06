@@ -58,13 +58,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </returns>
         private static ThreeState GetObsoleteContextState(Symbol symbol, bool forceComplete, Func<Symbol, ThreeState> getStateFromSymbol)
         {
-            while ((object)symbol != null)
+            while (symbol is not null)
             {
                 if (symbol.Kind == SymbolKind.Field)
                 {
                     // If this is the backing field of an event, look at the event instead.
                     var associatedSymbol = ((FieldSymbol)symbol).AssociatedSymbol;
-                    if ((object)associatedSymbol != null)
+                    if (associatedSymbol is not null)
                     {
                         symbol = associatedSymbol;
                     }
@@ -129,19 +129,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static ObsoleteDiagnosticKind getDiagnosticKind(Symbol containingMember, bool forceComplete, Func<Symbol, ThreeState> getStateFromSymbol)
             {
-                switch (GetObsoleteContextState(containingMember, forceComplete, getStateFromSymbol))
+                return GetObsoleteContextState(containingMember, forceComplete, getStateFromSymbol) switch
                 {
-                    case ThreeState.False:
-                        return ObsoleteDiagnosticKind.Diagnostic;
-                    case ThreeState.True:
-                        // If we are in a context that is already experimental/obsolete, there is no point reporting
-                        // more experimental/obsolete diagnostics.
-                        return ObsoleteDiagnosticKind.Suppressed;
-                    default:
-                        // If the context is unknown, then store the symbol so that we can do this check at a
-                        // later stage
-                        return ObsoleteDiagnosticKind.LazyPotentiallySuppressed;
-                }
+                    ThreeState.False => ObsoleteDiagnosticKind.Diagnostic,
+                    ThreeState.True => ObsoleteDiagnosticKind.Suppressed,// If we are in a context that is already experimental/obsolete, there is no point reporting
+                                                                         // more experimental/obsolete diagnostics.
+                    _ => ObsoleteDiagnosticKind.LazyPotentiallySuppressed,// If the context is unknown, then store the symbol so that we can do this check at a
+                                                                          // later stage
+                };
             }
         }
 

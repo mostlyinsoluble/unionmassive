@@ -36,20 +36,13 @@ namespace Microsoft.CodeAnalysis
 
         public override bool Equals(object? obj)
         {
-            switch (obj)
+            return obj switch
             {
-                case ExtendedSpecialType other:
-                    return this == other;
-
-                case SpecialType other:
-                    return this == other;
-
-                case InternalSpecialType other:
-                    return this == other;
-
-                default:
-                    return false;
-            }
+                ExtendedSpecialType other => this == other,
+                SpecialType other => this == other,
+                InternalSpecialType other => this == other,
+                _ => false,
+            };
         }
 
         public override int GetHashCode()

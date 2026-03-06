@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             OptimizationLevel optimizations,
             bool emittingPdb)
         {
-            Debug.Assert((object)method != null);
+            Debug.Assert(method is not null);
             Debug.Assert(boundBody != null);
             Debug.Assert(builder != null);
             Debug.Assert(moduleBuilder != null);
@@ -417,7 +417,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         private void EmitSequencePointStatement(BoundSequencePointWithSpan node)
         {
             TextSpan span = node.Span;
-            if (span != default(TextSpan) && _emitPdbSequencePoints)
+            if (span != default && _emitPdbSequencePoints)
             {
                 this.EmitSequencePoint(node.SyntaxTree, span);
             }
@@ -429,7 +429,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 instructionsEmitted = this.EmitStatementAndCountInstructions(statement);
             }
 
-            if (instructionsEmitted == 0 && span != default(TextSpan) && _ilEmitStyle == ILEmitStyle.Debug)
+            if (instructionsEmitted == 0 && span != default && _ilEmitStyle == ILEmitStyle.Debug)
             {
                 // if there was no code emitted, then emit nop 
                 // otherwise this point could get associated with some random statement, possibly in a wrong scope

@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics)
         {
             Debug.Assert(containingSymbol != null);
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(containingType is not null);
             Debug.Assert(statement != null);
             Debug.Assert(compilationState != null);
             Debug.Assert(diagnostics != null);
@@ -362,10 +362,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     pendingValue = _F.Local(frame.returnValue);
                 }
 
-                SynthesizedLocal returnValue;
                 BoundStatement unpendReturn;
 
-                var returnLabel = parent.ProxyReturnIfNeeded(_F.CurrentFunction, pendingValue, out returnValue);
+                var returnLabel = parent.ProxyReturnIfNeeded(_F.CurrentFunction, pendingValue, out SynthesizedLocal returnValue);
 
                 if (returnLabel == null)
                 {
@@ -411,11 +410,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitReturnStatement(BoundReturnStatement node)
         {
-            SynthesizedLocal returnValue;
             var returnLabel = _currentAwaitFinallyFrame.ProxyReturnIfNeeded(
                 _F.CurrentFunction,
                 node.ExpressionOpt,
-                out returnValue);
+                out SynthesizedLocal returnValue);
 
             if (returnLabel == null)
             {
@@ -754,8 +752,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitLocal(BoundLocal node)
         {
             var catchFrame = _currentAwaitCatchFrame;
-            LocalSymbol hoistedLocal;
-            if (catchFrame == null || !catchFrame.TryGetHoistedLocal(node.LocalSymbol, out hoistedLocal))
+            if (catchFrame == null || !catchFrame.TryGetHoistedLocal(node.LocalSymbol, out LocalSymbol hoistedLocal))
             {
                 return base.VisitLocal(node);
             }
@@ -1056,8 +1053,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     this.proxiedLabels = proxiedLabels = new List<LabelSymbol>();
                 }
 
-                LabelSymbol proxy;
-                if (!proxyLabels.TryGetValue(label, out proxy))
+                if (!proxyLabels.TryGetValue(label, out LabelSymbol proxy))
                 {
                     proxy = new GeneratedLabelSymbol("proxy" + label.Name);
                     proxyLabels.Add(label, proxy);

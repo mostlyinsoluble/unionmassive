@@ -151,7 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (IsTupleType)
             {
                 var result = MakeSynthesizedTupleMembers(ImmutableArray<Symbol>.Empty);
-                RoslynDebug.Assert(result is object);
+                RoslynDebug.Assert(result is not null);
                 return result.ToImmutableAndFree();
             }
 
@@ -323,7 +323,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     ImmutableInterlocked.InterlockedCompareExchange(ref _lazyTypeParameters,
                         GetTypeParameters(),
-                        default(ImmutableArray<TypeParameterSymbol>));
+                        default);
                 }
                 return _lazyTypeParameters;
             }
@@ -496,7 +496,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override TypeLayout Layout
         {
-            get { return default(TypeLayout); }
+            get { return default; }
         }
 
         internal override CharSet MarshallingCharSet

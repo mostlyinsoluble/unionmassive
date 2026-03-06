@@ -264,9 +264,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 BindingDiagnosticBag diagnostics)
                 : base(delegateType, returnType, syntax, MethodKind.DelegateInvoke, refKind, DeclarationModifiers.Virtual | DeclarationModifiers.Public)
             {
-                SyntaxToken arglistToken;
                 var parameters = ParameterHelpers.MakeParameters(
-                    binder, this, syntax.ParameterList, out arglistToken,
+                    binder, this, syntax.ParameterList, out SyntaxToken arglistToken,
                     allowRefOrOut: true,
                     allowThis: false,
                     addRefReadOnlyModifier: true,
@@ -327,7 +326,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 ParameterHelpers.EnsureRefKindAttributesExist(compilation, Parameters, diagnostics, modifyCompilation: true);
                 ParameterHelpers.EnsureParamCollectionAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
 
-                if (compilation.ShouldEmitNativeIntegerAttributes(ReturnType))
+                if (ReturnType.ContainsNativeIntegerWrapperType())
                 {
                     compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
                 }

@@ -218,9 +218,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // lambdas in field/property initializers:
-            int syntaxOffset;
             var containingType = (SourceNamedTypeSymbol)this.ContainingType;
-            if (containingType.TryCalculateSyntaxOffsetOfPositionInInitializer(position, tree, this.IsStatic, ctorInitializerLength, out syntaxOffset))
+            if (containingType.TryCalculateSyntaxOffsetOfPositionInInitializer(position, tree, this.IsStatic, ctorInitializerLength, out int syntaxOffset))
             {
                 return syntaxOffset;
             }

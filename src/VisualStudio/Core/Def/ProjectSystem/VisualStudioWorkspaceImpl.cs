@@ -357,33 +357,11 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
 
     public override bool CanApplyChange(ApplyChangesKind feature)
     {
-        switch (feature)
+        return feature switch
         {
-            case ApplyChangesKind.AddDocument:
-            case ApplyChangesKind.RemoveDocument:
-            case ApplyChangesKind.ChangeDocument:
-            case ApplyChangesKind.AddMetadataReference:
-            case ApplyChangesKind.RemoveMetadataReference:
-            case ApplyChangesKind.AddProjectReference:
-            case ApplyChangesKind.RemoveProjectReference:
-            case ApplyChangesKind.AddAnalyzerReference:
-            case ApplyChangesKind.RemoveAnalyzerReference:
-            case ApplyChangesKind.AddAdditionalDocument:
-            case ApplyChangesKind.RemoveAdditionalDocument:
-            case ApplyChangesKind.ChangeAdditionalDocument:
-            case ApplyChangesKind.ChangeCompilationOptions:
-            case ApplyChangesKind.ChangeParseOptions:
-            case ApplyChangesKind.ChangeDocumentInfo:
-            case ApplyChangesKind.AddAnalyzerConfigDocument:
-            case ApplyChangesKind.RemoveAnalyzerConfigDocument:
-            case ApplyChangesKind.ChangeAnalyzerConfigDocument:
-            case ApplyChangesKind.AddSolutionAnalyzerReference:
-            case ApplyChangesKind.RemoveSolutionAnalyzerReference:
-                return true;
-
-            default:
-                return false;
-        }
+            ApplyChangesKind.AddDocument or ApplyChangesKind.RemoveDocument or ApplyChangesKind.ChangeDocument or ApplyChangesKind.AddMetadataReference or ApplyChangesKind.RemoveMetadataReference or ApplyChangesKind.AddProjectReference or ApplyChangesKind.RemoveProjectReference or ApplyChangesKind.AddAnalyzerReference or ApplyChangesKind.RemoveAnalyzerReference or ApplyChangesKind.AddAdditionalDocument or ApplyChangesKind.RemoveAdditionalDocument or ApplyChangesKind.ChangeAdditionalDocument or ApplyChangesKind.ChangeCompilationOptions or ApplyChangesKind.ChangeParseOptions or ApplyChangesKind.ChangeDocumentInfo or ApplyChangesKind.AddAnalyzerConfigDocument or ApplyChangesKind.RemoveAnalyzerConfigDocument or ApplyChangesKind.ChangeAnalyzerConfigDocument or ApplyChangesKind.AddSolutionAnalyzerReference or ApplyChangesKind.RemoveSolutionAnalyzerReference => true,
+            _ => false,
+        };
     }
 
     private bool TryGetProjectData(ProjectId projectId, [NotNullWhen(returnValue: true)] out IVsHierarchy? hierarchy, [NotNullWhen(returnValue: true)] out EnvDTE.Project? project)

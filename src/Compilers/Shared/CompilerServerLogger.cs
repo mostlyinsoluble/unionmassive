@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         private Stream? _loggingStream;
         private readonly string _identifier;
 
-        public bool IsLogging => _loggingStream is object;
+        public bool IsLogging => _loggingStream is not null;
 
         /// <summary>
         /// Static class initializer that initializes logging.
@@ -148,7 +148,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
 
         public void Log(string message)
         {
-            if (_loggingStream is object)
+            if (_loggingStream is not null)
             {
                 var threadId = Environment.CurrentManagedThreadId;
                 var prefix = $"[{DateTimeOffset.Now:o}] ID={_identifier} TID={threadId}: ";

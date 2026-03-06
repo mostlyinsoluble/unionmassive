@@ -80,7 +80,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         /// <param name="partialName">Optional partial name.</param>
         /// <param name="architectureFilter">Optional architecture filter.</param>
-        public override IEnumerable<AssemblyIdentity> GetAssemblyIdentities(AssemblyName partialName, ImmutableArray<ProcessorArchitecture> architectureFilter = default(ImmutableArray<ProcessorArchitecture>))
+        public override IEnumerable<AssemblyIdentity> GetAssemblyIdentities(AssemblyName partialName, ImmutableArray<ProcessorArchitecture> architectureFilter = default)
         {
             return GetAssemblyIdentities(FusionAssemblyIdentity.ToAssemblyNameObject(partialName), architectureFilter);
         }
@@ -91,7 +91,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         /// <param name="partialName">The optional partial name.</param>
         /// <param name="architectureFilter">The optional architecture filter.</param>
-        public override IEnumerable<AssemblyIdentity> GetAssemblyIdentities(string partialName = null, ImmutableArray<ProcessorArchitecture> architectureFilter = default(ImmutableArray<ProcessorArchitecture>))
+        public override IEnumerable<AssemblyIdentity> GetAssemblyIdentities(string partialName = null, ImmutableArray<ProcessorArchitecture> architectureFilter = default)
         {
             FusionAssemblyIdentity.IAssemblyName nameObj;
             if (partialName != null)
@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         /// <param name="architectureFilter">Optional architecture filter.</param>
         /// <returns>Unique simple names of GAC assemblies.</returns>
-        public override IEnumerable<string> GetAssemblySimpleNames(ImmutableArray<ProcessorArchitecture> architectureFilter = default(ImmutableArray<ProcessorArchitecture>))
+        public override IEnumerable<string> GetAssemblySimpleNames(ImmutableArray<ProcessorArchitecture> architectureFilter = default)
         {
             var q = from nameObject in GetAssemblyObjects(partialNameFilter: null, architectureFilter: architectureFilter)
                     select FusionAssemblyIdentity.GetName(nameObject);
@@ -138,10 +138,9 @@ namespace Microsoft.CodeAnalysis
             FusionAssemblyIdentity.IAssemblyName partialNameFilter,
             ImmutableArray<ProcessorArchitecture> architectureFilter)
         {
-            IAssemblyEnum enumerator;
             FusionAssemblyIdentity.IApplicationContext applicationContext = null;
 
-            int hr = CreateAssemblyEnum(out enumerator, applicationContext, partialNameFilter, ASM_CACHE.GAC, IntPtr.Zero);
+            int hr = CreateAssemblyEnum(out IAssemblyEnum enumerator, applicationContext, partialNameFilter, ASM_CACHE.GAC, IntPtr.Zero);
             if (hr == S_FALSE)
             {
                 // no assembly found
@@ -172,9 +171,8 @@ namespace Microsoft.CodeAnalysis
 
             while (true)
             {
-                FusionAssemblyIdentity.IAssemblyName nameObject;
 
-                hr = enumerator.GetNextAssembly(out applicationContext, out nameObject, 0);
+                hr = enumerator.GetNextAssembly(out applicationContext, out FusionAssemblyIdentity.IAssemblyName nameObject, 0);
                 if (hr != 0)
                 {
                     if (hr < 0)
@@ -243,8 +241,7 @@ namespace Microsoft.CodeAnalysis
                     cchBuf = MAX_PATH
                 };
 
-                IAssemblyCache assemblyCacheObject;
-                CreateAssemblyCache(out assemblyCacheObject, 0);
+                CreateAssemblyCache(out IAssemblyCache assemblyCacheObject, 0);
                 assemblyCacheObject.QueryAssemblyInfo(0, fullName, ref info);
                 Debug.Assert(info.pszCurrentAssemblyPathBuf != null);
                 Debug.Assert(info.pszCurrentAssemblyPathBuf[info.cchBuf - 1] == '\0');

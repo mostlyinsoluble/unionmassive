@@ -1516,7 +1516,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             foreach (var subpat in operation.PropertySubpatterns)
             {
-                Assert.True(subpat is IPropertySubpatternOperation);
+                Assert.True(subpat is not null);
             }
 
             IEnumerable<IOperation> children = operation.DeconstructionSubpatterns.Cast<IOperation>();

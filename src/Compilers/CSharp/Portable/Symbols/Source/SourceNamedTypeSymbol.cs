@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 var baseBinder = this.DeclaringCompilation.GetBinder(bases);
                 baseBinder = baseBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
 
-                if ((object)backupLocation == null)
+                if (backupLocation is null)
                 {
                     backupLocation = inheritedTypeDecls[0].Type.GetLocation();
                 }
@@ -112,24 +112,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static SyntaxToken GetName(CSharpSyntaxNode node)
         {
-            switch (node.Kind())
+            return node.Kind() switch
             {
-                case SyntaxKind.EnumDeclaration:
-                    return ((EnumDeclarationSyntax)node).Identifier;
-                case SyntaxKind.DelegateDeclaration:
-                    return ((DelegateDeclarationSyntax)node).Identifier;
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.InterfaceDeclaration:
-                case SyntaxKind.StructDeclaration:
-                case SyntaxKind.RecordDeclaration:
-                case SyntaxKind.RecordStructDeclaration:
-                    return ((BaseTypeDeclarationSyntax)node).Identifier;
-                default:
-                    return default(SyntaxToken);
-            }
+                SyntaxKind.EnumDeclaration => ((EnumDeclarationSyntax)node).Identifier,
+                SyntaxKind.DelegateDeclaration => ((DelegateDeclarationSyntax)node).Identifier,
+                SyntaxKind.ClassDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration => ((BaseTypeDeclarationSyntax)node).Identifier,
+                _ => default,
+            };
         }
 
-        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             ref var lazyDocComment = ref expandIncludes ? ref _lazyExpandedDocComment : ref _lazyDocComment;
             return SourceDocumentationCommentUtils.GetAndCacheDocumentationComment(this, expandIncludes, ref lazyDocComment);
@@ -155,32 +147,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 var typeDecl = (CSharpSyntaxNode)syntaxRef.GetSyntax();
                 var syntaxTree = syntaxRef.SyntaxTree;
-
-                TypeParameterListSyntax tpl;
                 SyntaxKind typeKind = typeDecl.Kind();
-                switch (typeKind)
+                TypeParameterListSyntax tpl = typeKind switch
                 {
-                    case SyntaxKind.ClassDeclaration:
-                    case SyntaxKind.StructDeclaration:
-                    case SyntaxKind.InterfaceDeclaration:
-                    case SyntaxKind.RecordDeclaration:
-                    case SyntaxKind.RecordStructDeclaration:
-                    case SyntaxKind.ExtensionBlockDeclaration:
-                        tpl = ((TypeDeclarationSyntax)typeDecl).TypeParameterList;
-                        break;
-
-                    case SyntaxKind.DelegateDeclaration:
-                        tpl = ((DelegateDeclarationSyntax)typeDecl).TypeParameterList;
-                        break;
-
-                    case SyntaxKind.EnumDeclaration:
-                    default:
-                        // there is no such thing as a generic enum, so code should never reach here.
-                        throw ExceptionUtilities.UnexpectedValue(typeDecl.Kind());
-                }
-
-                MessageID.IDS_FeatureGenerics.CheckFeatureAvailability(diagnostics, tpl.LessThanToken);
-
+                    SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.ExtensionBlockDeclaration => ((TypeDeclarationSyntax)typeDecl).TypeParameterList,
+                    SyntaxKind.DelegateDeclaration => ((DelegateDeclarationSyntax)typeDecl).TypeParameterList,
+                    _ => throw ExceptionUtilities.UnexpectedValue(typeDecl.Kind()),// there is no such thing as a generic enum, so code should never reach here.
+                };
                 bool isInterfaceOrDelegate = typeKind == SyntaxKind.InterfaceDeclaration || typeKind == SyntaxKind.DelegateDeclaration;
                 var parameterBuilder = new List<TypeParameterBuilder>();
                 parameterBuilders1.Add(parameterBuilder);
@@ -192,10 +165,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         if (!isInterfaceOrDelegate)
                         {
                             diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, tp.VarianceKeyword.GetLocation());
-                        }
-                        else
-                        {
-                            MessageID.IDS_FeatureTypeVariance.CheckFeatureAvailability(diagnostics, tp.VarianceKeyword);
                         }
                     }
 
@@ -222,7 +191,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         if (!ReferenceEquals(ContainingType, null))
                         {
                             var tpEnclosing = ContainingType.FindEnclosingTypeParameter(name);
-                            if ((object)tpEnclosing != null)
+                            if (tpEnclosing is not null)
                             {
                                 // Type parameter '{0}' has the same name as the type parameter from outer type '{1}'
                                 diagnostics.Add(ErrorCode.WRN_TypeParameterSameAsOuterTypeParameter, location, name, tpEnclosing.ContainingType);
@@ -586,9 +555,8 @@ next:;
                 foreach (int index1 in originalConstraintTypesMap.Values)
                 {
                     TypeWithAnnotations constraintType1 = mergedConstraintTypes?[index1] ?? originalConstraintTypes[index1];
-                    int index2;
 
-                    if (!clauseConstraintTypesMap.TryGetValue(constraintType1, out index2))
+                    if (!clauseConstraintTypesMap.TryGetValue(constraintType1, out int index2))
                     {
                         // No matching type
                         result = false;
@@ -813,22 +781,13 @@ next:;
         {
             get
             {
-                switch (TypeKind)
+                return TypeKind switch
                 {
-                    case TypeKind.Delegate:
-                        return AttributeLocation.Type | AttributeLocation.Return;
-
-                    case TypeKind.Enum:
-                    case TypeKind.Interface:
-                        return AttributeLocation.Type;
-
-                    case TypeKind.Struct:
-                    case TypeKind.Class:
-                        return AttributeLocation.Type | (HasPrimaryConstructor ? AttributeLocation.Method : 0);
-
-                    default:
-                        return AttributeLocation.None;
-                }
+                    TypeKind.Delegate => AttributeLocation.Type | AttributeLocation.Return,
+                    TypeKind.Enum or TypeKind.Interface => AttributeLocation.Type,
+                    TypeKind.Struct or TypeKind.Class => AttributeLocation.Type | (HasPrimaryConstructor ? AttributeLocation.Method : 0),
+                    _ => AttributeLocation.None,
+                };
             }
         }
 
@@ -952,8 +911,7 @@ next:;
                 return (null, null);
             }
 
-            ObsoleteAttributeData? obsoleteData;
-            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out attributeData, out boundAttribute, out obsoleteData))
+            if (EarlyDecodeDeprecatedOrExperimentalOrObsoleteAttribute(ref arguments, out attributeData, out boundAttribute, out ObsoleteAttributeData? obsoleteData))
             {
                 if (obsoleteData != null)
                 {
@@ -1062,7 +1020,7 @@ next:;
                 return data.AttributeUsageInfo;
             }
 
-            return ((object)this.BaseTypeNoUseSiteDiagnostics != null) ? this.BaseTypeNoUseSiteDiagnostics.GetAttributeUsageInfo() : AttributeUsageInfo.Default;
+            return (this.BaseTypeNoUseSiteDiagnostics is not null) ? this.BaseTypeNoUseSiteDiagnostics.GetAttributeUsageInfo() : AttributeUsageInfo.Default;
         }
 
         /// <summary>
@@ -1345,13 +1303,13 @@ next:;
             var attribute = arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
 
-            if (this.IsInterfaceType() && (!arguments.HasDecodedData || (object)((TypeWellKnownAttributeData)arguments.DecodedData).ComImportCoClass == null))
+            if (this.IsInterfaceType() && (!arguments.HasDecodedData || ((TypeWellKnownAttributeData)arguments.DecodedData).ComImportCoClass is null))
             {
                 TypedConstant argument = attribute.CommonConstructorArguments[0];
                 Debug.Assert(argument.Kind == TypedConstantKind.Type);
 
                 var coClassType = argument.ValueInternal as NamedTypeSymbol;
-                if ((object)coClassType != null && coClassType.TypeKind == TypeKind.Class)
+                if (coClassType is not null && coClassType.TypeKind == TypeKind.Class)
                 {
                     arguments.GetOrCreateData<TypeWellKnownAttributeData>().ComImportCoClass = coClassType;
                 }
@@ -1536,7 +1494,7 @@ next:;
                     return new TypeLayout(LayoutKind.Sequential, this.HasInstanceFields() ? 0 : 1, alignment: 0);
                 }
 
-                return default(TypeLayout);
+                return default;
             }
         }
 
@@ -1632,7 +1590,7 @@ next:;
                 if (this.TypeKind == TypeKind.Class)
                 {
                     var baseType = this.BaseTypeNoUseSiteDiagnostics;
-                    if ((object)baseType != null && baseType.SpecialType != SpecialType.System_Object)
+                    if (baseType is not null && baseType.SpecialType != SpecialType.System_Object)
                     {
                         // CS0424: '{0}': a class with the ComImport attribute cannot specify a base class
                         diagnostics.Add(ErrorCode.ERR_ComImportWithBase, this.GetFirstLocation(), this.Name);
@@ -1668,7 +1626,7 @@ next:;
                     }
                 }
             }
-            else if ((object)this.ComImportCoClass != null)
+            else if (this.ComImportCoClass is not null)
             {
                 Debug.Assert(boundAttributes.Any());
 
@@ -1817,22 +1775,10 @@ next:;
         internal override NamedTypeSymbol AsNativeInteger()
         {
             Debug.Assert(this.SpecialType == SpecialType.System_IntPtr || this.SpecialType == SpecialType.System_UIntPtr);
-            if (ContainingAssembly.RuntimeSupportsNumericIntPtr)
-            {
-                return this;
-            }
-
-            return ContainingAssembly.GetNativeIntegerType(this);
+            return this;
         }
 
         internal override NamedTypeSymbol NativeIntegerUnderlyingType => null;
-
-        internal override bool Equals(TypeSymbol t2, TypeCompareKind comparison)
-        {
-            return t2 is NativeIntegerTypeSymbol nativeInteger ?
-                nativeInteger.Equals(this, comparison) :
-                base.Equals(t2, comparison);
-        }
 
 #nullable enable
         internal bool IsSimpleProgram
@@ -1990,19 +1936,6 @@ next:;
                 else
                 {
                     diagnostics.Add(ErrorCode.ERR_InvalidInlineArrayFields, GetFirstLocation());
-                }
-
-                if (!ContainingAssembly.RuntimeSupportsInlineArrayTypes)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportInlineArrayTypes, GetFirstLocation());
-                }
-            }
-
-            if (TypeKind == TypeKind.Struct && HasExtendedLayoutAttribute)
-            {
-                if (!ContainingAssembly.RuntimeSupportsExtendedLayout)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportExtendedLayoutTypes, GetFirstLocation());
                 }
             }
 

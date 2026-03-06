@@ -360,12 +360,9 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
             Dim type = TryCast(namespaceOrType, TypeSymbol)
             If type IsNot Nothing Then
                 clauseDiagnostics.Clear()
-                type.CheckAllConstraints(
-                    compilation.LanguageVersion,
-                    location, clauseDiagnostics, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagnostics, compilation.Assembly))
                 diagnostics.AddRange(clauseDiagnostics.DiagnosticBag)
 
-                If VisualBasicCompilation.ReportUnusedImportsInTree(location.PossiblyEmbeddedOrMySourceTree) Then
+                If CodeAnalysis.Compilation.ReportUnusedImportsInTree(location.PossiblyEmbeddedOrMySourceTree) Then
                     If clauseDiagnostics.DependenciesBag.Count <> 0 Then
                         If Not dependencies.IsEmpty Then
                             clauseDiagnostics.AddDependencies(dependencies)

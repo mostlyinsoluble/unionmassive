@@ -29,9 +29,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
 
             MyBase.WriteParseOptionsCore(writer, parseOptions)
 
-            writer.Write("languageVersion", basicOptions.LanguageVersion)
-            writer.Write("specifiedLanguageVersion", basicOptions.SpecifiedLanguageVersion)
-
             writer.WriteKey("preprocessorSymbols")
             writer.WriteObjectStart()
             For Each pair In basicOptions.PreprocessorSymbols.OrderBy(Function(x, y) StringComparer.Ordinal.Compare(x.Key, y.Key))

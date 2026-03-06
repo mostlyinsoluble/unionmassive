@@ -50,8 +50,7 @@ namespace Microsoft.CodeAnalysis.Emit
 
         internal Cci.DebugSourceDocument? TryGetDebugDocumentForNormalizedPath(string normalizedPath)
         {
-            Cci.DebugSourceDocument? document;
-            _debugDocuments.TryGetValue(normalizedPath, out document);
+            _debugDocuments.TryGetValue(normalizedPath, out Cci.DebugSourceDocument? document);
             return document;
         }
 
@@ -68,8 +67,7 @@ namespace Microsoft.CodeAnalysis.Emit
             }
 
             var key = (path, basePath);
-            string? normalizedPath;
-            if (!_normalizedPathsCache.TryGetValue(key, out normalizedPath))
+            if (!_normalizedPathsCache.TryGetValue(key, out string? normalizedPath))
             {
                 normalizedPath = _resolver.NormalizePath(path, basePath) ?? path;
                 _normalizedPathsCache.TryAdd(key, normalizedPath);

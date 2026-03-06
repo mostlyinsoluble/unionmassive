@@ -213,13 +213,13 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
                 string[]? expectedSymbolCandidates,
                 CompilationUtils.SemanticInfoSummary semanticInfo)
             {
-                if (expectedSymbol is object)
+                if (expectedSymbol is not null)
                 {
                     Assert.Empty(semanticInfo.CandidateSymbols);
                     AssertEx.Equal(expectedSymbol, semanticInfo.Symbol.ToTestDisplayString(includeNonNullable: false));
                     Assert.Equal(CandidateReason.None, semanticInfo.CandidateReason);
                 }
-                else if (expectedSymbolCandidates is object)
+                else if (expectedSymbolCandidates is not null)
                 {
                     Assert.Null(semanticInfo.Symbol);
                     Assert.Equal(expectedReason, semanticInfo.CandidateReason);

@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Accessors are handled specially - see MakePropertyAccessorOverriddenOrHiddenMembers for details.
                 MethodSymbol accessor = member as MethodSymbol;
                 Symbol associatedPropertyOrEvent = accessor.AssociatedSymbol;
-                if ((object)associatedPropertyOrEvent != null)
+                if (associatedPropertyOrEvent is not null)
                 {
                     if (associatedPropertyOrEvent.Kind == SymbolKind.Property)
                     {
@@ -131,9 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return MakeInterfaceOverriddenOrHiddenMembers(member, memberIsFromSomeCompilation);
             }
 
-            ArrayBuilder<Symbol> hiddenBuilder;
-            ImmutableArray<Symbol> overriddenMembers;
-            FindOverriddenOrHiddenMembers(member, containingType, memberIsFromSomeCompilation, out hiddenBuilder, out overriddenMembers);
+            FindOverriddenOrHiddenMembers(member, containingType, memberIsFromSomeCompilation, out ArrayBuilder<Symbol> hiddenBuilder, out ImmutableArray<Symbol> overriddenMembers);
 
             ImmutableArray<Symbol> hiddenMembers = hiddenBuilder == null ? ImmutableArray<Symbol>.Empty : hiddenBuilder.ToImmutableAndFree();
             return OverriddenOrHiddenMembersResult.Create(overriddenMembers, hiddenMembers);
@@ -157,10 +155,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             };
 
             for (NamedTypeSymbol currType = containingType.BaseTypeNoUseSiteDiagnostics;
-                (object)currType != null && (object)bestMatch == null && hiddenBuilder == null;
+                currType is not null && bestMatch is null && hiddenBuilder == null;
                 currType = currType.BaseTypeNoUseSiteDiagnostics)
             {
-                bool unused;
                 FindOverriddenOrHiddenMembersInType(
                     member,
                     memberIsFromSomeCompilation,
@@ -168,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     knownOverriddenMember,
                     currType,
                     out bestMatch,
-                    out unused,
+                    out bool unused,
                     out hiddenBuilder);
             }
 
@@ -179,8 +176,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static Symbol FindFirstHiddenMemberIfAny(Symbol member, bool memberIsFromSomeCompilation)
         {
-            ArrayBuilder<Symbol> hiddenBuilder;
-            FindOverriddenOrHiddenMembers(member, member.ContainingType, memberIsFromSomeCompilation, out hiddenBuilder,
+            FindOverriddenOrHiddenMembers(member, member.ContainingType, memberIsFromSomeCompilation, out ArrayBuilder<Symbol> hiddenBuilder,
                 overriddenMembers: out _);
 
             Symbol result = hiddenBuilder?.FirstOrDefault();
@@ -241,7 +237,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private static OverriddenOrHiddenMembersResult MakePropertyAccessorOverriddenOrHiddenMembers(MethodSymbol accessor, PropertySymbol associatedProperty)
         {
             Debug.Assert(accessor.IsAccessor());
-            Debug.Assert((object)associatedProperty != null);
+            Debug.Assert(associatedProperty is not null);
 
             bool accessorIsGetter = accessor.MethodKind == MethodKind.PropertyGet;
 
@@ -258,7 +254,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // it overrides), then record the corresponding accessor (if any) as hidden.
                     PropertySymbol propertyHiddenByProperty = (PropertySymbol)hiddenByProperty;
                     MethodSymbol correspondingAccessor = accessorIsGetter ? propertyHiddenByProperty.GetMethod : propertyHiddenByProperty.SetMethod;
-                    if ((object)correspondingAccessor != null)
+                    if (correspondingAccessor is not null)
                     {
                         AccessOrGetInstance(ref hiddenBuilder).Add(correspondingAccessor);
                     }
@@ -272,7 +268,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 MethodSymbol correspondingAccessor = accessorIsGetter ?
                     propertyOverriddenByProperty.GetOwnOrInheritedGetMethod() :
                     propertyOverriddenByProperty.GetOwnOrInheritedSetMethod();
-                if ((object)correspondingAccessor != null)
+                if (correspondingAccessor is not null)
                 {
                     overriddenAccessor = correspondingAccessor;
                 }
@@ -281,7 +277,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // There's a detailed comment in MakeOverriddenOrHiddenMembersWorker(Symbol) concerning why this predicate is appropriate.
             bool accessorIsFromSomeCompilation = accessor.Dangerous_IsFromSomeCompilation;
             ImmutableArray<Symbol> overriddenAccessors = ImmutableArray<Symbol>.Empty;
-            if ((object)overriddenAccessor != null && IsOverriddenSymbolAccessible(overriddenAccessor, accessor.ContainingType) &&
+            if (overriddenAccessor is not null && IsOverriddenSymbolAccessible(overriddenAccessor, accessor.ContainingType) &&
                 isAccessorOverride(accessor, overriddenAccessor))
             {
                 FindRelatedMembers(
@@ -333,7 +329,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private static OverriddenOrHiddenMembersResult MakeEventAccessorOverriddenOrHiddenMembers(MethodSymbol accessor, EventSymbol associatedEvent)
         {
             Debug.Assert(accessor.IsAccessor());
-            Debug.Assert((object)associatedEvent != null);
+            Debug.Assert(associatedEvent is not null);
 
             bool accessorIsAdder = accessor.MethodKind == MethodKind.EventAdd;
 
@@ -350,7 +346,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // it overrides), then record the corresponding accessor (if any) as hidden.
                     EventSymbol eventHiddenByEvent = (EventSymbol)hiddenByEvent;
                     MethodSymbol correspondingAccessor = accessorIsAdder ? eventHiddenByEvent.AddMethod : eventHiddenByEvent.RemoveMethod;
-                    if ((object)correspondingAccessor != null)
+                    if (correspondingAccessor is not null)
                     {
                         AccessOrGetInstance(ref hiddenBuilder).Add(correspondingAccessor);
                     }
@@ -362,7 +358,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // CONSIDER: Do something more sensible if there are multiple overridden members?  Already an error case.
                 EventSymbol eventOverriddenByEvent = (EventSymbol)hiddenOrOverriddenByEvent.OverriddenMembers[0];
                 MethodSymbol correspondingAccessor = eventOverriddenByEvent.GetOwnOrInheritedAccessor(accessorIsAdder);
-                if ((object)correspondingAccessor != null)
+                if (correspondingAccessor is not null)
                 {
                     overriddenAccessor = correspondingAccessor;
                 }
@@ -371,7 +367,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // There's a detailed comment in MakeOverriddenOrHiddenMembersWorker(Symbol) concerning why this predicate is appropriate.
             bool accessorIsFromSomeCompilation = accessor.Dangerous_IsFromSomeCompilation;
             ImmutableArray<Symbol> overriddenAccessors = ImmutableArray<Symbol>.Empty;
-            if ((object)overriddenAccessor != null && IsOverriddenSymbolAccessible(overriddenAccessor, accessor.ContainingType) &&
+            if (overriddenAccessor is not null && IsOverriddenSymbolAccessible(overriddenAccessor, accessor.ContainingType) &&
                     (accessorIsFromSomeCompilation
                         ? MemberSignatureComparer.CSharpAccessorOverrideComparer.Equals(accessor, overriddenAccessor) //NB: custom comparer
                         : MemberSignatureComparer.RuntimeSignatureComparer.Equals(accessor, overriddenAccessor)))
@@ -425,9 +421,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     continue;
                 }
 
-                Symbol currTypeBestMatch;
-                bool currTypeHasSameKindNonMatch;
-                ArrayBuilder<Symbol> currTypeHiddenBuilder;
 
                 FindOverriddenOrHiddenMembersInType(
                     member,
@@ -435,11 +428,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     containingType,
                     knownOverriddenMember: null,
                     currType,
-                    out currTypeBestMatch,
-                    out currTypeHasSameKindNonMatch,
-                    out currTypeHiddenBuilder);
+                    out Symbol currTypeBestMatch,
+                    out bool currTypeHasSameKindNonMatch,
+                    out ArrayBuilder<Symbol> currTypeHiddenBuilder);
 
-                bool haveBestMatch = (object)currTypeBestMatch != null;
+                bool haveBestMatch = currTypeBestMatch is not null;
 
                 if (haveBestMatch)
                 {
@@ -711,7 +704,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             overriddenMembers = ImmutableArray<Symbol>.Empty;
 
-            if ((object)representativeMember != null)
+            if (representativeMember is not null)
             {
                 bool needToSearchForRelated = representativeMember.Kind != SymbolKind.Field && representativeMember.Kind != SymbolKind.NamedType &&
                                               (!representativeMember.ContainingType.IsDefinition || representativeMember.IsIndexer());
@@ -752,7 +745,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private static void AddHiddenMemberIfApplicable(ref ArrayBuilder<Symbol> hiddenBuilder, Symbol hidingMember, Symbol hiddenMember)
         {
-            Debug.Assert((object)hiddenMember != null);
+            Debug.Assert(hiddenMember is not null);
             if (hiddenMember.Kind != SymbolKind.Method || ((MethodSymbol)hiddenMember).CanBeHiddenByMember(hidingMember))
             {
                 AccessOrGetInstance(ref hiddenBuilder).Add(hiddenMember);
@@ -788,7 +781,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </param>
         private static void FindOtherOverriddenMethodsInContainingType(Symbol representativeMember, bool overridingMemberIsFromSomeCompilation, ArrayBuilder<Symbol> overriddenBuilder)
         {
-            Debug.Assert((object)representativeMember != null);
+            Debug.Assert(representativeMember is not null);
             Debug.Assert(representativeMember.Kind == SymbolKind.Property || !representativeMember.ContainingType.IsDefinition);
 
             int representativeCustomModifierCount = -1;
@@ -850,7 +843,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </param>
         private static void FindOtherHiddenMembersInContainingType(Symbol hidingMember, Symbol representativeMember, ref ArrayBuilder<Symbol> hiddenBuilder)
         {
-            Debug.Assert((object)representativeMember != null);
+            Debug.Assert(representativeMember is not null);
             Debug.Assert(representativeMember.Kind != SymbolKind.Field);
             Debug.Assert(representativeMember.Kind != SymbolKind.NamedType);
             Debug.Assert(representativeMember.Kind == SymbolKind.Property || !representativeMember.ContainingType.IsDefinition);
@@ -945,45 +938,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // See https://github.com/dotnet/roslyn/issues/45453. No need to warn when the runtime
             // supports covariant returns because any methodimpl we produce to identify the specific
             // overridden method is unambiguously understood by the runtime.
-            if (method.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses)
-                return true;
 
-            // If the method was declared as a covariant return, there will be a compile-time error since the runtime
-            // does not support covariant returns. In this case we do not warn about runtime ambiguity and pretend that
-            // we can use a methodimpl (even though it is of a form not supported by the runtime and would result in a
-            // loader error) so that the symbol APIs produce the most useful result.
-            if (!method.ReturnType.Equals(csharpOverriddenMethod.ReturnType, TypeCompareKind.AllIgnoreOptions))
-                return true;
-
-            // Due to https://github.com/dotnet/runtime/issues/38119 the methodimpl would
-            // appear to the runtime to be ambiguous in some cases.
-            bool methodimplWouldBeAmbiguous = csharpOverriddenMethod.MethodHasRuntimeCollision();
-            if (!methodimplWouldBeAmbiguous)
-                return true;
-
-            Debug.Assert(runtimeOverriddenMethod is { });
-
-            // We produce the warning when a methodimpl would be required but would be ambiguous to the runtime.
-            // However, if there was a duplicate definition for the runtime signature of the overridden
-            // method where it was originally declared, that would have been an error.  In that case we suppress
-            // the warning as a cascaded diagnostic.
-            bool originalOverriddenMethodWasAmbiguous =
-                csharpOverriddenMethod.IsDefinition || csharpOverriddenMethod.OriginalDefinition.MethodHasRuntimeCollision();
-            warnAmbiguous = !originalOverriddenMethodWasAmbiguous;
-
-            bool overriddenMethodContainedInSameTypeAsRuntimeOverriddenMethod =
-                csharpOverriddenMethod.ContainingType.Equals(runtimeOverriddenMethod.ContainingType, TypeCompareKind.CLRSignatureCompareOptions);
-
-            // If the overridden method is on a different (e.g. base) type compared to the runtime overridden
-            // method, then the runtime overridden method could not possibly resolve correctly to the overridden method.
-            // In this case we might as well produce a methodimpl. At least it has a chance of being correctly resolved
-            // by the runtime, where the runtime resolution without the methodimpl would definitely be wrong.
-            if (!overriddenMethodContainedInSameTypeAsRuntimeOverriddenMethod)
-                return true;
-
-            // This is the historical test, preserved since the days of the native compiler in case it turns out to affect compatibility.
-            // However, this test cannot be true in a program free of errors.
-            return csharpOverriddenMethod != runtimeOverriddenMethod && method.IsAccessor() != runtimeOverriddenMethod.IsAccessor();
+            return true;
         }
 
         internal static bool MethodHasRuntimeCollision(this MethodSymbol method)

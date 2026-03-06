@@ -28,14 +28,11 @@ internal static class BlockTypes
 
     internal static bool IsCommentOrPreprocessorRegion(string type)
     {
-        switch (type)
+        return type switch
         {
-            case Comment:
-            case PreprocessorRegion:
-                return true;
-        }
-
-        return false;
+            Comment or PreprocessorRegion => true,
+            _ => false,
+        };
     }
 
     internal static bool IsExpressionLevelConstruct(string type)
@@ -43,15 +40,11 @@ internal static class BlockTypes
 
     internal static bool IsStatementLevelConstruct(string type)
     {
-        switch (type)
+        return type switch
         {
-            case Statement:
-            case Conditional:
-            case Loop:
-                return true;
-        }
-
-        return false;
+            Statement or Conditional or Loop => true,
+            _ => false,
+        };
     }
 
     internal static bool IsCodeLevelConstruct(string type)

@@ -2399,7 +2399,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
 
                 try
                 {
-                    DocumentationCommentCompiler.WriteDocumentationCommentXml(compilation, outputName, stream, bindingDiagnostics, default(CancellationToken), filterTree, filterSpanWithinTree);
+                    DocumentationCommentCompiler.WriteDocumentationCommentXml(compilation, outputName, stream, bindingDiagnostics, default, filterTree, filterSpanWithinTree);
                 }
                 finally
                 {
@@ -2443,8 +2443,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
 
         internal static Symbol? GetReferencedSymbol(CrefSyntax crefSyntax, CSharpCompilation compilation, params DiagnosticDescription[] expectedDiagnostics)
         {
-            Symbol ambiguityWinner;
-            var references = GetReferencedSymbols(crefSyntax, compilation, out ambiguityWinner, expectedDiagnostics);
+            var references = GetReferencedSymbols(crefSyntax, compilation, out Symbol ambiguityWinner, expectedDiagnostics);
             Assert.Null(ambiguityWinner);
             Assert.InRange(references.Length, 0, 1); //Otherwise, call GetReferencedSymbols
 

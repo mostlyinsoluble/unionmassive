@@ -51,7 +51,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 }
 
                 Type typeArgument = typeArguments[typeArgumentOffset + i];
-                bool sawSingleInvalidIdentifier;
                 AppendQualifiedTypeName(
                     builder,
                     typeArgument,
@@ -60,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                     tupleElementNames,
                     ref tupleElementIndex,
                     escapeKeywordIdentifiers,
-                    out sawSingleInvalidIdentifier);
+                    out var sawSingleInvalidIdentifier);
                 sawInvalidIdentifier |= sawSingleInvalidIdentifier;
             }
             builder.Append('>');
@@ -78,7 +77,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             out bool sawInvalidIdentifier)
         {
             sawInvalidIdentifier = false;
-            bool sawSingleInvalidIdentifier;
             AppendQualifiedTypeName(
                 builder,
                 type,
@@ -87,7 +85,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 tupleElementNames,
                 ref tupleElementIndex,
                 escapeKeywordIdentifiers,
-                sawInvalidIdentifier: out sawSingleInvalidIdentifier);
+                sawInvalidIdentifier: out var sawSingleInvalidIdentifier);
             Debug.Assert(!sawSingleInvalidIdentifier);
             if (!string.IsNullOrEmpty(nameOpt))
             {

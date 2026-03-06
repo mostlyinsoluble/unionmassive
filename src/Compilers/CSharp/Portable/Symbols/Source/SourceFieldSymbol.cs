@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected SourceFieldSymbol(SourceMemberContainerTypeSymbol containingType)
         {
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(containingType is not null);
 
             this.containingType = containingType;
         }
@@ -113,7 +113,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
+            Debug.Assert(arguments.AttributeSyntaxOpt is not null);
             Debug.Assert(arguments.Diagnostics is BindingDiagnosticBag);
 
             var attribute = arguments.Attribute;
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 compilation.EnsureIsReadOnlyAttributeExists(diagnostics, location, modifyCompilation: true);
             }
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(Type))
+            if (Type.ContainsNativeIntegerWrapperType())
             {
                 compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
             }
@@ -228,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public override bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default)
             => IsDefinedInSourceTree(_syntaxReference, tree, definedWithinSpan);
 
-        public sealed override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override string GetDocumentationCommentXml(CultureInfo preferredCulture = null, bool expandIncludes = false, CancellationToken cancellationToken = default)
         {
             ref var lazyDocComment = ref expandIncludes ? ref _lazyExpandedDocComment : ref _lazyDocComment;
             return SourceDocumentationCommentUtils.GetAndCacheDocumentationComment(this, expandIncludes, ref lazyDocComment);

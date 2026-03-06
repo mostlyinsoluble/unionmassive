@@ -294,18 +294,11 @@ internal sealed class MetadataAsSourceFileService : IMetadataAsSourceFileService
             return false;
         }
 
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Event:
-            case SymbolKind.Field:
-            case SymbolKind.Method:
-            case SymbolKind.NamedType:
-            case SymbolKind.Property:
-            case SymbolKind.Parameter:
-                return true;
-        }
-
-        return false;
+            SymbolKind.Event or SymbolKind.Field or SymbolKind.Method or SymbolKind.NamedType or SymbolKind.Property or SymbolKind.Parameter => true,
+            _ => false,
+        };
     }
 
     public Workspace? TryGetWorkspace() => _workspace;

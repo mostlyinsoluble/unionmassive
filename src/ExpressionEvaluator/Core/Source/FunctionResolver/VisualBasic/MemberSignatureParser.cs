@@ -322,43 +322,26 @@ namespace Microsoft.CodeAnalysis.VisualBasic.ExpressionEvaluator
 
         private static SpecialType GetSpecialType(SyntaxKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case SyntaxKind.BooleanKeyword:
-                    return SpecialType.System_Boolean;
-                case SyntaxKind.CharKeyword:
-                    return SpecialType.System_Char;
-                case SyntaxKind.SByteKeyword:
-                    return SpecialType.System_SByte;
-                case SyntaxKind.ByteKeyword:
-                    return SpecialType.System_Byte;
-                case SyntaxKind.ShortKeyword:
-                    return SpecialType.System_Int16;
-                case SyntaxKind.UShortKeyword:
-                    return SpecialType.System_UInt16;
-                case SyntaxKind.IntegerKeyword:
-                    return SpecialType.System_Int32;
-                case SyntaxKind.UIntegerKeyword:
-                    return SpecialType.System_UInt32;
-                case SyntaxKind.LongKeyword:
-                    return SpecialType.System_Int64;
-                case SyntaxKind.ULongKeyword:
-                    return SpecialType.System_UInt64;
-                case SyntaxKind.SingleKeyword:
-                    return SpecialType.System_Single;
-                case SyntaxKind.DoubleKeyword:
-                    return SpecialType.System_Double;
-                case SyntaxKind.StringKeyword:
-                    return SpecialType.System_String;
-                case SyntaxKind.ObjectKeyword:
-                    return SpecialType.System_Object;
-                case SyntaxKind.DecimalKeyword:
-                    return SpecialType.System_Decimal;
-                case SyntaxKind.DateKeyword:
-                    return SpecialType.System_DateTime;
-                default:
-                    return SpecialType.None;
-            }
+                SyntaxKind.BooleanKeyword => SpecialType.System_Boolean,
+                SyntaxKind.CharKeyword => SpecialType.System_Char,
+                SyntaxKind.SByteKeyword => SpecialType.System_SByte,
+                SyntaxKind.ByteKeyword => SpecialType.System_Byte,
+                SyntaxKind.ShortKeyword => SpecialType.System_Int16,
+                SyntaxKind.UShortKeyword => SpecialType.System_UInt16,
+                SyntaxKind.IntegerKeyword => SpecialType.System_Int32,
+                SyntaxKind.UIntegerKeyword => SpecialType.System_UInt32,
+                SyntaxKind.LongKeyword => SpecialType.System_Int64,
+                SyntaxKind.ULongKeyword => SpecialType.System_UInt64,
+                SyntaxKind.SingleKeyword => SpecialType.System_Single,
+                SyntaxKind.DoubleKeyword => SpecialType.System_Double,
+                SyntaxKind.StringKeyword => SpecialType.System_String,
+                SyntaxKind.ObjectKeyword => SpecialType.System_Object,
+                SyntaxKind.DecimalKeyword => SpecialType.System_Decimal,
+                SyntaxKind.DateKeyword => SpecialType.System_DateTime,
+                _ => SpecialType.None,
+            };
         }
 
         private static Exception InvalidSignature()

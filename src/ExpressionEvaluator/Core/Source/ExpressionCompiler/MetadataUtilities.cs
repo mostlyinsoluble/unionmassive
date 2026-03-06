@@ -429,9 +429,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             {
                 return false;
             }
-            int majorVersion;
-            int minorVersion;
-            reader.GetWinMdVersion(out majorVersion, out minorVersion);
+            reader.GetWinMdVersion(out var majorVersion, out var minorVersion);
             return (majorVersion == 1) && (minorVersion >= 3);
         }
 
@@ -460,8 +458,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             {
                 foreach (var local in scope.GetLocals())
                 {
-                    int attributes;
-                    local.GetAttributes(out attributes);
+                    local.GetAttributes(out var attributes);
                     if (attributes == (int)LocalVariableAttributes.DebuggerHidden)
                     {
                         continue;

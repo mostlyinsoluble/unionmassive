@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     }
                     else
                     {
-                        return default(SyntaxTriviaList);
+                        return default;
                     }
                 }
             }
@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                         if (removeNextSeparator)
                         {
                             removeNextSeparator = false;
-                            visited = default(SyntaxNodeOrToken);
+                            visited = default;
                         }
                         else
                         {
@@ -323,7 +323,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             private void AddTrivia(SyntaxToken token, SyntaxNode node)
             {
-                Debug.Assert(node.Parent is object);
+                Debug.Assert(node.Parent is not null);
                 if ((_options & SyntaxRemoveOptions.KeepLeadingTrivia) != 0)
                 {
                     this.AddResidualTrivia(token.LeadingTrivia);
@@ -363,7 +363,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             private void AddTrivia(SyntaxNode node, SyntaxToken token)
             {
-                Debug.Assert(node.Parent is object);
+                Debug.Assert(node.Parent is not null);
                 if ((_options & SyntaxRemoveOptions.KeepLeadingTrivia) != 0)
                 {
                     this.AddResidualTrivia(node.GetLeadingTrivia());
@@ -495,18 +495,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             private static bool HasRelatedDirectives(DirectiveTriviaSyntax directive)
             {
-                switch (directive.Kind())
+                return directive.Kind() switch
                 {
-                    case SyntaxKind.IfDirectiveTrivia:
-                    case SyntaxKind.ElseDirectiveTrivia:
-                    case SyntaxKind.ElifDirectiveTrivia:
-                    case SyntaxKind.EndIfDirectiveTrivia:
-                    case SyntaxKind.RegionDirectiveTrivia:
-                    case SyntaxKind.EndRegionDirectiveTrivia:
-                        return true;
-                    default:
-                        return false;
-                }
+                    SyntaxKind.IfDirectiveTrivia or SyntaxKind.ElseDirectiveTrivia or SyntaxKind.ElifDirectiveTrivia or SyntaxKind.EndIfDirectiveTrivia or SyntaxKind.RegionDirectiveTrivia or SyntaxKind.EndRegionDirectiveTrivia => true,
+                    _ => false,
+                };
             }
         }
     }

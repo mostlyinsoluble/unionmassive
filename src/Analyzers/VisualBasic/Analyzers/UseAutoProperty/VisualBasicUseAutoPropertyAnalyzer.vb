@@ -27,11 +27,11 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.UseAutoProperty
         Protected Overrides ReadOnly Property PropertyDeclarationKind As SyntaxKind = SyntaxKind.PropertyBlock
 
         Protected Overrides Function SupportsReadOnlyProperties(compilation As Compilation) As Boolean
-            Return DirectCast(compilation, VisualBasicCompilation).LanguageVersion >= LanguageVersion.VisualBasic14
+            Return True
         End Function
 
         Protected Overrides Function SupportsPropertyInitializer(compilation As Compilation) As Boolean
-            Return DirectCast(compilation, VisualBasicCompilation).LanguageVersion >= LanguageVersion.VisualBasic10
+            Return True
         End Function
 
         Protected Overrides ReadOnly Property CanExplicitInterfaceImplementationsBeFixed As Boolean = True

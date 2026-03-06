@@ -18,8 +18,6 @@ namespace Microsoft.CodeAnalysis.CSharp;
 [ExportLanguageService(typeof(ISyntaxTreeFactoryService), LanguageNames.CSharp), Shared]
 internal sealed partial class CSharpSyntaxTreeFactoryService : AbstractSyntaxTreeFactoryService
 {
-    private static readonly CSharpParseOptions _parseOptionWithLatestLanguageVersion = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview);
-
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
     public CSharpSyntaxTreeFactoryService()
@@ -29,19 +27,9 @@ internal sealed partial class CSharpSyntaxTreeFactoryService : AbstractSyntaxTre
     public override ParseOptions GetDefaultParseOptions()
         => CSharpParseOptions.Default;
 
-    public override ParseOptions GetDefaultParseOptionsWithLatestLanguageVersion()
-        => _parseOptionWithLatestLanguageVersion;
-
     public override ParseOptions TryParsePdbParseOptions(IReadOnlyDictionary<string, string> metadata)
     {
-        if (!metadata.TryGetValue("language-version", out var langVersionString) ||
-            !LanguageVersionFacts.TryParse(langVersionString, out var langVersion))
-        {
-            langVersion = LanguageVersion.Default;
-        }
-
         return new CSharpParseOptions(
-            languageVersion: langVersion,
             preprocessorSymbols: metadata.TryGetValue("define", out var defines) ? defines.Split(',') : null);
     }
 

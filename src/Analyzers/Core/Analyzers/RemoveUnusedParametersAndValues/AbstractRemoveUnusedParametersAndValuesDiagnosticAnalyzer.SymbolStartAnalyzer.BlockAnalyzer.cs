@@ -537,28 +537,19 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
                                 unusedParameter.ContainingSymbol.IsLocalFunction())
                             {
                                 var hasReference = symbolUsageResult.SymbolsRead.Contains(unusedParameter);
-
-                                bool shouldReport;
-                                switch (unusedParameter.RefKind)
-                                {
-                                    case RefKind.Out:
+                                var
                                         // Do not report out parameters of local functions.
                                         // If they are unused in the caller, we will flag the
                                         // out argument at the local function callsite.
-                                        shouldReport = false;
-                                        break;
-
-                                    case RefKind.Ref:
-                                        // Report ref parameters only if they have no read/write references.
-                                        // Note that we always have one write for the parameter input value from the caller.
-                                        shouldReport = !hasReference && symbolUsageResult.GetSymbolWriteCount(unusedParameter) == 1;
-                                        break;
-
-                                    default:
-                                        shouldReport = true;
-                                        break;
-                                }
-
+                                        shouldReport = unusedParameter.RefKind switch
+                                        {
+                                            RefKind.Out => false,// Do not report out parameters of local functions.
+                                                                 // If they are unused in the caller, we will flag the
+                                                                 // out argument at the local function callsite.
+                                            RefKind.Ref => !hasReference && symbolUsageResult.GetSymbolWriteCount(unusedParameter) == 1,// Report ref parameters only if they have no read/write references.
+                                                                                                                                        // Note that we always have one write for the parameter input value from the caller.
+                                            _ => true,
+                                        };
                                 if (shouldReport)
                                 {
                                     _symbolStartAnalyzer.ReportUnusedParameterDiagnostic(unusedParameter, hasReference, context.ReportDiagnostic, context.Options, interpolatedStringHandlerAttribute, context.CancellationToken);

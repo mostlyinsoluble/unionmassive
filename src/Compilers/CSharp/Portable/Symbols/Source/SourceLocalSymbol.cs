@@ -89,8 +89,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             this._typeSyntax = typeSyntax;
 
-            bool isScoped;
-            typeSyntax = typeSyntax.SkipScoped(out isScoped);
+            typeSyntax = typeSyntax.SkipScoped(out bool isScoped);
             isScoped = isScoped && allowScoped;
 
             // Diagnostics for ref-locals is reported by caller in BindDeclarationStatementParts.
@@ -350,8 +349,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (typeSyntax.IsVar)
                 {
-                    bool isVar;
-                    TypeWithAnnotations declType = this.TypeSyntaxBinder.BindTypeOrVarKeyword(typeSyntax, BindingDiagnosticBag.Discarded, out isVar);
+                    TypeWithAnnotations declType = this.TypeSyntaxBinder.BindTypeOrVarKeyword(typeSyntax, BindingDiagnosticBag.Discarded, out bool isVar);
                     return isVar;
                 }
 
@@ -483,13 +481,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal void SetTypeWithAnnotations(TypeWithAnnotations newType)
         {
-            Debug.Assert(newType.Type is object);
+            Debug.Assert(newType.Type is not null);
             TypeWithAnnotations? originalType = _type?.Value;
 
             // In the event that we race to set the type of a local, we should
             // always deduce the same type, or deduce that the type is an error.
 
-            Debug.Assert((object)originalType?.DefaultType == null ||
+            Debug.Assert(originalType?.DefaultType is null ||
                 originalType.Value.DefaultType.IsErrorType() && newType.Type.IsErrorType() ||
                 originalType.Value.TypeSymbolEquals(newType, TypeCompareKind.ConsiderEverything));
 

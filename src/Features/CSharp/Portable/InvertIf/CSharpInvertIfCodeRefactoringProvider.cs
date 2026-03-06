@@ -73,21 +73,11 @@ internal sealed class CSharpInvertIfCodeRefactoringProvider() : AbstractInvertIf
 
     protected override bool CanControlFlowOut(SyntaxNode node)
     {
-        switch (node)
+        return node switch
         {
-            case SwitchSectionSyntax:
-            case LocalFunctionStatementSyntax:
-            case AccessorDeclarationSyntax:
-            case MemberDeclarationSyntax:
-            case AnonymousFunctionExpressionSyntax:
-            case CommonForEachStatementSyntax:
-            case DoStatementSyntax:
-            case WhileStatementSyntax:
-            case ForStatementSyntax:
-                return false;
-        }
-
-        return true;
+            SwitchSectionSyntax or LocalFunctionStatementSyntax or AccessorDeclarationSyntax or MemberDeclarationSyntax or AnonymousFunctionExpressionSyntax or CommonForEachStatementSyntax or DoStatementSyntax or WhileStatementSyntax or ForStatementSyntax => false,
+            _ => true,
+        };
     }
 
     protected override SyntaxList<StatementSyntax> GetStatements(SyntaxNode node)

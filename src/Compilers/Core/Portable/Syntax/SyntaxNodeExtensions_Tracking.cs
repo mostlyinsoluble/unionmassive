@@ -124,7 +124,7 @@ namespace Microsoft.CodeAnalysis
         private static IReadOnlyList<SyntaxNode> GetCurrentNodeFromTrueRoots(SyntaxNode trueRoot, SyntaxNode node)
         {
             var id = GetId(node);
-            if (id is object)
+            if (id is not null)
             {
                 CurrentNodes tracked = s_rootToCurrentNodesMap.GetValue(trueRoot, r => new CurrentNodes(r));
                 return tracked.GetNodes(id);
@@ -137,8 +137,7 @@ namespace Microsoft.CodeAnalysis
 
         private static SyntaxAnnotation? GetId(SyntaxNode original)
         {
-            SyntaxAnnotation? id;
-            s_nodeToIdMap.TryGetValue(original, out id);
+            s_nodeToIdMap.TryGetValue(original, out SyntaxAnnotation? id);
             return id;
         }
 
@@ -158,7 +157,7 @@ namespace Microsoft.CodeAnalysis
                 else
                 {
                     node = ((IStructuredTriviaSyntax)node).ParentTrivia.Token.Parent!;
-                    Debug.Assert(node is object);
+                    Debug.Assert(node is not null);
                 }
             }
         }
@@ -183,7 +182,7 @@ namespace Microsoft.CodeAnalysis
                 else
                 {
                     node = ((IStructuredTriviaSyntax)node).ParentTrivia.Token.Parent!;
-                    Debug.Assert(node is object);
+                    Debug.Assert(node is not null);
                 }
             }
 
@@ -203,11 +202,10 @@ namespace Microsoft.CodeAnalysis
 
                 foreach (var node in root.GetAnnotatedNodesAndTokens(IdAnnotationKind).Select(n => n.AsNode()!))
                 {
-                    Debug.Assert(node is object);
+                    Debug.Assert(node is not null);
                     foreach (var id in node.GetAnnotations(IdAnnotationKind))
                     {
-                        List<SyntaxNode>? list;
-                        if (!map.TryGetValue(id, out list))
+                        if (!map.TryGetValue(id, out List<SyntaxNode>? list))
                         {
                             list = new List<SyntaxNode>();
                             map.Add(id, list);
@@ -222,8 +220,7 @@ namespace Microsoft.CodeAnalysis
 
             public IReadOnlyList<SyntaxNode> GetNodes(SyntaxAnnotation id)
             {
-                IReadOnlyList<SyntaxNode>? nodes;
-                if (_idToNodeMap.TryGetValue(id, out nodes))
+                if (_idToNodeMap.TryGetValue(id, out IReadOnlyList<SyntaxNode>? nodes))
                 {
                     return nodes;
                 }

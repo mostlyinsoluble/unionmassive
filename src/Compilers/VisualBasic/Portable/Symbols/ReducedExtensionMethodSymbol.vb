@@ -36,8 +36,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                                      instanceType As TypeSymbol,
                                      possiblyExtensionMethod As MethodSymbol,
                                      proximity As Integer,
-                                     ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol),
-                                     languageVersion As LanguageVersion
+                                     ByRef useSiteInfo As CompoundUseSiteInfo(Of AssemblySymbol)
         ) As MethodSymbol
 
             Debug.Assert(instanceType IsNot Nothing)
@@ -147,8 +146,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                     ' Check constraints.
                     Dim diagnosticsBuilder = ArrayBuilder(Of TypeParameterDiagnosticInfo).GetInstance()
                     Dim useSiteDiagnosticsBuilder As ArrayBuilder(Of TypeParameterDiagnosticInfo) = Nothing
-                    success = possiblyExtensionMethod.CheckConstraints(languageVersion,
-                                                                       partialSubstitution,
+                    success = possiblyExtensionMethod.CheckConstraints(partialSubstitution,
                                                                        typeParametersToFixArray,
                                                                        fixWithArray,
                                                                        diagnosticsBuilder,

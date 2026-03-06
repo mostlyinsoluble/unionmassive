@@ -337,32 +337,17 @@ namespace Xunit.Harness
 
         private static Version GetVersion(VisualStudioVersion visualStudioVersion)
         {
-            switch (visualStudioVersion)
+            return visualStudioVersion switch
             {
-                case VisualStudioVersion.VS2012:
-                    return new Version(11, 0);
-
-                case VisualStudioVersion.VS2013:
-                    return new Version(12, 0);
-
-                case VisualStudioVersion.VS2015:
-                    return new Version(14, 0);
-
-                case VisualStudioVersion.VS2017:
-                    return new Version(15, 0);
-
-                case VisualStudioVersion.VS2019:
-                    return new Version(16, 0);
-
-                case VisualStudioVersion.VS2022:
-                    return new Version(17, 0);
-
-                case VisualStudioVersion.VS18:
-                    return new Version(18, 0);
-
-                default:
-                    throw new ArgumentException();
-            }
+                VisualStudioVersion.VS2012 => new Version(11, 0),
+                VisualStudioVersion.VS2013 => new Version(12, 0),
+                VisualStudioVersion.VS2015 => new Version(14, 0),
+                VisualStudioVersion.VS2017 => new Version(15, 0),
+                VisualStudioVersion.VS2019 => new Version(16, 0),
+                VisualStudioVersion.VS2022 => new Version(17, 0),
+                VisualStudioVersion.VS18 => new Version(18, 0),
+                _ => throw new ArgumentException(),
+            };
         }
 
         private VisualStudioInstanceKey GetVisualStudioVersionForTestCase(IXunitTestCase testCase)

@@ -23,10 +23,9 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         public uint GetOrAddTokenFor(T item)
         {
-            uint token;
             // NOTE: cannot use GetOrAdd here since items and itemToToken must be in sync
             // so if we do need to add we have to take a lock and modify both collections.
-            if (_itemToToken.TryGetValue(item, out token))
+            if (_itemToToken.TryGetValue(item, out uint token))
             {
                 return token;
             }

@@ -49,8 +49,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         string IDkmClrFormatter.GetTypeName(DkmInspectionContext inspectionContext, DkmClrType type, DkmClrCustomTypeInfo typeInfo, ReadOnlyCollection<string> formatSpecifiers)
         {
-            bool unused;
-            return GetTypeName(new TypeAndCustomInfo(type, typeInfo), escapeKeywordIdentifiers: false, sawInvalidIdentifier: out unused);
+            return GetTypeName(new TypeAndCustomInfo(type, typeInfo), escapeKeywordIdentifiers: false, sawInvalidIdentifier: out var unused);
         }
 
         bool IDkmClrFormatter.HasUnderlyingString(DkmClrValue value, DkmInspectionContext inspectionContext)
@@ -76,8 +75,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         string IDkmClrFullNameProvider.GetClrTypeName(DkmInspectionContext inspectionContext, DkmClrType clrType, DkmClrCustomTypeInfo customTypeInfo)
         {
             Debug.Assert(inspectionContext != null);
-            bool sawInvalidIdentifier;
-            var name = GetTypeName(new TypeAndCustomInfo(clrType, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out sawInvalidIdentifier);
+            var name = GetTypeName(new TypeAndCustomInfo(clrType, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out var sawInvalidIdentifier);
             return sawInvalidIdentifier ? null : name;
         }
 
@@ -88,8 +86,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         string IDkmClrFullNameProvider.GetClrCastExpression(DkmInspectionContext inspectionContext, string argument, DkmClrType type, DkmClrCustomTypeInfo customTypeInfo, DkmClrCastExpressionOptions castExpressionOptions)
         {
-            bool sawInvalidIdentifier;
-            var name = GetTypeName(new TypeAndCustomInfo(type, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out sawInvalidIdentifier);
+            var name = GetTypeName(new TypeAndCustomInfo(type, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out var sawInvalidIdentifier);
             if (sawInvalidIdentifier)
             {
                 return null;
@@ -99,8 +96,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         string IDkmClrFullNameProvider.GetClrObjectCreationExpression(DkmInspectionContext inspectionContext, DkmClrType type, DkmClrCustomTypeInfo customTypeInfo, string[] arguments)
         {
-            bool sawInvalidIdentifier;
-            var name = GetTypeName(new TypeAndCustomInfo(type, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out sawInvalidIdentifier);
+            var name = GetTypeName(new TypeAndCustomInfo(type, customTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out var sawInvalidIdentifier);
             if (sawInvalidIdentifier)
             {
                 return null;
@@ -112,8 +108,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             var pooledBuilder = PooledStringBuilder.GetInstance();
             var builder = pooledBuilder.Builder;
-            bool sawInvalidIdentifier;
-            AppendIdentifierEscapingPotentialKeywords(builder, identifier, out sawInvalidIdentifier);
+            AppendIdentifierEscapingPotentialKeywords(builder, identifier, out var sawInvalidIdentifier);
             var result = sawInvalidIdentifier ? null : builder.ToString();
             pooledBuilder.Free();
             return result;
@@ -141,8 +136,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             string qualifier;
             if (memberIsStatic)
             {
-                bool sawInvalidIdentifier;
-                qualifier = GetTypeName(new TypeAndCustomInfo(declaringType, declaringTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out sawInvalidIdentifier);
+                qualifier = GetTypeName(new TypeAndCustomInfo(declaringType, declaringTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out var sawInvalidIdentifier);
                 if (sawInvalidIdentifier)
                 {
                     return null; // FullName wouldn't be parseable.
@@ -150,8 +144,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             }
             else if (memberAccessRequiresExplicitCast)
             {
-                bool sawInvalidIdentifier;
-                var typeName = GetTypeName(new TypeAndCustomInfo(declaringType, declaringTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out sawInvalidIdentifier);
+                var typeName = GetTypeName(new TypeAndCustomInfo(declaringType, declaringTypeInfo), escapeKeywordIdentifiers: true, sawInvalidIdentifier: out var sawInvalidIdentifier);
                 if (sawInvalidIdentifier)
                 {
                     return null; // FullName wouldn't be parseable.

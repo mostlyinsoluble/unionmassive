@@ -174,18 +174,11 @@ internal static class BlockSyntaxExtensions
 
     private static bool IsSupportedInCSharp6(SyntaxKind declarationKind)
     {
-        switch (declarationKind)
+        return declarationKind switch
         {
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.AddAccessorDeclaration:
-            case SyntaxKind.RemoveAccessorDeclaration:
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-                return false;
-        }
-
-        return true;
+            SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.AddAccessorDeclaration or SyntaxKind.RemoveAccessorDeclaration or SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration => false,
+            _ => true,
+        };
     }
 
     public static bool MatchesPreference(

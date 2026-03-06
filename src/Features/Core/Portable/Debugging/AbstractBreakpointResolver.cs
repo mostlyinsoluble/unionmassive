@@ -157,16 +157,13 @@ internal abstract partial class AbstractBreakpointResolver
 
     private static bool MatchesName(INamespaceOrTypeSymbol typeOrNamespace, NameAndArity nameAndArity, IEqualityComparer<string> comparer)
     {
-        switch (typeOrNamespace)
+        return typeOrNamespace switch
         {
-            case INamespaceSymbol namespaceSymbol:
-                return comparer.Equals(namespaceSymbol.Name, nameAndArity.Name) && nameAndArity.Arity == 0;
-            case INamedTypeSymbol typeSymbol:
-                return comparer.Equals(typeSymbol.Name, nameAndArity.Name) &&
-                    (nameAndArity.Arity == 0 || nameAndArity.Arity == typeSymbol.TypeArguments.Length);
-            default:
-                return false;
-        }
+            INamespaceSymbol namespaceSymbol => comparer.Equals(namespaceSymbol.Name, nameAndArity.Name) && nameAndArity.Arity == 0,
+            INamedTypeSymbol typeSymbol => comparer.Equals(typeSymbol.Name, nameAndArity.Name) &&
+                                (nameAndArity.Arity == 0 || nameAndArity.Arity == typeSymbol.TypeArguments.Length),
+            _ => false,
+        };
     }
 
     private static bool MatchesNames(INamedTypeSymbol type, NameAndArity[] names, IEqualityComparer<string> comparer)

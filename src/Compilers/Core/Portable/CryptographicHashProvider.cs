@@ -38,144 +38,81 @@ namespace Microsoft.CodeAnalysis
                     return ImmutableArray.Create<byte>();
                 }
 
-                switch (algorithmId)
+                return algorithmId switch
                 {
-                    case AssemblyHashAlgorithm.None:
-                    case AssemblyHashAlgorithm.Sha1:
-                        return GetHash(ref _lazySHA1Hash, algorithm);
-
-                    case AssemblyHashAlgorithm.Sha256:
-                        return GetHash(ref _lazySHA256Hash, algorithm);
-
-                    case AssemblyHashAlgorithm.Sha384:
-                        return GetHash(ref _lazySHA384Hash, algorithm);
-
-                    case AssemblyHashAlgorithm.Sha512:
-                        return GetHash(ref _lazySHA512Hash, algorithm);
-
-                    case AssemblyHashAlgorithm.MD5:
-                        return GetHash(ref _lazyMD5Hash, algorithm);
-
-                    default:
-                        throw ExceptionUtilities.UnexpectedValue(algorithmId);
-                }
+                    AssemblyHashAlgorithm.None or AssemblyHashAlgorithm.Sha1 => GetHash(ref _lazySHA1Hash, algorithm),
+                    AssemblyHashAlgorithm.Sha256 => GetHash(ref _lazySHA256Hash, algorithm),
+                    AssemblyHashAlgorithm.Sha384 => GetHash(ref _lazySHA384Hash, algorithm),
+                    AssemblyHashAlgorithm.Sha512 => GetHash(ref _lazySHA512Hash, algorithm),
+                    AssemblyHashAlgorithm.MD5 => GetHash(ref _lazyMD5Hash, algorithm),
+                    _ => throw ExceptionUtilities.UnexpectedValue(algorithmId),
+                };
             }
         }
 
         internal static int GetHashSize(SourceHashAlgorithm algorithmId)
         {
-            switch (algorithmId)
+            return algorithmId switch
             {
-                case SourceHashAlgorithm.Sha1:
-                    return 160 / 8;
-
-                case SourceHashAlgorithm.Sha256:
-                    return 256 / 8;
-
-                case SourceHashAlgorithm.Sha384:
-                    return 384 / 8;
-
-                case SourceHashAlgorithm.Sha512:
-                    return 512 / 8;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(algorithmId);
-            }
+                SourceHashAlgorithm.Sha1 => 160 / 8,
+                SourceHashAlgorithm.Sha256 => 256 / 8,
+                SourceHashAlgorithm.Sha384 => 384 / 8,
+                SourceHashAlgorithm.Sha512 => 512 / 8,
+                _ => throw ExceptionUtilities.UnexpectedValue(algorithmId),
+            };
         }
 
         internal static HashAlgorithm? TryGetAlgorithm(SourceHashAlgorithm algorithmId)
         {
-            switch (algorithmId)
+            return algorithmId switch
             {
-                case SourceHashAlgorithm.Sha1:
-                    // CodeQL [SM02196] This is not enabled by default but exists as a compat option for existing builds.
-                    return SHA1.Create();
-
-                case SourceHashAlgorithm.Sha256:
-                    return SHA256.Create();
-
-                case SourceHashAlgorithm.Sha384:
-                    return SHA384.Create();
-
-                case SourceHashAlgorithm.Sha512:
-                    return SHA512.Create();
-
-                default:
-                    return null;
-            }
+                SourceHashAlgorithm.Sha1 => SHA1.Create(),// CodeQL [SM02196] This is not enabled by default but exists as a compat option for existing builds.
+                SourceHashAlgorithm.Sha256 => SHA256.Create(),
+                SourceHashAlgorithm.Sha384 => SHA384.Create(),
+                SourceHashAlgorithm.Sha512 => SHA512.Create(),
+                _ => null,
+            };
         }
 
         internal static HashAlgorithmName GetAlgorithmName(SourceHashAlgorithm algorithmId)
         {
-            switch (algorithmId)
+            return algorithmId switch
             {
-                case SourceHashAlgorithm.Sha1:
-                    // CodeQL [SM02196] This is not enabled by default but exists as a compat option for existing builds.
-                    return HashAlgorithmName.SHA1;
-
-                case SourceHashAlgorithm.Sha256:
-                    return HashAlgorithmName.SHA256;
-
-                case SourceHashAlgorithm.Sha384:
-                    return HashAlgorithmName.SHA384;
-
-                case SourceHashAlgorithm.Sha512:
-                    return HashAlgorithmName.SHA512;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(algorithmId);
-            }
+                SourceHashAlgorithm.Sha1 => HashAlgorithmName.SHA1,// CodeQL [SM02196] This is not enabled by default but exists as a compat option for existing builds.
+                SourceHashAlgorithm.Sha256 => HashAlgorithmName.SHA256,
+                SourceHashAlgorithm.Sha384 => HashAlgorithmName.SHA384,
+                SourceHashAlgorithm.Sha512 => HashAlgorithmName.SHA512,
+                _ => throw ExceptionUtilities.UnexpectedValue(algorithmId),
+            };
         }
 
         internal static HashAlgorithm? TryGetAlgorithm(AssemblyHashAlgorithm algorithmId)
         {
-            switch (algorithmId)
+            return algorithmId switch
             {
-                case AssemblyHashAlgorithm.None:
-                case AssemblyHashAlgorithm.Sha1:
-                    // CodeQL [SM02196] ECMA-335 requires us to support SHA-1
-                    return SHA1.Create();
-
-                case AssemblyHashAlgorithm.Sha256:
-                    return SHA256.Create();
-
-                case AssemblyHashAlgorithm.Sha384:
-                    return SHA384.Create();
-
-                case AssemblyHashAlgorithm.Sha512:
-                    return SHA512.Create();
-
-                case AssemblyHashAlgorithm.MD5:
-                    // CodeQL [SM02196] This is supported by the underlying ECMA-335 APIs (System.Reflection.Metadata) and as consumers we must also support it.
-                    return MD5.Create();
-
-                default:
-                    return null;
-            }
+                AssemblyHashAlgorithm.None or AssemblyHashAlgorithm.Sha1 => SHA1.Create(),// CodeQL [SM02196] ECMA-335 requires us to support SHA-1
+                AssemblyHashAlgorithm.Sha256 => SHA256.Create(),
+                AssemblyHashAlgorithm.Sha384 => SHA384.Create(),
+                AssemblyHashAlgorithm.Sha512 => SHA512.Create(),
+                AssemblyHashAlgorithm.MD5 => MD5.Create(),// CodeQL [SM02196] This is supported by the underlying ECMA-335 APIs (System.Reflection.Metadata) and as consumers we must also support it.
+                _ => null,
+            };
         }
 
         internal static bool IsSupportedAlgorithm(AssemblyHashAlgorithm algorithmId)
         {
-            switch (algorithmId)
+            return algorithmId switch
             {
-                case AssemblyHashAlgorithm.None:
-                case AssemblyHashAlgorithm.Sha1:
-                case AssemblyHashAlgorithm.Sha256:
-                case AssemblyHashAlgorithm.Sha384:
-                case AssemblyHashAlgorithm.Sha512:
-                case AssemblyHashAlgorithm.MD5:
-                    return true;
-
-                default:
-                    return false;
-            }
+                AssemblyHashAlgorithm.None or AssemblyHashAlgorithm.Sha1 or AssemblyHashAlgorithm.Sha256 or AssemblyHashAlgorithm.Sha384 or AssemblyHashAlgorithm.Sha512 or AssemblyHashAlgorithm.MD5 => true,
+                _ => false,
+            };
         }
 
         private ImmutableArray<byte> GetHash(ref ImmutableArray<byte> lazyHash, HashAlgorithm algorithm)
         {
             if (lazyHash.IsDefault)
             {
-                ImmutableInterlocked.InterlockedCompareExchange(ref lazyHash, ComputeHash(algorithm), default(ImmutableArray<byte>));
+                ImmutableInterlocked.InterlockedCompareExchange(ref lazyHash, ComputeHash(algorithm), default);
             }
 
             return lazyHash;

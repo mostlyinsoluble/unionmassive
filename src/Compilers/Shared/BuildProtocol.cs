@@ -157,7 +157,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// <summary>
         /// Write a Request to the stream.
         /// </summary>
-        public async Task WriteAsync(Stream outStream, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task WriteAsync(Stream outStream, CancellationToken cancellationToken = default)
         {
             using var memoryStream = new MemoryStream();
             using var writer = new BinaryWriter(memoryStream, Encoding.Unicode);
@@ -317,7 +317,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<BuildResponse> ReadAsync(Stream stream, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task<BuildResponse> ReadAsync(Stream stream, CancellationToken cancellationToken = default)
         {
             // Read the response length
             var lengthBuffer = new byte[4];
@@ -335,26 +335,17 @@ namespace Microsoft.CodeAnalysis.CommandLine
             {
                 var responseType = (ResponseType)reader.ReadInt32();
 
-                switch (responseType)
+                return responseType switch
                 {
-                    case ResponseType.Completed:
-                        return CompletedBuildResponse.Create(reader);
-                    case ResponseType.MismatchedVersion:
-                        return new MismatchedVersionBuildResponse();
-                    case ResponseType.IncorrectHash:
-                        return new IncorrectHashBuildResponse();
-                    case ResponseType.AnalyzerInconsistency:
-                        return AnalyzerInconsistencyBuildResponse.Create(reader);
-                    case ResponseType.Shutdown:
-                        return ShutdownBuildResponse.Create(reader);
-                    case ResponseType.Rejected:
-                        return RejectedBuildResponse.Create(reader);
-
+                    ResponseType.Completed => CompletedBuildResponse.Create(reader),
+                    ResponseType.MismatchedVersion => new MismatchedVersionBuildResponse(),
+                    ResponseType.IncorrectHash => new IncorrectHashBuildResponse(),
+                    ResponseType.AnalyzerInconsistency => AnalyzerInconsistencyBuildResponse.Create(reader),
+                    ResponseType.Shutdown => ShutdownBuildResponse.Create(reader),
+                    ResponseType.Rejected => RejectedBuildResponse.Create(reader),
                     // Intentional fall through
-                    case ResponseType.CannotConnect:
-                    default:
-                        throw new InvalidOperationException("Received invalid response type from server.");
-                }
+                    _ => throw new InvalidOperationException("Received invalid response type from server."),
+                };
             }
         }
     }
@@ -503,7 +494,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         public static RejectedBuildResponse Create(BinaryReader reader)
         {
             var reason = ReadLengthPrefixedString(reader);
-            Debug.Assert(reason is object);
+            Debug.Assert(reason is not null);
             return new RejectedBuildResponse(reason);
         }
     }
@@ -576,7 +567,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// </summary>
         public static void WriteLengthPrefixedString(BinaryWriter writer, string? value)
         {
-            if (value is object)
+            if (value is not null)
             {
                 writer.Write(value.Length);
                 writer.Write(value.ToCharArray());

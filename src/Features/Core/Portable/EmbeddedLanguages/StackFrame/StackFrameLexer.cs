@@ -392,17 +392,11 @@ internal struct StackFrameLexer
     public static bool IsBlank(VirtualChar ch)
     {
         // List taken from the native regex parser.
-        switch (ch.Value)
+        return ch.Value switch
         {
-            case '\u0009':
-            case '\u000A':
-            case '\u000C':
-            case '\u000D':
-            case ' ':
-                return true;
-            default:
-                return false;
-        }
+            '\u0009' or '\u000A' or '\u000C' or '\u000D' or ' ' => true,
+            _ => false,
+        };
     }
 
     private static bool IsAsciiAlphaCharacter(VirtualChar ch)

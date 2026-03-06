@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.Text
                     }
                     else
                     {
-                        return default(TextLine);
+                        return default;
                     }
                 }
             }

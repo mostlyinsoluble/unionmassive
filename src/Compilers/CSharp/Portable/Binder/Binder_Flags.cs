@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal Binder WithContainingMemberOrLambda(Symbol containing)
         {
-            Debug.Assert((object)containing != null);
+            Debug.Assert(containing is not null);
             return new BinderWithContainingMemberOrLambda(this, containing);
         }
 
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         internal Binder WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags flags, Symbol containing)
         {
-            Debug.Assert((object)containing != null);
+            Debug.Assert(containing is not null);
             return new BinderWithContainingMemberOrLambda(this, this.Flags | flags, containing);
         }
 
@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // In C# 12 and below, we keep the (spec violating) behavior that iterator bodies inherit the safe/unsafe context
             // from their containing scope. Since there are errors for unsafe constructs directly in iterators,
             // this inherited unsafe context can be observed only in nested non-iterator local functions.
-            var withoutUnsafe = isIteratorBody && this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync);
+            var withoutUnsafe = isIteratorBody;
 
             if (this.Flags.Includes(BinderFlags.UnsafeRegion))
             {

@@ -359,7 +359,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
             }
 
-            if ((object)methodThisParameter != null)
+            if (methodThisParameter is not null)
             {
                 EnterParameter(methodThisParameter);
                 if (methodThisParameter.Type.SpecialType.CanOptimizeBehavior())
@@ -369,8 +369,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            ParameterSymbol extensionParameter = null;
-            if (_symbol.TryGetInstanceExtensionParameter(out extensionParameter))
+            if (_symbol.TryGetInstanceExtensionParameter(out ParameterSymbol extensionParameter))
             {
                 EnterParameter(extensionParameter);
             }
@@ -380,20 +379,19 @@ namespace Microsoft.CodeAnalysis.CSharp
             // check that each out parameter is definitely assigned at the end of the method.  If
             // there's more than one location, then the method is partial and we prefer to report an
             // out parameter in partial method error.
-            Location location;
-            if (ShouldAnalyzeOutParameters(out location))
+            if (ShouldAnalyzeOutParameters(out Location location))
             {
                 LeaveParameters(methodParameters, null, location);
-                if ((object)methodThisParameter != null) LeaveParameter(methodThisParameter, null, location);
-                if ((object)extensionParameter != null) LeaveParameter(extensionParameter, null, location);
+                if (methodThisParameter is not null) LeaveParameter(methodThisParameter, null, location);
+                if (extensionParameter is not null) LeaveParameter(extensionParameter, null, location);
 
                 var savedState = this.State;
                 foreach (PendingBranch returnBranch in pendingReturns)
                 {
                     this.State = returnBranch.State;
                     LeaveParameters(methodParameters, returnBranch.Branch.Syntax, null);
-                    if ((object)methodThisParameter != null) LeaveParameter(methodThisParameter, returnBranch.Branch.Syntax, null);
-                    if ((object)extensionParameter != null) LeaveParameter(extensionParameter, returnBranch.Branch.Syntax, null);
+                    if (methodThisParameter is not null) LeaveParameter(methodThisParameter, returnBranch.Branch.Syntax, null);
+                    if (extensionParameter is not null) LeaveParameter(extensionParameter, returnBranch.Branch.Syntax, null);
                     Join(ref savedState, ref this.State);
                 }
 
@@ -444,22 +442,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                             {
                                 Symbol associatedPropertyOrEvent = field.AssociatedSymbol;
                                 bool hasAssociatedProperty = associatedPropertyOrEvent?.Kind == SymbolKind.Property;
-                                if (compilation.IsFeatureEnabled(MessageID.IDS_FeatureAutoDefaultStructs))
-                                {
-                                    Diagnostics.Add(
+                                Diagnostics.Add(
                                         hasAssociatedProperty ? ErrorCode.WRN_UnassignedThisAutoPropertySupportedVersion : ErrorCode.WRN_UnassignedThisSupportedVersion,
                                         location,
                                         hasAssociatedProperty ? associatedPropertyOrEvent : field);
-                                }
-                                else
-                                {
-                                    Diagnostics.Add(
-                                        hasAssociatedProperty ? ErrorCode.ERR_UnassignedThisAutoPropertyUnsupportedVersion : ErrorCode.ERR_UnassignedThisUnsupportedVersion,
-                                        location,
-                                        hasAssociatedProperty ? associatedPropertyOrEvent : field,
-                                        new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureAutoDefaultStructs.RequiredVersion()));
-                                }
-
                                 this.AddImplicitlyInitializedField(field);
                                 reported = true;
                             }
@@ -469,11 +455,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         {
                             if (parameterType.HasInlineArrayAttribute(out int length) && length > 1 && parameterType.TryGetPossiblyUnsupportedByLanguageInlineArrayElementField() is FieldSymbol elementField)
                             {
-                                if (!compilation.IsFeatureEnabled(MessageID.IDS_FeatureAutoDefaultStructs))
-                                {
-                                    Diagnostics.Add(ErrorCode.ERR_ParamUnassigned, location, parameter.Name);
-                                }
-
                                 // Add the element field to the set of fields requiring initialization to indicate that the whole instance needs initialization.
                                 // This is done explicitly only for unreported cases, because, if something was reported, then we already have added the
                                 // element field in the set. It is the only instance field in the type.
@@ -557,12 +538,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ErrorCode newCode = oldCode switch
                 {
 #pragma warning disable format
-                    ErrorCode.ERR_UnassignedThisAutoPropertyUnsupportedVersion => ErrorCode.WRN_UnassignedThisAutoPropertyUnsupportedVersion,
                     ErrorCode.ERR_UnassignedThisUnsupportedVersion             => ErrorCode.WRN_UnassignedThisUnsupportedVersion,
                     ErrorCode.ERR_ParamUnassigned                              => ErrorCode.WRN_ParamUnassigned,
                     ErrorCode.ERR_UseDefViolationProperty                      => ErrorCode.WRN_UseDefViolationProperty,
                     ErrorCode.ERR_UseDefViolationField                         => ErrorCode.WRN_UseDefViolationField,
-                    ErrorCode.ERR_UseDefViolationThisUnsupportedVersion        => ErrorCode.WRN_UseDefViolationThisUnsupportedVersion,
                     ErrorCode.ERR_UseDefViolationPropertyUnsupportedVersion    => ErrorCode.WRN_UseDefViolationPropertyUnsupportedVersion,
                     ErrorCode.ERR_UseDefViolationFieldUnsupportedVersion       => ErrorCode.WRN_UseDefViolationFieldUnsupportedVersion,
                     ErrorCode.ERR_UseDefViolationOut                           => ErrorCode.WRN_UseDefViolationOut,
@@ -636,8 +615,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 foreach (Symbol captured in _capturedVariables)
                 {
-                    Location location;
-                    if (_unsafeAddressTakenVariables.TryGetValue(captured, out location) &&
+                    if (_unsafeAddressTakenVariables.TryGetValue(captured, out Location location) &&
                         !(captured is ParameterSymbol { ContainingSymbol: SynthesizedPrimaryConstructor primaryConstructor } parameter &&
                          primaryConstructor.GetCapturedParameters().ContainsKey(parameter))) // Primary constructor parameter captured by the type itself is not hoisted into a closure
                     {
@@ -706,7 +684,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ParameterSymbol rangeVariableUnderlyingParameter = null)
         {
             var local = variable as LocalSymbol;
-            if ((object)local != null)
+            if (local is not null)
             {
                 _usedVariables.Add(local);
             }
@@ -714,14 +692,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             NotePrimaryConstructorParameterReadIfNeeded(variable);
 
             var localFunction = variable as LocalFunctionSymbol;
-            if ((object)localFunction != null)
+            if (localFunction is not null)
             {
                 _usedLocalFunctions.Add(localFunction);
             }
 
-            if ((object)variable != null)
+            if (variable is not null)
             {
-                if ((object)_sourceAssembly != null && variable.Kind == SymbolKind.Field)
+                if (_sourceAssembly is not null && variable.Kind == SymbolKind.Field)
                 {
                     _sourceAssembly.NoteFieldAccess((FieldSymbol)variable.OriginalDefinition,
                                                     read: true,
@@ -760,7 +738,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         {
                             var eventAccess = (BoundEventAccess)n;
                             FieldSymbol associatedField = eventAccess.EventSymbol.AssociatedField;
-                            if ((object)associatedField != null)
+                            if (associatedField is not null)
                             {
                                 NoteRead(associatedField);
 
@@ -800,10 +778,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected virtual void NoteWrite(Symbol variable, BoundExpression value, bool read, bool isRef)
         {
-            if ((object)variable != null)
+            if (variable is not null)
             {
                 _writtenVariables.Add(variable);
-                if ((object)_sourceAssembly != null && variable.Kind == SymbolKind.Field)
+                if (_sourceAssembly is not null && variable.Kind == SymbolKind.Field)
                 {
                     var field = (FieldSymbol)variable.OriginalDefinition;
                     _sourceAssembly.NoteFieldAccess(field,
@@ -812,7 +790,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 var local = variable as LocalSymbol;
-                if ((object)local != null && read && WriteConsideredUse(local.Type, value))
+                if (local is not null && read && WriteConsideredUse(local.Type, value))
                 {
                     // A local variable that is written to is considered to also be read,
                     // unless the written value is always a constant. The reasons for this
@@ -853,14 +831,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value == null || value.HasAnyErrors) return true;
 
-            if ((object)type != null && type.IsReferenceType &&
+            if (type is not null && type.IsReferenceType &&
                 type.SpecialType != SpecialType.System_String &&
                 type is not ArrayTypeSymbol { IsSZArray: true, ElementType.SpecialType: SpecialType.System_Byte })
             {
                 return value.ConstantValueOpt != ConstantValue.Null;
             }
 
-            if ((object)type != null && type.IsPointerOrFunctionPointer())
+            if (type is not null && type.IsPointerOrFunctionPointer())
             {
                 // We always suppress the warning for pointer types.
                 return true;
@@ -915,7 +893,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundKind.FieldAccess:
                         {
                             var fieldAccess = (BoundFieldAccess)n;
-                            if ((object)_sourceAssembly != null)
+                            if (_sourceAssembly is not null)
                             {
                                 var field = fieldAccess.FieldSymbol.OriginalDefinition;
                                 _sourceAssembly.NoteFieldAccess(field,
@@ -943,9 +921,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         {
                             var eventAccess = (BoundEventAccess)n;
                             FieldSymbol associatedField = eventAccess.EventSymbol.AssociatedField;
-                            if ((object)associatedField != null)
+                            if (associatedField is not null)
                             {
-                                if ((object)_sourceAssembly != null)
+                                if (_sourceAssembly is not null)
                                 {
                                     var field = associatedField.OriginalDefinition;
                                     _sourceAssembly.NoteFieldAccess(field, read: value == null || WriteConsideredUse(associatedField.Type, value), write: true);
@@ -1071,22 +1049,22 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
             }
 
-            return (object)member != null &&
-                (object)receiver != null &&
+            return member is not null &&
+                receiver is not null &&
                 receiver.Kind != BoundKind.TypeExpression &&
                 MayRequireTrackingReceiverType(receiver.Type);
         }
 
         private bool MayRequireTrackingReceiverType(TypeSymbol type)
         {
-            return (object)type != null &&
+            return type is not null &&
                 (_trackClassFields || type.TypeKind == TypeKind.Struct);
         }
 
         protected bool MayRequireTracking(BoundExpression receiverOpt, FieldSymbol fieldSymbol)
         {
             return
-                (object)fieldSymbol != null && //simplifies calling pattern for events
+                fieldSymbol is not null && //simplifies calling pattern for events
                 receiverOpt != null &&
                 !fieldSymbol.IsStatic &&
                 !fieldSymbol.IsFixedSizeBuffer &&
@@ -1103,7 +1081,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected void CheckAssigned(Symbol symbol, SyntaxNode node)
         {
             Debug.Assert(!IsConditionalState);
-            if ((object)symbol != null)
+            if (symbol is not null)
             {
                 NoteRead(symbol);
 
@@ -1242,17 +1220,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(foundUnassignedField);
                 }
 
-                if (compilation.IsFeatureEnabled(MessageID.IDS_FeatureAutoDefaultStructs))
-                {
-                    Diagnostics.Add(ErrorCode.WRN_UseDefViolationThisSupportedVersion, node.Location);
-                }
-                else
-                {
-                    Diagnostics.Add(
-                        ErrorCode.ERR_UseDefViolationThisUnsupportedVersion,
-                        node.Location,
-                        new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureAutoDefaultStructs.RequiredVersion()));
-                }
+                Diagnostics.Add(ErrorCode.WRN_UseDefViolationThisSupportedVersion, node.Location);
             }
 
             void addDiagnosticForStructField(int fieldSlot, FieldSymbol fieldSymbol)
@@ -1294,21 +1262,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     symbolName);
                             }
                         }
-                        else if (compilation.IsFeatureEnabled(MessageID.IDS_FeatureAutoDefaultStructs))
-                        {
+                        else
                             Diagnostics.Add(
                                 hasAssociatedProperty ? ErrorCode.WRN_UseDefViolationPropertySupportedVersion : ErrorCode.WRN_UseDefViolationFieldSupportedVersion,
                                 node.Location,
                                 symbolName);
-                        }
-                        else
-                        {
-                            Diagnostics.Add(
-                                hasAssociatedProperty ? ErrorCode.ERR_UseDefViolationPropertyUnsupportedVersion : ErrorCode.ERR_UseDefViolationFieldUnsupportedVersion,
-                                node.Location,
-                                symbolName,
-                                new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureAutoDefaultStructs.RequiredVersion()));
-                        }
                         return;
                     }
 
@@ -1336,7 +1294,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.ThisReference:
                     {
                         var self = MethodThisParameter;
-                        if ((object)self == null)
+                        if (self is null)
                         {
                             unassignedSlot = -1;
                             return true;
@@ -1440,7 +1398,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         {
                             var fieldAccess = (BoundFieldAccess)expression;
                             var fieldSymbol = fieldAccess.FieldSymbol;
-                            if ((object)_sourceAssembly != null) _sourceAssembly.NoteFieldAccess(fieldSymbol, true, true);
+                            if (_sourceAssembly is not null) _sourceAssembly.NoteFieldAccess(fieldSymbol, true, true);
                             if (fieldSymbol.ContainingType.IsReferenceType || fieldSymbol.IsStatic) return null;
                             expression = fieldAccess.ReceiverOpt;
                             continue;
@@ -1494,7 +1452,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         var pattern = (BoundObjectPattern)node;
                         var symbol = pattern.Variable as LocalSymbol;
-                        if ((object)symbol != null)
+                        if (symbol is not null)
                         {
                             // we do not track definite assignment for pattern variables when they are
                             // promoted to fields for top-level code in scripts and interactive
@@ -1643,7 +1601,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             VariableIdentifier variable = variableBySlot[containingSlot];
             TypeSymbol structType = variable.Symbol.GetTypeOrReturnType().Type;
 
-            if (structType.HasInlineArrayAttribute(out int length) && length > 1 && structType.TryGetPossiblyUnsupportedByLanguageInlineArrayElementField() is object)
+            if (structType.HasInlineArrayAttribute(out int length) && length > 1 && structType.TryGetPossiblyUnsupportedByLanguageInlineArrayElementField() is not null)
             {
                 // An inline array of length > 1 cannot be considered fully initialized judging only based on fields.
                 return false;
@@ -2496,7 +2454,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool shouldReadOperand = false;
 
             Symbol variable = UseNonFieldSymbolUnsafely(operand);
-            if ((object)variable != null)
+            if (variable is not null)
             {
                 // The goal here is to treat address-of as a read in cases where
                 // we (a) care about a read happening (e.g. for DataFlowsIn) and
@@ -2536,7 +2494,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // we assume that external method may write and/or read all of its fields (recursively).
             // Strangely, the native compiler requires the "ref", even for reference types, to exhibit
             // this behavior.
-            if (refKind != RefKind.None && ((object)method == null || method.IsExtern) && arg.Type is TypeSymbol type)
+            if (refKind != RefKind.None && (method is null || method.IsExtern) && arg.Type is TypeSymbol type)
             {
                 MarkFieldsUsed(type);
             }
@@ -2566,7 +2524,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.EventAccess:
                     var @event = (BoundEventAccess)expr;
                     FieldSymbol associatedField = @event.EventSymbol.AssociatedField;
-                    if ((object)associatedField != null && MayRequireTracking(@event.ReceiverOpt, associatedField))
+                    if (associatedField is not null && MayRequireTracking(@event.ReceiverOpt, associatedField))
                     {
                         CheckAssigned(@event, associatedField, node);
                     }
@@ -2660,7 +2618,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (node.FieldSymbol.IsFixedSizeBuffer && node.Syntax != null && !SyntaxFacts.IsFixedStatementExpression(node.Syntax))
             {
                 Symbol receiver = UseNonFieldSymbolUnsafely(node.ReceiverOpt);
-                if ((object)receiver != null)
+                if (receiver is not null)
                 {
                     CheckCaptured(receiver);
                     if (!_unsafeAddressTakenVariables.ContainsKey(receiver))
@@ -2690,8 +2648,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (MayRequireTracking(node.ReceiverOpt, backingField))
                     {
                         // special definite assignment behavior for fields of struct local variables.
-                        int unassignedSlot;
-                        if (this.State.Reachable && !IsAssigned(node, out unassignedSlot))
+                        if (this.State.Reachable && !IsAssigned(node, out int unassignedSlot))
                         {
                             ReportUnassignedIfNotCapturedInLocalFunction(backingField, node.Syntax, unassignedSlot);
                         }
@@ -2707,7 +2664,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // special definite assignment behavior for events of struct local variables.
 
             FieldSymbol associatedField = node.EventSymbol.AssociatedField;
-            if ((object)associatedField != null)
+            if (associatedField is not null)
             {
                 NoteRead(associatedField);
                 if (MayRequireTracking(node.ReceiverOpt, associatedField))
@@ -2724,7 +2681,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // declare and assign all iteration variables
             foreach (var iterationVariable in node.IterationVariables)
             {
-                Debug.Assert((object)iterationVariable != null);
+                Debug.Assert(iterationVariable is not null);
                 int slot = GetOrCreateSlot(iterationVariable);
                 if (slot > 0) SetSlotAssigned(slot);
                 // NOTE: do not report unused iteration variables. They are always considered used.

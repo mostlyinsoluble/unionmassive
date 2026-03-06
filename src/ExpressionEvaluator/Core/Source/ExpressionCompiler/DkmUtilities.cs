@@ -226,8 +226,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             Debug.Assert(compResult.Assembly != null);
 
-            ReadOnlyCollection<byte>? customTypeInfo;
-            Guid customTypeInfoId = compResult.GetCustomTypeInfo(out customTypeInfo);
+            Guid customTypeInfoId = compResult.GetCustomTypeInfo(out var customTypeInfo);
 
             return DkmCompiledClrInspectionQuery.Create(
                 runtimeInstance,
@@ -290,36 +289,25 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private static DkmEvaluationResultCategory GetResultCategory(SymbolKind kind)
         {
-            switch (kind)
+            return kind switch
             {
-                case SymbolKind.Method:
-                    return DkmEvaluationResultCategory.Method;
-                case SymbolKind.Property:
-                    return DkmEvaluationResultCategory.Property;
-                default:
-                    return DkmEvaluationResultCategory.Data;
-            }
+                SymbolKind.Method => DkmEvaluationResultCategory.Method,
+                SymbolKind.Property => DkmEvaluationResultCategory.Property,
+                _ => DkmEvaluationResultCategory.Data,
+            };
         }
 
         private static DkmEvaluationResultAccessType GetResultAccessType(Accessibility accessibility)
         {
-            switch (accessibility)
+            return accessibility switch
             {
-                case Accessibility.Public:
-                    return DkmEvaluationResultAccessType.Public;
-                case Accessibility.Protected:
-                    return DkmEvaluationResultAccessType.Protected;
-                case Accessibility.Private:
-                    return DkmEvaluationResultAccessType.Private;
-                case Accessibility.Internal:
-                case Accessibility.ProtectedOrInternal: // Dev12 treats this as "internal"
-                case Accessibility.ProtectedAndInternal: // Dev12 treats this as "internal"
-                    return DkmEvaluationResultAccessType.Internal;
-                case Accessibility.NotApplicable:
-                    return DkmEvaluationResultAccessType.None;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(accessibility);
-            }
+                Accessibility.Public => DkmEvaluationResultAccessType.Public,
+                Accessibility.Protected => DkmEvaluationResultAccessType.Protected,
+                Accessibility.Private => DkmEvaluationResultAccessType.Private,
+                Accessibility.Internal or Accessibility.ProtectedOrInternal or Accessibility.ProtectedAndInternal => DkmEvaluationResultAccessType.Internal,
+                Accessibility.NotApplicable => DkmEvaluationResultAccessType.None,
+                _ => throw ExceptionUtilities.UnexpectedValue(accessibility),
+            };
         }
 
         internal static bool Includes(this DkmVariableInfoFlags flags, DkmVariableInfoFlags desired)

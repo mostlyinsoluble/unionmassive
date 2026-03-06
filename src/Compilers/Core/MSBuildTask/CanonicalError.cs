@@ -237,8 +237,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         /// <returns>'value' converted to int or 0 if it can't be parsed or is negative</returns>
         private static int ConvertToIntWithDefault(string value)
         {
-            int result;
-            bool success = int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out result);
+            bool success = int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result);
 
             if (!success || (result < 0))
             {

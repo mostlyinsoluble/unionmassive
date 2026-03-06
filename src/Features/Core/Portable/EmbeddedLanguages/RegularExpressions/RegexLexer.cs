@@ -215,17 +215,11 @@ internal struct RegexLexer
     private static bool IsBlank(VirtualChar ch)
     {
         // List taken from the native regex parser.
-        switch (ch.Value)
+        return ch.Value switch
         {
-            case '\u0009':
-            case '\u000A':
-            case '\u000C':
-            case '\u000D':
-            case ' ':
-                return true;
-            default:
-                return false;
-        }
+            '\u0009' or '\u000A' or '\u000C' or '\u000D' or ' ' => true,
+            _ => false,
+        };
     }
 
     public RegexToken? TryScanEscapeCategory()
@@ -345,24 +339,11 @@ internal struct RegexLexer
 
     private static bool IsOptionChar(VirtualChar ch)
     {
-        switch (ch.Value)
+        return ch.Value switch
         {
-            case '+':
-            case '-':
-            case 'i':
-            case 'I':
-            case 'm':
-            case 'M':
-            case 'n':
-            case 'N':
-            case 's':
-            case 'S':
-            case 'x':
-            case 'X':
-                return true;
-            default:
-                return false;
-        }
+            '+' or '-' or 'i' or 'I' or 'm' or 'M' or 'n' or 'N' or 's' or 'S' or 'x' or 'X' => true,
+            _ => false,
+        };
     }
 
     public RegexToken ScanHexCharacters(int count)

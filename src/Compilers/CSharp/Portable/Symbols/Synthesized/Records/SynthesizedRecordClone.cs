@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             DeclarationModifiers result = DeclarationModifiers.Public;
 
-            if (VirtualCloneInBase(containingType) is object)
+            if (VirtualCloneInBase(containingType) is not null)
             {
                 result |= DeclarationModifiers.Override;
             }
@@ -61,21 +61,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 modifiers &= ~DeclarationModifiers.AccessibilityMask;
 
-                switch (modifiers)
+                return modifiers switch
                 {
-                    case DeclarationModifiers.None:
-                        return true;
-                    case DeclarationModifiers.Abstract:
-                        return true;
-                    case DeclarationModifiers.Override:
-                        return true;
-                    case DeclarationModifiers.Abstract | DeclarationModifiers.Override:
-                        return true;
-                    case DeclarationModifiers.Virtual:
-                        return true;
-                    default:
-                        return false;
-                }
+                    DeclarationModifiers.None => true,
+                    DeclarationModifiers.Abstract => true,
+                    DeclarationModifiers.Override => true,
+                    DeclarationModifiers.Abstract | DeclarationModifiers.Override => true,
+                    DeclarationModifiers.Virtual => true,
+                    _ => false,
+                };
             }
 #endif 
         }
@@ -95,9 +89,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            return (ReturnType: !ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses && VirtualCloneInBase(ContainingType) is { } baseClone ?
-                                     baseClone.ReturnTypeWithAnnotations :
-                                     TypeWithAnnotations.Create(isNullableEnabled: true, ContainingType),
+            return (ReturnType: TypeWithAnnotations.Create(isNullableEnabled: true, ContainingType),
                     Parameters: ImmutableArray<ParameterSymbol>.Empty);
         }
 
@@ -165,7 +157,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         Arity: 0
                     } method)
                 {
-                    if (candidate is object)
+                    if (candidate is not null)
                     {
                         // An ambiguity case, can come from metadata, treat as an error for simplicity.
                         return null;

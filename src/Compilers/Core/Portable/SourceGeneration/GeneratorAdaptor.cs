@@ -43,7 +43,7 @@ namespace Microsoft.CodeAnalysis
             SourceGenerator.Initialize(generatorInitContext);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            if (generatorInitContext.Callbacks.PostInitCallback is object)
+            if (generatorInitContext.Callbacks.PostInitCallback is not null)
             {
                 context.RegisterPostInitializationOutput(generatorInitContext.Callbacks.PostInitCallback);
             }
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis
                                         .Combine(context.AdditionalTextsProvider.Collect()).Select((p, _) => p.Item1 with { AdditionalTexts = p.Item2 });
 
             var syntaxContextReceiverCreator = generatorInitContext.Callbacks.SyntaxContextReceiverCreator;
-            if (syntaxContextReceiverCreator is object)
+            if (syntaxContextReceiverCreator is not null)
             {
                 contextBuilderSource = contextBuilderSource
                                        .Combine(context.SyntaxProvider.CreateSyntaxReceiverProvider(syntaxContextReceiverCreator))
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis
 
             public GeneratorExecutionContext ToExecutionContext(string sourceExtension, SourceHashAlgorithm checksumAlgorithm, CancellationToken cancellationToken)
             {
-                Debug.Assert(ParseOptions is object && ConfigOptions is object);
+                Debug.Assert(ParseOptions is not null && ConfigOptions is not null);
                 return new GeneratorExecutionContext(Compilation, ParseOptions, AdditionalTexts, ConfigOptions, Receiver, sourceExtension, checksumAlgorithm, cancellationToken);
             }
         }

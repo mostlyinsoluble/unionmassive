@@ -70,7 +70,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ErrorCode? customErrorCode = null,
             object[]? customArgs = null)
         {
-            Debug.Assert((node.Kind() == SyntaxKind.SizeOfExpression) == ((object?)sizeOfTypeOpt != null), "Should have a type for (only) sizeof expressions.");
+            Debug.Assert((node.Kind() == SyntaxKind.SizeOfExpression) == (sizeOfTypeOpt is not null), "Should have a type for (only) sizeof expressions.");
             var diagnosticInfo = GetUnsafeDiagnosticInfo(disallowedUnder, sizeOfTypeOpt, customErrorCode, customArgs);
             if (diagnosticInfo == null)
             {
@@ -112,12 +112,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Debug.Assert(customErrorCode is null && customArgs is null);
 
-                    if (this.Compilation.SourceModule.UseUpdatedMemorySafetyRules)
-                    {
-                        return MessageID.IDS_FeatureUnsafeEvolution.GetFeatureAvailabilityDiagnosticInfo(this.Compilation);
-                    }
-
-                    return ((object?)sizeOfTypeOpt == null)
+                    return (sizeOfTypeOpt is null)
                         ? new CSDiagnosticInfo(ErrorCode.ERR_UnsafeNeeded)
                         : new CSDiagnosticInfo(ErrorCode.ERR_SizeofUnsafe, sizeOfTypeOpt);
                 }
@@ -126,26 +121,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (this.Compilation.SourceModule.UseUpdatedMemorySafetyRules)
                 {
-                    return MessageID.IDS_FeatureUnsafeEvolution.GetFeatureAvailabilityDiagnosticInfo(this.Compilation)
-                        ?? new CSDiagnosticInfo(customErrorCode ?? ErrorCode.ERR_UnsafeOperation, customArgs ?? []);
+                    return new CSDiagnosticInfo(customErrorCode ?? ErrorCode.ERR_UnsafeOperation, customArgs ?? []);
                 }
 
                 // This location is disallowed only under updated memory safety rules which are not enabled.
                 // We report an error elsewhere, usually at the pointer type itself
                 // (where we are called with `disallowedUnder: MemorySafetyRules.Legacy`).
-                return null;
-            }
-            else if (this.IsIndirectlyInIterator && MessageID.IDS_FeatureRefUnsafeInIteratorAsync.GetFeatureAvailabilityDiagnosticInfo(Compilation) is { } unsafeInIteratorDiagnosticInfo)
-            {
-                if (disallowedUnder is MemorySafetyRules.Legacy)
-                {
-                    return unsafeInIteratorDiagnosticInfo;
-                }
-
-                // This location is disallowed only under updated memory safety rules.
-                // We report the RefUnsafeInIteratorAsync langversion error elsewhere, usually at the pointer type itself
-                // (where we are called with `disallowedUnder: MemorySafetyRules.Legacy`).
-                Debug.Assert(disallowedUnder is MemorySafetyRules.Updated);
                 return null;
             }
             else

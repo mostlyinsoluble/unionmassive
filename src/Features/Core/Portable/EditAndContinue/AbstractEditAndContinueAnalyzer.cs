@@ -1932,7 +1932,7 @@ internal abstract partial class AbstractEditAndContinueAnalyzer : IEditAndContin
     protected static bool HasEdit(IReadOnlyDictionary<SyntaxNode, EditKind> editMap, SyntaxNode? node, EditKind editKind)
     {
         return
-            node is object &&
+            node is not null &&
             editMap.TryGetValue(node, out var parentEdit) &&
             parentEdit == editKind;
     }
@@ -2184,7 +2184,7 @@ internal abstract partial class AbstractEditAndContinueAnalyzer : IEditAndContin
         List<SyntaxNode?>? list = null;
         var current = node;
 
-        while (current is object && current != root)
+        while (current is not null && current != root)
         {
             if (nodeSelector(current))
             {

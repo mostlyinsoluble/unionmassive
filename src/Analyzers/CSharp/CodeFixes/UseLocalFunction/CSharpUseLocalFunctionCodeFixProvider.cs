@@ -268,17 +268,13 @@ internal sealed class CSharpUseLocalFunctionCodeFixProvider() : SyntaxEditorBase
 
     private static ParameterListSyntax TryGetOrCreateParameterList(AnonymousFunctionExpressionSyntax anonymousFunction)
     {
-        switch (anonymousFunction)
+        return anonymousFunction switch
         {
-            case SimpleLambdaExpressionSyntax simpleLambda:
-                return ParameterList([simpleLambda.Parameter]);
-            case ParenthesizedLambdaExpressionSyntax parenthesizedLambda:
-                return parenthesizedLambda.ParameterList;
-            case AnonymousMethodExpressionSyntax anonymousMethod:
-                return anonymousMethod.ParameterList; // may be null!
-            default:
-                throw ExceptionUtilities.UnexpectedValue(anonymousFunction);
-        }
+            SimpleLambdaExpressionSyntax simpleLambda => ParameterList([simpleLambda.Parameter]),
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambda => parenthesizedLambda.ParameterList,
+            AnonymousMethodExpressionSyntax anonymousMethod => anonymousMethod.ParameterList,// may be null!
+            _ => throw ExceptionUtilities.UnexpectedValue(anonymousFunction),
+        };
     }
 
     private static InvocationExpressionSyntax WithNewParameterNames(InvocationExpressionSyntax invocation, IMethodSymbol method, ParameterListSyntax newParameterList)

@@ -378,7 +378,7 @@ namespace Microsoft.CodeAnalysis
             }
 
             Debug.Assert(!_lazyChecksum.IsDefault);
-            Debug.Assert(_lazyHashAlgorithm != default(SourceHashAlgorithm));
+            Debug.Assert(_lazyHashAlgorithm != default);
 
             // NOTE: If this tree is to be embedded, it's debug source info should have
             // been obtained via EmbeddedText.GetDebugSourceInfo() and not here.

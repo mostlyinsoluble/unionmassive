@@ -313,7 +313,7 @@ namespace Analyzer.Utilities
 
         private bool TryGetValue(int hashCode, K key, [MaybeNullWhen(returnValue: false)] out V value)
         {
-            RoslynDebug.Assert(_root is object);
+            RoslynDebug.Assert(_root is not null);
             AvlNode? b = _root;
 
             do
@@ -483,7 +483,7 @@ hasBucket:
 
         private static AvlNode LeftSimple(AvlNode unbalanced)
         {
-            RoslynDebug.Assert(unbalanced.Right is object);
+            RoslynDebug.Assert(unbalanced.Right is not null);
             var right = unbalanced.Right;
             unbalanced.Right = right.Left;
             right.Left = unbalanced;
@@ -495,7 +495,7 @@ hasBucket:
 
         private static AvlNode RightSimple(AvlNode unbalanced)
         {
-            RoslynDebug.Assert(unbalanced.Left is object);
+            RoslynDebug.Assert(unbalanced.Left is not null);
             var left = unbalanced.Left;
             unbalanced.Left = left.Right;
             left.Right = unbalanced;
@@ -507,8 +507,8 @@ hasBucket:
 
         private static AvlNode LeftComplex(AvlNode unbalanced)
         {
-            RoslynDebug.Assert(unbalanced.Right is object);
-            RoslynDebug.Assert(unbalanced.Right.Left is object);
+            RoslynDebug.Assert(unbalanced.Right is not null);
+            RoslynDebug.Assert(unbalanced.Right.Left is not null);
             var right = unbalanced.Right;
             var rightLeft = right.Left;
             right.Left = rightLeft.Right;

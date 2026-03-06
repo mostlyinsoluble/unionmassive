@@ -141,7 +141,7 @@ internal sealed class CSharpChangeNamespaceService() :
 
         if (syntaxFacts.IsRightOfQualifiedName(nameRef))
         {
-            RoslynDebug.Assert(nameRef.Parent is object);
+            RoslynDebug.Assert(nameRef.Parent is not null);
             oldNode = nameRef.Parent;
             var aliasQualifier = GetAliasQualifier(oldNode);
 
@@ -158,7 +158,7 @@ internal sealed class CSharpChangeNamespaceService() :
         else if (syntaxFacts.IsNameOfSimpleMemberAccessExpression(nameRef) ||
                  syntaxFacts.IsNameOfMemberBindingExpression(nameRef))
         {
-            RoslynDebug.Assert(nameRef.Parent is object);
+            RoslynDebug.Assert(nameRef.Parent is not null);
             oldNode = nameRef.Parent;
             var aliasQualifier = GetAliasQualifier(oldNode);
 

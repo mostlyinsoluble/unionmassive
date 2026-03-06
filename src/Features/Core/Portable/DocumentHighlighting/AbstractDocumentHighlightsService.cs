@@ -136,26 +136,15 @@ internal abstract partial class AbstractDocumentHighlightsService :
 
     private static bool ShouldConsiderSymbol(ISymbol symbol)
     {
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Method:
-                switch (((IMethodSymbol)symbol).MethodKind)
-                {
-                    case MethodKind.AnonymousFunction:
-                    case MethodKind.PropertyGet:
-                    case MethodKind.PropertySet:
-                    case MethodKind.EventAdd:
-                    case MethodKind.EventRaise:
-                    case MethodKind.EventRemove:
-                        return false;
-
-                    default:
-                        return true;
-                }
-
-            default:
-                return true;
-        }
+            SymbolKind.Method => ((IMethodSymbol)symbol).MethodKind switch
+            {
+                MethodKind.AnonymousFunction or MethodKind.PropertyGet or MethodKind.PropertySet or MethodKind.EventAdd or MethodKind.EventRaise or MethodKind.EventRemove => false,
+                _ => true,
+            },
+            _ => true,
+        };
     }
 
     private async Task<ImmutableArray<DocumentHighlights>> FilterAndCreateSpansAsync(
@@ -279,16 +268,12 @@ internal abstract partial class AbstractDocumentHighlightsService :
 
     private static bool ShouldIncludeDefinition(ISymbol symbol)
     {
-        switch (symbol.Kind)
+        return symbol.Kind switch
         {
-            case SymbolKind.Namespace:
-                return false;
-
-            case SymbolKind.NamedType:
-                return !((INamedTypeSymbol)symbol).IsScriptClass;
-        }
-
-        return true;
+            SymbolKind.Namespace => false,
+            SymbolKind.NamedType => !((INamedTypeSymbol)symbol).IsScriptClass,
+            _ => true,
+        };
     }
 
     private static async Task AddLocationSpanAsync(Location location, Solution solution, HashSet<DocumentSpan> spanSet, MultiDictionary<Document, HighlightSpan> tagList, HighlightSpanKind kind, CancellationToken cancellationToken)

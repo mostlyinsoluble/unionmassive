@@ -57,7 +57,7 @@ internal abstract class AbstractReferenceDirectiveCompletionProvider : AbstractD
                 context.AddItem(CommonCompletionItem.Create(PathUtilities.GetFileName(path, includeExtension: true), displayTextSuffix: "", glyph: Glyph.Assembly, rules: s_rules));
             }
 
-            if (resolver.GacFileResolver is object)
+            if (resolver.GacFileResolver is not null)
             {
                 var gacHelper = new GlobalAssemblyCacheCompletionHelper(s_rules);
                 context.AddItems(await gacHelper.GetItemsAsync(pathThroughLastSlash, context.CancellationToken).ConfigureAwait(false));

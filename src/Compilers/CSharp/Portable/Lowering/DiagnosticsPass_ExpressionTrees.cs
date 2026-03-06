@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static void IssueDiagnostics(CSharpCompilation compilation, BoundNode node, BindingDiagnosticBag diagnostics, MethodSymbol containingSymbol)
         {
             Debug.Assert(node != null);
-            Debug.Assert((object)containingSymbol != null);
+            Debug.Assert(containingSymbol is not null);
 
             ExecutableCodeBinder.ValidateIteratorMethod(compilation, containingSymbol, diagnostics);
 
@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private DiagnosticsPass(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, MethodSymbol containingSymbol)
         {
             Debug.Assert(diagnostics != null);
-            Debug.Assert((object)containingSymbol != null);
+            Debug.Assert(containingSymbol is not null);
 
             _compilation = compilation;
             _diagnostics = diagnostics;
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void CheckUnsafeType(BoundExpression e)
         {
-            if (e != null && (object)e.Type != null && e.Type.IsPointerOrFunctionPointer()) NoteUnsafe(e);
+            if (e != null && e.Type is not null && e.Type.IsPointerOrFunctionPointer()) NoteUnsafe(e);
         }
 
         private void NoteUnsafe(BoundNode node)
@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void CheckReferenceToThisOrBase(BoundExpression node)
         {
-            if (_staticLocalOrAnonymousFunction is object)
+            if (_staticLocalOrAnonymousFunction is not null)
             {
                 var diagnostic = _staticLocalOrAnonymousFunction.MethodKind == MethodKind.LocalFunction
                     ? ErrorCode.ERR_StaticLocalFunctionCannotCaptureThis
@@ -207,7 +207,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(symbol.Kind == SymbolKind.Local || symbol.Kind == SymbolKind.Parameter || symbol is LocalFunctionSymbol);
 
-            if (_staticLocalOrAnonymousFunction is object && Symbol.IsCaptured(symbol, _staticLocalOrAnonymousFunction))
+            if (_staticLocalOrAnonymousFunction is not null && Symbol.IsCaptured(symbol, _staticLocalOrAnonymousFunction))
             {
                 var diagnostic = _staticLocalOrAnonymousFunction.MethodKind == MethodKind.LocalFunction
                     ? ErrorCode.ERR_StaticLocalFunctionCannotCaptureVariable
@@ -313,8 +313,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             BitVector defaultArguments,
             BoundNode node)
         {
-            Debug.Assert((object)method != null);
-            Debug.Assert(((object)propertyAccess == null) ||
+            Debug.Assert(method is not null);
+            Debug.Assert((propertyAccess is null) ||
                 (method == propertyAccess.GetOwnOrInheritedGetMethod()) ||
                 (method == propertyAccess.GetOwnOrInheritedSetMethod()) ||
                 propertyAccess.MustCallMethodsDirectly);
@@ -327,24 +327,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Error(ErrorCode.ERR_PartialMethodInExpressionTree, node);
                 }
-                else if ((object)propertyAccess != null && propertyAccess.IsIndexedProperty() && !propertyAccess.IsIndexer)
+                else if (propertyAccess is not null && propertyAccess.IsIndexedProperty() && !propertyAccess.IsIndexer)
                 {
                     Error(ErrorCode.ERR_ExpressionTreeContainsIndexedProperty, node);
-                }
-                else if (hasDefaultArgument(arguments, defaultArguments) &&
-                    !_compilation.IsFeatureEnabled(MessageID.IDS_FeatureExpressionOptionalAndNamedArguments))
-                {
-                    Error(ErrorCode.ERR_ExpressionTreeContainsOptionalArgument, node);
-                }
-                else if (!argumentNamesOpt.IsDefaultOrEmpty &&
-                    !_compilation.IsFeatureEnabled(MessageID.IDS_FeatureExpressionOptionalAndNamedArguments))
-                {
-                    Error(ErrorCode.ERR_ExpressionTreeContainsNamedArgument, node);
                 }
                 else if (!argumentNamesOpt.IsDefaultOrEmpty &&
                     hasNamedArgumentOutOfOrder(argsToParamsOpt))
                 {
-                    Debug.Assert(_compilation.IsFeatureEnabled(MessageID.IDS_FeatureExpressionOptionalAndNamedArguments));
                     Error(ErrorCode.ERR_ExpressionTreeContainsNamedArgumentOutOfPosition, node);
                 }
                 else if (IsComCallWithRefOmitted(method, arguments, argumentRefKindsOpt))
@@ -552,7 +541,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Error(ErrorCode.ERR_ExtensionCollectionElementInitializerInExpressionTree, node);
             }
 
-            VisitCall(node.AddMethod, null, node.Arguments, default(ImmutableArray<RefKind>), default(ImmutableArray<string>), default(ImmutableArray<int>), node.DefaultArguments, node);
+            VisitCall(node.AddMethod, null, node.Arguments, default, default, default, node.DefaultArguments, node);
             return base.VisitCollectionElementInitializer(node);
         }
 
@@ -566,7 +555,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var indexer = node.Indexer;
             var method = indexer.GetOwnOrInheritedGetMethod() ?? indexer.GetOwnOrInheritedSetMethod();
-            if ((object)method != null)
+            if (method is not null)
             {
                 VisitCall(method, indexer, node.Arguments, node.ArgumentRefKindsOpt, node.ArgumentNamesOpt, node.ArgsToParamsOpt, node.DefaultArguments, node);
             }

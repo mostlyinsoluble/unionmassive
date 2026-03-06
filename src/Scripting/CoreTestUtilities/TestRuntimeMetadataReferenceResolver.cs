@@ -53,7 +53,7 @@ namespace Roslyn.Test.Utilities
                 return ImmutableArray.Create(MetadataReference.CreateFromFile(reference, properties));
             }
 
-            return default(ImmutableArray<PortableExecutableReference>);
+            return default;
         }
     }
 }

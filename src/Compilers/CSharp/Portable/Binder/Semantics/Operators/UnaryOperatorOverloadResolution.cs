@@ -551,7 +551,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(operand != null);
 
             var enumType = operand.Type;
-            if ((object)enumType == null)
+            if (enumType is null)
             {
                 return;
             }
@@ -582,7 +582,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(operand != null);
 
             var pointerType = operand.Type as PointerTypeSymbol;
-            if ((object)pointerType == null)
+            if (pointerType is null)
             {
                 return null;
             }
@@ -612,7 +612,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(operand != null);
 
-            if ((object)operand.Type == null)
+            if (operand.Type is null)
             {
                 // If the operand has no type -- because it is a null reference or a lambda or a method group --
                 // there is no way we can determine what type to search for user-defined operators.
@@ -668,17 +668,17 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hadApplicableCandidates = false;
 
             NamedTypeSymbol current = declaringTypeOrTypeParameter as NamedTypeSymbol;
-            if ((object)current == null)
+            if (current is null)
             {
                 current = declaringTypeOrTypeParameter.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo);
             }
 
-            if ((object)current == null && declaringTypeOrTypeParameter.IsTypeParameter())
+            if (current is null && declaringTypeOrTypeParameter.IsTypeParameter())
             {
                 current = ((TypeParameterSymbol)declaringTypeOrTypeParameter).EffectiveBaseClass(ref useSiteInfo);
             }
 
-            for (; (object)current != null; current = current.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
+            for (; current is not null; current = current.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
             {
                 operators.Clear();
 

@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
                     var name = GetMethodName(pair.Key);
                     if (map.ContainsKey(name))
                     {
-                        map[name] = default(MethodData);
+                        map[name] = default;
                     }
                     else
                     {

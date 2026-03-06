@@ -46,22 +46,12 @@ namespace Microsoft.Cci
             CancellationToken cancellationToken)
         {
             var builder = new MetadataBuilder();
-            MetadataBuilder? debugBuilderOpt;
-            switch (context.Module.DebugInformationFormat)
+            MetadataBuilder? debugBuilderOpt = context.Module.DebugInformationFormat switch
             {
-                case DebugInformationFormat.PortablePdb:
-                    debugBuilderOpt = hasPdbStream ? new MetadataBuilder() : null;
-                    break;
-
-                case DebugInformationFormat.Embedded:
-                    debugBuilderOpt = metadataOnly ? null : new MetadataBuilder();
-                    break;
-
-                default:
-                    debugBuilderOpt = null;
-                    break;
-            }
-
+                DebugInformationFormat.PortablePdb => hasPdbStream ? new MetadataBuilder() : null,
+                DebugInformationFormat.Embedded => metadataOnly ? null : new MetadataBuilder(),
+                _ => null,
+            };
             var dynamicAnalysisDataWriterOpt = emitTestCoverageData ?
                 new DynamicAnalysisDataWriter(context.Module.DebugDocumentCount, context.Module.HintNumberOfMethodDefinitions) :
                 null;
@@ -127,8 +117,7 @@ namespace Microsoft.Cci
 
         protected override bool TryGetTypeDefinitionHandle(ITypeDefinition def, out TypeDefinitionHandle handle)
         {
-            int index;
-            bool result = _typeDefs.TryGetValue(def, out index);
+            bool result = _typeDefs.TryGetValue(def, out int index);
             handle = MetadataTokens.TypeDefinitionHandle(index);
             return result;
         }
@@ -170,8 +159,7 @@ namespace Microsoft.Cci
 
         protected override bool TryGetMethodDefinitionHandle(IMethodDefinition def, out MethodDefinitionHandle handle)
         {
-            int index;
-            bool result = _methodDefs.TryGetValue(def, out index);
+            bool result = _methodDefs.TryGetValue(def, out int index);
             handle = MetadataTokens.MethodDefinitionHandle(index);
             return result;
         }
@@ -275,8 +263,7 @@ namespace Microsoft.Cci
 
         protected override bool TryGetTypeReferenceHandle(ITypeReference reference, out TypeReferenceHandle handle)
         {
-            int index;
-            bool result = _typeRefIndex.TryGetValue(reference, out index);
+            bool result = _typeRefIndex.TryGetValue(reference, out int index);
             handle = MetadataTokens.TypeReferenceHandle(index);
             return result;
         }

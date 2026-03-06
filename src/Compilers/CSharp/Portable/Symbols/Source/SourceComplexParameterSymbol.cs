@@ -293,7 +293,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     Debug.Assert(completedOnThisThread);
                 }
 
-                state.SpinWaitComplete(CompletionPart.EndDefaultSyntaxValue, default(CancellationToken));
+                state.SpinWaitComplete(CompletionPart.EndDefaultSyntaxValue, default);
                 return _lazyDefaultSyntaxValue;
             }
         }
@@ -381,8 +381,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            MessageID.IDS_FeatureOptionalParameter.CheckFeatureAvailability(diagnostics, defaultSyntax.EqualsToken);
-
             binder = GetDefaultParameterValueBinder(defaultSyntax);
             binder = binder.CreateBinderForParameterDefaultValue(this, defaultSyntax);
             Debug.Assert(binder.InParameterDefaultValue);
@@ -428,13 +426,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // The metadata parameter name should be the name used in the partial definition.
 
                 var sourceMethod = this.ContainingSymbol as SourceOrdinaryMethodSymbol;
-                if ((object)sourceMethod == null)
+                if (sourceMethod is null)
                 {
                     return base.MetadataName;
                 }
 
                 var definition = sourceMethod.SourcePartialDefinition;
-                if ((object)definition == null)
+                if (definition is null)
                 {
                     return base.MetadataName;
                 }
@@ -511,7 +509,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 var syntax = this.ParameterSyntax;
-                return (syntax != null) ? syntax.AttributeLists : default(SyntaxList<AttributeListSyntax>);
+                return (syntax != null) ? syntax.AttributeLists : default;
             }
         }
 
@@ -587,7 +585,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Debug.Assert(!ReferenceEquals(copyFrom, this));
 
                 bool bagCreatedOnThisThread;
-                if ((object)copyFrom != null)
+                if (copyFrom is not null)
                 {
                     var attributesBag = copyFrom.GetAttributesBag();
                     bagCreatedOnThisThread = Interlocked.CompareExchange(ref _lazyCustomAttributesBag, attributesBag, null) == null;
@@ -734,8 +732,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 description.Equals(AttributeDescription.DecimalConstantAttribute) ||
                 description.Equals(AttributeDescription.DateTimeConstantAttribute));
 
-            bool hasAnyDiagnostics;
-            var (attributeData, boundAttribute) = arguments.Binder.GetAttribute(arguments.AttributeSyntax, arguments.AttributeType, beforeAttributePartBound: null, afterAttributePartBound: null, out hasAnyDiagnostics);
+            var (attributeData, boundAttribute) = arguments.Binder.GetAttribute(arguments.AttributeSyntax, arguments.AttributeType, beforeAttributePartBound: null, afterAttributePartBound: null, out bool hasAnyDiagnostics);
             ConstantValue value;
             if (attributeData.HasErrors)
             {
@@ -759,7 +756,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
+            Debug.Assert(arguments.AttributeSyntaxOpt is not null);
 
             var attribute = arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
@@ -1520,7 +1517,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // prevent infinite recursion:
                     Debug.Assert(!ReferenceEquals(copyFrom, this));
 
-                    if ((object)copyFrom != null)
+                    if (copyFrom is not null)
                     {
                         // Parameter of partial implementation.
                         // We bind the attributes only on the definition part and copy them over to the implementation.
@@ -1611,7 +1608,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Debug.Assert(completedOnThisThread);
             }
 
-            state.SpinWaitComplete(CompletionPart.EndMiscValidation, default(CancellationToken));
+            state.SpinWaitComplete(CompletionPart.EndMiscValidation, default);
 
             void validateParamsType(BindingDiagnosticBag diagnostics)
             {
@@ -1717,11 +1714,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 Debug.Assert(elementType is { });
-
-                if (collectionTypeKind != CollectionExpressionTypeKind.Array)
-                {
-                    MessageID.IDS_FeatureParamsCollections.CheckFeatureAvailability(diagnostics, ParameterSyntax);
-                }
             }
 
             bool isAtLeastAsVisible(ParameterSyntax syntax, Binder binder, MethodSymbol method, BindingDiagnosticBag diagnostics)

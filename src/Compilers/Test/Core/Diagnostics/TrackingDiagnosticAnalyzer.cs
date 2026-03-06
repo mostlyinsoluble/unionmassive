@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             {
                 AbstractMemberName = abstractMemberName;
                 CallerName = callerName;
-                SyntaxKind = node == null ? default(TLanguageKindEnum) : (TLanguageKindEnum)(object)(ushort)node.RawKind;
+                SyntaxKind = node == null ? default : (TLanguageKindEnum)(object)(ushort)node.RawKind;
                 SymbolKind = symbol == null ? (SymbolKind?)null : symbol.Kind;
                 MethodKind = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).MethodKind : (MethodKind?)null;
                 ReturnsVoid = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).ReturnsVoid : false;

@@ -38,37 +38,19 @@ internal static class CSharpUsePatternCombinatorsAnalyzer
 
     private static AnalyzedPattern? ParsePattern(IOperation operation)
     {
-        switch (operation)
+        return operation switch
         {
-            case IBinaryOperation { OperatorKind: BinaryOperatorKind.Equals } op:
-                return ParseConstantPattern(op);
-
-            case IBinaryOperation { OperatorKind: NotEquals } op:
-                return Not.TryCreate(ParseConstantPattern(op));
-
-            case IBinaryOperation { OperatorKind: ConditionalOr, Syntax: BinaryExpressionSyntax syntax } op:
-                return ParseBinaryPattern(op, isDisjunctive: true, syntax.OperatorToken);
-
-            case IBinaryOperation { OperatorKind: ConditionalAnd, Syntax: BinaryExpressionSyntax syntax } op:
-                return ParseBinaryPattern(op, isDisjunctive: false, syntax.OperatorToken);
-
-            case IBinaryOperation op when IsRelationalOperator(op.OperatorKind):
-                return ParseRelationalPattern(op);
-
-            case IUnaryOperation { OperatorKind: UnaryOperatorKind.Not } op:
-                return Not.TryCreate(ParsePattern(op.Operand));
-
-            case IIsTypeOperation { Syntax: BinaryExpressionSyntax binaryExpression } op:
-                return Type.TryCreate(binaryExpression, op);
-
-            case IIsPatternOperation { Pattern.Syntax: PatternSyntax pattern } op:
-                return new Source(pattern, op.Value);
-
-            case IParenthesizedOperation op:
-                return ParsePattern(op.Operand);
-        }
-
-        return null;
+            IBinaryOperation { OperatorKind: BinaryOperatorKind.Equals } op => ParseConstantPattern(op),
+            IBinaryOperation { OperatorKind: NotEquals } op => Not.TryCreate(ParseConstantPattern(op)),
+            IBinaryOperation { OperatorKind: ConditionalOr, Syntax: BinaryExpressionSyntax syntax } op => ParseBinaryPattern(op, isDisjunctive: true, syntax.OperatorToken),
+            IBinaryOperation { OperatorKind: ConditionalAnd, Syntax: BinaryExpressionSyntax syntax } op => ParseBinaryPattern(op, isDisjunctive: false, syntax.OperatorToken),
+            IBinaryOperation op when IsRelationalOperator(op.OperatorKind) => ParseRelationalPattern(op),
+            IUnaryOperation { OperatorKind: UnaryOperatorKind.Not } op => Not.TryCreate(ParsePattern(op.Operand)),
+            IIsTypeOperation { Syntax: BinaryExpressionSyntax binaryExpression } op => Type.TryCreate(binaryExpression, op),
+            IIsPatternOperation { Pattern.Syntax: PatternSyntax pattern } op => new Source(pattern, op.Value),
+            IParenthesizedOperation op => ParsePattern(op.Operand),
+            _ => null,
+        };
     }
 
     private static AnalyzedPattern? ParseBinaryPattern(IBinaryOperation op, bool isDisjunctive, SyntaxToken token)
@@ -123,16 +105,11 @@ internal static class CSharpUsePatternCombinatorsAnalyzer
 
     private static bool IsRelationalOperator(BinaryOperatorKind operatorKind)
     {
-        switch (operatorKind)
+        return operatorKind switch
         {
-            case LessThan:
-            case LessThanOrEqual:
-            case GreaterThanOrEqual:
-            case GreaterThan:
-                return true;
-            default:
-                return false;
-        }
+            LessThan or LessThanOrEqual or GreaterThanOrEqual or GreaterThan => true,
+            _ => false,
+        };
     }
 
     /// <summary>

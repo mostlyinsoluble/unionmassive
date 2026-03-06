@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         internal static readonly AttributeUsageInfo Default = new AttributeUsageInfo(validTargets: AttributeTargets.All, allowMultiple: false, inherited: true);
 
-        internal static readonly AttributeUsageInfo Null = default(AttributeUsageInfo);
+        internal static readonly AttributeUsageInfo Null = default;
 
         internal AttributeUsageInfo(AttributeTargets validTargets, bool allowMultiple, bool inherited)
         {
@@ -208,26 +208,25 @@ namespace Microsoft.CodeAnalysis
 
         private static string GetErrorDisplayNameResourceId(AttributeTargets target)
         {
-            switch (target)
+            return target switch
             {
-                case AttributeTargets.Assembly: return nameof(CodeAnalysisResources.Assembly);
-                case AttributeTargets.Class: return nameof(CodeAnalysisResources.Class1);
-                case AttributeTargets.Constructor: return nameof(CodeAnalysisResources.Constructor);
-                case AttributeTargets.Delegate: return nameof(CodeAnalysisResources.Delegate1);
-                case AttributeTargets.Enum: return nameof(CodeAnalysisResources.Enum1);
-                case AttributeTargets.Event: return nameof(CodeAnalysisResources.Event1);
-                case AttributeTargets.Field: return nameof(CodeAnalysisResources.Field);
-                case AttributeTargets.GenericParameter: return nameof(CodeAnalysisResources.TypeParameter);
-                case AttributeTargets.Interface: return nameof(CodeAnalysisResources.Interface1);
-                case AttributeTargets.Method: return nameof(CodeAnalysisResources.Method);
-                case AttributeTargets.Module: return nameof(CodeAnalysisResources.Module);
-                case AttributeTargets.Parameter: return nameof(CodeAnalysisResources.Parameter);
-                case AttributeTargets.Property: return nameof(CodeAnalysisResources.Property);
-                case AttributeTargets.ReturnValue: return nameof(CodeAnalysisResources.Return1);
-                case AttributeTargets.Struct: return nameof(CodeAnalysisResources.Struct1);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(target);
-            }
+                AttributeTargets.Assembly => nameof(CodeAnalysisResources.Assembly),
+                AttributeTargets.Class => nameof(CodeAnalysisResources.Class1),
+                AttributeTargets.Constructor => nameof(CodeAnalysisResources.Constructor),
+                AttributeTargets.Delegate => nameof(CodeAnalysisResources.Delegate1),
+                AttributeTargets.Enum => nameof(CodeAnalysisResources.Enum1),
+                AttributeTargets.Event => nameof(CodeAnalysisResources.Event1),
+                AttributeTargets.Field => nameof(CodeAnalysisResources.Field),
+                AttributeTargets.GenericParameter => nameof(CodeAnalysisResources.TypeParameter),
+                AttributeTargets.Interface => nameof(CodeAnalysisResources.Interface1),
+                AttributeTargets.Method => nameof(CodeAnalysisResources.Method),
+                AttributeTargets.Module => nameof(CodeAnalysisResources.Module),
+                AttributeTargets.Parameter => nameof(CodeAnalysisResources.Parameter),
+                AttributeTargets.Property => nameof(CodeAnalysisResources.Property),
+                AttributeTargets.ReturnValue => nameof(CodeAnalysisResources.Return1),
+                AttributeTargets.Struct => nameof(CodeAnalysisResources.Struct1),
+                _ => throw ExceptionUtilities.UnexpectedValue(target),
+            };
         }
     }
 }

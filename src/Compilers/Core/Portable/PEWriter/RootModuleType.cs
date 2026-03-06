@@ -42,7 +42,7 @@ namespace Microsoft.Cci
 
         public TypeDefinitionHandle TypeDef
         {
-            get { return default(TypeDefinitionHandle); }
+            get { return default; }
         }
 
         public ITypeDefinition ResolvedType

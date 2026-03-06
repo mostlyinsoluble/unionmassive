@@ -12,22 +12,13 @@ internal sealed partial class RenameTagger(ITextBuffer buffer, InlineRenameServi
 {
     protected override bool TryCreateTagSpan(SnapshotSpan span, RenameSpanKind type, out TagSpan<ITextMarkerTag> tagSpan)
     {
-        ITextMarkerTag tagKind;
-        switch (type)
+        ITextMarkerTag tagKind = type switch
         {
-            case RenameSpanKind.Reference:
-                tagKind = RenameFieldBackgroundAndBorderTag.Instance;
-                break;
-            case RenameSpanKind.UnresolvedConflict:
-                tagKind = RenameConflictTag.Instance;
-                break;
-            case RenameSpanKind.Complexified:
-                tagKind = RenameFixupTag.Instance;
-                break;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(type);
-        }
-
+            RenameSpanKind.Reference => RenameFieldBackgroundAndBorderTag.Instance,
+            RenameSpanKind.UnresolvedConflict => RenameConflictTag.Instance,
+            RenameSpanKind.Complexified => RenameFixupTag.Instance,
+            _ => throw ExceptionUtilities.UnexpectedValue(type),
+        };
         tagSpan = new TagSpan<ITextMarkerTag>(span, tagKind);
         return true;
     }

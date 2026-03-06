@@ -73,9 +73,7 @@ namespace Microsoft.CodeAnalysis.Text
         {
             get
             {
-                int index;
-                int offset;
-                GetIndexAndOffset(position, out index, out offset);
+                GetIndexAndOffset(position, out int index, out int offset);
                 return _segments[index][offset];
             }
         }
@@ -87,9 +85,7 @@ namespace Microsoft.CodeAnalysis.Text
             var sourceIndex = span.Start;
             var count = span.Length;
 
-            int segIndex;
-            int segOffset;
-            GetIndexAndOffset(sourceIndex, out segIndex, out segOffset);
+            GetIndexAndOffset(sourceIndex, out int segIndex, out int segOffset);
 
             var newSegments = ArrayBuilder<SourceText>.GetInstance();
             try
@@ -148,9 +144,7 @@ namespace Microsoft.CodeAnalysis.Text
             if (!CheckCopyToArguments(sourceIndex, destination, destinationIndex, count))
                 return;
 
-            int segIndex;
-            int segOffset;
-            GetIndexAndOffset(sourceIndex, out segIndex, out segOffset);
+            GetIndexAndOffset(sourceIndex, out int segIndex, out int segOffset);
 
             while (segIndex < _segments.Length && count > 0)
             {
@@ -393,8 +387,7 @@ namespace Microsoft.CodeAnalysis.Text
         /// </summary>
         private static void TrimInaccessibleText(ArrayBuilder<SourceText> segments)
         {
-            int length, size;
-            ComputeLengthAndStorageSize(segments, out length, out size);
+            ComputeLengthAndStorageSize(segments, out int length, out int size);
 
             // if more than half of the storage is unused, compress into a single new segment
             if (length < size / 2)

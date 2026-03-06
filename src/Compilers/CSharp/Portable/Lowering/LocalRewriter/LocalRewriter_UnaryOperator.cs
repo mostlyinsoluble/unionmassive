@@ -200,8 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             //        new R?(OP(temp.GetValueOrDefault())) :
             //        default(R?);
 
-            BoundAssignmentOperator tempAssignment;
-            BoundLocal boundTemp = _factory.StoreToTemp(loweredOperand, out tempAssignment);
+            BoundLocal boundTemp = _factory.StoreToTemp(loweredOperand, out BoundAssignmentOperator tempAssignment);
             MethodSymbol getValueOrDefault = UnsafeGetNullableMethod(syntax, boundTemp.Type, SpecialMember.System_Nullable_T_GetValueOrDefault);
 
             // temp.HasValue
@@ -429,10 +428,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (operandType.IsReferenceType)
             {
-                BoundAssignmentOperator tempAssignment;
                 BoundLocal boundTemp;
 
-                boundTemp = _factory.StoreToTemp(VisitExpression(node.Operand), out tempAssignment);
+                boundTemp = _factory.StoreToTemp(VisitExpression(node.Operand), out BoundAssignmentOperator tempAssignment);
                 return new BoundSequence(
                     syntax: syntax,
                     locals: [boundTemp.LocalSymbol],
@@ -466,10 +464,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression transformedLHS = TransformCompoundAssignmentLHS(left, tempInitializers, tempSymbols, isDynamicAssignment: false);
             Debug.Assert(TypeSymbol.Equals(operandType, transformedLHS.Type, TypeCompareKind.AllIgnoreOptions));
 
-            BoundAssignmentOperator tempAssignment;
             BoundLocal boundTemp;
 
-            boundTemp = _factory.StoreToTemp(transformedLHS, out tempAssignment);
+            boundTemp = _factory.StoreToTemp(transformedLHS, out BoundAssignmentOperator tempAssignment);
             tempSymbols.Add(boundTemp.LocalSymbol);
 
             tempInitializers.Add(tempAssignment);
@@ -824,8 +821,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // increment or decrement. The operand is a variable (or property), and so we do not know if
             // it is always null/never null.
 
-            BoundAssignmentOperator tempAssignment;
-            BoundLocal boundTemp = _factory.StoreToTemp(rewrittenArgument, out tempAssignment);
+            BoundLocal boundTemp = _factory.StoreToTemp(rewrittenArgument, out BoundAssignmentOperator tempAssignment);
 
             MethodSymbol getValueOrDefault = UnsafeGetNullableMethod(syntax, type, SpecialMember.System_Nullable_T_GetValueOrDefault);
             MethodSymbol ctor = UnsafeGetNullableMethod(syntax, type, SpecialMember.System_Nullable_T__ctor);
@@ -965,17 +961,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private MethodSymbol GetDecimalIncDecOperator(BinaryOperatorKind oper)
         {
-            SpecialMember member;
-            switch (oper.Operator())
+            var member = oper.Operator() switch
             {
-                case BinaryOperatorKind.Addition: member = SpecialMember.System_Decimal__op_Increment; break;
-                case BinaryOperatorKind.Subtraction: member = SpecialMember.System_Decimal__op_Decrement; break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(oper.Operator());
-            }
-
+                BinaryOperatorKind.Addition => SpecialMember.System_Decimal__op_Increment,
+                BinaryOperatorKind.Subtraction => SpecialMember.System_Decimal__op_Decrement,
+                _ => throw ExceptionUtilities.UnexpectedValue(oper.Operator()),
+            };
             var method = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
-            Debug.Assert((object)method != null); // Should have been checked during Warnings pass
+            Debug.Assert(method is not null); // Should have been checked during Warnings pass
             return method;
         }
 
@@ -1187,27 +1180,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // Operator overload resolution will not have chosen the enumerated type
                         // unless the operand actually is of the enumerated type (or nullable enum type.)
 
-                        switch (underlyingType.SpecialType)
+                        result = underlyingType.SpecialType switch
                         {
-                            case SpecialType.System_SByte:
-                            case SpecialType.System_Int16:
-                            case SpecialType.System_Int32:
-                                result = BinaryOperatorKind.Int;
-                                break;
-                            case SpecialType.System_Byte:
-                            case SpecialType.System_UInt16:
-                            case SpecialType.System_UInt32:
-                                result = BinaryOperatorKind.UInt;
-                                break;
-                            case SpecialType.System_Int64:
-                                result = BinaryOperatorKind.Long;
-                                break;
-                            case SpecialType.System_UInt64:
-                                result = BinaryOperatorKind.ULong;
-                                break;
-                            default:
-                                throw ExceptionUtilities.UnexpectedValue(underlyingType.SpecialType);
-                        }
+                            SpecialType.System_SByte or SpecialType.System_Int16 or SpecialType.System_Int32 => BinaryOperatorKind.Int,
+                            SpecialType.System_Byte or SpecialType.System_UInt16 or SpecialType.System_UInt32 => BinaryOperatorKind.UInt,
+                            SpecialType.System_Int64 => BinaryOperatorKind.Long,
+                            SpecialType.System_UInt64 => BinaryOperatorKind.ULong,
+                            _ => throw ExceptionUtilities.UnexpectedValue(underlyingType.SpecialType),
+                        };
                     }
                     break;
                 case UnaryOperatorKind.Pointer:

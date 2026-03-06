@@ -195,7 +195,7 @@ namespace Microsoft.CodeAnalysis
         public static bool TryParseKey(ImmutableArray<byte> blob, out ImmutableArray<byte> snKey, out RSAParameters? privateKey)
         {
             privateKey = null;
-            snKey = default(ImmutableArray<byte>);
+            snKey = default;
 
             if (IsValidPublicKey(blob))
             {

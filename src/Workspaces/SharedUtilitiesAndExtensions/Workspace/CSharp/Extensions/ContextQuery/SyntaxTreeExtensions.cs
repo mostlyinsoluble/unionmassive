@@ -935,20 +935,17 @@ internal static partial class SyntaxTreeExtensions
         var token = tokenOnLeftOfPosition;
         token = token.GetPreviousTokenIfTouchingWord(position);
 
-        switch (token.Kind())
+        return token.Kind() switch
         {
-            case SyntaxKind.LessThanToken:
-            case SyntaxKind.CommaToken:
-                return token.Parent.IsKind(SyntaxKind.FunctionPointerParameterList);
-        }
-
-        return token switch
-        {
-            // ref modifiers
-            { Parent.RawKind: (int)SyntaxKind.FunctionPointerParameter } => true,
-            // Regular type specifiers
-            { Parent: TypeSyntax { Parent.RawKind: (int)SyntaxKind.FunctionPointerParameter } } => true,
-            _ => false
+            SyntaxKind.LessThanToken or SyntaxKind.CommaToken => token.Parent.IsKind(SyntaxKind.FunctionPointerParameterList),
+            _ => token switch
+            {
+                // ref modifiers
+                { Parent.RawKind: (int)SyntaxKind.FunctionPointerParameter } => true,
+                // Regular type specifiers
+                { Parent: TypeSyntax { Parent.RawKind: (int)SyntaxKind.FunctionPointerParameter } } => true,
+                _ => false
+            },
         };
     }
 

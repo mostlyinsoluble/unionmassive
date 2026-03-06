@@ -192,10 +192,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                         Dim diagnosticsBuilder = ArrayBuilder(Of TypeParameterDiagnosticInfo).GetInstance()
                         Dim useSiteDiagnosticsBuilder As ArrayBuilder(Of TypeParameterDiagnosticInfo) = Nothing
 
-                        retType.CheckAllConstraints(
-                            DeclaringCompilation.LanguageVersion,
-                            diagnosticsBuilder, useSiteDiagnosticsBuilder, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagBag, sourceModule.ContainingAssembly))
-
                         If useSiteDiagnosticsBuilder IsNot Nothing Then
                             diagnosticsBuilder.AddRange(useSiteDiagnosticsBuilder)
                         End If
@@ -256,18 +252,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
                     Dim sourceModule = ContainingSourceModule
 
                     params = GetParameters(sourceModule, diagBag)
-
-                    For Each param In params
-                        ' TODO: The check for Locations is to rule out cases such as implicit parameters
-                        ' from property accessors but it allows explicit accessor parameters. Is that correct?
-                        If param.Locations.Length > 0 Then
-                            ' Note: Errors are reported on the parameter name. Ideally, we should
-                            ' match Dev10 and report errors on the parameter type syntax instead.
-                            param.Type.CheckAllConstraints(
-                                DeclaringCompilation.LanguageVersion,
-                                param.GetFirstLocation(), diagBag, template:=New CompoundUseSiteInfo(Of AssemblySymbol)(diagBag, sourceModule.ContainingAssembly))
-                        End If
-                    Next
 
                     sourceModule.AtomicStoreArrayAndDiagnostics(
                         _lazyParameters,

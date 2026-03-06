@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isReadOnly,
             bool isStatic)
         {
-            Debug.Assert((object)containingType != null);
+            Debug.Assert(containingType is not null);
             Debug.Assert(!string.IsNullOrEmpty(name));
             Debug.Assert((accessibility & DeclarationModifiers.AccessibilityMask) != 0);
             Debug.Assert((accessibility & ~DeclarationModifiers.AccessibilityMask) == 0);
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, compilation.SynthesizeDynamicAttribute(type, typeWithAnnotations.CustomModifiers.Length));
             }
 
-            if (compilation.ShouldEmitNativeIntegerAttributes(type))
+            if (type.ContainsNativeIntegerWrapperType())
             {
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeNativeIntegerAttribute(this, type));
             }

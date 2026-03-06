@@ -8,13 +8,11 @@
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MicrosoftCodeAnalysisVersionForAnalyzers)" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Update="AnalyzersResources.resx" GenerateSource="true" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\..\..\..\Compilers\CSharp\Portable\Microsoft.CodeAnalysis.CSharp.csproj" />
     <ProjectReference Include="..\..\Core\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj" />
   </ItemGroup>
 </Project>

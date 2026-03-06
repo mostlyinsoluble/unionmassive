@@ -105,10 +105,9 @@ namespace Microsoft.CodeAnalysis
                     minor = null;
                 }
 
-                int majorValue;
 
                 if (major != major.Trim() ||
-                    !int.TryParse(major, NumberStyles.None, CultureInfo.InvariantCulture, out majorValue) ||
+                    !int.TryParse(major, NumberStyles.None, CultureInfo.InvariantCulture, out int majorValue) ||
                     majorValue >= 65356 || majorValue < 0)
                 {
                     return false;
@@ -156,20 +155,12 @@ namespace Microsoft.CodeAnalysis
             if (platform == Platform.Arm)
                 return Windows8;
 
-            switch (outputKind)
+            return outputKind switch
             {
-                case OutputKind.ConsoleApplication:
-                case OutputKind.DynamicallyLinkedLibrary:
-                case OutputKind.NetModule:
-                case OutputKind.WindowsApplication:
-                    return new SubsystemVersion(4, 0);
-                case OutputKind.WindowsRuntimeApplication:
-                case OutputKind.WindowsRuntimeMetadata:
-                    return Windows8;
-
-                default:
-                    throw new ArgumentOutOfRangeException(CodeAnalysisResources.OutputKindNotSupported, "outputKind");
-            }
+                OutputKind.ConsoleApplication or OutputKind.DynamicallyLinkedLibrary or OutputKind.NetModule or OutputKind.WindowsApplication => new SubsystemVersion(4, 0),
+                OutputKind.WindowsRuntimeApplication or OutputKind.WindowsRuntimeMetadata => Windows8,
+                _ => throw new ArgumentOutOfRangeException(CodeAnalysisResources.OutputKindNotSupported, "outputKind"),
+            };
         }
 
         /// <summary>

@@ -31,7 +31,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.UseNullPropagation
         Protected Overrides ReadOnly Property SemanticFacts As ISemanticFacts = VisualBasicSemanticFacts.Instance
 
         Protected Overrides Function ShouldAnalyze(compilation As Compilation) As Boolean
-            Return DirectCast(compilation, VisualBasicCompilation).LanguageVersion >= LanguageVersion.VisualBasic14
+            Return True
         End Function
 
         Protected Overrides Function TryAnalyzePatternCondition(syntaxFacts As ISyntaxFacts, conditionNode As ExpressionSyntax, ByRef conditionPartToCheck As ExpressionSyntax, ByRef isEquals As Boolean) As Boolean

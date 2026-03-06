@@ -131,21 +131,11 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
 
     private static SyntaxNode? AsNamespaceMember(SyntaxNode declaration)
     {
-        switch (declaration.Kind())
+        return declaration.Kind() switch
         {
-            case SyntaxKind.NamespaceDeclaration:
-            case SyntaxKind.FileScopedNamespaceDeclaration:
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.DelegateDeclaration:
-            case SyntaxKind.RecordDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-                return declaration;
-            default:
-                return null;
-        }
+            SyntaxKind.NamespaceDeclaration or SyntaxKind.FileScopedNamespaceDeclaration or SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration or SyntaxKind.InterfaceDeclaration or SyntaxKind.EnumDeclaration or SyntaxKind.DelegateDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration => declaration,
+            _ => null,
+        };
     }
 
     public override SyntaxNode NamespaceImportDeclaration(SyntaxNode name)
@@ -202,20 +192,14 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
 
     internal static SyntaxToken GetArgumentModifiers(RefKind refKind)
     {
-        switch (refKind)
+        return refKind switch
         {
-            case RefKind.None:
-            case RefKind.In:
-                return default;
-            case RefKind.Out:
-                return OutKeyword;
-            case RefKind.Ref:
-                return RefKeyword;
-            case RefKind.RefReadOnlyParameter:
-                return InKeyword;
-            default:
-                throw ExceptionUtilities.UnexpectedValue(refKind);
-        }
+            RefKind.None or RefKind.In => default,
+            RefKind.Out => OutKeyword,
+            RefKind.Ref => RefKeyword,
+            RefKind.RefReadOnlyParameter => InKeyword,
+            _ => throw ExceptionUtilities.UnexpectedValue(refKind),
+        };
     }
 
     private protected override SyntaxNode MethodDeclaration(
@@ -1044,16 +1028,11 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
 
     public override SyntaxNode InsertReturnAttributes(SyntaxNode declaration, int index, IEnumerable<SyntaxNode> attributes)
     {
-        switch (declaration.Kind())
+        return declaration.Kind() switch
         {
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-            case SyntaxKind.DelegateDeclaration:
-                return this.Isolate(declaration, d => this.InsertReturnAttributesInternal(d, index, attributes));
-            default:
-                return declaration;
-        }
+            SyntaxKind.MethodDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration or SyntaxKind.DelegateDeclaration => this.Isolate(declaration, d => this.InsertReturnAttributesInternal(d, index, attributes)),
+            _ => declaration,
+        };
     }
 
     private SyntaxNode InsertReturnAttributesInternal(SyntaxNode d, int index, IEnumerable<SyntaxNode> attributes)
@@ -1537,71 +1516,27 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
 
     private static DeclarationModifiers GetAllowedModifiers(SyntaxKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case SyntaxKind.RecordDeclaration:
-                return s_recordModifiers;
-            case SyntaxKind.ClassDeclaration:
-                return s_classModifiers;
-
-            case SyntaxKind.EnumDeclaration:
-                return DeclarationModifiers.New | DeclarationModifiers.File;
-
-            case SyntaxKind.DelegateDeclaration:
-                return DeclarationModifiers.New | DeclarationModifiers.Unsafe | DeclarationModifiers.File;
-
-            case SyntaxKind.InterfaceDeclaration:
-                return s_interfaceModifiers;
-
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.RecordStructDeclaration:
-                return s_structModifiers;
-
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-                return s_methodModifiers;
-
-            case SyntaxKind.ConstructorDeclaration:
-                return s_constructorModifiers;
-
-            case SyntaxKind.DestructorDeclaration:
-                return s_destructorModifiers;
-
-            case SyntaxKind.FieldDeclaration:
-                return s_fieldModifiers;
-
-            case SyntaxKind.PropertyDeclaration:
-                return s_propertyModifiers;
-
-            case SyntaxKind.IndexerDeclaration:
-                return s_indexerModifiers;
-
-            case SyntaxKind.EventFieldDeclaration:
-            case SyntaxKind.EventDeclaration:
-                return s_eventModifiers;
-
-            case SyntaxKind.GetAccessorDeclaration:
-            case SyntaxKind.SetAccessorDeclaration:
-                return s_propertyAccessorModifiers;
-
-            case SyntaxKind.AddAccessorDeclaration:
-            case SyntaxKind.RemoveAccessorDeclaration:
-                return s_eventAccessorModifiers;
-
-            case SyntaxKind.LocalFunctionStatement:
-                return s_localFunctionModifiers;
-            case SyntaxKind.ParenthesizedLambdaExpression:
-            case SyntaxKind.SimpleLambdaExpression:
-            case SyntaxKind.AnonymousMethodExpression:
-                return s_lambdaModifiers;
-
-            case SyntaxKind.EnumMemberDeclaration:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.LocalDeclarationStatement:
-            default:
-                return DeclarationModifiers.None;
-        }
+            SyntaxKind.RecordDeclaration => s_recordModifiers,
+            SyntaxKind.ClassDeclaration => s_classModifiers,
+            SyntaxKind.EnumDeclaration => DeclarationModifiers.New | DeclarationModifiers.File,
+            SyntaxKind.DelegateDeclaration => DeclarationModifiers.New | DeclarationModifiers.Unsafe | DeclarationModifiers.File,
+            SyntaxKind.InterfaceDeclaration => s_interfaceModifiers,
+            SyntaxKind.StructDeclaration or SyntaxKind.RecordStructDeclaration => s_structModifiers,
+            SyntaxKind.MethodDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration => s_methodModifiers,
+            SyntaxKind.ConstructorDeclaration => s_constructorModifiers,
+            SyntaxKind.DestructorDeclaration => s_destructorModifiers,
+            SyntaxKind.FieldDeclaration => s_fieldModifiers,
+            SyntaxKind.PropertyDeclaration => s_propertyModifiers,
+            SyntaxKind.IndexerDeclaration => s_indexerModifiers,
+            SyntaxKind.EventFieldDeclaration or SyntaxKind.EventDeclaration => s_eventModifiers,
+            SyntaxKind.GetAccessorDeclaration or SyntaxKind.SetAccessorDeclaration => s_propertyAccessorModifiers,
+            SyntaxKind.AddAccessorDeclaration or SyntaxKind.RemoveAccessorDeclaration => s_eventAccessorModifiers,
+            SyntaxKind.LocalFunctionStatement => s_localFunctionModifiers,
+            SyntaxKind.ParenthesizedLambdaExpression or SyntaxKind.SimpleLambdaExpression or SyntaxKind.AnonymousMethodExpression => s_lambdaModifiers,
+            _ => DeclarationModifiers.None,
+        };
     }
 
     public override DeclarationModifiers GetModifiers(SyntaxNode declaration)

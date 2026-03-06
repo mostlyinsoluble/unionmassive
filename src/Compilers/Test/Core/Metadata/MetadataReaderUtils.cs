@@ -167,15 +167,12 @@ namespace Roslyn.Test.Utilities
 
         public static StringHandle GetName(this MetadataReader reader, EntityHandle token)
         {
-            switch (token.Kind)
+            return token.Kind switch
             {
-                case HandleKind.TypeReference:
-                    return reader.GetTypeReference((TypeReferenceHandle)token).Name;
-                case HandleKind.TypeDefinition:
-                    return reader.GetTypeDefinition((TypeDefinitionHandle)token).Name;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(token.Kind);
-            }
+                HandleKind.TypeReference => reader.GetTypeReference((TypeReferenceHandle)token).Name,
+                HandleKind.TypeDefinition => reader.GetTypeDefinition((TypeDefinitionHandle)token).Name,
+                _ => throw ExceptionUtilities.UnexpectedValue(token.Kind),
+            };
         }
 
         private delegate T ReadBlobItemDelegate<T>(ref BlobReader blobReader);
@@ -216,19 +213,13 @@ namespace Roslyn.Test.Utilities
 
         public static string GetCustomAttributeName(this MetadataReader reader, CustomAttributeRow row)
         {
-            EntityHandle parent;
             var token = row.ConstructorToken;
-            switch (token.Kind)
+            var parent = token.Kind switch
             {
-                case HandleKind.MemberReference:
-                    parent = reader.GetMemberReference((MemberReferenceHandle)token).Parent;
-                    break;
-                case HandleKind.MethodDefinition:
-                    parent = reader.GetMethodDefinition((MethodDefinitionHandle)token).GetDeclaringType();
-                    break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(token.Kind);
-            }
+                HandleKind.MemberReference => reader.GetMemberReference((MemberReferenceHandle)token).Parent,
+                HandleKind.MethodDefinition => (EntityHandle)reader.GetMethodDefinition((MethodDefinitionHandle)token).GetDeclaringType(),
+                _ => throw ExceptionUtilities.UnexpectedValue(token.Kind),
+            };
             var strHandle = reader.GetName(parent);
             return reader.GetString(strHandle);
         }

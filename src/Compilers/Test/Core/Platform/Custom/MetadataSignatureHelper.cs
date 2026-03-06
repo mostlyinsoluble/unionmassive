@@ -212,21 +212,17 @@ namespace Roslyn.Test.Utilities
 
         public static StringBuilder AppendFieldAttributes(StringBuilder sb, FieldAttributes attributes, bool all = true)
         {
-            string visibility;
-            switch (attributes & FieldAttributes.FieldAccessMask)
+            string visibility = (attributes & FieldAttributes.FieldAccessMask) switch
             {
-                case FieldAttributes.PrivateScope: visibility = "privatescope"; break;
-                case FieldAttributes.Private: visibility = "private"; break;
-                case FieldAttributes.FamANDAssem: visibility = "famandassem"; break;
-                case FieldAttributes.Assembly: visibility = "assembly"; break;
-                case FieldAttributes.Family: visibility = "family"; break;
-                case FieldAttributes.FamORAssem: visibility = "famorassem"; break;
-                case FieldAttributes.Public: visibility = "public"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
+                FieldAttributes.PrivateScope => "privatescope",
+                FieldAttributes.Private => "private",
+                FieldAttributes.FamANDAssem => "famandassem",
+                FieldAttributes.Assembly => "assembly",
+                FieldAttributes.Family => "family",
+                FieldAttributes.FamORAssem => "famorassem",
+                FieldAttributes.Public => "public",
+                _ => throw new InvalidOperationException(),
+            };
             sb.Append(visibility);
             sb.Append((attributes & FieldAttributes.Static) != 0 ? " static" : " instance");
 
@@ -258,21 +254,17 @@ namespace Roslyn.Test.Utilities
 
         public static StringBuilder AppendMethodAttributes(StringBuilder sb, MethodAttributes attributes, bool all = true)
         {
-            string visibility;
-            switch (attributes & MethodAttributes.MemberAccessMask)
+            string visibility = (attributes & MethodAttributes.MemberAccessMask) switch
             {
-                case MethodAttributes.PrivateScope: visibility = "privatescope"; break;
-                case MethodAttributes.Private: visibility = "private"; break;
-                case MethodAttributes.FamANDAssem: visibility = "famandassem"; break;
-                case MethodAttributes.Assembly: visibility = "assembly"; break;
-                case MethodAttributes.Family: visibility = "family"; break;
-                case MethodAttributes.FamORAssem: visibility = "famorassem"; break;
-                case MethodAttributes.Public: visibility = "public"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
+                MethodAttributes.PrivateScope => "privatescope",
+                MethodAttributes.Private => "private",
+                MethodAttributes.FamANDAssem => "famandassem",
+                MethodAttributes.Assembly => "assembly",
+                MethodAttributes.Family => "family",
+                MethodAttributes.FamORAssem => "famorassem",
+                MethodAttributes.Public => "public",
+                _ => throw new InvalidOperationException(),
+            };
             sb.Append(visibility);
 
             if ((attributes & MethodAttributes.HideBySig) != 0)
@@ -309,18 +301,14 @@ namespace Roslyn.Test.Utilities
 
         public static StringBuilder AppendMethodImplAttributes(StringBuilder sb, MethodImplAttributes attributes)
         {
-            string codeType;
-            switch (attributes & MethodImplAttributes.CodeTypeMask)
+            string codeType = (attributes & MethodImplAttributes.CodeTypeMask) switch
             {
-                case MethodImplAttributes.IL: codeType = "cil"; break;
-                case MethodImplAttributes.OPTIL: codeType = "optil"; break;
-                case MethodImplAttributes.Runtime: codeType = "runtime"; break;
-                case MethodImplAttributes.Native: codeType = "native"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
+                MethodImplAttributes.IL => "cil",
+                MethodImplAttributes.OPTIL => "optil",
+                MethodImplAttributes.Runtime => "runtime",
+                MethodImplAttributes.Native => "native",
+                _ => throw new InvalidOperationException(),
+            };
             sb.Append(codeType);
             sb.Append(' ');
             sb.Append((attributes & MethodImplAttributes.Unmanaged) == MethodImplAttributes.Unmanaged ? "unmanaged" : "managed");
@@ -345,44 +333,32 @@ namespace Roslyn.Test.Utilities
 
         public static StringBuilder AppendTypeAttributes(StringBuilder sb, TypeAttributes attributes)
         {
-            string visibility;
-            switch (attributes & TypeAttributes.VisibilityMask)
+            string visibility = (attributes & TypeAttributes.VisibilityMask) switch
             {
-                case TypeAttributes.NotPublic: visibility = "private"; break;
-                case TypeAttributes.Public: visibility = "public"; break;
-                case TypeAttributes.NestedPrivate: visibility = "nested private"; break;
-                case TypeAttributes.NestedFamANDAssem: visibility = "nested famandassem"; break;
-                case TypeAttributes.NestedAssembly: visibility = "nested assembly"; break;
-                case TypeAttributes.NestedFamily: visibility = "nested family"; break;
-                case TypeAttributes.NestedFamORAssem: visibility = "nested famorassem"; break;
-                case TypeAttributes.NestedPublic: visibility = "nested public"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
-            string layout;
-            switch (attributes & TypeAttributes.LayoutMask)
+                TypeAttributes.NotPublic => "private",
+                TypeAttributes.Public => "public",
+                TypeAttributes.NestedPrivate => "nested private",
+                TypeAttributes.NestedFamANDAssem => "nested famandassem",
+                TypeAttributes.NestedAssembly => "nested assembly",
+                TypeAttributes.NestedFamily => "nested family",
+                TypeAttributes.NestedFamORAssem => "nested famorassem",
+                TypeAttributes.NestedPublic => "nested public",
+                _ => throw new InvalidOperationException(),
+            };
+            string layout = (attributes & TypeAttributes.LayoutMask) switch
             {
-                case TypeAttributes.AutoLayout: layout = "auto"; break;
-                case TypeAttributes.SequentialLayout: layout = "sequential"; break;
-                case TypeAttributes.ExplicitLayout: layout = "explicit"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
-            string stringFormat;
-            switch (attributes & TypeAttributes.StringFormatMask)
+                TypeAttributes.AutoLayout => "auto",
+                TypeAttributes.SequentialLayout => "sequential",
+                TypeAttributes.ExplicitLayout => "explicit",
+                _ => throw new InvalidOperationException(),
+            };
+            string stringFormat = (attributes & TypeAttributes.StringFormatMask) switch
             {
-                case TypeAttributes.AnsiClass: stringFormat = "ansi"; break;
-                case TypeAttributes.UnicodeClass: stringFormat = "unicode"; break;
-                case TypeAttributes.AutoClass: stringFormat = "autochar"; break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
+                TypeAttributes.AnsiClass => "ansi",
+                TypeAttributes.UnicodeClass => "unicode",
+                TypeAttributes.AutoClass => "autochar",
+                _ => throw new InvalidOperationException(),
+            };
             if ((attributes & TypeAttributes.Interface) != 0)
                 sb.Append("interface ");
 

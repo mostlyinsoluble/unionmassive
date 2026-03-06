@@ -623,30 +623,23 @@ internal static partial class ProtocolConversions
         }
 
         // TODO - Define conversion from NavigateToItemKind to LSP Symbol kind
-        switch (kind)
+        return kind switch
         {
-            case NavigateToItemKind.EnumItem:
-                return LSP.SymbolKind.EnumMember;
-            case NavigateToItemKind.Structure:
-                return LSP.SymbolKind.Struct;
-            case NavigateToItemKind.Delegate:
-                return LSP.SymbolKind.Function;
-            default:
-                return LSP.SymbolKind.Object;
-        }
+            NavigateToItemKind.EnumItem => LSP.SymbolKind.EnumMember,
+            NavigateToItemKind.Structure => LSP.SymbolKind.Struct,
+            NavigateToItemKind.Delegate => LSP.SymbolKind.Function,
+            _ => LSP.SymbolKind.Object,
+        };
     }
 
     public static LSP.DocumentHighlightKind HighlightSpanKindToDocumentHighlightKind(HighlightSpanKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case HighlightSpanKind.Reference:
-                return LSP.DocumentHighlightKind.Read;
-            case HighlightSpanKind.WrittenReference:
-                return LSP.DocumentHighlightKind.Write;
-            default:
-                return LSP.DocumentHighlightKind.Text;
-        }
+            HighlightSpanKind.Reference => LSP.DocumentHighlightKind.Read,
+            HighlightSpanKind.WrittenReference => LSP.DocumentHighlightKind.Write,
+            _ => LSP.DocumentHighlightKind.Text,
+        };
     }
 
     public static LSP.VSInternalSpellCheckableRangeKind SpellCheckSpanKindToSpellCheckableRangeKind(SpellCheckKind kind)
@@ -660,57 +653,30 @@ internal static partial class ProtocolConversions
 
     public static Glyph SymbolKindToGlyph(LSP.SymbolKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case LSP.SymbolKind.File:
-                return Glyph.CSharpFile;
-            case LSP.SymbolKind.Module:
-                return Glyph.ModulePublic;
-            case LSP.SymbolKind.Namespace:
-                return Glyph.Namespace;
-            case LSP.SymbolKind.Package:
-                return Glyph.Assembly;
-            case LSP.SymbolKind.Class:
-                return Glyph.ClassPublic;
-            case LSP.SymbolKind.Method:
-                return Glyph.MethodPublic;
-            case LSP.SymbolKind.Property:
-                return Glyph.PropertyPublic;
-            case LSP.SymbolKind.Field:
-                return Glyph.FieldPublic;
-            case LSP.SymbolKind.Constructor:
-                return Glyph.MethodPublic;
-            case LSP.SymbolKind.Enum:
-                return Glyph.EnumPublic;
-            case LSP.SymbolKind.Interface:
-                return Glyph.InterfacePublic;
-            case LSP.SymbolKind.Function:
-                return Glyph.DelegatePublic;
-            case LSP.SymbolKind.Variable:
-                return Glyph.Local;
-            case LSP.SymbolKind.Constant:
-            case LSP.SymbolKind.Number:
-                return Glyph.ConstantPublic;
-            case LSP.SymbolKind.String:
-            case LSP.SymbolKind.Boolean:
-            case LSP.SymbolKind.Array:
-            case LSP.SymbolKind.Object:
-            case LSP.SymbolKind.Key:
-            case LSP.SymbolKind.Null:
-                return Glyph.Local;
-            case LSP.SymbolKind.EnumMember:
-                return Glyph.EnumMemberPublic;
-            case LSP.SymbolKind.Struct:
-                return Glyph.StructurePublic;
-            case LSP.SymbolKind.Event:
-                return Glyph.EventPublic;
-            case LSP.SymbolKind.Operator:
-                return Glyph.OperatorPublic;
-            case LSP.SymbolKind.TypeParameter:
-                return Glyph.TypeParameter;
-            default:
-                return Glyph.None;
-        }
+            LSP.SymbolKind.File => Glyph.CSharpFile,
+            LSP.SymbolKind.Module => Glyph.ModulePublic,
+            LSP.SymbolKind.Namespace => Glyph.Namespace,
+            LSP.SymbolKind.Package => Glyph.Assembly,
+            LSP.SymbolKind.Class => Glyph.ClassPublic,
+            LSP.SymbolKind.Method => Glyph.MethodPublic,
+            LSP.SymbolKind.Property => Glyph.PropertyPublic,
+            LSP.SymbolKind.Field => Glyph.FieldPublic,
+            LSP.SymbolKind.Constructor => Glyph.MethodPublic,
+            LSP.SymbolKind.Enum => Glyph.EnumPublic,
+            LSP.SymbolKind.Interface => Glyph.InterfacePublic,
+            LSP.SymbolKind.Function => Glyph.DelegatePublic,
+            LSP.SymbolKind.Variable => Glyph.Local,
+            LSP.SymbolKind.Constant or LSP.SymbolKind.Number => Glyph.ConstantPublic,
+            LSP.SymbolKind.String or LSP.SymbolKind.Boolean or LSP.SymbolKind.Array or LSP.SymbolKind.Object or LSP.SymbolKind.Key or LSP.SymbolKind.Null => Glyph.Local,
+            LSP.SymbolKind.EnumMember => Glyph.EnumMemberPublic,
+            LSP.SymbolKind.Struct => Glyph.StructurePublic,
+            LSP.SymbolKind.Event => Glyph.EventPublic,
+            LSP.SymbolKind.Operator => Glyph.OperatorPublic,
+            LSP.SymbolKind.TypeParameter => Glyph.TypeParameter,
+            _ => Glyph.None,
+        };
     }
 
     public static LSP.SymbolKind GlyphToSymbolKind(Glyph glyph)
@@ -727,93 +693,44 @@ internal static partial class ProtocolConversions
             return symbolKind;
         }
 
-        switch (glyph)
+        return glyph switch
         {
-            case Glyph.Assembly:
-            case Glyph.BasicProject:
-            case Glyph.CSharpProject:
-            case Glyph.NuGet:
-                return LSP.SymbolKind.Package;
-            case Glyph.BasicFile:
-            case Glyph.CSharpFile:
-                return LSP.SymbolKind.File;
-            case Glyph.DelegatePublic:
-            case Glyph.DelegateProtected:
-            case Glyph.DelegatePrivate:
-            case Glyph.DelegateInternal:
-            case Glyph.ExtensionMethodPublic:
-            case Glyph.ExtensionMethodProtected:
-            case Glyph.ExtensionMethodPrivate:
-            case Glyph.ExtensionMethodInternal:
-                return LSP.SymbolKind.Method;
-            case Glyph.Local:
-            case Glyph.Parameter:
-            case Glyph.RangeVariable:
-            case Glyph.Reference:
-                return LSP.SymbolKind.Variable;
-            case Glyph.StructurePublic:
-            case Glyph.StructureProtected:
-            case Glyph.StructurePrivate:
-            case Glyph.StructureInternal:
-                return LSP.SymbolKind.Struct;
-            default:
-                return LSP.SymbolKind.Object;
-        }
+            Glyph.Assembly or Glyph.BasicProject or Glyph.CSharpProject or Glyph.NuGet => LSP.SymbolKind.Package,
+            Glyph.BasicFile or Glyph.CSharpFile => LSP.SymbolKind.File,
+            Glyph.DelegatePublic or Glyph.DelegateProtected or Glyph.DelegatePrivate or Glyph.DelegateInternal or Glyph.ExtensionMethodPublic or Glyph.ExtensionMethodProtected or Glyph.ExtensionMethodPrivate or Glyph.ExtensionMethodInternal => LSP.SymbolKind.Method,
+            Glyph.Local or Glyph.Parameter or Glyph.RangeVariable or Glyph.Reference => LSP.SymbolKind.Variable,
+            Glyph.StructurePublic or Glyph.StructureProtected or Glyph.StructurePrivate or Glyph.StructureInternal => LSP.SymbolKind.Struct,
+            _ => LSP.SymbolKind.Object,
+        };
     }
 
     public static Glyph CompletionItemKindToGlyph(LSP.CompletionItemKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case LSP.CompletionItemKind.Text:
-                return Glyph.None;
-            case LSP.CompletionItemKind.Method:
-            case LSP.CompletionItemKind.Constructor:
-            case LSP.CompletionItemKind.Function:    // We don't use Function, but map it just in case. It has the same icon as Method in VS and VS Code
-                return Glyph.MethodPublic;
-            case LSP.CompletionItemKind.Field:
-                return Glyph.FieldPublic;
-            case LSP.CompletionItemKind.Variable:
-            case LSP.CompletionItemKind.Unit:
-            case LSP.CompletionItemKind.Value:
-                return Glyph.Local;
-            case LSP.CompletionItemKind.Class:
-                return Glyph.ClassPublic;
-            case LSP.CompletionItemKind.Interface:
-                return Glyph.InterfacePublic;
-            case LSP.CompletionItemKind.Module:
-                return Glyph.ModulePublic;
-            case LSP.CompletionItemKind.Property:
-                return Glyph.PropertyPublic;
-            case LSP.CompletionItemKind.Enum:
-                return Glyph.EnumPublic;
-            case LSP.CompletionItemKind.Keyword:
-                return Glyph.Keyword;
-            case LSP.CompletionItemKind.Snippet:
-                return Glyph.Snippet;
-            case LSP.CompletionItemKind.Color:
-                return Glyph.None;
-            case LSP.CompletionItemKind.File:
-                return Glyph.CSharpFile;
-            case LSP.CompletionItemKind.Reference:
-                return Glyph.Reference;
-            case LSP.CompletionItemKind.Folder:
-                return Glyph.OpenFolder;
-            case LSP.CompletionItemKind.EnumMember:
-                return Glyph.EnumMemberPublic;
-            case LSP.CompletionItemKind.Constant:
-                return Glyph.ConstantPublic;
-            case LSP.CompletionItemKind.Struct:
-                return Glyph.StructurePublic;
-            case LSP.CompletionItemKind.Event:
-                return Glyph.EventPublic;
-            case LSP.CompletionItemKind.Operator:
-                return Glyph.OperatorPublic;
-            case LSP.CompletionItemKind.TypeParameter:
-                return Glyph.TypeParameter;
-            default:
-                return Glyph.None;
-        }
+            LSP.CompletionItemKind.Text => Glyph.None,
+            LSP.CompletionItemKind.Method or LSP.CompletionItemKind.Constructor or LSP.CompletionItemKind.Function => Glyph.MethodPublic,
+            LSP.CompletionItemKind.Field => Glyph.FieldPublic,
+            LSP.CompletionItemKind.Variable or LSP.CompletionItemKind.Unit or LSP.CompletionItemKind.Value => Glyph.Local,
+            LSP.CompletionItemKind.Class => Glyph.ClassPublic,
+            LSP.CompletionItemKind.Interface => Glyph.InterfacePublic,
+            LSP.CompletionItemKind.Module => Glyph.ModulePublic,
+            LSP.CompletionItemKind.Property => Glyph.PropertyPublic,
+            LSP.CompletionItemKind.Enum => Glyph.EnumPublic,
+            LSP.CompletionItemKind.Keyword => Glyph.Keyword,
+            LSP.CompletionItemKind.Snippet => Glyph.Snippet,
+            LSP.CompletionItemKind.Color => Glyph.None,
+            LSP.CompletionItemKind.File => Glyph.CSharpFile,
+            LSP.CompletionItemKind.Reference => Glyph.Reference,
+            LSP.CompletionItemKind.Folder => Glyph.OpenFolder,
+            LSP.CompletionItemKind.EnumMember => Glyph.EnumMemberPublic,
+            LSP.CompletionItemKind.Constant => Glyph.ConstantPublic,
+            LSP.CompletionItemKind.Struct => Glyph.StructurePublic,
+            LSP.CompletionItemKind.Event => Glyph.EventPublic,
+            LSP.CompletionItemKind.Operator => Glyph.OperatorPublic,
+            LSP.CompletionItemKind.TypeParameter => Glyph.TypeParameter,
+            _ => Glyph.None,
+        };
     }
 
     // The mappings here are roughly based off of SymbolUsageInfoExtensions.ToSymbolReferenceKinds.

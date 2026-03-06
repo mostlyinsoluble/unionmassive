@@ -83,11 +83,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             noPreviousCases.Free();
         }
 
-        internal static bool EnableRedundantPatternsCheck(CSharpCompilation compilation)
-        {
-            return compilation.LanguageVersion >= LanguageVersion.CSharp14;
-        }
-
         /// <summary>
         /// <see cref="CheckRedundantPatternsForIsPattern"/>
         /// </summary>

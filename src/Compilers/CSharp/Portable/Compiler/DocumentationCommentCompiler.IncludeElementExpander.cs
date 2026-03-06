@@ -350,9 +350,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         Debug.Assert(doc != null);
 
-                        string errorMessage;
-                        bool invalidXPath;
-                        XElement[] loadedElements = XmlUtilities.TrySelectElements(doc, xpathValue, out errorMessage, out invalidXPath);
+                        XElement[] loadedElements = XmlUtilities.TrySelectElements(doc, xpathValue, out string errorMessage, out bool invalidXPath);
                         if (loadedElements == null)
                         {
                             includeDiagnostics.Add(ErrorCode.WRN_FailedInclude, location, filePathValue, xpathValue, errorMessage);
@@ -550,7 +548,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // All binders should have a containing symbol.
                 Symbol containingSymbol = memberSymbol.ContainingSymbol;
-                Debug.Assert((object)containingSymbol != null);
+                Debug.Assert(containingSymbol is not null);
                 binder = binder.WithContainingMemberOrLambda(containingSymbol);
 
                 if (isParameter)

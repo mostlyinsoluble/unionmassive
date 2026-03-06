@@ -354,23 +354,13 @@ internal abstract partial class AbstractSuppressionCodeFixProvider : IConfigurat
 
     protected static string? GetScopeString(SymbolKind targetSymbolKind)
     {
-        switch (targetSymbolKind)
+        return targetSymbolKind switch
         {
-            case SymbolKind.Event:
-            case SymbolKind.Field:
-            case SymbolKind.Method:
-            case SymbolKind.Property:
-                return "member";
-
-            case SymbolKind.NamedType:
-                return "type";
-
-            case SymbolKind.Namespace:
-                return "namespace";
-
-            default:
-                return null;
-        }
+            SymbolKind.Event or SymbolKind.Field or SymbolKind.Method or SymbolKind.Property => "member",
+            SymbolKind.NamedType => "type",
+            SymbolKind.Namespace => "namespace",
+            _ => null,
+        };
     }
 
     protected static string GetTargetString(ISymbol targetSymbol)

@@ -756,7 +756,7 @@ namespace Microsoft.CodeAnalysis
         /// Embed the COM types from the reference so that the compiled
         /// application no longer requires a primary interop assembly (PIA).
         /// </param>
-        public abstract CompilationReference ToMetadataReference(ImmutableArray<string> aliases = default(ImmutableArray<string>), bool embedInteropTypes = false);
+        public abstract CompilationReference ToMetadataReference(ImmutableArray<string> aliases = default, bool embedInteropTypes = false);
 
         /// <summary>
         /// Creates a new compilation with the specified references.
@@ -1425,7 +1425,7 @@ namespace Microsoft.CodeAnalysis
             ImmutableArray<Location?> elementLocations = default,
             ImmutableArray<NullableAnnotation> elementNullableAnnotations = default)
         {
-            if ((object)underlyingType == null)
+            if (underlyingType is null)
             {
                 throw new ArgumentNullException(nameof(underlyingType));
             }
@@ -1777,24 +1777,24 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Gets the diagnostics produced during the parsing stage.
         /// </summary>
-        public abstract ImmutableArray<Diagnostic> GetParseDiagnostics(CancellationToken cancellationToken = default(CancellationToken));
+        public abstract ImmutableArray<Diagnostic> GetParseDiagnostics(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the diagnostics produced during symbol declaration.
         /// </summary>
-        public abstract ImmutableArray<Diagnostic> GetDeclarationDiagnostics(CancellationToken cancellationToken = default(CancellationToken));
+        public abstract ImmutableArray<Diagnostic> GetDeclarationDiagnostics(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the diagnostics produced during the analysis of method bodies and field initializers.
         /// </summary>
-        public abstract ImmutableArray<Diagnostic> GetMethodBodyDiagnostics(CancellationToken cancellationToken = default(CancellationToken));
+        public abstract ImmutableArray<Diagnostic> GetMethodBodyDiagnostics(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all the diagnostics for the compilation, including syntax, declaration, and
         /// binding. Does not include any diagnostics that might be produced during emit, see
         /// <see cref="EmitResult"/>.
         /// </summary>
-        public abstract ImmutableArray<Diagnostic> GetDiagnostics(CancellationToken cancellationToken = default(CancellationToken));
+        public abstract ImmutableArray<Diagnostic> GetDiagnostics(CancellationToken cancellationToken = default);
 
         internal abstract void GetDiagnostics(CompilationStage stage, bool includeEarlierStages, DiagnosticBag diagnostics, CancellationToken cancellationToken = default);
 
@@ -1819,7 +1819,7 @@ namespace Microsoft.CodeAnalysis
         /// for the compilation on which this API was invoked. In order to avoid the errors, it is recommended to
         /// remove unused assembly references and unused imports at the same time.
         /// </summary>
-        public abstract ImmutableArray<MetadataReference> GetUsedAssemblyReferences(CancellationToken cancellationToken = default(CancellationToken));
+        public abstract ImmutableArray<MetadataReference> GetUsedAssemblyReferences(CancellationToken cancellationToken = default);
 
         internal void EnsureCompilationEventQueueCompleted()
         {
@@ -1870,7 +1870,7 @@ namespace Microsoft.CodeAnalysis
         /// <returns>True if there are no unsuppressed errors (i.e., no errors which fail compilation).</returns>
         internal bool FilterAndAppendAndFreeDiagnostics(DiagnosticBag accumulator, [DisallowNull] ref DiagnosticBag? incoming, CancellationToken cancellationToken)
         {
-            RoslynDebug.Assert(incoming is object);
+            RoslynDebug.Assert(incoming is not null);
             bool result = FilterAndAppendDiagnostics(accumulator, incoming, cancellationToken);
             incoming.Free();
             incoming = null;
@@ -1879,7 +1879,7 @@ namespace Microsoft.CodeAnalysis
 
         internal bool FilterAndAppendDiagnostics(DiagnosticBag accumulator, DiagnosticBag incoming, CancellationToken cancellationToken)
         {
-            RoslynDebug.Assert(incoming is object);
+            RoslynDebug.Assert(incoming is not null);
             bool result = FilterAndAppendDiagnostics(accumulator, incoming.AsEnumerableWithoutResolution(), exclude: null, cancellationToken);
             return result;
         }
@@ -2208,7 +2208,7 @@ namespace Microsoft.CodeAnalysis
         internal Cci.ModulePropertiesForSerialization ConstructModuleSerializationProperties(
             EmitOptions emitOptions,
             string? targetRuntimeVersion,
-            Guid moduleVersionId = default(Guid))
+            Guid moduleVersionId = default)
         {
             CompilationOptions compilationOptions = this.Options;
             Platform platform = compilationOptions.Platform;
@@ -2282,38 +2282,16 @@ namespace Microsoft.CodeAnalysis
                 subsystemVersion = emitOptions.SubsystemVersion;
             }
 
-            Machine machine;
-            switch (platform)
+            var machine = platform switch
             {
-                case Platform.Arm64:
-                    machine = Machine.Arm64;
-                    break;
-
-                case Platform.Arm:
-                    machine = Machine.ArmThumb2;
-                    break;
-
-                case Platform.X64:
-                    machine = Machine.Amd64;
-                    break;
-
-                case Platform.Itanium:
-                    machine = Machine.IA64;
-                    break;
-
-                case Platform.X86:
-                    machine = Machine.I386;
-                    break;
-
-                case Platform.AnyCpu:
-                case Platform.AnyCpu32BitPreferred:
-                    machine = Machine.Unknown;
-                    break;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(platform);
-            }
-
+                Platform.Arm64 => Machine.Arm64,
+                Platform.Arm => Machine.ArmThumb2,
+                Platform.X64 => Machine.Amd64,
+                Platform.Itanium => Machine.IA64,
+                Platform.X86 => Machine.I386,
+                Platform.AnyCpu or Platform.AnyCpu32BitPreferred => Machine.Unknown,
+                _ => throw ExceptionUtilities.UnexpectedValue(platform),
+            };
             return new Cci.ModulePropertiesForSerialization(
                 persistentIdentifier: moduleVersionId,
                 corFlags: GetCorHeaderFlags(machine, HasStrongName, prefers32Bit: platform == Platform.AnyCpu32BitPreferred),
@@ -2417,21 +2395,12 @@ namespace Microsoft.CodeAnalysis
 
         private static Subsystem GetSubsystem(OutputKind outputKind)
         {
-            switch (outputKind)
+            return outputKind switch
             {
-                case OutputKind.ConsoleApplication:
-                case OutputKind.DynamicallyLinkedLibrary:
-                case OutputKind.NetModule:
-                case OutputKind.WindowsRuntimeMetadata:
-                    return Subsystem.WindowsCui;
-
-                case OutputKind.WindowsRuntimeApplication:
-                case OutputKind.WindowsApplication:
-                    return Subsystem.WindowsGui;
-
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(outputKind);
-            }
+                OutputKind.ConsoleApplication or OutputKind.DynamicallyLinkedLibrary or OutputKind.NetModule or OutputKind.WindowsRuntimeMetadata => Subsystem.WindowsCui,
+                OutputKind.WindowsRuntimeApplication or OutputKind.WindowsApplication => Subsystem.WindowsGui,
+                _ => throw ExceptionUtilities.UnexpectedValue(outputKind),
+            };
         }
 
         /// <summary>
@@ -2801,7 +2770,7 @@ namespace Microsoft.CodeAnalysis
             Stream? sourceLinkStream = null,
             IEnumerable<EmbeddedText>? embeddedTexts = null,
             Stream? metadataPEStream = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return Emit(
                 peStream,
@@ -2985,7 +2954,7 @@ namespace Microsoft.CodeAnalysis
                     {
                         // NOTE: We generate documentation even in presence of compile errors.
                         // https://github.com/dotnet/roslyn/issues/37996 tracks revisiting this behavior.
-                        if (!GenerateResources(moduleBeingBuilt, win32Resources, useRawWin32Resources: rebuildData is object, diagnostics, cancellationToken) ||
+                        if (!GenerateResources(moduleBeingBuilt, win32Resources, useRawWin32Resources: rebuildData is not null, diagnostics, cancellationToken) ||
                             !GenerateDocumentationComments(xmlDocumentationStream, options.OutputNameOverride, diagnostics, cancellationToken))
                         {
                             success = false;
@@ -3054,7 +3023,7 @@ namespace Microsoft.CodeAnalysis
             Stream ilStream,
             Stream pdbStream,
             ICollection<MethodDefinitionHandle> updatedMethods,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return EmitDifference(baseline, edits, s => false, metadataStream, ilStream, pdbStream, updatedMethods, cancellationToken);
         }
@@ -3075,7 +3044,7 @@ namespace Microsoft.CodeAnalysis
             Stream ilStream,
             Stream pdbStream,
             ICollection<MethodDefinitionHandle> updatedMethods,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             var diff = EmitDifference(baseline, edits, isAddedSymbol, metadataStream, ilStream, pdbStream, cancellationToken);
 
@@ -3101,7 +3070,7 @@ namespace Microsoft.CodeAnalysis
             Stream metadataStream,
             Stream ilStream,
             Stream pdbStream,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
             => EmitDifference(baseline, edits, isAddedSymbol, metadataStream, ilStream, pdbStream, EmitDifferenceOptions.Default, cancellationToken);
 
         /// <summary>
@@ -3119,7 +3088,7 @@ namespace Microsoft.CodeAnalysis
             Stream ilStream,
             Stream pdbStream,
             EmitDifferenceOptions options,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             if (baseline == null)
             {
@@ -3599,8 +3568,7 @@ namespace Microsoft.CodeAnalysis
         internal string? Feature(string p)
         {
             CodeAnalysis.Feature.AssertValidFeature(p);
-            string? v;
-            return _features.TryGetValue(p, out v) ? v : null;
+            return _features.TryGetValue(p, out string? v) ? v : null;
         }
 
         #endregion
@@ -3676,9 +3644,8 @@ namespace Microsoft.CodeAnalysis
                 return true;
             }
 
-            SmallConcurrentSetOfInts? usedImports;
             return syntaxTree != null &&
-                TreeToUsedImportDirectivesMap.TryGetValue(syntaxTree, out usedImports) &&
+                TreeToUsedImportDirectivesMap.TryGetValue(syntaxTree, out SmallConcurrentSetOfInts? usedImports) &&
                 usedImports.Contains(position);
         }
 
@@ -3784,12 +3751,12 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Return true if there is a source declaration symbol name that meets given predicate.
         /// </summary>
-        public abstract bool ContainsSymbolsWithName(Func<string, bool> predicate, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract bool ContainsSymbolsWithName(Func<string, bool> predicate, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Return source declaration symbols whose name meets given predicate.
         /// </summary>
-        public abstract IEnumerable<ISymbol> GetSymbolsWithName(Func<string, bool> predicate, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract IEnumerable<ISymbol> GetSymbolsWithName(Func<string, bool> predicate, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default);
 
 #pragma warning disable RS0026 // Do not add multiple public overloads with optional parameters
         /// <summary>
@@ -3798,7 +3765,7 @@ namespace Microsoft.CodeAnalysis
         /// SymbolFilter, CancellationToken)"/> when predicate is just a simple string check.
         /// <paramref name="name"/> is case sensitive or not depending on the target language.
         /// </summary>
-        public abstract bool ContainsSymbolsWithName(string name, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract bool ContainsSymbolsWithName(string name, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Return source declaration symbols whose name matches the provided name.  This may be
@@ -3806,7 +3773,7 @@ namespace Microsoft.CodeAnalysis
         /// CancellationToken)"/> when predicate is just a simple string check.  <paramref
         /// name="name"/> is case sensitive or not depending on the target language.
         /// </summary>
-        public abstract IEnumerable<ISymbol> GetSymbolsWithName(string name, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract IEnumerable<ISymbol> GetSymbolsWithName(string name, SymbolFilter filter = SymbolFilter.TypeAndMember, CancellationToken cancellationToken = default);
 #pragma warning restore RS0026 // Do not add multiple public overloads with optional parameters
 
         #endregion
@@ -3910,43 +3877,5 @@ namespace Microsoft.CodeAnalysis
         }
 
         internal abstract bool IsUnreferencedAssemblyIdentityDiagnosticCode(int code);
-
-        /// <summary>
-        /// Returns the required language version found in a <see cref="Diagnostic"/>, if any is found.
-        /// Returns null if none is found.
-        /// </summary>
-        public static string? GetRequiredLanguageVersion(Diagnostic diagnostic)
-        {
-            if (diagnostic == null)
-            {
-                throw new ArgumentNullException(nameof(diagnostic));
-            }
-
-            bool found = false;
-            string? foundVersion = null;
-            if (diagnostic.Arguments != null)
-            {
-                foreach (var argument in diagnostic.Arguments)
-                {
-                    if (argument is RequiredLanguageVersion versionDiagnostic)
-                    {
-                        Debug.Assert(!found); // only one required language version in a given diagnostic
-                        found = true;
-                        foundVersion = versionDiagnostic.ToString();
-                    }
-                }
-            }
-
-            return foundVersion;
-        }
-
-        /// <summary>
-        /// Determines whether the runtime this <see cref="Compilation"/> is targeting supports a particular capability.
-        /// </summary>
-        /// <remarks>Returns <see langword="false"/> if an unknown capability is passed in.</remarks>
-        public bool SupportsRuntimeCapability(RuntimeCapability capability)
-            => SupportsRuntimeCapabilityCore(capability);
-
-        private protected abstract bool SupportsRuntimeCapabilityCore(RuntimeCapability capability);
     }
 }

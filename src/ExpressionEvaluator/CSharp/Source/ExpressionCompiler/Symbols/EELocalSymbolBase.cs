@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         internal static LocalSymbol ToOtherMethod(this LocalSymbol local, MethodSymbol method, TypeMap typeMap)
         {
             var l = local as EELocalSymbolBase;
-            if ((object)l != null)
+            if (l is not null)
             {
                 return l.ToOtherMethod(method, typeMap);
             }

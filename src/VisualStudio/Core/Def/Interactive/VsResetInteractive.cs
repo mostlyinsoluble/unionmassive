@@ -171,21 +171,12 @@ internal sealed class VsResetInteractive : ResetInteractive
             return InteractiveHostPlatform.Core;
         }
 
-        switch (platform)
+        return platform switch
         {
-            case Platform.Arm:
-            case Platform.AnyCpu32BitPreferred:
-            case Platform.X86:
-                return InteractiveHostPlatform.Desktop32;
-
-            case Platform.Itanium:
-            case Platform.X64:
-            case Platform.Arm64:
-                return InteractiveHostPlatform.Desktop64;
-
-            default:
-                return null;
-        }
+            Platform.Arm or Platform.AnyCpu32BitPreferred or Platform.X86 => (CodeAnalysis.Interactive.InteractiveHostPlatform?)InteractiveHostPlatform.Desktop32,
+            Platform.Itanium or Platform.X64 or Platform.Arm64 => (CodeAnalysis.Interactive.InteractiveHostPlatform?)InteractiveHostPlatform.Desktop64,
+            _ => null,
+        };
     }
 
     private static string GetReferenceString(VSLangProj.Reference reference)

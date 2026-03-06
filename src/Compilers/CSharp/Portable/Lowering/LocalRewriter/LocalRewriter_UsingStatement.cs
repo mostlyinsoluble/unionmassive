@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             LocalSymbol localSymbol = localDeclaration.LocalSymbol;
             TypeSymbol localType = localSymbol.Type;
-            Debug.Assert((object)localType != null); //otherwise, there wouldn't be a conversion to IDisposable
+            Debug.Assert(localType is not null); //otherwise, there wouldn't be a conversion to IDisposable
 
             BoundLocal boundLocal = new BoundLocal(declarationSyntax, localSymbol, localDeclaration.InitializerOpt.ConstantValueOpt, localType);
 
@@ -248,8 +248,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     iDisposableType,
                     @checked: false);
 
-                BoundAssignmentOperator tempAssignment;
-                BoundLocal boundTemp = _factory.StoreToTemp(tempInit, out tempAssignment, kind: SynthesizedLocalKind.Using);
+                BoundLocal boundTemp = _factory.StoreToTemp(tempInit, out BoundAssignmentOperator tempAssignment, kind: SynthesizedLocalKind.Using);
 
                 BoundStatement tryFinally = RewriteUsingStatementTryFinally(usingSyntax, declarationSyntax, tryBlock, boundTemp, awaitKeywordOpt, awaitOpt, patternDisposeInfo);
 
@@ -472,7 +471,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 disposeCall = MakeCall(disposeInfo, resourceSyntax, disposedExpression, firstRewrittenArgument: null);
 
-                if (awaitOpt is object)
+                if (awaitOpt is not null)
                 {
                     // await local.DisposeAsync()
                     _sawAwaitInExceptionHandler = true;

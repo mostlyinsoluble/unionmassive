@@ -292,17 +292,14 @@ internal struct StackFrameParser
 
         // Check for generated name kinds we can handle
         // See https://github.com/dotnet/roslyn/blob/main/src/Compilers/CSharp/Portable/Symbols/Synthesized/GeneratedNameKind.cs 
-        switch (currentChar)
+        return currentChar switch
         {
-            case 'g': // Local function
-                return TryParseLocalMethodName(lessThanToken, identifier.Value, greaterThanToken);
-
-            case 'd': // State Machine (such as async methods)
-                return TryParseStateMachineMethodName(lessThanToken, identifier.Value, greaterThanToken);
-
-            default:
-                return Result<StackFrameGeneratedNameNode>.Abort;
-        }
+            // Local function
+            'g' => TryParseLocalMethodName(lessThanToken, identifier.Value, greaterThanToken),
+            // State Machine (such as async methods)
+            'd' => TryParseStateMachineMethodName(lessThanToken, identifier.Value, greaterThanToken),
+            _ => Result<StackFrameGeneratedNameNode>.Abort,
+        };
     }
 
     private Result<StackFrameGeneratedNameNode> TryParseLocalMethodName(StackFrameToken lessThanToken, StackFrameToken identifier, StackFrameToken greaterThanToken)

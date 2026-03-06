@@ -73,22 +73,11 @@ internal sealed class CSharpLineSeparatorService : ILineSeparatorService
             return true;
         }
 
-        switch (node.Kind())
+        return node.Kind() switch
         {
-            case SyntaxKind.NamespaceDeclaration:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.DestructorDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-                return true;
-
-            default:
-                return false;
-        }
+            SyntaxKind.NamespaceDeclaration or SyntaxKind.MethodDeclaration or SyntaxKind.PropertyDeclaration or SyntaxKind.EventDeclaration or SyntaxKind.IndexerDeclaration or SyntaxKind.ConstructorDeclaration or SyntaxKind.DestructorDeclaration or SyntaxKind.OperatorDeclaration or SyntaxKind.ConversionOperatorDeclaration => true,
+            _ => false,
+        };
     }
 
     /// <summary>Node types that may contain separable blocks.</summary>

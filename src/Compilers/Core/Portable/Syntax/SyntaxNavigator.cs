@@ -212,8 +212,7 @@ namespace Microsoft.CodeAnalysis
 
             foreach (var trivia in list.Reverse())
             {
-                SyntaxToken token;
-                if (TryGetLastTokenForStructuredTrivia(trivia, predicate, stepInto, out token))
+                if (TryGetLastTokenForStructuredTrivia(trivia, predicate, stepInto, out SyntaxToken token))
                 {
                     return token;
                 }
@@ -412,8 +411,7 @@ namespace Microsoft.CodeAnalysis
             {
                 if (returnPrevious)
                 {
-                    SyntaxToken token;
-                    if (TryGetLastTokenForStructuredTrivia(trivia, predicate, stepInto, out token))
+                    if (TryGetLastTokenForStructuredTrivia(trivia, predicate, stepInto, out SyntaxToken token))
                     {
                         return token;
                     }

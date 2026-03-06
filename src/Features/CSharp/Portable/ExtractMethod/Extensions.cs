@@ -20,7 +20,7 @@ internal static class Extensions
     {
         Contract.ThrowIfNull(node);
 
-        for (var current = node; current is object; current = current.Parent)
+        for (var current = node; current is not null; current = current.Parent)
         {
             if (current.Parent != null &&
                 current.Parent.IsStatementContainerNode())
@@ -40,15 +40,15 @@ internal static class Extensions
 
     public static BlockSyntax? GetBlockBody(this SyntaxNode? node)
     {
-        switch (node)
+        return node switch
         {
-            case BaseMethodDeclarationSyntax m: return m.Body;
-            case AccessorDeclarationSyntax a: return a.Body;
-            case SimpleLambdaExpressionSyntax s: return s.Body as BlockSyntax;
-            case ParenthesizedLambdaExpressionSyntax p: return p.Body as BlockSyntax;
-            case AnonymousMethodExpressionSyntax a: return a.Block;
-            default: return null;
-        }
+            BaseMethodDeclarationSyntax m => m.Body,
+            AccessorDeclarationSyntax a => a.Body,
+            SimpleLambdaExpressionSyntax s => s.Body as BlockSyntax,
+            ParenthesizedLambdaExpressionSyntax p => p.Body as BlockSyntax,
+            AnonymousMethodExpressionSyntax a => a.Block,
+            _ => null,
+        };
     }
 
     public static bool UnderValidContext(this SyntaxNode node)

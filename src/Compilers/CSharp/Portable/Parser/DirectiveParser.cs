@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 
@@ -327,33 +325,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 string errorText = triviaBuilder.ToString();
                 eod = this.AddError(eod, offset: triviaOffset, triviaWidth, isError ? ErrorCode.ERR_ErrorDirective : ErrorCode.WRN_WarningDirective, errorText);
-
-                if (isError)
-                {
-                    if (errorText.Equals("version", StringComparison.Ordinal))
-                    {
-                        string version = CommonCompiler.GetProductVersion(typeof(CSharpCompiler));
-                        string assemblyPath = CommonCompiler.GetAssemblyLocation(typeof(CSharpCompiler));
-                        var specified = this.Options.SpecifiedLanguageVersion;
-                        var effective = specified.MapSpecifiedToEffectiveVersion();
-
-                        var displayLanguageVersion = specified == effective ? specified.ToDisplayString() : $"{specified.ToDisplayString()} ({effective.ToDisplayString()})";
-
-                        eod = this.AddError(eod, triviaOffset, triviaWidth, ErrorCode.ERR_CompilerAndLanguageVersion, version,
-                            displayLanguageVersion, assemblyPath);
-                    }
-                    else
-                    {
-                        const string versionMarker = "version:";
-                        if (this.Options.LanguageVersion != LanguageVersion.Preview &&
-                            errorText.StartsWith(versionMarker, StringComparison.Ordinal) &&
-                            LanguageVersionFacts.TryParse(errorText.Substring(versionMarker.Length), out var languageVersion))
-                        {
-                            ErrorCode error = this.Options.LanguageVersion.GetErrorCode();
-                            eod = this.AddError(eod, triviaOffset, triviaWidth, error, "version", new CSharpRequiredLanguageVersion(languageVersion));
-                        }
-                    }
-                }
             }
 
             if (isError)
@@ -538,11 +509,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private DirectiveTriviaSyntax ParseNullableDirective(SyntaxToken hash, SyntaxToken token, bool isActive)
         {
-            if (isActive)
-            {
-                token = CheckFeatureAvailability(token, MessageID.IDS_FeatureNullableReferenceTypes);
-            }
-
             SyntaxToken setting = this.CurrentToken.Kind switch
             {
                 SyntaxKind.EnableKeyword => EatToken(),
@@ -566,11 +532,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private DirectiveTriviaSyntax ParsePragmaDirective(SyntaxToken hash, SyntaxToken pragma, bool isActive)
         {
-            if (isActive)
-            {
-                pragma = CheckFeatureAvailability(pragma, MessageID.IDS_FeaturePragma);
-            }
-
             bool hasError = false;
             if (this.CurrentToken.ContextualKind == SyntaxKind.WarningKeyword)
             {
@@ -634,7 +595,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 {
                     style = this.EatToken(SyntaxKind.DisableKeyword, ErrorCode.WRN_IllegalPPWarning, reportError: isActive);
                     var end = this.ParseEndOfDirective(ignoreErrors: true, afterPragma: true);
-                    return SyntaxFactory.PragmaWarningDirectiveTrivia(hash, pragma, warning, style, default(SeparatedSyntaxList<ExpressionSyntax>), end, isActive);
+                    return SyntaxFactory.PragmaWarningDirectiveTrivia(hash, pragma, warning, style, default, end, isActive);
                 }
             }
             else if (this.CurrentToken.Kind == SyntaxKind.ChecksumKeyword)
@@ -644,8 +605,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 var guid = this.EatToken(SyntaxKind.StringLiteralToken, ErrorCode.WRN_IllegalPPChecksum, reportError: isActive && !file.IsMissing);
                 if (isActive && !guid.IsMissing)
                 {
-                    Guid tmp;
-                    if (!Guid.TryParse(guid.ValueText, out tmp))
+                    if (!Guid.TryParse(guid.ValueText, out Guid tmp))
                     {
                         guid = this.AddError(guid, ErrorCode.WRN_IllegalPPChecksum);
                     }
@@ -680,7 +640,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 var warning = this.EatToken(SyntaxKind.WarningKeyword, ErrorCode.WRN_IllegalPragma, reportError: isActive);
                 var style = this.EatToken(SyntaxKind.DisableKeyword, reportError: false);
                 var eod = this.ParseEndOfDirective(ignoreErrors: true, afterPragma: true);
-                return SyntaxFactory.PragmaWarningDirectiveTrivia(hash, pragma, warning, style, default(SeparatedSyntaxList<ExpressionSyntax>), eod, isActive);
+                return SyntaxFactory.PragmaWarningDirectiveTrivia(hash, pragma, warning, style, default, eod, isActive);
             }
         }
 
@@ -900,8 +860,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     // literals, and regular string literals - not boolean literals.  In (non-directive)
                     // C#, tru\u0065 is equivalent to the identifier @true, not the boolean literal true.)
                     string id = ((IdentifierNameSyntax)expr).Identifier.ValueText;
-                    bool constantValue;
-                    if (bool.TryParse(id, out constantValue))
+                    if (bool.TryParse(id, out bool constantValue))
                     {
                         return constantValue;
                     }
@@ -914,16 +873,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private bool IsDefined(string id)
         {
             var defState = _context.IsDefined(id);
-            switch (defState)
+            return defState switch
             {
-                default:
-                case DefineState.Unspecified:
-                    return this.Options.PreprocessorSymbols.Contains(id);
-                case DefineState.Defined:
-                    return true;
-                case DefineState.Undefined:
-                    return false;
-            }
+                DefineState.Defined => true,
+                DefineState.Undefined => false,
+                _ => this.Options.PreprocessorSymbols.Contains(id),
+            };
         }
     }
 }

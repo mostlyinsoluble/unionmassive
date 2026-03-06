@@ -19,8 +19,6 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private BoundExpression BindAwait(AwaitExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureAsync.CheckFeatureAvailability(diagnostics, node.AwaitKeyword);
-
             BoundExpression expression = BindRValueWithoutTargetType(node.Expression, diagnostics);
 
             return BindAwait(expression, node, diagnostics);
@@ -96,7 +94,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!call.IsErroneousNode);
 
             // First check if the target method is async.
-            if ((object)call.Method != null && call.Method.IsAsync)
+            if (call.Method is not null && call.Method.IsAsync)
             {
                 return true;
             }
@@ -153,7 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             DiagnosticInfo? info = null;
             var containingMemberOrLambda = this.ContainingMemberOrLambda;
-            if (containingMemberOrLambda is object)
+            if (containingMemberOrLambda is not null)
             {
                 switch (containingMemberOrLambda.Kind)
                 {
@@ -231,18 +229,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             else if (this.Flags.Includes(BinderFlags.InCatchFilter))
             {
                 Error(diagnostics, ErrorCode.ERR_BadAwaitInCatchFilter, nodeOrToken.GetLocation()!);
-                return true;
-            }
-            else if (this.Flags.Includes(BinderFlags.InFinallyBlock) &&
-                (nodeOrToken.SyntaxTree as CSharpSyntaxTree)?.Options?.IsFeatureEnabled(MessageID.IDS_AwaitInCatchAndFinally) == false)
-            {
-                Error(diagnostics, ErrorCode.ERR_BadAwaitInFinally, nodeOrToken.GetLocation()!);
-                return true;
-            }
-            else if (this.Flags.Includes(BinderFlags.InCatchBlock) &&
-                (nodeOrToken.SyntaxTree as CSharpSyntaxTree)?.Options?.IsFeatureEnabled(MessageID.IDS_AwaitInCatchAndFinally) == false)
-            {
-                Error(diagnostics, ErrorCode.ERR_BadAwaitInCatch, nodeOrToken.GetLocation()!);
                 return true;
             }
             else
@@ -582,7 +568,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private bool GetGetAwaiterMethod(BoundExpression expression, SyntaxNode node, BindingDiagnosticBag diagnostics, [NotNullWhen(true)] out BoundExpression? getAwaiterCall)
         {
-            RoslynDebug.Assert(expression.Type is object);
+            RoslynDebug.Assert(expression.Type is not null);
             if (expression.Type.IsVoidType())
             {
                 Error(diagnostics, ErrorCode.ERR_BadAwaitArgVoidCall, node);
@@ -631,7 +617,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var receiver = new BoundLiteral(node, ConstantValue.Null, awaiterType);
             var name = WellKnownMemberNames.IsCompleted;
-            var qualified = BindInstanceMemberAccess(node, node, receiver, name, 0, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), invoked: false, indexed: false, diagnostics);
+            var qualified = BindInstanceMemberAccess(node, node, receiver, name, 0, default, default, invoked: false, indexed: false, diagnostics);
             if (qualified.HasAnyErrors)
             {
                 isCompletedProperty = null;
@@ -712,7 +698,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            RoslynDebug.Assert(awaiterType is object);
+            RoslynDebug.Assert(awaiterType is not null);
             if (getAwaiterGetResultCall.Kind != BoundKind.Call)
             {
                 Error(diagnostics, ErrorCode.ERR_NoSuchMember, node, awaiterType, WellKnownMemberNames.GetResult);

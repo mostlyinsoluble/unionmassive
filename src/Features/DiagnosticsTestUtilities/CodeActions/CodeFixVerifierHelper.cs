@@ -100,11 +100,11 @@ internal static class CodeFixVerifierHelper
     {
         if (options.Count == 0)
         {
-            return explicitEditorConfig is object ? SourceText.From(explicitEditorConfig, Encoding.UTF8) : null;
+            return explicitEditorConfig is not null ? SourceText.From(explicitEditorConfig, Encoding.UTF8) : null;
         }
 
         var analyzerConfig = new StringBuilder();
-        if (explicitEditorConfig is object)
+        if (explicitEditorConfig is not null)
         {
             analyzerConfig.AppendLine(explicitEditorConfig);
         }

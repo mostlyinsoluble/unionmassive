@@ -416,8 +416,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                         continue;
                     }
 
-                    Exception exception;
-                    object value = GetMemberValue(member, obj, out exception);
+                    object value = GetMemberValue(member, obj, out var exception);
                     if (exception != null)
                     {
                         var memberValueBuilder = MakeMemberBuilder(lengthLimit);
@@ -440,9 +439,8 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                                 int i = 0;
                                 foreach (object item in array)
                                 {
-                                    string name;
                                     Builder valueBuilder = MakeMemberBuilder(lengthLimit);
-                                    FormatObjectRecursive(valueBuilder, item, isRoot: false, debuggerDisplayName: out name);
+                                    FormatObjectRecursive(valueBuilder, item, isRoot: false, debuggerDisplayName: out var name);
 
                                     if (!string.IsNullOrEmpty(name))
                                     {
@@ -466,9 +464,8 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                     }
                     else
                     {
-                        string name;
                         Builder valueBuilder = MakeMemberBuilder(lengthLimit);
-                        FormatObjectRecursive(valueBuilder, value, isRoot: false, debuggerDisplayName: out name);
+                        FormatObjectRecursive(valueBuilder, value, isRoot: false, debuggerDisplayName: out var name);
 
                         if (string.IsNullOrEmpty(name))
                         {
@@ -801,9 +798,8 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                         {
                             int expressionEnd = format.IndexOf('}', i);
 
-                            bool noQuotes, callableOnly;
                             string memberName;
-                            if (expressionEnd == -1 || (memberName = ParseSimpleMemberName(format, i, expressionEnd, out noQuotes, out callableOnly)) == null)
+                            if (expressionEnd == -1 || (memberName = ParseSimpleMemberName(format, i, expressionEnd, out var noQuotes, out var callableOnly)) == null)
                             {
                                 // the expression isn't properly formatted
                                 result.Append(format, i - 1, format.Length - i + 1);
@@ -817,8 +813,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                             }
                             else
                             {
-                                Exception exception;
-                                object value = GetMemberValue(member, obj, out exception);
+                                object value = GetMemberValue(member, obj, out var exception);
 
                                 if (exception != null)
                                 {

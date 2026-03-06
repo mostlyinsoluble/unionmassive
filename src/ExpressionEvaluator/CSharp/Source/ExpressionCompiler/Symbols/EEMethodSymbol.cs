@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             var parameterBuilder = ArrayBuilder<ParameterSymbol>.GetInstance();
 
             var substitutedSourceThisParameter = this.SubstitutedSourceMethod.ThisParameter;
-            var substitutedSourceHasThisParameter = (object)substitutedSourceThisParameter != null;
+            var substitutedSourceHasThisParameter = substitutedSourceThisParameter is not null;
             if (substitutedSourceHasThisParameter)
             {
                 _thisParameter = MakeParameterSymbol(0, GeneratedNames.ThisProxyFieldName(), substitutedSourceThisParameter);
@@ -197,8 +197,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 var localsBuilder = ArrayBuilder<LocalSymbol>.GetInstance(sourceLocalsForBinding.Length);
                 foreach (var sourceLocal in sourceLocalsForBinding)
                 {
-                    LocalSymbol local;
-                    if (!localsMap.TryGetValue(sourceLocal, out local))
+                    if (!localsMap.TryGetValue(sourceLocal, out var local))
                     {
                         local = sourceLocal.ToOtherMethod(this, this.TypeMap);
                         localsMap.Add(sourceLocal, local);
@@ -257,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override System.Reflection.MethodImplAttributes ImplementationAttributes
         {
-            get { return default(System.Reflection.MethodImplAttributes); }
+            get { return default; }
         }
 
         internal override bool HasDeclarativeSecurity
@@ -329,7 +328,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             get
             {
-                if ((object)_lazyReturnType == null)
+                if (_lazyReturnType is null)
                 {
                     throw new InvalidOperationException();
                 }
@@ -477,8 +476,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            ImmutableArray<LocalSymbol> declaredLocalsArray;
-            var body = _generateMethodBody(this, diagnostics.DiagnosticBag, out declaredLocalsArray, out _lazyResultProperties);
+            var body = _generateMethodBody(this, diagnostics.DiagnosticBag, out var declaredLocalsArray, out _lazyResultProperties);
             var compilation = compilationState.Compilation;
 
             _lazyReturnType = TypeWithAnnotations.Create(CalculateReturnType(compilation, body));
@@ -732,7 +730,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             {
                 return thisProxy.ToBoundExpression(syntax);
             }
-            if ((object)_thisParameter != null)
+            if (_thisParameter is not null)
             {
                 var typeNameKind = GeneratedNameParser.GetKind(_thisParameter.TypeWithAnnotations.Type.Name);
                 if (typeNameKind != GeneratedNameKind.None && typeNameKind != GeneratedNameKind.AnonymousType)
@@ -755,17 +753,12 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 return compilation.GetSpecialType(SpecialType.System_Void);
             }
 
-            switch (bodyOpt.Kind)
+            return bodyOpt.Kind switch
             {
-                case BoundKind.ReturnStatement:
-                    return ((BoundReturnStatement)bodyOpt).ExpressionOpt.Type;
-                case BoundKind.ExpressionStatement:
-                case BoundKind.LocalDeclaration:
-                case BoundKind.MultipleLocalDeclarations:
-                    return compilation.GetSpecialType(SpecialType.System_Void);
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(bodyOpt.Kind);
-            }
+                BoundKind.ReturnStatement => ((BoundReturnStatement)bodyOpt).ExpressionOpt.Type,
+                BoundKind.ExpressionStatement or BoundKind.LocalDeclaration or BoundKind.MultipleLocalDeclarations => compilation.GetSpecialType(SpecialType.System_Void),
+                _ => throw ExceptionUtilities.UnexpectedValue(bodyOpt.Kind),
+            };
         }
 
         internal override int CalculateLocalSyntaxOffset(int localPosition, SyntaxTree localTree)

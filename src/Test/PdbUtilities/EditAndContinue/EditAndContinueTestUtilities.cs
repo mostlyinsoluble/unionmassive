@@ -37,8 +37,7 @@ internal class EditAndContinueTestUtilities
 
     public static string EncLogRowToString(EditAndContinueLogEntry row)
     {
-        TableIndex tableIndex;
-        MetadataTokens.TryGetTableIndex(row.Handle.Kind, out tableIndex);
+        MetadataTokens.TryGetTableIndex(row.Handle.Kind, out var tableIndex);
 
         return string.Format(
             "Row({0}, TableIndex.{1}, EditAndContinueOperation.{2})",
@@ -49,8 +48,7 @@ internal class EditAndContinueTestUtilities
 
     public static string EncMapRowToString(EntityHandle handle)
     {
-        TableIndex tableIndex;
-        MetadataTokens.TryGetTableIndex(handle.Kind, out tableIndex);
+        MetadataTokens.TryGetTableIndex(handle.Kind, out var tableIndex);
 
         return string.Format(
             "Handle({0}, TableIndex.{1})",
@@ -60,9 +58,8 @@ internal class EditAndContinueTestUtilities
 
     public static string AttributeRowToString(CustomAttributeRow row)
     {
-        TableIndex parentTableIndex, constructorTableIndex;
-        MetadataTokens.TryGetTableIndex(row.ParentToken.Kind, out parentTableIndex);
-        MetadataTokens.TryGetTableIndex(row.ConstructorToken.Kind, out constructorTableIndex);
+        MetadataTokens.TryGetTableIndex(row.ParentToken.Kind, out var parentTableIndex);
+        MetadataTokens.TryGetTableIndex(row.ConstructorToken.Kind, out var constructorTableIndex);
 
         return string.Format(
             "new CustomAttributeRow(Handle({0}, TableIndex.{1}), Handle({2}, TableIndex.{3}))",

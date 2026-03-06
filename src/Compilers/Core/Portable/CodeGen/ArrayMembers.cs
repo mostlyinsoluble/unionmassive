@@ -106,10 +106,9 @@ namespace Microsoft.CodeAnalysis.CodeGen
         private ArrayMethod GetArrayMethod(Cci.IArrayTypeReference arrayType, ArrayMethodKind id)
         {
             var key = ((byte)id, new IReferenceOrISignature(arrayType));
-            ArrayMethod? result;
 
             var dict = _dict;
-            if (!dict.TryGetValue(key, out result))
+            if (!dict.TryGetValue(key, out ArrayMethod? result))
             {
                 result = MakeArrayMethod(arrayType, id);
                 result = dict.GetOrAdd(key, result);
@@ -120,22 +119,14 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         private static ArrayMethod MakeArrayMethod(Cci.IArrayTypeReference arrayType, ArrayMethodKind id)
         {
-            switch (id)
+            return id switch
             {
-                case ArrayMethodKind.CTOR:
-                    return new ArrayConstructor(arrayType);
-
-                case ArrayMethodKind.GET:
-                    return new ArrayGet(arrayType);
-
-                case ArrayMethodKind.SET:
-                    return new ArraySet(arrayType);
-
-                case ArrayMethodKind.ADDRESS:
-                    return new ArrayAddress(arrayType);
-            }
-
-            throw ExceptionUtilities.UnexpectedValue(id);
+                ArrayMethodKind.CTOR => new ArrayConstructor(arrayType),
+                ArrayMethodKind.GET => new ArrayGet(arrayType),
+                ArrayMethodKind.SET => new ArraySet(arrayType),
+                ArrayMethodKind.ADDRESS => new ArrayAddress(arrayType),
+                _ => throw ExceptionUtilities.UnexpectedValue(id),
+            };
         }
 
         /// <summary>
@@ -237,15 +228,14 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         public static ArrayMethodParameterInfo GetIndexParameter(ushort index)
         {
-            switch (index)
+            return index switch
             {
-                case 0: return s_index0;
-                case 1: return s_index1;
-                case 2: return s_index2;
-                case 3: return s_index3;
-            }
-
-            return new ArrayMethodParameterInfo(index);
+                0 => s_index0,
+                1 => s_index1,
+                2 => s_index2,
+                3 => s_index3,
+                _ => new ArrayMethodParameterInfo(index),
+            };
         }
 
         public ImmutableArray<Cci.ICustomModifier> RefCustomModifiers

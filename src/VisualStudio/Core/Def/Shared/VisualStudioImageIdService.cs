@@ -59,15 +59,13 @@ internal sealed class VisualStudioImageIdService(IThreadingContext threadingCont
     private ImageId GetImageId(ImmutableArray<string> tags)
     {
         var glyph = tags.GetFirstGlyph();
-        switch (glyph)
+        return glyph switch
         {
-            case Glyph.AddReference:
-                return GetCompositedImageId(
-                    CreateLayer(Glyph.Reference.GetImageMoniker(), virtualXOffset: 1, virtualYOffset: 2),
-                    CreateLayer(KnownMonikers.PendingAddNode, virtualWidth: 7, virtualXOffset: -1, virtualYOffset: -2));
-        }
-
-        return glyph.GetImageId();
+            Glyph.AddReference => GetCompositedImageId(
+                                CreateLayer(Glyph.Reference.GetImageMoniker(), virtualXOffset: 1, virtualYOffset: 2),
+                                CreateLayer(KnownMonikers.PendingAddNode, virtualWidth: 7, virtualXOffset: -1, virtualYOffset: -2)),
+            _ => glyph.GetImageId(),
+        };
     }
 
     private static ImageCompositionLayer CreateLayer(

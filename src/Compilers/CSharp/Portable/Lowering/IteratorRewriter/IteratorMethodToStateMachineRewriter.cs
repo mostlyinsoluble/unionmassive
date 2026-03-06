@@ -114,7 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // state = -1;
             // [optional: cachedThis = capturedThis;]
             // [[rewritten body]]
-            newBody = F.Block((object)cachedThis == null ?
+            newBody = F.Block(cachedThis is null ?
                                 ImmutableArray.Create(cachedState) :
                                 ImmutableArray.Create(cachedState, cachedThis),
 
@@ -302,7 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                if ((object)_exitLabel == null)
+                if (_exitLabel is null)
                 {
                     _exitLabel = this.F.GenerateLabel("exitLabel");
                     _methodValue = F.SynthesizedLocal(result.Type);
@@ -412,7 +412,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             //      return;
             // }
             Debug.Assert(frame.parent.finalizeState == _currentFinallyFrame.finalizeState);
-            rewrittenHandler = F.Block((object)this.cachedThis != null ?
+            rewrittenHandler = F.Block(this.cachedThis is not null ?
                                             ImmutableArray.Create(this.cachedThis) :
                                             ImmutableArray<LocalSymbol>.Empty,
                                 F.Assignment(F.Field(F.This(), stateField), F.Literal(frame.parent.finalizeState)),

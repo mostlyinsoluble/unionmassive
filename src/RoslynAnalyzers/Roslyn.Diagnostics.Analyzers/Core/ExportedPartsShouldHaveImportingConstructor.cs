@@ -104,7 +104,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
                 if (constructor.IsImplicitlyDeclared)
                 {
-                    if (exportAttributeApplication.ApplicationSyntaxReference is object)
+                    if (exportAttributeApplication.ApplicationSyntaxReference is not null)
                     {
                         // '{0}' is MEF-exported and should have a single importing constructor of the correct form
                         context.ReportDiagnostic(

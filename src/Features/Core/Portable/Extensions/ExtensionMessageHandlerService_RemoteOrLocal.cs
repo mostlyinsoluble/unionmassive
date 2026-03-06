@@ -29,13 +29,13 @@ internal sealed partial class ExtensionMessageHandlerServiceFactory
                 {
                     var (executeInProcessAsync, _, arg) = tuple;
                     await executeInProcessAsync(localService, arg, cancellationToken).ConfigureAwait(false);
-                    return default(VoidResult);
+                    return default;
                 },
                 static async (service, tuple, checksum, cancellationToken) =>
                 {
                     var (_, executeOutOfProcessAsync, arg) = tuple;
                     await executeOutOfProcessAsync(service, arg, checksum, cancellationToken).ConfigureAwait(false);
-                    return default(VoidResult);
+                    return default;
                 },
                 (executeInProcessAsync, executeOutOfProcessAsync, arg),
                 cancellationToken).ConfigureAwait(false);

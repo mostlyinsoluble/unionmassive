@@ -62,8 +62,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             string? appConfigPath = null;
             bool displayLogo = true;
             bool displayHelp = false;
-            bool displayVersion = false;
-            bool displayLangVersions = false;
             bool optimize = false;
             bool checkOverflow = false;
             NullableContextOptions nullableContextOptions = NullableContextOptions.Disable;
@@ -88,7 +86,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool utf8output = false;
             OutputKind outputKind = OutputKind.ConsoleApplication;
             SubsystemVersion subsystemVersion = SubsystemVersion.None;
-            LanguageVersion languageVersion = LanguageVersion.Default;
             string? mainTypeName = null;
             string? win32ManifestFile = null;
             string? win32ResourceFile = null;
@@ -169,9 +166,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(optionsEnded || !arg.StartsWith("@", StringComparison.Ordinal));
 
                 ArrayBuilder<string> filePathBuilder;
-                ReadOnlyMemory<char> nameMemory;
-                ReadOnlyMemory<char>? valueMemory;
-                if (optionsEnded || !TryParseOption(arg, out nameMemory, out valueMemory))
+                if (optionsEnded || !TryParseOption(arg, out ReadOnlyMemory<char> nameMemory, out ReadOnlyMemory<char>? valueMemory))
                 {
                     filePathBuilder = ArrayBuilder<string>.GetInstance();
                     ParseFileArgument(arg.AsMemory(), baseDirectory, filePathBuilder, diagnostics);
@@ -205,25 +200,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else if (IsOptionName("langversion", nameMemory))
                 {
-                    value = RemoveQuotesAndSlashes(valueMemory);
-                    if (RoslynString.IsNullOrEmpty(value))
-                    {
-                        AddDiagnostic(diagnostics, ErrorCode.ERR_SwitchNeedsString, MessageID.IDS_Text.Localize(), "/langversion:");
-                    }
-                    else if (value.StartsWith("0", StringComparison.Ordinal))
-                    {
-                        // This error was added in 7.1 to stop parsing versions as ints (behaviour in previous Roslyn compilers), and explicitly
-                        // treat them as identifiers (behaviour in native compiler). This error helps users identify that breaking change.
-                        AddDiagnostic(diagnostics, ErrorCode.ERR_LanguageVersionCannotHaveLeadingZeroes, value);
-                    }
-                    else if (value == "?")
-                    {
-                        displayLangVersions = true;
-                    }
-                    else if (!LanguageVersionFacts.TryParse(value, out languageVersion))
-                    {
-                        AddDiagnostic(diagnostics, ErrorCode.ERR_BadCompatMode, value);
-                    }
                     continue;
                 }
                 else if (!IsScriptCommandLineParser && IsOptionName("a", "analyzer", nameMemory))
@@ -259,7 +235,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
 
                     case "version":
-                        displayVersion = true;
                         continue;
 
                     case "features":
@@ -514,8 +489,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                             else
                             {
-                                Guid sqmSessionGuid;
-                                if (!Guid.TryParse(value, out sqmSessionGuid))
+                                if (!Guid.TryParse(value, out Guid sqmSessionGuid))
                                 {
                                     AddDiagnostic(diagnostics, ErrorCode.ERR_InvalidFormatForGuidForOption, value, name);
                                 }
@@ -956,8 +930,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 ParseWarnings(valueMemory.Value, builder);
                                 foreach (var id in builder)
                                 {
-                                    ReportDiagnostic ruleSetValue;
-                                    if (diagnosticOptions.TryGetValue(id, out ruleSetValue))
+                                    if (diagnosticOptions.TryGetValue(id, out ReportDiagnostic ruleSetValue))
                                     {
                                         warnAsErrors[id] = ruleSetValue;
                                     }
@@ -979,9 +952,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 continue;
                             }
 
-                            int newWarningLevel;
                             if (string.IsNullOrEmpty(value) ||
-                                !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out newWarningLevel))
+                                !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int newWarningLevel))
                             {
                                 AddDiagnostic(diagnostics, ErrorCode.ERR_SwitchNeedsNumber, name);
                             }
@@ -1112,8 +1084,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         case "baseaddress":
                             value = RemoveQuotesAndSlashes(valueMemory);
 
-                            ulong newBaseAddress;
-                            if (string.IsNullOrEmpty(value) || !TryParseUInt64(value, out newBaseAddress))
+                            if (string.IsNullOrEmpty(value) || !TryParseUInt64(value, out ulong newBaseAddress))
                             {
                                 if (RoslynString.IsNullOrEmpty(value))
                                 {
@@ -1215,12 +1186,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                         case "filealign":
                             value = RemoveQuotesAndSlashes(valueMemory);
 
-                            ushort newAlignment;
                             if (RoslynString.IsNullOrEmpty(value))
                             {
                                 AddDiagnostic(diagnostics, ErrorCode.ERR_SwitchNeedsNumber, name);
                             }
-                            else if (!TryParseUInt16(value, out newAlignment))
+                            else if (!TryParseUInt16(value, out ushort newAlignment))
                             {
                                 AddDiagnostic(diagnostics, ErrorCode.ERR_InvalidFileAlignment, value);
                             }
@@ -1497,14 +1467,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var parsedFeatures = ParseFeatures(features);
 
-            string? compilationName;
-            GetCompilationAndModuleNames(diagnostics, outputKind, sourceFiles, sourceFilesSpecified, moduleAssemblyName, ref outputFileName, ref moduleName, out compilationName);
+            GetCompilationAndModuleNames(diagnostics, outputKind, sourceFiles, sourceFilesSpecified, moduleAssemblyName, ref outputFileName, ref moduleName, out string? compilationName);
 
             flattenedArgs.Free();
 
             var parseOptions = new CSharpParseOptions
             (
-                languageVersion: languageVersion,
                 preprocessorSymbols: defines.ToImmutableAndFree(),
                 documentationMode: parseDocumentationComments ? DocumentationMode.Diagnose : DocumentationMode.None,
                 kind: IsScriptCommandLineParser ? SourceCodeKind.Script : SourceCodeKind.Regular,
@@ -1513,7 +1481,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We want to report diagnostics with source suppression in the error log file.
             // However, these diagnostics won't be reported on the command line.
-            var reportSuppressedDiagnostics = errorLogOptions is object;
+            var reportSuppressedDiagnostics = errorLogOptions is not null;
 
             var options = new CSharpCompilationOptions
             (
@@ -1566,13 +1534,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             diagnostics.AddRange(options.Errors);
             diagnostics.AddRange(parseOptions.Errors);
 
-            if (nullableContextOptions != NullableContextOptions.Disable && parseOptions.LanguageVersion < MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion())
-            {
-                diagnostics.Add(new CSDiagnostic(new CSDiagnosticInfo(ErrorCode.ERR_NullableOptionNotAvailable,
-                                                 "nullable", nullableContextOptions, parseOptions.LanguageVersion.ToDisplayString(),
-                                                 new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion())), Location.None));
-            }
-
             pathMap = SortPathMap(pathMap);
 
             return new CSharpCommandLineArguments
@@ -1611,8 +1572,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 NoWin32Manifest = noWin32Manifest,
                 DisplayLogo = displayLogo,
                 DisplayHelp = displayHelp,
-                DisplayVersion = displayVersion,
-                DisplayLangVersions = displayLangVersions,
                 ManifestResourceArguments = managedResources.AsImmutable(),
                 CompilationOptions = options,
                 ParseOptions = parseOptions,
@@ -2142,8 +2101,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ParseWarnings(warningArgument, idsBuilder);
             foreach (var id in idsBuilder)
             {
-                ReportDiagnostic existing;
-                if (d.TryGetValue(id, out existing))
+                if (d.TryGetValue(id, out ReportDiagnostic existing))
                 {
                     // Rewrite the existing value with the latest one unless it is for /nowarn.
                     if (existing != ReportDiagnostic.Suppress)
@@ -2184,8 +2142,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static void AddDiagnostic(IList<Diagnostic> diagnostics, Dictionary<string, ReportDiagnostic> warningOptions, ErrorCode errorCode, params object[] arguments)
         {
             int code = (int)errorCode;
-            ReportDiagnostic value;
-            warningOptions.TryGetValue(CSharp.MessageProvider.Instance.GetIdForErrorCode(code), out value);
+            warningOptions.TryGetValue(CSharp.MessageProvider.Instance.GetIdForErrorCode(code), out ReportDiagnostic value);
             if (value != ReportDiagnostic.Suppress)
             {
                 AddDiagnostic(diagnostics, errorCode, arguments);

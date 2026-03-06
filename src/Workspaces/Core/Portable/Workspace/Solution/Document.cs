@@ -496,8 +496,8 @@ public class Document : TextDocument
                     var tree = useAsync ? await GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false) : this.GetSyntaxTreeSynchronously(cancellationToken);
                     var oldTree = useAsync ? await oldDocument.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false) : oldDocument.GetSyntaxTreeSynchronously(cancellationToken);
 
-                    RoslynDebug.Assert(tree is object);
-                    RoslynDebug.Assert(oldTree is object);
+                    RoslynDebug.Assert(tree is not null);
+                    RoslynDebug.Assert(oldTree is not null);
                     return [.. tree.GetChanges(oldTree)];
                 }
 
