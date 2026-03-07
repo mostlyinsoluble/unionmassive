@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         /// exactly once, otherwise it may be skipped.)
         /// </summary>
         private readonly GenerateMethodBody _generateMethodBody;
-        private TypeWithAnnotations _lazyReturnType;
+        private TypeWithAnnotations? _lazyReturnType;
         private ResultProperties _lazyResultProperties;
 
         // NOTE: This is only used for asserts, so it could be conditional on DEBUG.
@@ -328,11 +328,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             get
             {
-                if (_lazyReturnType is null)
-                {
-                    throw new InvalidOperationException();
-                }
-                return _lazyReturnType;
+                if (_lazyReturnType is not null)
+                    return (TypeWithAnnotations)_lazyReturnType;
+                throw new InvalidOperationException();
             }
         }
 

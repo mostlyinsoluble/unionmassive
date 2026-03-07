@@ -460,10 +460,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 HashSet<string>? boundNamedArgumentsSet = null;
 
-                // Only report the first "non-trailing named args required C# 7.2" error,
-                // so as to avoid "cascading" errors.
-                bool hadLangVersionError = false;
-
                 var shouldHaveName = false;
 
                 foreach (var argument in attributeArgumentList.Arguments)
@@ -479,7 +475,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         this.BindArgumentAndName(
                             boundConstructorArguments,
                             diagnostics,
-                            ref hadLangVersionError,
                             argument,
                             BindArgumentExpression(diagnostics, argument.Expression, RefKind.None, allowArglist: false),
                             argument.NameColon,
@@ -598,7 +593,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
             this.LookupMembersWithFallback(result, attributeType, name, 0, ref useSiteInfo);
             diagnostics.Add(identifierName, useSiteInfo);
-            Symbol resultSymbol = this.ResultSymbol(result, name, 0, identifierName, diagnostics, false, out wasError, qualifierOpt: null);
+            Symbol resultSymbol = this.ResultSymbol(result, name, 0, identifierName, diagnostics, false, out wasError, qualifier: null);
             resultKind = result.Kind;
             result.Free();
             return resultSymbol;

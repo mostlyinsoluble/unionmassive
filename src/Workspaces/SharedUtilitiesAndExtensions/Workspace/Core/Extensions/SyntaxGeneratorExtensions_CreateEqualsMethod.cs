@@ -350,33 +350,10 @@ internal static partial class SyntaxGeneratorExtensions
             return;
         }
 
-        if (generatorInternal.SyntaxFacts.SupportsNotPattern(parseOptions))
-        {
-            // If we support not patterns then we can do "obj is not null && ..."
-            expressions.Add(
+        expressions.Add(
                 generatorInternal.IsPatternExpression(otherNameExpression,
                     generatorInternal.NotPattern(
                         generatorInternal.ConstantPattern(nullLiteral))));
-        }
-        else if (generatorInternal.SupportsPatterns(parseOptions))
-        {
-            // if we support patterns then we can do `!(obj is null)`
-            expressions.Add(
-                factory.LogicalNotExpression(
-                    generatorInternal.IsPatternExpression(otherNameExpression,
-                        generatorInternal.ConstantPattern(nullLiteral))));
-        }
-        else
-        {
-            // Otherwise, emit a call to ReferenceEquals(x, null) as the best way to do a null check
-            // without potentially going through an overloaded operator (now or in the future).
-            expressions.Add(
-                factory.LogicalNotExpression(
-                    factory.InvocationExpression(
-                        factory.IdentifierName(nameof(ReferenceEquals)),
-                        otherNameExpression,
-                        nullLiteral)));
-        }
     }
 
 #nullable enable

@@ -99,7 +99,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.CallHierarchy
             _presenter = New MockCallHierarchyPresenter()
             Dim threadOperationExecutor = workspace.GetService(Of IUIThreadOperationExecutor)
             Dim asynchronousOperationListenerProvider = workspace.GetService(Of IAsynchronousOperationListenerProvider)()
-            _waiter = asynchronousOperationListenerProvider.GetWaiter(FeatureAttribute.CallHierarchy)
+            _waiter = asynchronousOperationListenerProvider.GetListener(FeatureAttribute.CallHierarchy) As IAsynchronousOperationWaiter
             _commandHandler = New CallHierarchyCommandHandler(threadingContext, threadOperationExecutor, asynchronousOperationListenerProvider, {_presenter}, provider)
         End Sub
 

@@ -1329,20 +1329,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(args.IsDefaultOrEmpty || (object)receiver != (object)args[0]);
 
-            bool isDelegateCall = delegateTypeOpt is not null;
-            if (!isDelegateCall)
-            {
-                if (method.RequiresInstanceReceiver)
-                {
-                    WarnOnAccessOfOffDefault(node.Kind() == SyntaxKind.InvocationExpression ?
-                                                ((InvocationExpressionSyntax)node).Expression :
-                                                node,
-                                             receiver,
-                                             diagnostics);
-                }
-            }
-
-            return new BoundCall(node, receiver, initialBindingReceiverIsSubjectToCloning: ReceiverIsSubjectToCloning(receiver, method), method, args, argNames, argRefKinds, isDelegateCall: isDelegateCall,
+            return new BoundCall(node, receiver, initialBindingReceiverIsSubjectToCloning: ReceiverIsSubjectToCloning(receiver, method), method, args, argNames, argRefKinds, isDelegateCall: delegateTypeOpt is not null,
                         expanded: expanded, invokedAsExtensionMethod: invokedAsExtensionMethod,
                         argsToParamsOpt: argsToParams, defaultArguments, resultKind: LookupResultKind.Viable, type: returnType, hasErrors: gotError);
         }

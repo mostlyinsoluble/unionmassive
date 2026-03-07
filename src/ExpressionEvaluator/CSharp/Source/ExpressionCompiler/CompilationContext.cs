@@ -453,8 +453,8 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                             if (localsDictionary.TryGetValue(argumentName, out var localSymbolAndIndex))
                             {
                                 itemsAdded.Add(argumentName);
-                                var local = localSymbolAndIndex.local;
-                                AppendLocalAndMethod(localBuilder, methodBuilder, local, container, localSymbolAndIndex.localIndex, GetLocalResultFlags(local));
+                                var local = localSymbolAndIndex.Item1;
+                                AppendLocalAndMethod(localBuilder, methodBuilder, local, container, localSymbolAndIndex.Item2, GetLocalResultFlags(local));
                             }
                         }
 

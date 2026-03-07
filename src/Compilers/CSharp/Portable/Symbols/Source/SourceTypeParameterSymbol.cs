@@ -294,11 +294,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void EnsureAttributesFromConstraints(BindingDiagnosticBag diagnostics)
         {
-            if (ConstraintTypesNoUseSiteDiagnostics.Any(static t => t.ContainsNativeIntegerWrapperType()))
-            {
-                DeclaringCompilation.EnsureNativeIntegerAttributeExists(diagnostics, getLocation(), ModifyCompilationForAttributeEmbedding());
-            }
-
             if (ConstraintsNeedNullableAttribute())
             {
                 DeclaringCompilation.EnsureNullableAttributeExists(diagnostics, getLocation(), ModifyCompilationForAttributeEmbedding());

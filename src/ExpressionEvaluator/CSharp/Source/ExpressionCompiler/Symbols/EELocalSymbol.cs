@@ -53,7 +53,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             Debug.Assert(method != null);
             Debug.Assert(ordinal >= -1);
             Debug.Assert(!locations.IsDefault);
-            Debug.Assert(type is not null);
 
             _method = method;
             _locations = locations;

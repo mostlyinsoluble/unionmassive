@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;
@@ -58,10 +57,7 @@ internal sealed class CSharpUseCollectionInitializerAnalyzer : AbstractUseCollec
         {
             // Note 2: we do allow `{ [k] = v }` initializers if k:v elements are supported.
             if (firstExpression is AssignmentExpressionSyntax
-                {
-                    Left: ImplicitElementAccessSyntax { ArgumentList.Arguments.Count: 1 }
-                } &&
-                this.SyntaxFacts.SupportsKeyValuePairElement(_objectCreationExpression.SyntaxTree.Options))
+                { Left: ImplicitElementAccessSyntax { ArgumentList.Arguments.Count: 1 } })
             {
                 return false;
             }
@@ -86,7 +82,6 @@ internal sealed class CSharpUseCollectionInitializerAnalyzer : AbstractUseCollec
             return true;
 
         // See if we can specialize a single argument, by potentially spreading it, or dropping it entirely if redundant.
-        var supportsWithArgument = _objectCreationExpression.SyntaxTree.Options.LanguageVersion().IsCSharp15OrAbove();
         if (TrySpecializeSingleArgument(out mayChangeSemantics))
             return true;
 
@@ -103,15 +98,8 @@ internal sealed class CSharpUseCollectionInitializerAnalyzer : AbstractUseCollec
         {
             return false;
         }
-
-        // Otherwise, if we're in C#15 or above, we can use the 'with(args)' argument trivially.
-        if (supportsWithArgument)
-        {
-            preMatches.Add(new(argumentList, UseSpread: false, UseKeyValue: false));
-            return true;
-        }
-
-        return false;
+        preMatches.Add(new(argumentList, UseSpread: false, UseKeyValue: false));
+        return true;
 
         bool TrySpecializeSingleArgument(out bool mayChangeSemantics)
         {
@@ -134,22 +122,6 @@ internal sealed class CSharpUseCollectionInitializerAnalyzer : AbstractUseCollec
                 } constructor)
             {
                 return false;
-            }
-
-            // If it took a single argument that implements IEnumerable<T>.  We handle this by spreading that argument
-            // as the first thing added to the collection.  Note: if we support 'with()', we prefer to use that as we know
-            // it preserves the semantics here perfectly.
-            if (!supportsWithArgument)
-            {
-                if (CanSpreadFirstParameter(constructor.ContainingType, firstParameter))
-                {
-                    preMatches.Add(new(argumentList.Arguments[0].Expression, UseSpread: true, UseKeyValue: false));
-
-                    // Can't be certain that spreading the elements will be the same as passing to the constructor.  So pass
-                    // that uncertainty up to the caller so they can inform the user.
-                    mayChangeSemantics = true;
-                    return true;
-                }
             }
 
             // Otherwise, if it's a single `int capacity` constructor, we can try to see if the capacity matches up with

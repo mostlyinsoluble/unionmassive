@@ -58,7 +58,6 @@ namespace Microsoft.CodeAnalysis.Rebuild
         {
             var pdbOptions = optionsReader.GetMetadataCompilationOptions();
 
-            var langVersionString = pdbOptions.GetUniqueOption(CompilationOptionNames.LanguageVersion);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Optimization, out var optimization);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Platform, out var platform);
 
@@ -69,14 +68,11 @@ namespace Microsoft.CodeAnalysis.Rebuild
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Nullable, out var nullable);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Unsafe, out var unsafeString);
 
-            CS.LanguageVersionFacts.TryParse(langVersionString, out var langVersion);
-
             var preprocessorSymbols = define == null
                 ? ImmutableArray<string>.Empty
                 : define.Split(',').ToImmutableArray();
 
-            var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(langVersion)
-                .WithPreprocessorSymbols(preprocessorSymbols);
+            var parseOptions = CSharpParseOptions.Default.WithPreprocessorSymbols(preprocessorSymbols);
 
             var (optimizationLevel, plus) = GetOptimizationLevel(optimization);
 
@@ -118,8 +114,10 @@ namespace Microsoft.CodeAnalysis.Rebuild
                 publicSign: false,
 
                 metadataImportOptions: MetadataImportOptions.Public,
-                nullableContextOptions: nullableOptions);
-            compilationOptions.DebugPlusMode = plus;
+                nullableContextOptions: nullableOptions)
+            {
+                DebugPlusMode = plus
+            };
 
             return (compilationOptions, parseOptions);
         }

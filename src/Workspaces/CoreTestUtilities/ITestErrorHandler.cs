@@ -10,8 +10,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities;
 public interface ITestErrorHandler
 {
     /// <summary>
-    /// Records unexpected exceptions thrown during test executino that can't be immediately
-    /// reported.
+    /// Records unexpected exceptions thrown during test executino that can't be immediately reported.
     /// </summary>
     ImmutableList<Exception> Exceptions { get; }
 }

@@ -17,8 +17,9 @@ internal sealed class GenerateFileForEachAdditionalFileWithContentsCommented : I
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(context.AdditionalTextsProvider.Select((t, ct) => t).WithTrackingName(StepName), (context, additionalText) =>
-            context.AddSource(
+        context.RegisterSourceOutput(context.AdditionalTextsProvider.Select(
+            (t, ct) => t).WithTrackingName(StepName),
+            (context, additionalText) => context.AddSource(
                 GetGeneratedFileName(additionalText.Path),
                 GenerateSourceForAdditionalFile(additionalText, context.CancellationToken)));
     }
@@ -28,12 +29,10 @@ internal sealed class GenerateFileForEachAdditionalFileWithContentsCommented : I
         // We're going to "comment" out the contents of the file when generating this
         var sourceText = file.GetText(cancellationToken);
         Contract.ThrowIfNull(sourceText, "Failed to fetch the text of an additional file.");
-
         var changes = sourceText.Lines.SelectAsArray(l => new TextChange(new TextSpan(l.Start, length: 0), "// "));
-        var generatedText = sourceText.WithChanges(changes);
-
-        return SourceText.From(generatedText.ToString(), encoding: Encoding.UTF8);
+        return SourceText.From(sourceText.WithChanges(changes).ToString(), encoding: Encoding.UTF8);
     }
 
-    private static string GetGeneratedFileName(string path) => $"{Path.GetFileNameWithoutExtension(path)}.generated";
+    private static string GetGeneratedFileName(string path)
+        => $"{Path.GetFileNameWithoutExtension(path)}.generated";
 }

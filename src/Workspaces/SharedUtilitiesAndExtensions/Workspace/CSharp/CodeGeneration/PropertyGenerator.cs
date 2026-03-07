@@ -174,7 +174,7 @@ internal static class PropertyGenerator
     }
 
     private static bool TryGetExpressionBody(
-        BasePropertyDeclarationSyntax baseProperty, LanguageVersion languageVersion, ExpressionBodyPreference preference, CancellationToken cancellationToken,
+        BasePropertyDeclarationSyntax baseProperty, ExpressionBodyPreference preference, CancellationToken cancellationToken,
         [NotNullWhen(true)] out ArrowExpressionClauseSyntax? arrowExpression, out SyntaxToken semicolonToken)
     {
         var accessorList = baseProperty.AccessorList;
@@ -185,7 +185,7 @@ internal static class PropertyGenerator
             if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
             {
                 return TryGetArrowExpressionBody(
-                    baseProperty.Kind(), accessor, languageVersion, preference, cancellationToken,
+                    baseProperty.Kind(), accessor, preference, cancellationToken,
                     out arrowExpression, out semicolonToken);
             }
         }
@@ -201,7 +201,7 @@ internal static class PropertyGenerator
         if (declaration.ExpressionBody == null &&
             declaration.Initializer == null &&
             TryGetExpressionBody(
-                declaration, info.LanguageVersion, info.Options.PreferExpressionBodiedProperties.Value, cancellationToken,
+                declaration, info.Options.PreferExpressionBodiedProperties.Value, cancellationToken,
                 out var expressionBody, out var semicolonToken))
         {
             declaration = declaration.WithAccessorList(null)
@@ -218,7 +218,7 @@ internal static class PropertyGenerator
         if (declaration.ExpressionBody == null)
         {
             if (TryGetExpressionBody(
-                    declaration, info.LanguageVersion, info.Options.PreferExpressionBodiedIndexers.Value, cancellationToken,
+                    declaration, info.Options.PreferExpressionBodiedIndexers.Value, cancellationToken,
                     out var expressionBody, out var semicolonToken))
             {
                 declaration = declaration.WithAccessorList(null)
@@ -236,7 +236,7 @@ internal static class PropertyGenerator
         if (declaration.ExpressionBody == null)
         {
             if (declaration.Body?.TryConvertToArrowExpressionBody(
-                declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedAccessors.Value, cancellationToken,
+                declaration.Kind(), info.Options.PreferExpressionBodiedAccessors.Value, cancellationToken,
                 out var expressionBody, out var semicolonToken) == true)
             {
                 declaration = declaration.WithBody(null)
@@ -249,7 +249,7 @@ internal static class PropertyGenerator
     }
 
     private static bool TryGetArrowExpressionBody(
-        SyntaxKind declarationKind, AccessorDeclarationSyntax accessor, LanguageVersion languageVersion, ExpressionBodyPreference preference, CancellationToken cancellationToken,
+        SyntaxKind declarationKind, AccessorDeclarationSyntax accessor, ExpressionBodyPreference preference, CancellationToken cancellationToken,
         [NotNullWhen(true)] out ArrowExpressionClauseSyntax? arrowExpression, out SyntaxToken semicolonToken)
     {
         // If the accessor has an expression body already, then use that as the expression body
@@ -269,7 +269,7 @@ internal static class PropertyGenerator
         }
 
         return accessor.Body.TryConvertToArrowExpressionBody(
-            declarationKind, languageVersion, preference, cancellationToken, out arrowExpression, out semicolonToken);
+            declarationKind, preference, cancellationToken, out arrowExpression, out semicolonToken);
     }
 
     private static AccessorListSyntax? GenerateAccessorList(

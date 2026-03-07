@@ -112,7 +112,7 @@
   -->
   <PropertyGroup>
     <MicrosoftBuildVersionForMetrics>17.11.48</MicrosoftBuildVersionForMetrics>
-    <SystemTextJsonVersionForMetrics>8.0.5</SystemTextJsonVersionForMetrics>
+    <SystemTextJsonVersionForMetrics>10.0.1</SystemTextJsonVersionForMetrics>
   </PropertyGroup>
 
   <!-- Arcade features -->

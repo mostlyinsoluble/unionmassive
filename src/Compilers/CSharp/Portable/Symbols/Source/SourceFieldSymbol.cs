@@ -141,11 +141,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 compilation.EnsureIsReadOnlyAttributeExists(diagnostics, location, modifyCompilation: true);
             }
 
-            if (Type.ContainsNativeIntegerWrapperType())
-            {
-                compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
-            }
-
             if (compilation.ShouldEmitNullableAttributes(this) &&
                 TypeWithAnnotations.NeedsNullableAttribute())
             {

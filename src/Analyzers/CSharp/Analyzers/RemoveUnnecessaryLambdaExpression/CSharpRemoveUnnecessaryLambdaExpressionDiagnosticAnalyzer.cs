@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -38,18 +37,17 @@ internal sealed class CSharpRemoveUnnecessaryLambdaExpressionDiagnosticAnalyzer(
 
     protected override void InitializeWorker(AnalysisContext context)
     {
-        context.RegisterCompilationStartAction(context =>
-        {
-            if (context.Compilation.LanguageVersion().IsCSharp11OrAbove())
-            {
-                var expressionType = context.Compilation.ExpressionOfTType();
-                var conditionalAttributeType = context.Compilation.ConditionalAttribute();
+        context.RegisterCompilationStartAction(run);
 
-                context.RegisterSyntaxNodeAction(
+        void run(CompilationStartAnalysisContext context)
+        {
+            var expressionType = context.Compilation.ExpressionOfTType();
+            var conditionalAttributeType = context.Compilation.ConditionalAttribute();
+
+            context.RegisterSyntaxNodeAction(
                     context => AnalyzeSyntax(context, expressionType, conditionalAttributeType),
-                    SyntaxKind.SimpleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.AnonymousMethodExpression);
-            }
-        });
+                SyntaxKind.SimpleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.AnonymousMethodExpression);
+        }
     }
 
     private void AnalyzeSyntax(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, INamedTypeSymbol? conditionalAttributeType)

@@ -2946,21 +2946,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             internal override NamedTypeSymbol AsNativeInteger()
             {
                 Debug.Assert(this.SpecialType == SpecialType.System_IntPtr || this.SpecialType == SpecialType.System_UIntPtr);
-                if (ContainingAssembly.RuntimeSupportsNumericIntPtr)
-                {
-                    return this;
-                }
 
-                return ContainingAssembly.GetNativeIntegerType(this);
+                return this;
             }
 
             internal override NamedTypeSymbol NativeIntegerUnderlyingType => null;
 
             internal override bool Equals(TypeSymbol t2, TypeCompareKind comparison)
             {
-                return t2 is NativeIntegerTypeSymbol nativeInteger ?
-                    nativeInteger.Equals(this, comparison) :
-                    base.Equals(t2, comparison);
+                return base.Equals(t2, comparison);
             }
         }
 

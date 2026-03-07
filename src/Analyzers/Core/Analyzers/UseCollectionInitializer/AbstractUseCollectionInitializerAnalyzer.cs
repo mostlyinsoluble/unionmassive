@@ -126,7 +126,7 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
                 // initializer, and we support k:v elements.
                 if (_analyzeForCollectionExpression && this.IsComplexElementInitializer(firstInit, out var initializerElementCount))
                 {
-                    if (initializerElementCount != 2 || !this.SyntaxFacts.SupportsKeyValuePairElement(_objectCreationExpression.SyntaxTree.Options))
+                    if (initializerElementCount != 2)
                         return false;
                 }
 
@@ -203,7 +203,7 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
                 this.State.ValuePatternMatches(instance))
             {
                 seenIndexAssignment = true;
-                return new(expressionStatement, UseSpread: false, UseKeyValue: this.State.SyntaxFacts.SupportsKeyValuePairElement(statement.SyntaxTree.Options));
+                return new(expressionStatement, UseSpread: false, UseKeyValue: true);
             }
         }
 

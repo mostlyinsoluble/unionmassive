@@ -145,7 +145,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         WRN_UnreferencedVar = 168,
         WRN_UnreferencedField = 169,
         ERR_UseDefViolationField = 170,
-        ERR_UnassignedThisUnsupportedVersion = 171,
         ERR_AmbigQM = 172,
         ERR_InvalidQM = 173, // Requires SymbolDistinguisher.
         ERR_NoBaseClass = 174,
@@ -1849,7 +1848,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_StaticAPIInRecord = 8877,
         ERR_CopyConstructorWrongAccessibility = 8878,
         ERR_NonPrivateAPIInRecord = 8879,
-        WRN_UnassignedThisUnsupportedVersion = 8881,
         WRN_ParamUnassigned = 8882,
         WRN_UseDefViolationProperty = 8883,
         WRN_UseDefViolationField = 8884,
@@ -2062,7 +2060,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_GlobalUsingStaticFileType = 9055,
         ERR_FileTypeNameDisallowed = 9056,
         WRN_AnalyzerReferencesNewerCompiler = 9057,
-        ERR_FeatureNotAvailableInVersion11 = 9058,
         ERR_RefFieldInNonRefStruct = 9059,
         ERR_CannotMatchOnINumberBase = 9060,
         ERR_ScopedDiscard = 9061,
@@ -2218,8 +2215,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_OutAttrOnRefReadonlyParam = 9199,
         WRN_RefReadonlyParameterDefaultValue = 9200,
         WRN_UseDefViolationRefField = 9201,
-
-        ERR_FeatureNotAvailableInVersion12 = 9202,
         ERR_CollectionExpressionEscape = 9203,
         WRN_Experimental = 9204,
         ERR_ExpectedInterpolatedString = 9205,

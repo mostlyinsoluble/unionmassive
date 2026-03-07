@@ -2076,7 +2076,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return false;
                     }
 
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiver, setMethod, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiver, setMethod, diagnostics);
                 }
             }
 
@@ -2120,7 +2120,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return false;
                     }
 
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiver, getMethod, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiver, getMethod, diagnostics);
                 }
             }
 

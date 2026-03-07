@@ -8,13 +8,11 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Microsoft.Cci;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Debugging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Roslyn.Utilities;
-using VB = Microsoft.CodeAnalysis.VisualBasic;
 
 namespace Microsoft.CodeAnalysis.Rebuild
 {
@@ -58,7 +56,6 @@ namespace Microsoft.CodeAnalysis.Rebuild
         {
             var pdbOptions = optionsReader.GetMetadataCompilationOptions();
 
-            var langVersionString = pdbOptions.GetUniqueOption(CompilationOptionNames.LanguageVersion);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Optimization, out var optimization);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Platform, out var platform);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.GlobalNamespaces, out var globalNamespacesString);
@@ -68,9 +65,6 @@ namespace Microsoft.CodeAnalysis.Rebuild
             {
                 globalImports = GlobalImport.Parse(globalNamespacesString.Split(';'));
             }
-
-            VB.LanguageVersion langVersion = default;
-            VB.LanguageVersionFacts.TryParse(langVersionString, ref langVersion);
 
             IReadOnlyDictionary<string, object>? preprocessorSymbols = null;
             if (pdbOptions.OptionToString(CompilationOptionNames.Define) is string defineString)
@@ -83,10 +77,7 @@ namespace Microsoft.CodeAnalysis.Rebuild
                 }
             }
 
-            var parseOptions = VisualBasicParseOptions
-                .Default
-                .WithLanguageVersion(langVersion)
-                .WithPreprocessorSymbols(preprocessorSymbols.ToImmutableArrayOrEmpty());
+            var parseOptions = VisualBasicParseOptions.Default.WithPreprocessorSymbols(preprocessorSymbols.ToImmutableArrayOrEmpty());
 
             var (optimizationLevel, plus) = GetOptimizationLevel(optimization);
             var isChecked = pdbOptions.OptionToBool(CompilationOptionNames.Checked) ?? true;
@@ -124,8 +115,10 @@ namespace Microsoft.CodeAnalysis.Rebuild
                 strongNameProvider: null,
                 publicSign: false,
                 reportSuppressedDiagnostics: false,
-                metadataImportOptions: MetadataImportOptions.Public);
-            compilationOptions.DebugPlusMode = plus;
+                metadataImportOptions: MetadataImportOptions.Public)
+            {
+                DebugPlusMode = plus
+            };
 
             return compilationOptions;
         }

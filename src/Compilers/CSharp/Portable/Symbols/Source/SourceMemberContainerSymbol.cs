@@ -1868,10 +1868,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var baseType = BaseTypeNoUseSiteDiagnostics;
             var interfaces = GetInterfacesToEmit();
 
-            // https://github.com/dotnet/roslyn/issues/30080: Report diagnostics for base type and interfaces at more specific locations.
-            if (hasBaseTypeOrInterface(static t => t.ContainsNativeIntegerWrapperType()))
-                compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
-
             if (compilation.ShouldEmitNullableAttributes(this))
             {
                 if (ShouldEmitNullableContextValue(out _))

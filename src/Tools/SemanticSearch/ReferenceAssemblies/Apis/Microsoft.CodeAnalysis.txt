@@ -224,7 +224,6 @@ Microsoft.CodeAnalysis.Compilation.GetEntryPoint(System.Threading.CancellationTo
 Microsoft.CodeAnalysis.Compilation.GetMetadataReference(Microsoft.CodeAnalysis.IAssemblySymbol)
 Microsoft.CodeAnalysis.Compilation.GetMethodBodyDiagnostics(System.Threading.CancellationToken)
 Microsoft.CodeAnalysis.Compilation.GetParseDiagnostics(System.Threading.CancellationToken)
-Microsoft.CodeAnalysis.Compilation.GetRequiredLanguageVersion(Microsoft.CodeAnalysis.Diagnostic)
 Microsoft.CodeAnalysis.Compilation.GetSemanticModel(Microsoft.CodeAnalysis.SyntaxTree,Microsoft.CodeAnalysis.SemanticModelOptions)
 Microsoft.CodeAnalysis.Compilation.GetSemanticModel(Microsoft.CodeAnalysis.SyntaxTree,System.Boolean)
 Microsoft.CodeAnalysis.Compilation.GetSpecialType(Microsoft.CodeAnalysis.SpecialType)
@@ -244,7 +243,6 @@ Microsoft.CodeAnalysis.Compilation.RemoveSyntaxTrees(Microsoft.CodeAnalysis.Synt
 Microsoft.CodeAnalysis.Compilation.RemoveSyntaxTrees(System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.SyntaxTree})
 Microsoft.CodeAnalysis.Compilation.ReplaceReference(Microsoft.CodeAnalysis.MetadataReference,Microsoft.CodeAnalysis.MetadataReference)
 Microsoft.CodeAnalysis.Compilation.ReplaceSyntaxTree(Microsoft.CodeAnalysis.SyntaxTree,Microsoft.CodeAnalysis.SyntaxTree)
-Microsoft.CodeAnalysis.Compilation.SupportsRuntimeCapability(Microsoft.CodeAnalysis.RuntimeCapability)
 Microsoft.CodeAnalysis.Compilation.SyntaxTreeCommonFeatures(System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.SyntaxTree})
 Microsoft.CodeAnalysis.Compilation.ToMetadataReference(System.Collections.Immutable.ImmutableArray{System.String},System.Boolean)
 Microsoft.CodeAnalysis.Compilation.WithAssemblyName(System.String)
@@ -2766,17 +2764,6 @@ Microsoft.CodeAnalysis.RuleSetInclude.#ctor(System.String,Microsoft.CodeAnalysis
 Microsoft.CodeAnalysis.RuleSetInclude.LoadRuleSet(Microsoft.CodeAnalysis.RuleSet)
 Microsoft.CodeAnalysis.RuleSetInclude.get_Action
 Microsoft.CodeAnalysis.RuleSetInclude.get_IncludePath
-Microsoft.CodeAnalysis.RuntimeCapability
-Microsoft.CodeAnalysis.RuntimeCapability.ByRefFields
-Microsoft.CodeAnalysis.RuntimeCapability.ByRefLikeGenerics
-Microsoft.CodeAnalysis.RuntimeCapability.CovariantReturnsOfClasses
-Microsoft.CodeAnalysis.RuntimeCapability.DefaultImplementationsOfInterfaces
-Microsoft.CodeAnalysis.RuntimeCapability.InlineArrayTypes
-Microsoft.CodeAnalysis.RuntimeCapability.NumericIntPtr
-Microsoft.CodeAnalysis.RuntimeCapability.RuntimeAsyncMethods
-Microsoft.CodeAnalysis.RuntimeCapability.UnmanagedSignatureCallingConvention
-Microsoft.CodeAnalysis.RuntimeCapability.VirtualStaticsInInterfaces
-Microsoft.CodeAnalysis.RuntimeCapability.value__
 Microsoft.CodeAnalysis.SarifVersion
 Microsoft.CodeAnalysis.SarifVersion.Default
 Microsoft.CodeAnalysis.SarifVersion.Latest

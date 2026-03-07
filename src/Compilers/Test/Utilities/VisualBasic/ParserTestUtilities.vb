@@ -60,15 +60,15 @@ Friend Module ParserTestUtilities
         Return ParseAndVerify(source, VisualBasicParseOptions.Default, expectedDiagnostics, errorCodesOnly:=False)
     End Function
 
-    Public Function ParseAndVerify(source As String, options As VisualBasicParseOptions, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
+    Public Function ParseAndVerify(source As String, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
         Return ParseAndVerify(source, options, expectedDiagnostics, errorCodesOnly:=False)
     End Function
 
-    Public Function ParseAndVerify(source As String, languageVersion As LanguageVersion, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
+    Public Function ParseAndVerify(source As String, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
         Return ParseAndVerify(source, VisualBasicParseOptions.Default.WithLanguageVersion(languageVersion), expectedDiagnostics, errorCodesOnly:=False)
     End Function
 
-    Public Function ParseAndVerify(source As String, languageVersion As LanguageVersion, errorCodesOnly As Boolean, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
+    Public Function ParseAndVerify(source As String, errorCodesOnly As Boolean, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
         Return ParseAndVerify(source, VisualBasicParseOptions.Default.WithLanguageVersion(languageVersion), expectedDiagnostics, errorCodesOnly:=errorCodesOnly)
     End Function
 

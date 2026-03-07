@@ -9,14 +9,11 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration;
 
 internal sealed class CSharpCodeGenerationContextInfo : CodeGenerationContextInfo
 {
-    public readonly LanguageVersion LanguageVersion;
-
-    public CSharpCodeGenerationContextInfo(CodeGenerationContext context, CSharpCodeGenerationOptions options, CSharpCodeGenerationService service, LanguageVersion languageVersion)
+    public CSharpCodeGenerationContextInfo(CodeGenerationContext context, CSharpCodeGenerationOptions options, CSharpCodeGenerationService service)
         : base(context)
     {
         Options = options;
         Service = service;
-        LanguageVersion = languageVersion;
     }
 
     public new CSharpCodeGenerationOptions Options { get; }
@@ -32,7 +29,7 @@ internal sealed class CSharpCodeGenerationContextInfo : CodeGenerationContextInf
         => Service;
 
     public new CSharpCodeGenerationContextInfo WithContext(CodeGenerationContext value)
-        => (Context == value) ? this : new(value, Options, Service, LanguageVersion);
+        => (Context == value) ? this : new(value, Options, Service);
 
     protected override CodeGenerationContextInfo WithContextImpl(CodeGenerationContext value)
         => WithContext(value);

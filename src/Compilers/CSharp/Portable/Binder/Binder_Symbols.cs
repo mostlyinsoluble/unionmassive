@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         diagnostics: resultDiagnostics,
                         suppressUseSiteDiagnostics: false,
                         wasError: out wasError,
-                        qualifierOpt: null);
+                        qualifier: null);
 
                     diagnostics.AddDependencies(resultDiagnostics);
 
@@ -364,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 this.LookupSymbolsWithFallback(result, plainName, 0, ref useSiteInfo, null, LookupOptions.NamespaceAliasesOnly);
                 diagnostics.Add(node, useSiteInfo);
 
-                Symbol bindingResult = ResultSymbol(result, plainName, 0, node, diagnostics, false, out bool wasError, qualifierOpt: null, options: LookupOptions.NamespaceAliasesOnly);
+                Symbol bindingResult = ResultSymbol(result, plainName, 0, node, diagnostics, false, out bool wasError, qualifier: null, options: LookupOptions.NamespaceAliasesOnly);
                 result.Free();
 
                 return bindingResult;
@@ -1924,14 +1924,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool suppressUseSiteDiagnostics,
             out bool wasError,
-            NamespaceOrTypeSymbol qualifierOpt,
+            NamespaceOrTypeSymbol? qualifier,
             LookupOptions options = default)
         {
-            Symbol symbol = resultSymbol(result, simpleName, arity, where, diagnostics, suppressUseSiteDiagnostics, out wasError, qualifierOpt, options);
+            Symbol symbol = resultSymbol(result, simpleName, arity, where, diagnostics, suppressUseSiteDiagnostics, out wasError, qualifier, options);
 
             if (symbol.Kind == SymbolKind.NamedType)
             {
-                CheckReceiverAndRuntimeSupportForSymbolAccess(where, receiverOpt: null, symbol, diagnostics);
+                CheckReceiverForSymbolAccess(where, receiverOpt: null, symbol, diagnostics);
 
                 if (suppressUseSiteDiagnostics && diagnostics.DependenciesBag is object)
                 {

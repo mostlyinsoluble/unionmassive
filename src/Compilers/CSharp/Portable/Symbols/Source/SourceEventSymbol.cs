@@ -863,11 +863,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             this.CheckModifiersAndType(diagnostics);
             this.Type.CheckAllConstraints(compilation, conversions, location, diagnostics);
 
-            if (Type.ContainsNativeIntegerWrapperType())
-            {
-                compilation.EnsureNativeIntegerAttributeExists(diagnostics, location, modifyCompilation: true);
-            }
-
             if (compilation.ShouldEmitNullableAttributes(this) &&
                 TypeWithAnnotations.NeedsNullableAttribute())
             {

@@ -270,8 +270,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(lookupResult.Symbols.Any());
 
                     var members = ArrayBuilder<Symbol>.GetInstance();
-                    Symbol symbol = enclosingBinder.GetSymbolOrMethodOrPropertyGroup(lookupResult, memberAccessNode, memberName, targetMemberArity, members, BindingDiagnosticBag.Discarded, wasError: out _,
-                                                                                     qualifierOpt: null);
+                    Symbol symbol = enclosingBinder.GetSymbolOrMethodOrPropertyGroup(lookupResult, memberAccessNode, memberName, targetMemberArity, members, BindingDiagnosticBag.Discarded, wasError: out _, qualifier: null);
 
                     if (symbol is null)
                     {

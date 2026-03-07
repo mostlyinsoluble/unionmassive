@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.CodeAnalysis.Shared.TestHooks;
 
@@ -18,4 +18,9 @@ internal interface IAsynchronousOperationListenerProvider
     /// same provider will return a singleton listener for same feature
     /// </summary>
     IAsynchronousOperationListener GetListener(string featureName);
+}
+
+internal interface IAsynchronousOperationListener : IExpeditableDelaySource
+{
+    IAsyncToken BeginAsyncOperation(string name, object? tag = null, [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0);
 }

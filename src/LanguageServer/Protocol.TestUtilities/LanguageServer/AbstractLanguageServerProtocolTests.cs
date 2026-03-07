@@ -881,9 +881,18 @@ public abstract partial class AbstractLanguageServerProtocolTests
         {
             var listenerProvider = TestWorkspace.GetService<IAsynchronousOperationListenerProvider>();
 
-            await listenerProvider.GetWaiter(FeatureAttribute.Workspace).ExpeditedWaitAsync();
-            await listenerProvider.GetWaiter(FeatureAttribute.SolutionCrawlerLegacy).ExpeditedWaitAsync();
-            await listenerProvider.GetWaiter(FeatureAttribute.DiagnosticService).ExpeditedWaitAsync();
+            IAsynchronousOperationListener[] three = [
+                listenerProvider.GetListener(FeatureAttribute.Workspace),
+                listenerProvider.GetListener(FeatureAttribute.SolutionCrawlerLegacy),
+                listenerProvider.GetListener(FeatureAttribute.DiagnosticService)
+            ];
+
+            var threeT = new Task[3];
+            int i;
+            for (i = 0; i < 3; i++)
+                threeT[i] = ((IAsynchronousOperationWaiter)three[i]).ExpeditedWaitAsync();
+            for (i = 0; i < 3; i++)
+                await threeT[i];
         }
 
         internal async Task WaitForSourceGeneratorsAsync()

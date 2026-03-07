@@ -131,7 +131,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             ParameterHelpers.EnsureRefKindAttributesExist(compilation, Parameters, addTo, modifyCompilation: false);
             ParameterHelpers.EnsureParamCollectionAttributeExists(compilation, Parameters, addTo, modifyCompilation: false);
-            ParameterHelpers.EnsureNativeIntegerAttributeExists(compilation, Parameters, addTo, modifyCompilation: false);
             ParameterHelpers.EnsureScopedRefAttributeExists(compilation, Parameters, addTo, modifyCompilation: false);
             ParameterHelpers.EnsureNullableAttributeExists(compilation, this, Parameters, addTo, modifyCompilation: false);
 
@@ -271,11 +270,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     compilation.EnsureIsReadOnlyAttributeExists(diagnostics, location ??= returnTypeSyntax.Location, modifyCompilation: false);
                     Binder.GetWellKnownType(DeclaringCompilation, WellKnownType.System_Runtime_InteropServices_InAttribute, diagnostics, location ??= returnTypeSyntax.Location);
-                }
-
-                if (returnType.Type.ContainsNativeIntegerWrapperType())
-                {
-                    compilation.EnsureNativeIntegerAttributeExists(diagnostics, location ??= returnTypeSyntax.Location, modifyCompilation: false);
                 }
 
                 if (compilation.ShouldEmitNullableAttributes(this) &&

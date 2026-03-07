@@ -336,7 +336,7 @@ internal sealed class DecompilationMetadataAsSourceFileProvider(IImplementationA
 
         var parseOptions = sourceProject.Language == fileInfo.LanguageName
             ? sourceProject.ParseOptions
-            : sourceProject.Solution.Services.GetLanguageServices(fileInfo.LanguageName).GetRequiredService<ISyntaxTreeFactoryService>().GetDefaultParseOptionsWithLatestLanguageVersion();
+            : sourceProject.Solution.Services.GetLanguageServices(fileInfo.LanguageName).GetRequiredService<ISyntaxTreeFactoryService>().GetDefaultParseOptions();
 
         var assemblyIdentity = topLevelNamedType.ContainingAssembly.Identity;
 

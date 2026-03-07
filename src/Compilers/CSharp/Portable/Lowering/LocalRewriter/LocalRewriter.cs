@@ -394,10 +394,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     moduleBuilder.EnsureIsUnmanagedAttributeExists();
                 }
 
-                if (hasReturnTypeOrParameter(localFunction, static t => t.ContainsNativeIntegerWrapperType()) ||
-                    typeParameters.Any(static t => t.ConstraintTypesNoUseSiteDiagnostics.Any(static t => t.ContainsNativeIntegerWrapperType())))
-                    moduleBuilder.EnsureNativeIntegerAttributeExists();
-
                 if (_factory.CompilationState.Compilation.ShouldEmitNullableAttributes(localFunction))
                 {
                     bool constraintsNeedNullableAttribute = typeParameters.Any(

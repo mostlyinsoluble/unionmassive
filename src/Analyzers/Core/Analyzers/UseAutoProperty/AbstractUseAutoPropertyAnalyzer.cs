@@ -381,8 +381,7 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
             return;
 
         // If the property already contains a `field` expression, then we can't do anything more here.
-        if (this.SyntaxFacts.SupportsFieldExpression(propertyDeclaration.SyntaxTree.Options) &&
-            propertyDeclaration.DescendantNodes().Any(this.SyntaxFacts.IsFieldExpression))
+        if (propertyDeclaration.DescendantNodes().Any(this.SyntaxFacts.IsFieldExpression))
         {
             return;
         }
@@ -549,11 +548,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
             if (ineligibleFieldUsageIfOutsideProperty.TryGetValue(result.Field, out var ineligibleFieldUsages))
             {
                 if (!ineligibleFieldUsages.All(loc => loc.Ancestors().Contains(result.PropertyDeclaration)))
-                    continue;
-
-                // All the usages were inside the property.  This is ok if we support the `field` keyword as those
-                // usages will be updated to that form.
-                if (!this.SyntaxFacts.SupportsFieldExpression(result.PropertyDeclaration.SyntaxTree.Options))
                     continue;
             }
 

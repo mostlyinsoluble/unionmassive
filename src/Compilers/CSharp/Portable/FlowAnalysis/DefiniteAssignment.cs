@@ -538,7 +538,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ErrorCode newCode = oldCode switch
                 {
 #pragma warning disable format
-                    ErrorCode.ERR_UnassignedThisUnsupportedVersion             => ErrorCode.WRN_UnassignedThisUnsupportedVersion,
                     ErrorCode.ERR_ParamUnassigned                              => ErrorCode.WRN_ParamUnassigned,
                     ErrorCode.ERR_UseDefViolationProperty                      => ErrorCode.WRN_UseDefViolationProperty,
                     ErrorCode.ERR_UseDefViolationField                         => ErrorCode.WRN_UseDefViolationField,

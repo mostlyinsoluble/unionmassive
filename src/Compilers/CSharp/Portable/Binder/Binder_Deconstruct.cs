@@ -563,7 +563,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             ImmutableArray<string?> tupleNames = namesBuilder is null ? default : namesBuilder.ToImmutableAndFree();
             ImmutableArray<bool> inferredPositions = tupleNames.IsDefault ? default : tupleNames.SelectAsArray(n => n != null);
-            
             var type = NamedTypeSymbol.CreateTuple(
                 syntax.Location,
                 typesWithAnnotationsBuilder.ToImmutableAndFree(), locationsBuilder.ToImmutableAndFree(),
@@ -851,8 +850,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         typeSyntax = scopedType.Type;
                     if (typeSyntax is RefTypeSyntax refType)
                         diagnostics.Add(ErrorCode.ERR_DeconstructVariableCannotBeByRef, refType.RefKeyword.GetLocation());
-                    if (declTypeWithAnnotations.HasType)
-                        CheckRestrictedTypeInAsyncMethod(this.ContainingMemberOrLambda, declTypeWithAnnotations.Type, diagnostics, typeSyntax);
                     if (declTypeWithAnnotations.HasType &&
                         localSymbol.Scope == ScopedKind.ScopedValue && !declTypeWithAnnotations.Type.IsErrorOrRefLikeOrAllowsRefLikeType())
                         diagnostics.Add(ErrorCode.ERR_ScopedRefAndRefStructOnly, typeSyntax.Location);

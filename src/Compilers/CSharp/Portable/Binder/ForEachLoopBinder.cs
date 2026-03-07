@@ -306,8 +306,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         ReportFieldContextualKeywordConflictIfAny(local, node, node.Identifier, diagnostics);
 
-                        CheckRestrictedTypeInAsyncMethod(this.ContainingMemberOrLambda, declType.Type, diagnostics, typeSyntax);
-
                         if (local.Scope == ScopedKind.ScopedValue && !declType.Type.IsErrorOrRefLikeOrAllowsRefLikeType())
                         {
                             diagnostics.Add(ErrorCode.ERR_ScopedRefAndRefStructOnly, typeSyntax.Location);

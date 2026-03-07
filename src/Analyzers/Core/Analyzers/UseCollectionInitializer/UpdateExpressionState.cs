@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -193,7 +192,6 @@ internal readonly struct UpdateExpressionState<
             // A two-argument Add(x, y) can become a `x:y` element if the destination type has an indexer with
             // complimentary type kinds as the Add method.
             if (arguments.Count == 2 &&
-                this.SyntaxFacts.SupportsKeyValuePairElement(invocationExpression.SyntaxTree.Options) &&
                 this.SemanticModel.GetSymbolInfo(invocationExpression, cancellationToken).Symbol is IMethodSymbol
                 {
                     Parameters: [var parameter1, var parameter2],
@@ -359,9 +357,6 @@ internal readonly struct UpdateExpressionState<
         int supportedArgumentCount = -1)
     {
         instance = null;
-        if (!this.SyntaxFacts.SupportsIndexingInitializer(statement.SyntaxTree.Options))
-            return false;
-
         if (!this.SyntaxFacts.IsSimpleAssignmentStatement(statement))
             return false;
 
@@ -436,8 +431,7 @@ internal readonly struct UpdateExpressionState<
             }
 
             // `x[y] = z` can be converted to `y:z` element if the destination type has an indexer with exactly 1 arg.
-            if (@this.SyntaxFacts.SupportsKeyValuePairElement(expression.SyntaxTree.Options) &&
-                @this.TryAnalyzeIndexAssignment(expressionStatement, cancellationToken, out instance, supportedArgumentCount: 1) &&
+            if (@this.TryAnalyzeIndexAssignment(expressionStatement, cancellationToken, out instance, supportedArgumentCount: 1) &&
                 @this.ValuePatternMatches(instance))
             {
                 return new(expressionStatement, UseSpread: false, UseKeyValue: true);
@@ -511,9 +505,7 @@ internal readonly struct UpdateExpressionState<
                 if (whenFalse is null)
                 {
                     // add the form `.. x ? [y] : []` to the result
-                    return @this.SyntaxFacts.SupportsCollectionExpressionNaturalType(ifStatement.SyntaxTree.Options)
-                        ? new(ifStatement, UseSpread: true, useKeyValue)
-                        : null;
+                    return new(ifStatement, UseSpread: true, useKeyValue);
                 }
 
                 var whenFalseStatements = whenFalse.ToImmutableArray();

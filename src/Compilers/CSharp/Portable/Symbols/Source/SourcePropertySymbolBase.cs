@@ -1048,14 +1048,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             ParameterHelpers.EnsureRefKindAttributesExist(compilation, Parameters, diagnostics, modifyCompilation: true);
             ParameterHelpers.EnsureParamCollectionAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
-
-            if (Type.ContainsNativeIntegerWrapperType())
-            {
-                compilation.EnsureNativeIntegerAttributeExists(diagnostics, typeLocation, modifyCompilation: true);
-            }
-
-            ParameterHelpers.EnsureNativeIntegerAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
-
             ParameterHelpers.EnsureScopedRefAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
 
             if (compilation.ShouldEmitNullableAttributes(this) &&

@@ -15,8 +15,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 {
     internal static class SyntaxHelpers
     {
-        internal static readonly CSharpParseOptions PreviewParseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview); // Used to be LanguageVersionFacts.CurrentVersion
-
         /// <summary>
         /// Parse expression. Returns null if there are any errors.
         /// </summary>
@@ -206,7 +204,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         private static InternalSyntax.ExpressionSyntax ParseDebuggerExpressionInternal(SourceText source, bool consumeFullText, bool isInFieldKeywordContext)
         {
-            using var lexer = new InternalSyntax.Lexer(source, PreviewParseOptions, allowPreprocessorDirectives: false);
+            using var lexer = new InternalSyntax.Lexer(source, CSharpParseOptions.Default, allowPreprocessorDirectives: false);
             using var parser = new InternalSyntax.LanguageParser(lexer, oldTree: null, changes: null, lexerMode: InternalSyntax.LexerMode.DebuggerSyntax);
             parser.IsInFieldKeywordContext = isInFieldKeywordContext;
 
@@ -219,7 +217,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         private static StatementSyntax ParseDebuggerStatement(string text, bool isInFieldKeywordContext)
         {
             var source = SourceText.From(text, encoding: null, SourceHashAlgorithms.Default);
-            using var lexer = new InternalSyntax.Lexer(source, PreviewParseOptions);
+            using var lexer = new InternalSyntax.Lexer(source, CSharpParseOptions.Default);
             using var parser = new InternalSyntax.LanguageParser(lexer, oldTree: null, changes: null, lexerMode: InternalSyntax.LexerMode.DebuggerSyntax);
             parser.IsInFieldKeywordContext = isInFieldKeywordContext;
 
@@ -230,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         private static SyntaxTree CreateSyntaxTree(this InternalSyntax.CSharpSyntaxNode root, SourceText text)
         {
-            return CSharpSyntaxTree.CreateForDebugger((CSharpSyntaxNode)root.CreateRed(), text, PreviewParseOptions);
+            return CSharpSyntaxTree.CreateForDebugger((CSharpSyntaxNode)root.CreateRed(), text, CSharpParseOptions.Default);
         }
 
         private static ExpressionSyntax MakeDebuggerExpression(this InternalSyntax.ExpressionSyntax expression, SourceText text)

@@ -35,7 +35,7 @@ internal sealed partial class ExtensionMessageHandlerServiceFactory
                 {
                     var (_, executeOutOfProcessAsync, arg) = tuple;
                     await executeOutOfProcessAsync(service, arg, checksum, cancellationToken).ConfigureAwait(false);
-                    return default;
+                    return default(VoidResult);
                 },
                 (executeInProcessAsync, executeOutOfProcessAsync, arg),
                 cancellationToken).ConfigureAwait(false);

@@ -6,14 +6,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.CSharp.LanguageService;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.UseCollectionExpression;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.LanguageService;
-using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.UseCollectionExpression;
 using Microsoft.CodeAnalysis.UseCollectionInitializer;
 
@@ -42,10 +39,10 @@ internal sealed class CSharpUseCollectionInitializerDiagnosticAnalyzer :
         => CSharpUseCollectionInitializerAnalyzer.Allocate();
 
     protected override bool AreCollectionInitializersSupported(Compilation compilation)
-        => compilation.LanguageVersion() >= LanguageVersion.CSharp3;
+        => true;
 
     protected override bool AreCollectionExpressionsSupported(Compilation compilation)
-        => compilation.LanguageVersion().SupportsCollectionExpressions();
+        => true;
 
     protected override bool CanUseCollectionExpression(
         SemanticModel semanticModel,

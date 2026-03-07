@@ -2,19 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
+#pragma warning disable IDE2001, IDE0011
+
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.CSharp.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Shared.Collections;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.UseSystemThreadingLock;
 
@@ -52,19 +50,11 @@ internal sealed class CSharpUseSystemThreadingLockDiagnosticAnalyzer()
     {
         context.RegisterCompilationStartAction(compilationContext =>
         {
-            var compilation = compilationContext.Compilation;
+            if (compilationContext.Compilation.GetBestTypeByMetadataName("System.Threading.Lock")
+            is not INamedTypeSymbol { DeclaredAccessibility: Accessibility.Public } lockType) return;
 
-            // The new 'Lock' feature is only supported in C# 13 and above, and only if we actually have a definition of
-            // System.Threading.Lock available.
-            if (!compilation.LanguageVersion().IsCSharp13OrAbove())
-                return;
-
-            var lockType = compilation.GetBestTypeByMetadataName("System.Threading.Lock");
-            if (lockType is not { DeclaredAccessibility: Accessibility.Public })
-                return;
-
-            if (lockType.GetTypeMembers("Scope").FirstOrDefault() is not { TypeKind: TypeKind.Struct, IsRefLikeType: true, DeclaredAccessibility: Accessibility.Public })
-                return;
+            if (lockType.GetTypeMembers("Scope").FirstOrDefault()
+            is not { TypeKind: TypeKind.Struct, IsRefLikeType: true, DeclaredAccessibility: Accessibility.Public }) return;
 
             context.RegisterSymbolStartAction(AnalyzeNamedType, SymbolKind.NamedType);
         });

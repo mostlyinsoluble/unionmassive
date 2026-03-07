@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis.Editing;
@@ -99,11 +97,9 @@ internal abstract class CodeGenerationAbstractMethodSymbol : CodeGenerationSymbo
 
     public bool IsConditional => false;
 
-#if !ROSLYN_4_12_OR_LOWER
     public bool IsIterator => false;
 
     public IMethodSymbol AssociatedExtensionImplementation => null;
-#endif
 
     public SignatureCallingConvention CallingConvention => SignatureCallingConvention.Default;
 

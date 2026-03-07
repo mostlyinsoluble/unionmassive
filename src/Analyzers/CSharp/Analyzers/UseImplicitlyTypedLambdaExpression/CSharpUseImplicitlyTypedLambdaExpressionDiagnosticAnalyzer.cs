@@ -7,7 +7,6 @@ using System.Threading;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -73,11 +72,6 @@ internal sealed class CSharpUseImplicitlyTypedLambdaExpressionDiagnosticAnalyzer
         {
             return false;
         }
-
-        // Prior to C# 14, implicitly typed lambdas can't have modifiers on parameters.
-        var languageVersion = semanticModel.Compilation.LanguageVersion();
-        if (!languageVersion.IsCSharp14OrAbove() && explicitLambda.ParameterList.Parameters.Any(p => p.Modifiers.Count > 0))
-            return false;
 
         var implicitLambda = ConvertToImplicitlyTypedLambda(explicitLambda);
 

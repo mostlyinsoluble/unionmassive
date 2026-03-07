@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -42,11 +40,9 @@ internal abstract class CodeGenerationTypeSymbol(
 
     public bool IsNativeIntegerType => false;
 
-#if !ROSLYN_4_12_OR_LOWER
     bool ITypeSymbol.IsExtension => false;
 
     IParameterSymbol ITypeSymbol.ExtensionParameter => null;
-#endif
 
     public static ImmutableArray<ITypeSymbol> TupleElementTypes => default;
 

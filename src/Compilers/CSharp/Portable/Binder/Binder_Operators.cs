@@ -725,7 +725,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiverOpt, method, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiverOpt, method, diagnostics);
                     ReportDiagnosticsIfUnsafeMemberAccess(diagnostics, method, node.OperatorToken);
                 }
 
@@ -3296,8 +3296,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ordinaryName = null;
 
                 if (kind is not (UnaryOperatorKind.PrefixIncrement or UnaryOperatorKind.PrefixDecrement or UnaryOperatorKind.PostfixIncrement or UnaryOperatorKind.PostfixDecrement) ||
-                    operandType.SpecialType.IsNumericType() ||
-                    !node.IsFeatureEnabled(MessageID.IDS_FeatureUserDefinedCompoundAssignmentOperators))
+                    operandType.SpecialType.IsNumericType())
                 {
                     return InstanceUserDefinedIncrementUsageMode.None;
                 }

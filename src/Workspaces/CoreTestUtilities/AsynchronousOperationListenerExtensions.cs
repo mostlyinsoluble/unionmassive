@@ -13,7 +13,4 @@ internal static class AsynchronousOperationListenerExtensions
     {
         await ((AsynchronousOperationListenerProvider)provider).WaitAllAsync(workspace, featureNames).ConfigureAwait(false);
     }
-
-    internal static IAsynchronousOperationWaiter GetWaiter(this IAsynchronousOperationListenerProvider provider, string featureName)
-        => (IAsynchronousOperationWaiter)provider.GetListener(featureName);
 }

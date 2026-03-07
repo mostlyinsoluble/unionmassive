@@ -32,7 +32,6 @@ internal static class BlockSyntaxExtensions
 
     public static bool TryConvertToExpressionBody(
         this BlockSyntax? block,
-        LanguageVersion languageVersion,
         ExpressionBodyPreference preference,
         CancellationToken cancellationToken,
         [NotNullWhen(true)] out ExpressionSyntax? expression,
@@ -40,7 +39,7 @@ internal static class BlockSyntaxExtensions
     {
         if (preference != ExpressionBodyPreference.Never &&
             block is { Statements: [var statement] } &&
-            TryGetExpression(statement, languageVersion, out expression, out semicolonToken) &&
+            TryGetExpression(statement, out expression, out semicolonToken) &&
             MatchesPreference(expression, preference) &&
             HasAcceptableDirectiveShape(statement, block.CloseBraceToken))
         {
@@ -135,20 +134,12 @@ internal static class BlockSyntaxExtensions
     public static bool TryConvertToArrowExpressionBody(
         this BlockSyntax block,
         SyntaxKind declarationKind,
-        LanguageVersion languageVersion,
         ExpressionBodyPreference preference,
         CancellationToken cancellationToken,
         [NotNullWhen(true)] out ArrowExpressionClauseSyntax? arrowExpression,
         out SyntaxToken semicolonToken)
     {
-        // We can always use arrow-expression bodies in C# 7 or above.
-        // We can also use them in C# 6, but only a select set of member kinds.
-        var acceptableVersion =
-            languageVersion >= LanguageVersion.CSharp7 ||
-            (languageVersion >= LanguageVersion.CSharp6 && IsSupportedInCSharp6(declarationKind));
-
-        if (acceptableVersion &&
-            block.TryConvertToExpressionBody(languageVersion, preference, cancellationToken, out var expression, out semicolonToken))
+        if (block.TryConvertToExpressionBody(preference, cancellationToken, out var expression, out semicolonToken))
         {
             arrowExpression = SyntaxFactory.ArrowExpressionClause(expression);
 
@@ -193,7 +184,7 @@ internal static class BlockSyntaxExtensions
         return CSharpSyntaxFacts.Instance.IsOnSingleLine(expression, fullSpan: false);
     }
 
-    private static bool TryGetExpression(StatementSyntax firstStatement, LanguageVersion languageVersion, [NotNullWhen(true)] out ExpressionSyntax? expression, out SyntaxToken semicolonToken)
+    private static bool TryGetExpression(StatementSyntax firstStatement, [NotNullWhen(true)] out ExpressionSyntax? expression, out SyntaxToken semicolonToken)
     {
         if (firstStatement is ExpressionStatementSyntax exprStatement)
         {
@@ -216,7 +207,7 @@ internal static class BlockSyntaxExtensions
         }
         else if (firstStatement is ThrowStatementSyntax throwStatement)
         {
-            if (languageVersion >= LanguageVersion.CSharp7 && throwStatement.Expression != null)
+            if (throwStatement.Expression != null)
             {
                 expression = SyntaxFactory.ThrowExpression(throwStatement.ThrowKeyword, throwStatement.Expression);
                 semicolonToken = throwStatement.SemicolonToken;

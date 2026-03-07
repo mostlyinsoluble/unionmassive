@@ -102,10 +102,6 @@ internal static partial class UseConditionalExpressionHelpers
 
         if (anyThrow != null)
         {
-            // can only convert to a conditional expression if the lang supports throw-exprs.
-            if (!syntaxFacts.SupportsThrowExpression(anyThrow.Syntax.SyntaxTree.Options))
-                return true;
-
             // `ref` can't be used with `throw`.
             if (isRef)
                 return true;

@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator.CSharp
     {
         protected override bool SupportsNullable(Compilation compilation)
         {
-            return ((CSharpCompilation)compilation).LanguageVersion >= LanguageVersion.CSharp8;
+            return true;
         }
     }
 }
