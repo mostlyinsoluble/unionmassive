@@ -133,7 +133,7 @@ internal abstract partial class AbstractImplementInterfaceService<TTypeDeclarati
             interfaceMember,
             conflictingMember: null,
             memberName: interfaceMember.Name,
-            generateInvisibly: generator.ShouldGenerateInvisibleMember(document.Project.ParseOptions!, interfaceMember, interfaceMember.Name, true),
+            generateInvisibly: generator.ShouldGenerateInvisibleMember(document.Project.ParseOptions!, interfaceMember, interfaceMember.Name),
             generateAbstractly: configuration.Abstractly,
             addNew: false,
             interfaceMember.RequiresUnsafeModifier() && !syntaxFacts.IsUnsafeContext(info.ContextNode),
@@ -185,7 +185,7 @@ internal abstract partial class AbstractImplementInterfaceService<TTypeDeclarati
                 {
                     totalMemberCount++;
 
-                    if (ContainsTypeLessAccessibleThan(member, state.ClassOrStructType, true))
+                    if (ContainsTypeLessAccessibleThan(member, state.ClassOrStructType))
                         inaccessibleMemberCount++;
                 }
             }

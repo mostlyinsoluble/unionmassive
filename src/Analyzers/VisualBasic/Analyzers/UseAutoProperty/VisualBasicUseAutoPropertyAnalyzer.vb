@@ -26,16 +26,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.UseAutoProperty
 
         Protected Overrides ReadOnly Property PropertyDeclarationKind As SyntaxKind = SyntaxKind.PropertyBlock
 
-        Protected Overrides Function SupportsReadOnlyProperties(compilation As Compilation) As Boolean
-            Return True
-        End Function
-
-        Protected Overrides Function SupportsPropertyInitializer(compilation As Compilation) As Boolean
-            Return True
-        End Function
-
         Protected Overrides ReadOnly Property CanExplicitInterfaceImplementationsBeFixed As Boolean = True
-        Protected Overrides ReadOnly Property SupportsFieldAttributesOnProperties As Boolean = False
 
         Protected Overrides Sub RecordIneligibleFieldLocations(
                 fieldNames As HashSet(Of String),

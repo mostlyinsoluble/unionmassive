@@ -75,8 +75,6 @@
     <Project Path="src/Compilers/Core/MSBuildTask/Sdk/Microsoft.Build.Tasks.CodeAnalysis.Sdk.csproj" />
     <Project Path="src/Compilers/Core/Portable/Microsoft.CodeAnalysis.csproj" />
     <Project Path="src/Compilers/Core/Rebuild/Microsoft.CodeAnalysis.Rebuild.csproj" />
-    <Project Path="src/Compilers/Test/Core/Microsoft.CodeAnalysis.Test.Utilities.csproj" />
-    <Project Path="src/Compilers/Test/Resources/Core/Microsoft.CodeAnalysis.Compiler.Test.Resources.csproj" />
     <Project Path="src/Test/PdbUtilities/Roslyn.Test.PdbUtilities.csproj" />
   </Folder>
   <Folder Name="/Compilers/CSharp/">
@@ -85,7 +83,6 @@
     <Project Path="src/Compilers/CSharp/csc/CscCommandLine.shproj" />
     <Project Path="src/Compilers/CSharp/CSharpAnalyzerDriver/CSharpAnalyzerDriver.shproj" />
     <Project Path="src/Compilers/CSharp/Portable/Microsoft.CodeAnalysis.CSharp.csproj" />
-    <Project Path="src/Compilers/Test/Utilities/CSharp/Microsoft.CodeAnalysis.CSharp.Test.Utilities.csproj" />
   </Folder>
   <Folder Name="/Compilers/Packages/">
     <Project Path="src/Compilers/Extension/Roslyn.Compilers.Extension.csproj" />
@@ -102,7 +99,6 @@
     <Project Path="src/Compilers/Server/VBCSCompiler/VBCSCompilerCommandLine.shproj" />
   </Folder>
   <Folder Name="/Compilers/VisualBasic/">
-    <Project Path="src/Compilers/Test/Utilities/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.Test.Utilities.vbproj" />
     <Project Path="src/Compilers/VisualBasic/BasicAnalyzerDriver/BasicAnalyzerDriver.shproj" />
     <Project Path="src/Compilers/VisualBasic/Portable/Microsoft.CodeAnalysis.VisualBasic.vbproj" />
     <Project Path="src/Compilers/VisualBasic/vbc/AnyCpu/vbc.csproj" />
@@ -124,9 +120,6 @@
   <Folder Name="/EditorFeatures/">
     <Project Path="src/EditorFeatures/Core/Microsoft.CodeAnalysis.EditorFeatures.csproj" />
     <Project Path="src/EditorFeatures/CSharp/Microsoft.CodeAnalysis.CSharp.EditorFeatures.csproj" />
-    <Project Path="src/EditorFeatures/DiagnosticsTestUtilities/Microsoft.CodeAnalysis.EditorFeatures.DiagnosticsTests.Utilities.csproj" />
-    <Project Path="src/EditorFeatures/TestUtilities/Microsoft.CodeAnalysis.EditorFeatures.Test.Utilities.csproj" />
-    <Project Path="src/EditorFeatures/TestUtilities2/Microsoft.CodeAnalysis.EditorFeatures.Test.Utilities2.vbproj" />
     <Project Path="src/EditorFeatures/Text/Microsoft.CodeAnalysis.EditorFeatures.Text.csproj" />
     <Project Path="src/EditorFeatures/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.vbproj" />
     <Project Path="src/EditorFeatures/XunitHook/Microsoft.CodeAnalysis.XunitHook.csproj" />
@@ -160,8 +153,6 @@
   <Folder Name="/Features/">
     <Project Path="src/Features/Core/Portable/Microsoft.CodeAnalysis.Features.csproj" />
     <Project Path="src/Features/CSharp/Portable/Microsoft.CodeAnalysis.CSharp.Features.csproj" />
-    <Project Path="src/Features/DiagnosticsTestUtilities/Microsoft.CodeAnalysis.Features.DiagnosticsTests.Utilities.csproj" />
-    <Project Path="src/Features/TestUtilities/Microsoft.CodeAnalysis.Features.Test.Utilities.csproj" />
     <Project Path="src/Features/VisualBasic/Portable/Microsoft.CodeAnalysis.VisualBasic.Features.vbproj" />
   </Folder>
   <Folder Name="/Features/Analyzers/">
@@ -175,8 +166,6 @@
   <Folder Name="/Features/CodeStyle/">
     <Project Path="src/CodeStyle/Core/Analyzers/Microsoft.CodeAnalysis.CodeStyle.csproj" />
     <Project Path="src/CodeStyle/Core/CodeFixes/Microsoft.CodeAnalysis.CodeStyle.Fixes.csproj" />
-    <Project Path="src/CodeStyle/Core/Tests/LegacyTestFramework/Microsoft.CodeAnalysis.CodeStyle.LegacyTestFramework.UnitTestUtilities.csproj" />
-    <Project Path="src/CodeStyle/Core/Tests/UnitTestUtilities/Microsoft.CodeAnalysis.CodeStyle.UnitTestUtilities.csproj" />
     <Project Path="src/CodeStyle/CSharp/Analyzers/Microsoft.CodeAnalysis.CSharp.CodeStyle.csproj" />
     <Project Path="src/CodeStyle/CSharp/CodeFixes/Microsoft.CodeAnalysis.CSharp.CodeStyle.Fixes.csproj">
       <BuildDependency Project="src/CodeStyle/Tools/CodeStyleConfigFileGenerator.csproj" />
@@ -206,7 +195,6 @@
     <Project Path="src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer/Microsoft.CodeAnalysis.LanguageServer.csproj" />
     <Project Path="src/LanguageServer/Microsoft.CommonLanguageServerProtocol.Framework/Microsoft.CommonLanguageServerProtocol.Framework.Package.csproj" />
     <Project Path="src/LanguageServer/Microsoft.CommonLanguageServerProtocol.Framework/Microsoft.CommonLanguageServerProtocol.Framework.Shared.shproj" />
-    <Project Path="src/LanguageServer/Protocol.TestUtilities/Microsoft.CodeAnalysis.LanguageServer.Protocol.Test.Utilities.csproj" />
     <Project Path="src/LanguageServer/Protocol/Microsoft.CodeAnalysis.LanguageServer.Protocol.csproj" />
   </Folder>
   <Folder Name="/LanguageServer/ExternalAccess/">
@@ -217,7 +205,6 @@
   <Folder Name="/Scripting/">
     <Project Path="src/NuGet/Microsoft.CodeAnalysis.Scripting.Package/Microsoft.CodeAnalysis.Scripting.Package.csproj" />
     <Project Path="src/Scripting/Core/Microsoft.CodeAnalysis.Scripting.csproj" />
-    <Project Path="src/Scripting/CoreTestUtilities/Microsoft.CodeAnalysis.Scripting.TestUtilities.csproj" />
     <Project Path="src/Scripting/CSharp/Microsoft.CodeAnalysis.CSharp.Scripting.csproj" />
     <Project Path="src/Scripting/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.Scripting.vbproj" />
   </Folder>
@@ -242,8 +229,6 @@
     <Project Path="src/Tools/BuildBoss/BuildBoss.csproj" />
     <Project Path="src/Tools/BuildValidator/BuildValidator.csproj" />
     <Project Path="src/Tools/GenerateRulesMissingDocumentation/GenerateRulesMissingDocumentation.csproj" />
-    <Project Path="src/Tools/IdeBenchmarks/IdeBenchmarks.csproj" />
-    <Project Path="src/Tools/IdeCoreBenchmarks/IdeCoreBenchmarks.csproj" />
     <Project Path="src/Tools/PrepareTests/PrepareTests.csproj" />
     <Project Path="src/Tools/Replay/Replay.csproj" />
     <Project Path="src/Tools/Source/CompilerGeneratorTools/Source/BoundTreeGenerator/CompilersBoundTreeGenerator.csproj" />
@@ -318,7 +303,6 @@
   <Folder Name="/Workspaces/">
     <Project Path="src/Workspaces/Core/Desktop/Microsoft.CodeAnalysis.Workspaces.Desktop.csproj" />
     <Project Path="src/Workspaces/Core/Portable/Microsoft.CodeAnalysis.Workspaces.csproj" />
-    <Project Path="src/Workspaces/CoreTestUtilities/Microsoft.CodeAnalysis.Workspaces.Test.Utilities.csproj" />
     <Project Path="src/Workspaces/CSharp/Portable/Microsoft.CodeAnalysis.CSharp.Workspaces.csproj" />
     <Project Path="src/Workspaces/MSBuild/BuildHost/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.csproj" />
     <Project Path="src/Workspaces/MSBuild/Contracts/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.csproj" />

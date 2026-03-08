@@ -32,10 +32,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.RemoveUnusedParametersAndValues
             Return CType(provider, VisualBasicAnalyzerOptionsProvider).UnusedValueAssignment
         End Function
 
-        Protected Overrides Function SupportsDiscard(tree As SyntaxTree) As Boolean
-            Return False
-        End Function
-
         Protected Overrides Function MethodHasHandlesClause(method As IMethodSymbol) As Boolean
             Return method.DeclaringSyntaxReferences().Any(Function(decl)
                                                               Return TryCast(decl.GetSyntax(), MethodStatementSyntax)?.HandlesClause IsNot Nothing

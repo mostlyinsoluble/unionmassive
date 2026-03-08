@@ -22,5 +22,5 @@ internal sealed class CSharpUseThrowExpressionDiagnosticAnalyzer()
         => context.GetCSharpAnalyzerOptions().PreferThrowExpression;
 
     protected override bool IsSupported(Compilation compilation)
-        => compilation.LanguageVersion() >= LanguageVersion.CSharp7;
+        => true;
 }

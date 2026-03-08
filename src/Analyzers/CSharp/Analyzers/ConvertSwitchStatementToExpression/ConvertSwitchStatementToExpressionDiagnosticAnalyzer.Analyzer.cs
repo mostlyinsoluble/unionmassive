@@ -27,7 +27,7 @@ internal sealed partial class ConvertSwitchStatementToExpressionDiagnosticAnalyz
             SemanticModel semanticModel,
             out bool shouldRemoveNextStatement)
         {
-            var analyzer = new Analyzer(supportsOrPatterns: semanticModel.SyntaxTree.Options.LanguageVersion() >= LanguageVersion.CSharp9);
+            var analyzer = new Analyzer();
             var nodeToGenerate = analyzer.AnalyzeSwitchStatement(node, out shouldRemoveNextStatement);
 
             if (nodeToGenerate == SyntaxKind.SimpleAssignmentExpression &&
@@ -138,14 +138,6 @@ internal sealed partial class ConvertSwitchStatementToExpressionDiagnosticAnalyz
                 // if any of the  labels are a default/_/var (catch-all) then we can convert this set of labels into
                 // a single `_` arm.
                 return true;
-            }
-
-            // We have multiple labels and none of them are a 'catch-all'.  
-
-            if (!_supportsOrPatterns)
-            {
-                // We don't support 'or' patterns, so no way to convert this to arms.
-                return false;
             }
 
             // If any of the cases have when-clauses, like so:

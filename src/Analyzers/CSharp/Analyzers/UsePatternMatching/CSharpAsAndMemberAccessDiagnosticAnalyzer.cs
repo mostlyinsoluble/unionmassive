@@ -40,11 +40,6 @@ internal sealed partial class CSharpAsAndMemberAccessDiagnosticAnalyzer : Abstra
     {
         context.RegisterCompilationStartAction(context =>
         {
-            // Recursive patterns (`is X { Prop: Y }`) is only available in C# 8.0 and above. Don't offer this
-            // refactoring in projects targeting a lesser version.
-            if (context.Compilation.LanguageVersion() < LanguageVersion.CSharp8)
-                return;
-
             context.RegisterSyntaxNodeAction(context => AnalyzeAsExpression(context), SyntaxKind.AsExpression);
         });
     }
@@ -63,13 +58,11 @@ internal sealed partial class CSharpAsAndMemberAccessDiagnosticAnalyzer : Abstra
         var asExpression = (BinaryExpressionSyntax)context.Node;
 
         if (!UsePatternMatchingHelpers.TryGetPartsOfAsAndMemberAccessCheck(
-                asExpression, out var conditionalAccessExpression, out var binaryExpression, out var isPatternExpression, out var requiredLanguageVersion))
+                asExpression, out var conditionalAccessExpression, out var binaryExpression, out var isPatternExpression))
         {
             return;
         }
 
-        if (context.Compilation.LanguageVersion() < requiredLanguageVersion)
-            return;
 
         if (!IsSafeToConvert())
             return;

@@ -413,11 +413,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
                 if (!@this.CanConvert(property))
                     return false;
 
-                // Can't remove the field if it has attributes on it.
-                var attributes = getterField.GetAttributes();
-                if (attributes.Length > 0 && !@this.SupportsFieldAttributesOnProperties)
-                    return false;
-
                 return true;
             },
             (this, compilation, containingType, property, cancellationToken));

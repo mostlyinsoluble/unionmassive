@@ -189,11 +189,6 @@ Namespace Microsoft.VisualStudio.LanguageServices.VisualBasic.ProjectSystemShim.
         Public wszUacManifestFile As String
 
         ''' <summary>
-        ''' Language version option.
-        ''' </summary>
-        Public langVersion As LanguageVersion
-
-        ''' <summary>
         ''' The VB Runtime Kind
         ''' </summary>
         Public vbRuntimeKind As VBRuntimeKind

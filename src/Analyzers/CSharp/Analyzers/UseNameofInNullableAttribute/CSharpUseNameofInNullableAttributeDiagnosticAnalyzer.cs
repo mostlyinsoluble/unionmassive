@@ -38,8 +38,7 @@ internal sealed class CSharpUseNameofInAttributeDiagnosticAnalyzer : AbstractBui
     {
         context.RegisterCompilationStartAction(context =>
         {
-            if (context.Compilation.LanguageVersion() >= LanguageVersion.CSharp11)
-                context.RegisterSyntaxNodeAction(AnalyzeAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(AnalyzeAttribute, SyntaxKind.Attribute);
         });
     }
 
