@@ -11,13 +11,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
 internal sealed partial class CSharpParenthesizedPatternReducer
 {
-    private sealed class Rewriter : AbstractReductionRewriter
+    private sealed class Rewriter(ObjectPool<CodeAnalysis.Simplification.AbstractReducer.IReductionRewriter> pool) : AbstractReductionRewriter(pool)
     {
-        public Rewriter(ObjectPool<IReductionRewriter> pool)
-            : base(pool)
-        {
-        }
-
         public override SyntaxNode VisitParenthesizedPattern(ParenthesizedPatternSyntax node)
         {
             return SimplifyNode(

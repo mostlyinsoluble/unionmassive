@@ -10,29 +10,21 @@ using Microsoft.CodeAnalysis.Symbols;
 
 namespace Microsoft.CodeAnalysis.Emit.EditAndContinue
 {
-    internal abstract class DeletedSourceDefinition<T> : IDefinition
+    /// <summary>
+    /// Constructs a deleted definition
+    /// </summary>
+    /// <param name="oldDefinition">The old definition of the member</param>
+    /// <param name="typesUsedByDeletedMembers">
+    /// Cache of type definitions used in signatures of deleted members. Used so that if a method 'C M(C c)' is deleted
+    /// we use the same <see cref="DeletedSourceTypeDefinition"/> instance for the method return type, and the parameter type.
+    /// </param>
+    internal abstract class DeletedSourceDefinition<T>(T oldDefinition, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers, ICustomAttribute? deletedAttribute) : IDefinition
         where T : IDefinition
     {
-        public readonly T OldDefinition;
+        public readonly T OldDefinition = oldDefinition;
 
-        private readonly Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> _typesUsedByDeletedMembers;
-        private readonly IEnumerable<ICustomAttribute> _attributes;
-
-        /// <summary>
-        /// Constructs a deleted definition
-        /// </summary>
-        /// <param name="oldDefinition">The old definition of the member</param>
-        /// <param name="typesUsedByDeletedMembers">
-        /// Cache of type definitions used in signatures of deleted members. Used so that if a method 'C M(C c)' is deleted
-        /// we use the same <see cref="DeletedSourceTypeDefinition"/> instance for the method return type, and the parameter type.
-        /// </param>
-        protected DeletedSourceDefinition(T oldDefinition, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers, ICustomAttribute? deletedAttribute)
-        {
-            OldDefinition = oldDefinition;
-
-            _typesUsedByDeletedMembers = typesUsedByDeletedMembers;
-            _attributes = deletedAttribute != null ? [deletedAttribute] : [];
-        }
+        private readonly Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> _typesUsedByDeletedMembers = typesUsedByDeletedMembers;
+        private readonly IEnumerable<ICustomAttribute> _attributes = deletedAttribute != null ? [deletedAttribute] : [];
 
         public bool IsEncDeleted
             => true;

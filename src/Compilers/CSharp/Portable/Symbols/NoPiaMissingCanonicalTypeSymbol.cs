@@ -17,30 +17,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// embedded type symbol that was attempted to be substituted with canonical type, but the
     /// canonical type couldn't be found.
     /// </summary>
-    internal class NoPiaMissingCanonicalTypeSymbol : ErrorTypeSymbol
+    internal class NoPiaMissingCanonicalTypeSymbol(
+        AssemblySymbol embeddingAssembly,
+        string fullTypeName,
+        string? guid,
+        string? scope,
+        string? identifier,
+NamedTypeSymbol.TupleExtraData? tupleData = null) : ErrorTypeSymbol(tupleData)
     // TODO: Should probably inherit from MissingMetadataType.TopLevel, but review TypeOf checks for MissingMetadataType.
     {
-        private readonly AssemblySymbol _embeddingAssembly;
-        private readonly string _fullTypeName;
-        private readonly string? _guid;
-        private readonly string? _scope;
-        private readonly string? _identifier;
-
-        public NoPiaMissingCanonicalTypeSymbol(
-            AssemblySymbol embeddingAssembly,
-            string fullTypeName,
-            string? guid,
-            string? scope,
-            string? identifier,
-            TupleExtraData? tupleData = null)
-            : base(tupleData)
-        {
-            _embeddingAssembly = embeddingAssembly;
-            _fullTypeName = fullTypeName;
-            _guid = guid;
-            _scope = scope;
-            _identifier = identifier;
-        }
+        private readonly AssemblySymbol _embeddingAssembly = embeddingAssembly;
+        private readonly string _fullTypeName = fullTypeName;
+        private readonly string? _guid = guid;
+        private readonly string? _scope = scope;
+        private readonly string? _identifier = identifier;
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {

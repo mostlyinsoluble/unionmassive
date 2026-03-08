@@ -21,10 +21,7 @@ internal sealed class WrappingFormattingRule : BaseFormattingRule
     {
     }
 
-    private WrappingFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private WrappingFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

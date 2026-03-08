@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.SplitComment;
 
 [ExportLanguageService(typeof(ISplitCommentService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpSplitCommentService : ISplitCommentService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSplitCommentService() : ISplitCommentService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSplitCommentService()
-    {
-    }
-
     public string CommentStart => "//";
 
     public bool IsAllowed(SyntaxNode root, SyntaxTrivia trivia)

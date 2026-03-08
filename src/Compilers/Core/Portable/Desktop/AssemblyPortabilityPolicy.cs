@@ -13,21 +13,15 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Policy to be used when matching assembly reference to an assembly definition across platforms.
     /// </summary>
-    internal readonly struct AssemblyPortabilityPolicy : IEquatable<AssemblyPortabilityPolicy>
+    internal readonly struct AssemblyPortabilityPolicy(
+        bool suppressSilverlightPlatformAssembliesPortability,
+        bool suppressSilverlightLibraryAssembliesPortability) : IEquatable<AssemblyPortabilityPolicy>
     {
         // 7cec85d7bea7798e (System, System.Core)
-        public readonly bool SuppressSilverlightPlatformAssembliesPortability;
+        public readonly bool SuppressSilverlightPlatformAssembliesPortability = suppressSilverlightPlatformAssembliesPortability;
 
         // 31bf3856ad364e35 (Microsoft.VisualBasic, System.ComponentModel.Composition)
-        public readonly bool SuppressSilverlightLibraryAssembliesPortability;
-
-        public AssemblyPortabilityPolicy(
-            bool suppressSilverlightPlatformAssembliesPortability,
-            bool suppressSilverlightLibraryAssembliesPortability)
-        {
-            this.SuppressSilverlightLibraryAssembliesPortability = suppressSilverlightLibraryAssembliesPortability;
-            this.SuppressSilverlightPlatformAssembliesPortability = suppressSilverlightPlatformAssembliesPortability;
-        }
+        public readonly bool SuppressSilverlightLibraryAssembliesPortability = suppressSilverlightLibraryAssembliesPortability;
 
         public override bool Equals(object obj)
         {

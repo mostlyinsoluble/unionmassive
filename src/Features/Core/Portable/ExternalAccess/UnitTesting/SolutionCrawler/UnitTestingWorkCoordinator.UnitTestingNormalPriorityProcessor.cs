@@ -368,10 +368,7 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService
                 {
                     private readonly UnitTestingNormalPriorityProcessor _normalPriorityProcessor;
 
-                    internal TestAccessor(UnitTestingNormalPriorityProcessor normalPriorityProcessor)
-                    {
-                        _normalPriorityProcessor = normalPriorityProcessor;
-                    }
+                    internal TestAccessor(UnitTestingNormalPriorityProcessor normalPriorityProcessor) => _normalPriorityProcessor = normalPriorityProcessor;
 
                     internal void WaitUntilCompletion(ImmutableArray<IUnitTestingIncrementalAnalyzer> analyzers, List<UnitTestingWorkItem> items)
                     {

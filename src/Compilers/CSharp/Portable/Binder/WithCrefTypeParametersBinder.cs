@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private MultiDictionary<string, TypeParameterSymbol> _lazyTypeParameterMap;
 
         internal WithCrefTypeParametersBinder(CrefSyntax crefSyntax, Binder next)
-            : base(next)
-        {
-            _crefSyntax = crefSyntax;
-        }
+            : base(next) => _crefSyntax = crefSyntax;
 
         protected override MultiDictionary<string, TypeParameterSymbol> TypeParameterMap
         {

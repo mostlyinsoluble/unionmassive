@@ -36,16 +36,11 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             Delete = 3,
         }
 
-        private class LCS<T> : LongestCommonSubsequence<IList<T>>
+        private class LCS<T>(IEqualityComparer<T> comparer) : LongestCommonSubsequence<IList<T>>
         {
             public static readonly LCS<T> Default = new LCS<T>(EqualityComparer<T>.Default);
 
-            private readonly IEqualityComparer<T> _comparer;
-
-            public LCS(IEqualityComparer<T> comparer)
-            {
-                _comparer = comparer;
-            }
+            private readonly IEqualityComparer<T> _comparer = comparer;
 
             protected override bool ItemsEqual(IList<T> sequenceA, int indexA, IList<T> sequenceB, int indexB)
             {
@@ -77,7 +72,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         public static string DiffReport<T>(IEnumerable<T> expected, IEnumerable<T> actual, string separator, IEqualityComparer<T> comparer = null, Func<T, string> toString = null)
         {
             var lcs = (comparer != null) ? new LCS<T>(comparer) : LCS<T>.Default;
-            toString = toString ?? new Func<T, string>(obj => obj.ToString());
+            toString ??= new Func<T, string>(obj => obj.ToString());
 
             IList<T> expectedList = expected as IList<T> ?? new List<T>(expected);
             IList<T> actualList = actual as IList<T> ?? new List<T>(actual);

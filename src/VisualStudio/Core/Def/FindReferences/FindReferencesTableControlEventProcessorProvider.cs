@@ -26,34 +26,22 @@ namespace Microsoft.VisualStudio.LanguageServices.FindUsages;
 [DataSource(StreamingFindUsagesPresenter.RoslynFindUsagesTableDataSourceIdentifier)]
 [Name(nameof(FindUsagesTableControlEventProcessorProvider))]
 [Order(Before = Priority.Default)]
-internal sealed class FindUsagesTableControlEventProcessorProvider : ITableControlEventProcessorProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FindUsagesTableControlEventProcessorProvider(
+    IUIThreadOperationExecutor operationExecutor,
+    IAsynchronousOperationListenerProvider asyncProvider) : ITableControlEventProcessorProvider
 {
-    private readonly IUIThreadOperationExecutor _operationExecutor;
-    private readonly IAsynchronousOperationListener _listener;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FindUsagesTableControlEventProcessorProvider(
-        IUIThreadOperationExecutor operationExecutor,
-        IAsynchronousOperationListenerProvider asyncProvider)
-    {
-        _operationExecutor = operationExecutor;
-        _listener = asyncProvider.GetListener(FeatureAttribute.FindReferences);
-    }
+    private readonly IUIThreadOperationExecutor _operationExecutor = operationExecutor;
+    private readonly IAsynchronousOperationListener _listener = asyncProvider.GetListener(FeatureAttribute.FindReferences);
 
     public ITableControlEventProcessor GetAssociatedEventProcessor(IWpfTableControl tableControl)
         => new TableControlEventProcessor(_operationExecutor, _listener);
 
-    private sealed class TableControlEventProcessor : TableControlEventProcessorBase
+    private sealed class TableControlEventProcessor(IUIThreadOperationExecutor operationExecutor, IAsynchronousOperationListener listener) : TableControlEventProcessorBase
     {
-        private readonly IUIThreadOperationExecutor _operationExecutor;
-        private readonly IAsynchronousOperationListener _listener;
-
-        public TableControlEventProcessor(IUIThreadOperationExecutor operationExecutor, IAsynchronousOperationListener listener)
-        {
-            _operationExecutor = operationExecutor;
-            _listener = listener;
-        }
+        private readonly IUIThreadOperationExecutor _operationExecutor = operationExecutor;
+        private readonly IAsynchronousOperationListener _listener = listener;
 
         public override void PreprocessNavigate(ITableEntryHandle entry, TableEntryNavigateEventArgs e)
         {

@@ -8,11 +8,8 @@ using Microsoft.CodeAnalysis.Workspaces.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LanguageServices.ExternalAccess.VSTypeScript.Api;
 
-internal sealed partial class VSTypeScriptVisualStudioProjectWrapper
+internal sealed partial class VSTypeScriptVisualStudioProjectWrapper(ProjectSystemProject underlyingObject)
 {
-    public VSTypeScriptVisualStudioProjectWrapper(ProjectSystemProject underlyingObject)
-        => Project = underlyingObject;
-
     public ProjectId Id => Project.Id;
 
     public string DisplayName
@@ -39,5 +36,5 @@ internal sealed partial class VSTypeScriptVisualStudioProjectWrapper
     public void RemoveFromWorkspace()
         => Project.RemoveFromWorkspace();
 
-    internal ProjectSystemProject Project { get; }
+    internal ProjectSystemProject Project { get; } = underlyingObject;
 }

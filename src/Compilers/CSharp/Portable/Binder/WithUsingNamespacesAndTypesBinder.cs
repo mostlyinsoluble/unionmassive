@@ -17,16 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// A binder that represents a scope introduced by 'using' namespace or type directives and deals with looking up names in it.
     /// </summary>
-    internal abstract class WithUsingNamespacesAndTypesBinder : Binder
+    internal abstract class WithUsingNamespacesAndTypesBinder(Binder next, bool withImportChainEntry) : Binder(next)
     {
-        private readonly bool _withImportChainEntry;
+        private readonly bool _withImportChainEntry = withImportChainEntry;
         private ImportChain? _lazyImportChain;
-
-        protected WithUsingNamespacesAndTypesBinder(Binder next, bool withImportChainEntry)
-            : base(next)
-        {
-            _withImportChainEntry = withImportChainEntry;
-        }
 
 #if DEBUG
         internal bool WithImportChainEntry => _withImportChainEntry;

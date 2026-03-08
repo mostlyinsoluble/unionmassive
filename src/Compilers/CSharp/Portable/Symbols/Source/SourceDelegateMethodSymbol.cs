@@ -15,25 +15,19 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal abstract class SourceDelegateMethodSymbol : SourceMemberMethodSymbol
-    {
-        private ImmutableArray<ParameterSymbol> _parameters;
-        private readonly TypeWithAnnotations _returnType;
-
-        protected SourceDelegateMethodSymbol(
-            SourceMemberContainerTypeSymbol delegateType,
-            TypeWithAnnotations returnType,
-            DelegateDeclarationSyntax syntax,
-            MethodKind methodKind,
-            RefKind refKind,
-            DeclarationModifiers declarationModifiers)
-            : base(delegateType, syntax.GetReference(), location: syntax.Identifier.GetLocation(), isIterator: false,
-                   (declarationModifiers, MakeFlags(
+    internal abstract class SourceDelegateMethodSymbol(
+        SourceMemberContainerTypeSymbol delegateType,
+        TypeWithAnnotations returnType,
+        DelegateDeclarationSyntax syntax,
+        MethodKind methodKind,
+        RefKind refKind,
+        DeclarationModifiers declarationModifiers) : SourceMemberMethodSymbol(delegateType, syntax.GetReference(), location: syntax.Identifier.GetLocation(), isIterator: false,
+               (declarationModifiers, MakeFlags(
                                                     methodKind, refKind, declarationModifiers, returnType.IsVoidType(), returnsVoidIsSet: true, isExpressionBodied: false,
                                                     isExtensionMethod: false, isVarArg: false, isNullableAnalysisEnabled: false, isExplicitInterfaceImplementation: false, hasThisInitializer: false)))
-        {
-            _returnType = returnType;
-        }
+    {
+        private ImmutableArray<ParameterSymbol> _parameters;
+        private readonly TypeWithAnnotations _returnType = returnType;
 
         internal sealed override ExecutableCodeBinder TryGetBodyBinder(BinderFactory binderFactoryOpt = null, bool ignoreAccessibility = false) => throw ExceptionUtilities.Unreachable();
 
@@ -215,12 +209,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 TypeWithAnnotations objectType,
                 TypeWithAnnotations intPtrType,
                 DelegateDeclarationSyntax syntax)
-                : base(delegateType, voidType, syntax, MethodKind.Constructor, RefKind.None, DeclarationModifiers.Public)
-            {
-                InitializeParameters(ImmutableArray.Create<ParameterSymbol>(
+                : base(delegateType, voidType, syntax, MethodKind.Constructor, RefKind.None, DeclarationModifiers.Public) => InitializeParameters(ImmutableArray.Create<ParameterSymbol>(
                     SynthesizedParameterSymbol.Create(this, objectType, 0, RefKind.None, "object"),
                     SynthesizedParameterSymbol.Create(this, intPtrType, 1, RefKind.None, "method")));
-            }
 
             public override string Name
             {

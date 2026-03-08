@@ -13810,10 +13810,7 @@ public sealed partial class ParameterSyntax : BaseParameterSyntax
     private EqualsValueClauseSyntax? @default;
 
     internal ParameterSyntax(InternalSyntax.CSharpSyntaxNode green, SyntaxNode? parent, int position)
-      : base(green, parent, position)
-    {
-        Validate();
-    }
+      : base(green, parent, position) => Validate();
 
     private partial void Validate();
 

@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.Collections
         {
             private readonly ImmutableSegmentedDictionary<TKey, TValue> _dictionary;
 
-            internal KeyCollection(ImmutableSegmentedDictionary<TKey, TValue> dictionary)
-            {
-                _dictionary = dictionary;
-            }
+            internal KeyCollection(ImmutableSegmentedDictionary<TKey, TValue> dictionary) => _dictionary = dictionary;
 
             public int Count => _dictionary.Count;
 

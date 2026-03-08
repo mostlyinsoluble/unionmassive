@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if ((mods & DeclarationModifiers.AccessibilityMask) != 0 &&
                     containingType.Name == syntax.Identifier.ValueText)
                 {
-                    mods = mods & ~DeclarationModifiers.AccessibilityMask;
+                    mods &= ~DeclarationModifiers.AccessibilityMask;
                     report_ERR_StaticConstructorWithAccessModifiers = true;
                     modifierErrors = true;
                 }

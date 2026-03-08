@@ -8,9 +8,6 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
 [MetadataAttribute]
-internal sealed class XamlMethodAttribute : LanguageServerEndpointAttribute
+internal sealed class XamlMethodAttribute(string method) : LanguageServerEndpointAttribute(method, StringConstants.XamlLanguageName)
 {
-    public XamlMethodAttribute(string method) : base(method, StringConstants.XamlLanguageName)
-    {
-    }
 }

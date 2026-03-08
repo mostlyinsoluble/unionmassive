@@ -68,11 +68,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 isExpressionBodied: syntax.IsExpressionBodied(),
                 isIterator: SyntaxFacts.HasYieldOperations(syntax.Body),
                 isNullableAnalysisEnabled: isNullableAnalysisEnabled,
-                diagnostics)
-        {
-            CheckForBlockAndExpressionBody(
+                diagnostics) => CheckForBlockAndExpressionBody(
                 syntax.Body, syntax.ExpressionBody, syntax, diagnostics);
-        }
 
         internal OperatorDeclarationSyntax GetSyntax()
         {

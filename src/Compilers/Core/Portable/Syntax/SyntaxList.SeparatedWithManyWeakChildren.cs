@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis.Syntax
             private readonly ArrayElement<WeakReference<SyntaxNode>?>[] _children;
 
             internal SeparatedWithManyWeakChildren(InternalSyntax.SyntaxList green, SyntaxNode parent, int position)
-                : base(green, parent, position)
-            {
-                _children = new ArrayElement<WeakReference<SyntaxNode>?>[(((green.SlotCount + 1) >> 1) - 1)];
-            }
+                : base(green, parent, position) => _children = new ArrayElement<WeakReference<SyntaxNode>?>[(((green.SlotCount + 1) >> 1) - 1)];
 
             internal override SyntaxNode? GetNodeSlot(int i)
             {

@@ -17,15 +17,12 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Adornments;
 /// cref="AbstractAdornmentManager{T}"/> will just defer to the tag itself to create the element rather than
 /// computing it itself.
 /// </summary>
-internal abstract class BrushTag : ITag
+internal abstract class BrushTag(IEditorFormatMap editorFormatMap) : ITag
 {
     private static readonly Color s_lightGray = Color.FromRgb(0xA5, 0xA5, 0xA5);
-    private readonly IEditorFormatMap _editorFormatMap;
+    private readonly IEditorFormatMap _editorFormatMap = editorFormatMap;
 
     private Brush? _brush;
-
-    protected BrushTag(IEditorFormatMap editorFormatMap)
-        => _editorFormatMap = editorFormatMap;
 
     public Brush GetBrush(IWpfTextView view)
         // If we can't get the color for some reason, fall back to a hard-coded value the editor has for outlining.

@@ -17,18 +17,12 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
 [Export(typeof(ILocationService))]
-internal sealed class LocationService : ILocationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LocationService(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions) : ILocationService
 {
-    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LocationService(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions)
-    {
-        _metadataAsSourceFileService = metadataAsSourceFileService;
-        _globalOptions = globalOptions;
-    }
+    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService = metadataAsSourceFileService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public async Task<FileLinePositionSpan?> GetLocationAsync(TextDocument document, TextSpan textSpan, CancellationToken cancellationToken)
     {

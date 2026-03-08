@@ -21,19 +21,13 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CodeGeneration;
 
-internal abstract partial class AbstractCodeGenerationService<TCodeGenerationContextInfo> : ICodeGenerationService
+internal abstract partial class AbstractCodeGenerationService<TCodeGenerationContextInfo>(
+    LanguageServices languageServices) : ICodeGenerationService
     where TCodeGenerationContextInfo : CodeGenerationContextInfo
 {
-    private readonly ISymbolDeclarationService _symbolDeclarationService;
+    private readonly ISymbolDeclarationService _symbolDeclarationService = languageServices.GetRequiredService<ISymbolDeclarationService>();
 
-    protected AbstractCodeGenerationService(
-        LanguageServices languageServices)
-    {
-        LanguageServices = languageServices;
-        _symbolDeclarationService = languageServices.GetRequiredService<ISymbolDeclarationService>();
-    }
-
-    public LanguageServices LanguageServices { get; }
+    public LanguageServices LanguageServices { get; } = languageServices;
 
     public abstract CodeGenerationOptions DefaultOptions { get; }
     public abstract CodeGenerationOptions GetCodeGenerationOptions(IOptionsReader options);

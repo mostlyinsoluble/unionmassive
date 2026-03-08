@@ -15,9 +15,12 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Represents a set of rules as specified in a ruleset file.
     /// </summary>
-    public class RuleSet
+    /// <remarks>
+    /// Create a RuleSet.
+    /// </remarks>
+    public class RuleSet(string filePath, ReportDiagnostic generalOption, ImmutableDictionary<string, ReportDiagnostic> specificOptions, ImmutableArray<RuleSetInclude> includes)
     {
-        private readonly string _filePath;
+        private readonly string _filePath = filePath;
         /// <summary>
         /// The file path of the ruleset file.
         /// </summary>
@@ -26,7 +29,7 @@ namespace Microsoft.CodeAnalysis
             get { return _filePath; }
         }
 
-        private readonly ReportDiagnostic _generalDiagnosticOption;
+        private readonly ReportDiagnostic _generalDiagnosticOption = generalOption;
         /// <summary>
         /// The global option specified by the IncludeAll tag.
         /// </summary>
@@ -35,7 +38,7 @@ namespace Microsoft.CodeAnalysis
             get { return _generalDiagnosticOption; }
         }
 
-        private readonly ImmutableDictionary<string, ReportDiagnostic> _specificDiagnosticOptions;
+        private readonly ImmutableDictionary<string, ReportDiagnostic> _specificDiagnosticOptions = specificOptions == null ? ImmutableDictionary<string, ReportDiagnostic>.Empty : specificOptions;
         /// <summary>
         /// Individual rule ids and their associated actions.
         /// </summary>
@@ -44,24 +47,13 @@ namespace Microsoft.CodeAnalysis
             get { return _specificDiagnosticOptions; }
         }
 
-        private readonly ImmutableArray<RuleSetInclude> _includes;
+        private readonly ImmutableArray<RuleSetInclude> _includes = includes.NullToEmpty();
         /// <summary>
         /// List of rulesets included by this ruleset.
         /// </summary>
         public ImmutableArray<RuleSetInclude> Includes
         {
             get { return _includes; }
-        }
-
-        /// <summary>
-        /// Create a RuleSet.
-        /// </summary>
-        public RuleSet(string filePath, ReportDiagnostic generalOption, ImmutableDictionary<string, ReportDiagnostic> specificOptions, ImmutableArray<RuleSetInclude> includes)
-        {
-            _filePath = filePath;
-            _generalDiagnosticOption = generalOption;
-            _specificDiagnosticOptions = specificOptions == null ? ImmutableDictionary<string, ReportDiagnostic>.Empty : specificOptions;
-            _includes = includes.NullToEmpty();
         }
 
         /// <summary>

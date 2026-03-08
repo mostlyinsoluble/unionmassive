@@ -33,10 +33,7 @@ public class MefV1HostServices : HostServices, IMefHostExportProvider
     private ImmutableDictionary<ExportKey, IEnumerable> _exportsMap
         = ImmutableDictionary<ExportKey, IEnumerable>.Empty;
 
-    private MefV1HostServices(ExportProvider exportProvider)
-    {
-        _exportProvider = exportProvider;
-    }
+    private MefV1HostServices(ExportProvider exportProvider) => _exportProvider = exportProvider;
 
     public static MefV1HostServices Create(ExportProvider exportProvider)
     {
@@ -135,16 +132,12 @@ public class MefV1HostServices : HostServices, IMefHostExportProvider
         }
     }
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(MefV1HostServices mefV1HostServices)
     {
 #pragma warning disable IDE0052 // Remove unread private members - hold onto the services
-        private readonly MefV1HostServices _mefV1HostServices;
-#pragma warning restore IDE0052 // Remove unread private members
+        private readonly MefV1HostServices _mefV1HostServices = mefV1HostServices;
 
-        public TestAccessor(MefV1HostServices mefV1HostServices)
-        {
-            _mefV1HostServices = mefV1HostServices;
-        }
+#pragma warning restore IDE0052 // Remove unread private members
 
         /// <summary>
         /// Injects replacement behavior for the <see cref="Create(IEnumerable{Assembly})"/> method.

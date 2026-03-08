@@ -70,10 +70,7 @@ namespace Microsoft.CodeAnalysis.Collections
 
         private readonly SegmentedHashSet<T> _set;
 
-        private ImmutableSegmentedHashSet(SegmentedHashSet<T> set)
-        {
-            _set = set;
-        }
+        private ImmutableSegmentedHashSet(SegmentedHashSet<T> set) => _set = set;
 
         /// <inheritdoc cref="ImmutableHashSet{T}.KeyComparer"/>
         public IEqualityComparer<T> KeyComparer => _set.Comparer;

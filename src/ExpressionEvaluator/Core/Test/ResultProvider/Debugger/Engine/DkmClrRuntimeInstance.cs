@@ -54,10 +54,7 @@ namespace Microsoft.VisualStudio.Debugger.Clr
         }
 
         internal DkmClrRuntimeInstance(Assembly[] assemblies, Dictionary<string, DkmClrObjectFavoritesInfo> favoritesByTypeName)
-            : this(assemblies)
-        {
-            _favoritesByTypeName = favoritesByTypeName;
-        }
+            : this(assemblies) => _favoritesByTypeName = favoritesByTypeName;
 
         internal DkmClrModuleInstance DefaultModule { get; }
 

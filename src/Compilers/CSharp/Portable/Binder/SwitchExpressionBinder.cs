@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private readonly SwitchExpressionSyntax SwitchExpressionSyntax;
 
         internal SwitchExpressionBinder(SwitchExpressionSyntax switchExpressionSyntax, Binder next)
-            : base(next)
-        {
-            SwitchExpressionSyntax = switchExpressionSyntax;
-        }
+            : base(next) => SwitchExpressionSyntax = switchExpressionSyntax;
 
         internal override BoundExpression BindSwitchExpressionCore(SwitchExpressionSyntax node, Binder originalBinder, BindingDiagnosticBag diagnostics)
         {

@@ -130,10 +130,7 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
             });
     }
 
-    protected AbstractIntegrationTest()
-    {
-        WorkspaceInProcess.EnableAsynchronousOperationTracking();
-    }
+    protected AbstractIntegrationTest() => WorkspaceInProcess.EnableAsynchronousOperationTracking();
 
     public override async Task InitializeAsync()
     {

@@ -17,14 +17,11 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Venus;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Diagnostics;
 
 [ExportWorkspaceService(typeof(IWorkspaceVenusSpanMappingService), ServiceLayer.Default), Shared]
-internal sealed partial class VisualStudioVenusSpanMappingService : IWorkspaceVenusSpanMappingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class VisualStudioVenusSpanMappingService(VisualStudioWorkspaceImpl workspace) : IWorkspaceVenusSpanMappingService
 {
-    private readonly VisualStudioWorkspaceImpl _workspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioVenusSpanMappingService(VisualStudioWorkspaceImpl workspace)
-        => _workspace = workspace;
+    private readonly VisualStudioWorkspaceImpl _workspace = workspace;
 
     public void GetAdjustedDiagnosticSpan(
         DocumentId documentId, Location location,
@@ -263,20 +260,12 @@ internal sealed partial class VisualStudioVenusSpanMappingService : IWorkspaceVe
         return false;
     }
 
-    private readonly struct MappedSpan
+    private readonly struct MappedSpan(int originalLine, int originalColumn, int mappedLine, int mappedColumn)
     {
-        private readonly int _originalLine;
-        private readonly int _originalColumn;
-        private readonly int _mappedLine;
-        private readonly int _mappedColumn;
-
-        public MappedSpan(int originalLine, int originalColumn, int mappedLine, int mappedColumn)
-        {
-            _originalLine = originalLine;
-            _originalColumn = originalColumn;
-            _mappedLine = mappedLine;
-            _mappedColumn = mappedColumn;
-        }
+        private readonly int _originalLine = originalLine;
+        private readonly int _originalColumn = originalColumn;
+        private readonly int _mappedLine = mappedLine;
+        private readonly int _mappedColumn = mappedColumn;
 
         public LinePosition OriginalLinePosition
         {

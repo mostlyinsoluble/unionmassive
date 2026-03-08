@@ -56,12 +56,9 @@ internal partial class ExtractInterfaceDialog : DialogWindow
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(ExtractInterfaceDialog dialog)
     {
-        private readonly ExtractInterfaceDialog _dialog;
-
-        public TestAccessor(ExtractInterfaceDialog dialog)
-            => _dialog = dialog;
+        private readonly ExtractInterfaceDialog _dialog = dialog;
 
         public Button OKButton => _dialog.OKButton;
 

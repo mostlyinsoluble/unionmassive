@@ -13,13 +13,8 @@ using EventSymbolAdapter = Microsoft.CodeAnalysis.CSharp.Symbols.EventSymbol;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 {
-    internal sealed class EmbeddedEvent : EmbeddedTypesManager.CommonEmbeddedEvent
+    internal sealed class EmbeddedEvent(EventSymbolAdapter underlyingEvent, EmbeddedMethod adder, EmbeddedMethod remover) : EmbeddedTypesManager.CommonEmbeddedEvent(underlyingEvent, adder, remover, null)
     {
-        public EmbeddedEvent(EventSymbolAdapter underlyingEvent, EmbeddedMethod adder, EmbeddedMethod remover) :
-            base(underlyingEvent, adder, remover, null)
-        {
-        }
-
         protected override IEnumerable<CSharpAttributeData> GetCustomAttributesToEmit(PEModuleBuilder moduleBuilder)
         {
             return UnderlyingEvent.AdaptedEventSymbol.GetCustomAttributesToEmit(moduleBuilder);

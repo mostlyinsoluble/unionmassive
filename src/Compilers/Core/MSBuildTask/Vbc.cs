@@ -1142,16 +1142,10 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         /// <summary>
         /// private class that just holds together name, value pair for the vbErrorLines Queue
         /// </summary>
-        private class VBError
+        private class VBError(string message, MessageImportance importance)
         {
-            public string Message { get; }
-            public MessageImportance MessageImportance { get; }
-
-            public VBError(string message, MessageImportance importance)
-            {
-                this.Message = message;
-                this.MessageImportance = importance;
-            }
+            public string Message { get; } = message;
+            public MessageImportance MessageImportance { get; } = importance;
         }
     }
 }

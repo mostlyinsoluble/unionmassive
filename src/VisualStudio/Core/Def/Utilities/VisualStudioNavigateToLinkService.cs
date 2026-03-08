@@ -15,14 +15,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
 [ExportWorkspaceService(typeof(INavigateToLinkService), layer: ServiceLayer.Host)]
 [Shared]
-internal sealed class VisualStudioNavigateToLinkService : INavigateToLinkService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioNavigateToLinkService() : INavigateToLinkService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioNavigateToLinkService()
-    {
-    }
-
     public Task<bool> TryNavigateToLinkAsync(Uri uri, CancellationToken cancellationToken)
     {
         if (!uri.IsAbsoluteUri)

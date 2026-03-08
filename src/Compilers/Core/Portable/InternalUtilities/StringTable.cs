@@ -77,10 +77,7 @@ namespace Roslyn.Utilities
         // implement Poolable object pattern
         #region "Poolable"
 
-        private StringTable(ObjectPool<StringTable>? pool)
-        {
-            _pool = pool;
-        }
+        private StringTable(ObjectPool<StringTable>? pool) => _pool = pool;
 
         private readonly ObjectPool<StringTable>? _pool;
         private static readonly ObjectPool<StringTable> s_staticPool = CreatePool();

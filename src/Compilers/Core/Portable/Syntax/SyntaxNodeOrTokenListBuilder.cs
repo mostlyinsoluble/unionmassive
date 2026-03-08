@@ -8,16 +8,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Syntax
 {
-    internal class SyntaxNodeOrTokenListBuilder
+    internal class SyntaxNodeOrTokenListBuilder(int size)
     {
-        private GreenNode?[] _nodes;
-        private int _count;
-
-        public SyntaxNodeOrTokenListBuilder(int size)
-        {
-            _nodes = new GreenNode?[size];
-            _count = 0;
-        }
+        private GreenNode?[] _nodes = new GreenNode?[size];
+        private int _count = 0;
 
         public static SyntaxNodeOrTokenListBuilder Create()
         {

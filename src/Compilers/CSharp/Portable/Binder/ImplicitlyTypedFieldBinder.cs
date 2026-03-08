@@ -17,15 +17,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// var x = y;
     /// var y = x;
     /// </remarks>
-    internal sealed class ImplicitlyTypedFieldBinder : Binder
+    internal sealed class ImplicitlyTypedFieldBinder(Binder next, ConsList<FieldSymbol> fieldsBeingBound) : Binder(next, next.Flags)
     {
-        private readonly ConsList<FieldSymbol> _fieldsBeingBound;
-
-        public ImplicitlyTypedFieldBinder(Binder next, ConsList<FieldSymbol> fieldsBeingBound)
-            : base(next, next.Flags)
-        {
-            _fieldsBeingBound = fieldsBeingBound;
-        }
+        private readonly ConsList<FieldSymbol> _fieldsBeingBound = fieldsBeingBound;
 
         internal override ConsList<FieldSymbol> FieldsBeingBound
         {

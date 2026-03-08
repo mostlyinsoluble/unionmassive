@@ -131,7 +131,7 @@ internal abstract partial class AbstractSuppressionCodeFixProvider : IConfigurat
         // token, so allow for that by just skipping over them
         while (TokenHasTrailingLineContinuationChar(token))
         {
-            indexOfLine = indexOfLine + 1;
+            indexOfLine++;
             token = root.FindToken(lines[indexOfLine].End, findInsideTrivia: true);
         }
 

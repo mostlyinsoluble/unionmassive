@@ -361,14 +361,9 @@ internal sealed partial class RemoteWorkspace : Workspace
     public TestAccessor GetTestAccessor()
         => new(this);
 
-    public readonly struct TestAccessor
+    public readonly struct TestAccessor(RemoteWorkspace remoteWorkspace)
     {
-        private readonly RemoteWorkspace _remoteWorkspace;
-
-        public TestAccessor(RemoteWorkspace remoteWorkspace)
-        {
-            _remoteWorkspace = remoteWorkspace;
-        }
+        private readonly RemoteWorkspace _remoteWorkspace = remoteWorkspace;
 
         public Solution CreateSolutionFromInfo(SolutionInfo solutionInfo)
             => _remoteWorkspace.CreateSolutionFromInfo(solutionInfo);

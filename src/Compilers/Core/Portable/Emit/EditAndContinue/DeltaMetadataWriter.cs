@@ -1487,20 +1487,13 @@ namespace Microsoft.CodeAnalysis.Emit
             }
         }
 
-        private abstract class DefinitionIndexBase<T>
+        private abstract class DefinitionIndexBase<T>(int lastRowId, IEqualityComparer<T>? comparer = null)
             where T : notnull
         {
-            protected readonly Dictionary<T, int> added; // Definitions added in this generation.
-            protected readonly List<T> rows; // Rows in this generation, containing adds and updates.
-            private readonly int _firstRowId; // First row in this generation.
+            protected readonly Dictionary<T, int> added = new Dictionary<T, int>(comparer); // Definitions added in this generation.
+            protected readonly List<T> rows = new List<T>(); // Rows in this generation, containing adds and updates.
+            private readonly int _firstRowId = lastRowId + 1; // First row in this generation.
             private bool _frozen;
-
-            public DefinitionIndexBase(int lastRowId, IEqualityComparer<T>? comparer = null)
-            {
-                this.added = new Dictionary<T, int>(comparer);
-                this.rows = new List<T>();
-                _firstRowId = lastRowId + 1;
-            }
 
             public abstract bool TryGetRowId(T item, out int rowId);
 
@@ -1574,24 +1567,17 @@ namespace Microsoft.CodeAnalysis.Emit
             }
         }
 
-        private sealed class DefinitionIndex<T> : DefinitionIndexBase<T> where T : class, IDefinition
+        private sealed class DefinitionIndex<T>(DefinitionIndex<T>.TryGetExistingIndex tryGetExistingIndex, int lastRowId) : DefinitionIndexBase<T>(lastRowId, ReferenceEqualityComparer.Instance) where T : class, IDefinition
         {
             public delegate bool TryGetExistingIndex(T item, out int index);
 
-            private readonly TryGetExistingIndex _tryGetExistingIndex;
+            private readonly TryGetExistingIndex _tryGetExistingIndex = tryGetExistingIndex;
 
             // Map of row id to def for all defs. This could be an array indexed
             // by row id but the array could be large and sparsely populated
             // if there are many defs in the previous generation but few
             // references to those defs in the current generation.
-            private readonly Dictionary<int, T> _map;
-
-            public DefinitionIndex(TryGetExistingIndex tryGetExistingIndex, int lastRowId)
-                : base(lastRowId, ReferenceEqualityComparer.Instance)
-            {
-                _tryGetExistingIndex = tryGetExistingIndex;
-                _map = new Dictionary<int, T>();
-            }
+            private readonly Dictionary<int, T> _map = new Dictionary<int, T>();
 
             public override bool TryGetRowId(T item, out int index)
             {
@@ -1768,13 +1754,8 @@ namespace Microsoft.CodeAnalysis.Emit
             return false;
         }
 
-        private sealed class GenericParameterIndex : DefinitionIndexBase<IGenericParameter>
+        private sealed class GenericParameterIndex(int lastRowId) : DefinitionIndexBase<IGenericParameter>(lastRowId, ReferenceEqualityComparer.Instance)
         {
-            public GenericParameterIndex(int lastRowId)
-                : base(lastRowId, ReferenceEqualityComparer.Instance)
-            {
-            }
-
             public override bool TryGetRowId(IGenericParameter item, out int index)
             {
                 return this.added.TryGetValue(item, out index);
@@ -1790,17 +1771,11 @@ namespace Microsoft.CodeAnalysis.Emit
             }
         }
 
-        private sealed class EventOrPropertyMapIndex : DefinitionIndexBase<int>
+        private sealed class EventOrPropertyMapIndex(EventOrPropertyMapIndex.TryGetExistingIndex tryGetExistingIndex, int lastRowId) : DefinitionIndexBase<int>(lastRowId)
         {
             public delegate bool TryGetExistingIndex(int item, out int index);
 
-            private readonly TryGetExistingIndex _tryGetExistingIndex;
-
-            public EventOrPropertyMapIndex(TryGetExistingIndex tryGetExistingIndex, int lastRowId)
-                : base(lastRowId)
-            {
-                _tryGetExistingIndex = tryGetExistingIndex;
-            }
+            private readonly TryGetExistingIndex _tryGetExistingIndex = tryGetExistingIndex;
 
             public override bool TryGetRowId(int item, out int index)
             {
@@ -1828,15 +1803,9 @@ namespace Microsoft.CodeAnalysis.Emit
             }
         }
 
-        private sealed class MethodImplIndex : DefinitionIndexBase<MethodImplKey>
+        private sealed class MethodImplIndex(DeltaMetadataWriter writer, int lastRowId) : DefinitionIndexBase<MethodImplKey>(lastRowId)
         {
-            private readonly DeltaMetadataWriter _writer;
-
-            public MethodImplIndex(DeltaMetadataWriter writer, int lastRowId)
-                : base(lastRowId)
-            {
-                _writer = writer;
-            }
+            private readonly DeltaMetadataWriter _writer = writer;
 
             public override bool TryGetRowId(MethodImplKey item, out int index)
             {
@@ -1864,17 +1833,10 @@ namespace Microsoft.CodeAnalysis.Emit
             }
         }
 
-        private sealed class DeltaReferenceIndexer : ReferenceIndexer
+        private sealed class DeltaReferenceIndexer(DeltaMetadataWriter writer) : ReferenceIndexer(writer)
         {
-            private readonly SymbolChanges _changes;
-            private readonly IReadOnlyDictionary<ITypeDefinition, ImmutableArray<ITypeDefinitionMember>> _deletedTypeMembers;
-
-            public DeltaReferenceIndexer(DeltaMetadataWriter writer)
-                : base(writer)
-            {
-                _changes = writer.Changes;
-                _deletedTypeMembers = writer._deletedTypeMembers;
-            }
+            private readonly SymbolChanges _changes = writer.Changes;
+            private readonly IReadOnlyDictionary<ITypeDefinition, ImmutableArray<ITypeDefinitionMember>> _deletedTypeMembers = writer._deletedTypeMembers;
 
             public override void Visit(CommonPEModuleBuilder module)
             {

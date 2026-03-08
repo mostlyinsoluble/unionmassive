@@ -639,17 +639,11 @@ namespace Microsoft.CodeAnalysis
         /// <c>is_global</c> property set to <c>true</c> we combine those files and treat them as a single 
         /// 'logical' global config file. This type represents that combined file. 
         /// </remarks>
-        internal sealed class GlobalAnalyzerConfig
+        internal sealed class GlobalAnalyzerConfig(AnalyzerConfig.Section globalSection, ImmutableArray<AnalyzerConfig.Section> namedSections)
         {
-            internal AnalyzerConfig.Section GlobalSection { get; }
+            internal AnalyzerConfig.Section GlobalSection { get; } = globalSection;
 
-            internal ImmutableArray<AnalyzerConfig.Section> NamedSections { get; }
-
-            public GlobalAnalyzerConfig(AnalyzerConfig.Section globalSection, ImmutableArray<AnalyzerConfig.Section> namedSections)
-            {
-                GlobalSection = globalSection;
-                NamedSections = namedSections;
-            }
+            internal ImmutableArray<AnalyzerConfig.Section> NamedSections { get; } = namedSections;
         }
     }
 }

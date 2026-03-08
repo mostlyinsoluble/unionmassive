@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private readonly NamedTypeSymbol _type;
 
         internal WithExtensionParameterBinder(NamedTypeSymbol type, Binder next)
-            : base(next)
-        {
-            _type = type;
-        }
+            : base(next) => _type = type;
 
         internal override void AddLookupSymbolsInfoInSingleBinder(LookupSymbolsInfo result, LookupOptions options, Binder originalBinder)
         {

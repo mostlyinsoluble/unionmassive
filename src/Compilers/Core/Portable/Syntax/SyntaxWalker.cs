@@ -9,21 +9,16 @@ namespace Microsoft.CodeAnalysis
     /// Walks the syntax tree, allowing subclasses to operate on all nodes, token and trivia.  The
     /// walker will perform a depth first walk of the tree.
     /// </summary>
-    public abstract class SyntaxWalker
+    /// <remarks>
+    /// Creates a new walker instance.
+    /// </remarks>
+    /// <param name="depth">Syntax the <see cref="SyntaxWalker"/> should descend into.</param>
+    public abstract class SyntaxWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Node)
     {
         /// <summary>
         /// Syntax the <see cref="SyntaxWalker"/> should descend into.
         /// </summary>
-        protected SyntaxWalkerDepth Depth { get; }
-
-        /// <summary>
-        /// Creates a new walker instance.
-        /// </summary>
-        /// <param name="depth">Syntax the <see cref="SyntaxWalker"/> should descend into.</param>
-        protected SyntaxWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Node)
-        {
-            this.Depth = depth;
-        }
+        protected SyntaxWalkerDepth Depth { get; } = depth;
 
         /// <summary>
         /// Called when the walker visits a node.  This method may be overridden if subclasses want

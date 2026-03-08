@@ -13,16 +13,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.AsyncComplet
 
 [Export(typeof(ILanguageServerSnippetExpander))]
 [Shared]
-internal sealed class LanguageServerSnippetExpanderAdapter : ILanguageServerSnippetExpander
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LanguageServerSnippetExpanderAdapter(LanguageServerSnippetExpander languageServerSnippetExpander) : ILanguageServerSnippetExpander
 {
-    private readonly LanguageServerSnippetExpander _languageServerSnippetExpander;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LanguageServerSnippetExpanderAdapter(LanguageServerSnippetExpander languageServerSnippetExpander)
-    {
-        _languageServerSnippetExpander = languageServerSnippetExpander;
-    }
+    private readonly LanguageServerSnippetExpander _languageServerSnippetExpander = languageServerSnippetExpander;
 
     public bool TryExpand(string lspSnippetText, SnapshotSpan snapshotSpan, ITextView textView)
         => _languageServerSnippetExpander.TryExpand(lspSnippetText, snapshotSpan, textView);

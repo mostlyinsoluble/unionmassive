@@ -296,7 +296,7 @@ namespace Microsoft.CodeAnalysis
         /// Represents a named section of the editorconfig file, which consists of a name followed by a set
         /// of key-value pairs.
         /// </summary>
-        internal sealed class Section
+        internal sealed class Section(string name, ImmutableDictionary<string, string> properties)
         {
             /// <summary>
             /// Used to compare <see cref="Name"/>s of sections. Specified by editorconfig to
@@ -316,17 +316,11 @@ namespace Microsoft.CodeAnalysis
             /// </summary>
             public static StringComparer PropertiesKeyComparer { get; } = CaseInsensitiveComparison.Comparer;
 
-            public Section(string name, ImmutableDictionary<string, string> properties)
-            {
-                Name = name;
-                Properties = properties;
-            }
-
             /// <summary>
             /// For regular files, the name as present directly in the section specification of the editorconfig file. For sections in
             /// global configs, this is the unescaped full file path.
             /// </summary>
-            public string Name { get; }
+            public string Name { get; } = name;
 
             /// <summary>
             /// Keys and values for this section. All keys are lower-cased according to the
@@ -335,7 +329,7 @@ namespace Microsoft.CodeAnalysis
             /// or if the corresponding key is in <see cref="ReservedKeys" />. Otherwise,
             /// the values are the literal values present in the source.
             /// </summary>
-            public ImmutableDictionary<string, string> Properties { get; }
+            public ImmutableDictionary<string, string> Properties { get; } = properties;
         }
     }
 }

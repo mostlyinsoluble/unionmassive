@@ -20,7 +20,9 @@ namespace Microsoft.CodeAnalysis.GenerateComparisonOperators;
 using static CodeGenerationSymbolFactory;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = PredefinedCodeRefactoringProviderNames.GenerateComparisonOperators), Shared]
-internal sealed class GenerateComparisonOperatorsCodeRefactoringProvider : CodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class GenerateComparisonOperatorsCodeRefactoringProvider() : CodeRefactoringProvider
 {
     private const string LeftName = "left";
     private const string RightName = "right";
@@ -32,12 +34,6 @@ internal sealed class GenerateComparisonOperatorsCodeRefactoringProvider : CodeR
             CodeGenerationOperatorKind.GreaterThan,
             CodeGenerationOperatorKind.GreaterThanOrEqual,
         ];
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public GenerateComparisonOperatorsCodeRefactoringProvider()
-    {
-    }
 
     public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
     {

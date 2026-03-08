@@ -10,21 +10,14 @@ using Microsoft.CodeAnalysis.VisualBasic.Scripting.Hosting;
 
 namespace Microsoft.CodeAnalysis.Scripting.Hosting.UnitTests
 {
-    internal sealed class TestVisualBasicObjectFormatter : VisualBasicObjectFormatterImpl
+    internal sealed class TestVisualBasicObjectFormatter(
+        bool quoteStringsAndCharacters = true,
+        int maximumLineLength = int.MaxValue,
+        CultureInfo cultureInfo = null) : VisualBasicObjectFormatterImpl
     {
-        private readonly bool _quoteStringsAndCharacters;
-        private readonly int _maximumLineLength;
-        private readonly CultureInfo _cultureInfo;
-
-        public TestVisualBasicObjectFormatter(
-            bool quoteStringsAndCharacters = true,
-            int maximumLineLength = int.MaxValue,
-            CultureInfo cultureInfo = null)
-        {
-            _quoteStringsAndCharacters = quoteStringsAndCharacters;
-            _maximumLineLength = maximumLineLength;
-            _cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
-        }
+        private readonly bool _quoteStringsAndCharacters = quoteStringsAndCharacters;
+        private readonly int _maximumLineLength = maximumLineLength;
+        private readonly CultureInfo _cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 
         protected override BuilderOptions GetInternalBuilderOptions(PrintOptions printOptions)
             => new BuilderOptions(

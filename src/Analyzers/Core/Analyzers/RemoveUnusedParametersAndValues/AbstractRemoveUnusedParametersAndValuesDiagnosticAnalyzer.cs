@@ -52,7 +52,14 @@ using PropertiesMap = ImmutableDictionary<(UnusedValuePreference preference, boo
 ///        though this may change in future.
 ///        This diagnostic configuration is controlled by <see cref="CodeStyleOptions2.UnusedParameters"/> option.
 /// </summary>
-internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosticAnalyzer : AbstractBuiltInUnnecessaryCodeStyleDiagnosticAnalyzer
+internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosticAnalyzer(
+    Option2<CodeStyleOption2<UnusedValuePreference>> unusedValueExpressionStatementOption,
+    Option2<CodeStyleOption2<UnusedValuePreference>> unusedValueAssignmentOption) : AbstractBuiltInUnnecessaryCodeStyleDiagnosticAnalyzer(
+        [
+                (s_expressionValueIsUnusedRule, unusedValueExpressionStatementOption),
+                (s_valueAssignedIsUnusedRule, unusedValueAssignmentOption),
+                (s_unusedParameterRule, CodeStyleOptions2.UnusedParameters)
+            ])
 {
     public const string DiscardVariableName = "_";
 
@@ -92,21 +99,8 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
 
     private static readonly PropertiesMap s_propertiesMap = CreatePropertiesMap();
 
-    protected AbstractRemoveUnusedParametersAndValuesDiagnosticAnalyzer(
-        Option2<CodeStyleOption2<UnusedValuePreference>> unusedValueExpressionStatementOption,
-        Option2<CodeStyleOption2<UnusedValuePreference>> unusedValueAssignmentOption)
-        : base(
-            [
-                (s_expressionValueIsUnusedRule, unusedValueExpressionStatementOption),
-                (s_valueAssignedIsUnusedRule, unusedValueAssignmentOption),
-                (s_unusedParameterRule, CodeStyleOptions2.UnusedParameters)
-            ])
-    {
-    }
-
     protected abstract ISyntaxFacts SyntaxFacts { get; }
     protected abstract Location GetDefinitionLocationToFade(IOperation unusedDefinition);
-    protected abstract bool SupportsDiscard(SyntaxTree tree);
     protected abstract bool MethodHasHandlesClause(IMethodSymbol method);
     protected abstract bool IsIfConditionalDirective(SyntaxNode node);
     protected abstract bool ReturnsThrow([NotNullWhen(true)] SyntaxNode? node);
@@ -228,15 +222,7 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
                 return (default(UnusedValuePreference), NotificationOption2.None);
             }
 
-            // If language or language version does not support discard, fall back to prefer unused local variable.
-            var preference = option.Value;
-            if (preference == UnusedValuePreference.DiscardVariable &&
-                !SupportsDiscard(syntaxTree))
-            {
-                preference = UnusedValuePreference.UnusedLocalVariable;
-            }
-
-            return (preference, option.Notification);
+            return (option.Value, option.Notification);
         }
     }
 

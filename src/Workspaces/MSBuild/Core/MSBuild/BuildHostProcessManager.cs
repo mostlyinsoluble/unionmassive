@@ -21,13 +21,17 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class BuildHostProcessManager : IAsyncDisposable
+internal sealed class BuildHostProcessManager(
+    ImmutableArray<string> knownCommandLineParserLanguages,
+    ImmutableDictionary<string, string>? globalMSBuildProperties = null,
+    IBinLogPathProvider? binaryLogPathProvider = null,
+    ILoggerFactory? loggerFactory = null) : IAsyncDisposable
 {
-    private readonly ImmutableArray<string> _knownCommandLineParserLanguages;
-    private readonly ImmutableDictionary<string, string> _globalMSBuildProperties;
-    private readonly ILoggerFactory? _loggerFactory;
-    private readonly ILogger? _logger;
-    private readonly IBinLogPathProvider? _binaryLogPathProvider;
+    private readonly ImmutableArray<string> _knownCommandLineParserLanguages = knownCommandLineParserLanguages;
+    private readonly ImmutableDictionary<string, string> _globalMSBuildProperties = globalMSBuildProperties ?? ImmutableDictionary<string, string>.Empty;
+    private readonly ILoggerFactory? _loggerFactory = loggerFactory;
+    private readonly ILogger? _logger = loggerFactory?.CreateLogger<BuildHostProcessManager>();
+    private readonly IBinLogPathProvider? _binaryLogPathProvider = binaryLogPathProvider;
 
     private readonly SemaphoreSlim _gate = new(initialCount: 1);
     private readonly Dictionary<BuildHostProcessKind, BuildHostProcess> _processes = [];
@@ -36,19 +40,6 @@ internal sealed class BuildHostProcessManager : IAsyncDisposable
     private static bool IsLoadedFromNuGetPackage => File.Exists(Path.Combine(MSBuildWorkspaceDirectory, "..", "..", "microsoft.codeanalysis.workspaces.msbuild.nuspec"));
 
     private static readonly string DotnetExecutable = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet";
-
-    public BuildHostProcessManager(
-        ImmutableArray<string> knownCommandLineParserLanguages,
-        ImmutableDictionary<string, string>? globalMSBuildProperties = null,
-        IBinLogPathProvider? binaryLogPathProvider = null,
-        ILoggerFactory? loggerFactory = null)
-    {
-        _knownCommandLineParserLanguages = knownCommandLineParserLanguages;
-        _globalMSBuildProperties = globalMSBuildProperties ?? ImmutableDictionary<string, string>.Empty;
-        _binaryLogPathProvider = binaryLogPathProvider;
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory?.CreateLogger<BuildHostProcessManager>();
-    }
 
     /// <summary>
     /// Determines the proper host for processing a project, and returns a <see cref="RemoteBuildHost"/> to service questions about that project; if a proper build host

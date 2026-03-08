@@ -36,10 +36,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
         }
 
         private CopyAbstractValue(CopyAbstractValueKind kind)
-            : this(ImmutableHashSet<AnalysisEntity>.Empty, kind)
-        {
-            Debug.Assert(!kind.IsKnown());
-        }
+            : this(ImmutableHashSet<AnalysisEntity>.Empty, kind) => Debug.Assert(!kind.IsKnown());
 
         internal CopyAbstractValue(AnalysisEntity analysisEntity)
             : this(ImmutableHashSet.Create(analysisEntity),
@@ -49,10 +46,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 
         internal CopyAbstractValue(ImmutableHashSet<AnalysisEntity> analysisEntities, bool isReferenceCopy)
             : this(analysisEntities,
-                   kind: isReferenceCopy ? CopyAbstractValueKind.KnownReferenceCopy : CopyAbstractValueKind.KnownValueCopy)
-        {
-            Debug.Assert(!analysisEntities.IsEmpty);
-        }
+                   kind: isReferenceCopy ? CopyAbstractValueKind.KnownReferenceCopy : CopyAbstractValueKind.KnownValueCopy) => Debug.Assert(!analysisEntities.IsEmpty);
 
         internal CopyAbstractValue WithEntityRemoved(AnalysisEntity entityToRemove)
         {

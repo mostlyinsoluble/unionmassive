@@ -20,18 +20,13 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.InheritanceMarg
 /// }
 /// And this view model is used to show the first level entry to let the user choose member.
 /// </summary>
-internal sealed class MemberMenuItemViewModel : MenuItemViewModel
+internal sealed class MemberMenuItemViewModel(
+    string displayContent,
+    ImageMoniker imageMoniker,
+    ImmutableArray<MenuItemViewModel> targets) : MenuItemViewModel(displayContent, imageMoniker)
 {
     /// <summary>
     /// Inheritance Targets for this member.
     /// </summary>
-    public ImmutableArray<MenuItemViewModel> Targets { get; }
-
-    public MemberMenuItemViewModel(
-        string displayContent,
-        ImageMoniker imageMoniker,
-        ImmutableArray<MenuItemViewModel> targets) : base(displayContent, imageMoniker)
-    {
-        Targets = targets;
-    }
+    public ImmutableArray<MenuItemViewModel> Targets { get; } = targets;
 }

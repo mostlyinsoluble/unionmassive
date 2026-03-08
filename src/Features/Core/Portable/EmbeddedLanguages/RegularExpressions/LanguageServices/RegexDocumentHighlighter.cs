@@ -23,14 +23,10 @@ using RegexToken = EmbeddedSyntaxToken<RegexKind>;
     PredefinedEmbeddedLanguageNames.Regex,
     [LanguageNames.CSharp, LanguageNames.VisualBasic],
     supportsUnannotatedAPIs: true, "Regex", "Regexp"), Shared]
-internal sealed class RegexDocumentHighlighter : IEmbeddedLanguageDocumentHighlighter
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RegexDocumentHighlighter() : IEmbeddedLanguageDocumentHighlighter
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RegexDocumentHighlighter()
-    {
-    }
-
     public ImmutableArray<DocumentHighlights> GetDocumentHighlights(
         Document document, SemanticModel semanticModel, SyntaxToken token, int position, HighlightingOptions options, CancellationToken cancellationToken)
     {

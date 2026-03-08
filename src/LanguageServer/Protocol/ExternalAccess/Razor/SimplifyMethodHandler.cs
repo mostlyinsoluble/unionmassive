@@ -17,15 +17,11 @@ namespace Microsoft.CodeAnalysis.LanguageServer.ExternalAccess.Razor;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(SimplifyMethodHandler)), Shared]
 [Method(SimplifyMethodMethodName)]
-internal class SimplifyMethodHandler : ILspServiceDocumentRequestHandler<SimplifyMethodParams, TextEdit[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class SimplifyMethodHandler() : ILspServiceDocumentRequestHandler<SimplifyMethodParams, TextEdit[]?>
 {
     public const string SimplifyMethodMethodName = "roslyn/simplifyMethod";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SimplifyMethodHandler()
-    {
-    }
 
     public bool MutatesSolutionState => false;
 

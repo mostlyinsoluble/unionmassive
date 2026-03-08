@@ -9,15 +9,10 @@ using Microsoft.CodeAnalysis.Workspaces.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LanguageServices.ProjectSystem.Legacy;
 
-internal abstract class AbstractLegacyProjectSystemProjectOptionsProcessor : ProjectSystemProjectOptionsProcessor
+internal abstract class AbstractLegacyProjectSystemProjectOptionsProcessor(
+    ProjectSystemProject project,
+    SolutionServices workspaceServices) : ProjectSystemProjectOptionsProcessor(project, workspaceServices)
 {
-    public AbstractLegacyProjectSystemProjectOptionsProcessor(
-        ProjectSystemProject project,
-        SolutionServices workspaceServices)
-        : base(project, workspaceServices)
-    {
-    }
-
     public string? ExplicitRuleSetFilePath
     {
         get;

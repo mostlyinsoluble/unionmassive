@@ -19,16 +19,10 @@ namespace Microsoft.CodeAnalysis.CodeGen
 {
     internal sealed class CompilationTestData
     {
-        internal readonly struct MethodData
+        internal readonly struct MethodData(ILBuilder ilBuilder, IMethodSymbolInternal method)
         {
-            public readonly ILBuilder ILBuilder;
-            public readonly IMethodSymbolInternal Method;
-
-            public MethodData(ILBuilder ilBuilder, IMethodSymbolInternal method)
-            {
-                this.ILBuilder = ilBuilder;
-                this.Method = method;
-            }
+            public readonly ILBuilder ILBuilder = ilBuilder;
+            public readonly IMethodSymbolInternal Method = method;
         }
 
         // The map is used for storing a list of methods and their associated IL.

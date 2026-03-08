@@ -13,20 +13,14 @@ using Microsoft.VisualStudio.Shell;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.SolutionExplorer;
 
 [Export(typeof(IAnalyzerNodeSetup))]
-internal sealed class AnalyzerNodeSetup : IAnalyzerNodeSetup
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerNodeSetup(
+    AnalyzerItemsTracker analyzerTracker,
+    AnalyzersCommandHandler analyzerCommandHandler) : IAnalyzerNodeSetup
 {
-    private readonly AnalyzerItemsTracker _analyzerTracker;
-    private readonly AnalyzersCommandHandler _analyzerCommandHandler;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerNodeSetup(
-        AnalyzerItemsTracker analyzerTracker,
-        AnalyzersCommandHandler analyzerCommandHandler)
-    {
-        _analyzerTracker = analyzerTracker;
-        _analyzerCommandHandler = analyzerCommandHandler;
-    }
+    private readonly AnalyzerItemsTracker _analyzerTracker = analyzerTracker;
+    private readonly AnalyzersCommandHandler _analyzerCommandHandler = analyzerCommandHandler;
 
     public async Task InitializeAsync(IAsyncServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

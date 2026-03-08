@@ -13,22 +13,16 @@ namespace Microsoft.VisualStudio.LanguageServices.Options;
 /// <summary>
 /// Serializes settings to and from VS Settings storage.
 /// </summary>
-internal abstract class AbstractVisualStudioSettingsOptionPersister<TSettingsManager>
+internal abstract class AbstractVisualStudioSettingsOptionPersister<TSettingsManager>(
+    Action<OptionKey2, object?> refreshOption,
+    TSettingsManager settingsManager)
 {
-    private readonly Action<OptionKey2, object?> _refreshOption;
+    private readonly Action<OptionKey2, object?> _refreshOption = refreshOption;
 
     private ImmutableDictionary<string, (OptionKey2 primaryOptionKey, string primaryStorageKey)> _storageKeysToMonitorForChanges
         = ImmutableDictionary<string, (OptionKey2, string)>.Empty;
 
-    public TSettingsManager SettingsManager { get; }
-
-    protected AbstractVisualStudioSettingsOptionPersister(
-        Action<OptionKey2, object?> refreshOption,
-        TSettingsManager settingsManager)
-    {
-        _refreshOption = refreshOption;
-        SettingsManager = settingsManager;
-    }
+    public TSettingsManager SettingsManager { get; } = settingsManager;
 
     protected void RefreshIfTracked(string key)
     {

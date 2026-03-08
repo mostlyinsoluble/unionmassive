@@ -8,15 +8,8 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Host.Mef;
 
-internal sealed class OrderableLanguageDocumentMetadata : OrderableLanguageMetadata
+internal sealed class OrderableLanguageDocumentMetadata(string name, string language, TextDocumentKind documentKind, string documentExtension, IEnumerable<string> after, IEnumerable<string> before) : OrderableLanguageMetadata(name, language, after, before)
 {
-    public TextDocumentKind DocumentKind { get; }
-    public string DocumentExtension { get; }
-
-    public OrderableLanguageDocumentMetadata(string name, string language, TextDocumentKind documentKind, string documentExtension, IEnumerable<string> after, IEnumerable<string> before)
-        : base(name, language, after, before)
-    {
-        DocumentKind = documentKind;
-        DocumentExtension = documentExtension;
-    }
+    public TextDocumentKind DocumentKind { get; } = documentKind;
+    public string DocumentExtension { get; } = documentExtension;
 }

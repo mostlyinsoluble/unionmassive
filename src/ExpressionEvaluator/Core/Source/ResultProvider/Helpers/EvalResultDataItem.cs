@@ -22,36 +22,24 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     /// on the Expansion so that the DkmClrValue is not kept
     /// alive by the Expansion.
     /// </remarks>
-    internal sealed class EvalResultDataItem : DkmDataItem
+    internal sealed class EvalResultDataItem(
+        string name,
+        TypeAndCustomInfo declaredTypeAndInfo,
+        DkmClrValue value,
+        Expansion expansion,
+        bool childShouldParenthesize,
+        string fullNameWithoutFormatSpecifiers,
+        string childFullNamePrefixOpt,
+        ReadOnlyCollection<string> formatSpecifiers) : DkmDataItem
     {
-        public readonly string Name;
-        public readonly TypeAndCustomInfo DeclaredTypeAndInfo;
-        public readonly DkmClrValue Value;
-        public readonly Expansion Expansion;
-        public readonly bool ChildShouldParenthesize;
-        public readonly string FullNameWithoutFormatSpecifiers;
-        public readonly ReadOnlyCollection<string> FormatSpecifiers;
-        public readonly string ChildFullNamePrefix;
-
-        public EvalResultDataItem(
-            string name,
-            TypeAndCustomInfo declaredTypeAndInfo,
-            DkmClrValue value,
-            Expansion expansion,
-            bool childShouldParenthesize,
-            string fullNameWithoutFormatSpecifiers,
-            string childFullNamePrefixOpt,
-            ReadOnlyCollection<string> formatSpecifiers)
-        {
-            this.Name = name;
-            this.DeclaredTypeAndInfo = declaredTypeAndInfo;
-            this.Value = value;
-            this.ChildShouldParenthesize = childShouldParenthesize;
-            this.FullNameWithoutFormatSpecifiers = fullNameWithoutFormatSpecifiers;
-            this.ChildFullNamePrefix = childFullNamePrefixOpt;
-            this.FormatSpecifiers = formatSpecifiers;
-            this.Expansion = expansion;
-        }
+        public readonly string Name = name;
+        public readonly TypeAndCustomInfo DeclaredTypeAndInfo = declaredTypeAndInfo;
+        public readonly DkmClrValue Value = value;
+        public readonly Expansion Expansion = expansion;
+        public readonly bool ChildShouldParenthesize = childShouldParenthesize;
+        public readonly string FullNameWithoutFormatSpecifiers = fullNameWithoutFormatSpecifiers;
+        public readonly ReadOnlyCollection<string> FormatSpecifiers = formatSpecifiers;
+        public readonly string ChildFullNamePrefix = childFullNamePrefixOpt;
 
         protected override void OnClose()
         {

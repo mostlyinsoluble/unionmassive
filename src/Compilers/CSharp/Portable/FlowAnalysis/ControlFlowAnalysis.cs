@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private object _regionEndPointIsReachable;
         private bool? _succeeded;
 
-        internal CSharpControlFlowAnalysis(RegionAnalysisContext context)
-        {
-            _context = context;
-        }
+        internal CSharpControlFlowAnalysis(RegionAnalysisContext context) => _context = context;
 
         /// <summary>
         /// A collection of statements outside the region that jump into the region.

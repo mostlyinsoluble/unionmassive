@@ -141,20 +141,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             return node != null ? node.Parent : null;
         }
 
-        private struct NamespaceBodyBuilder
+        private struct NamespaceBodyBuilder(SyntaxListPool pool)
         {
-            public SyntaxListBuilder<ExternAliasDirectiveSyntax> Externs;
-            public SyntaxListBuilder<UsingDirectiveSyntax> Usings;
-            public SyntaxListBuilder<AttributeListSyntax> Attributes;
-            public SyntaxListBuilder<MemberDeclarationSyntax> Members;
-
-            public NamespaceBodyBuilder(SyntaxListPool pool)
-            {
-                Externs = pool.Allocate<ExternAliasDirectiveSyntax>();
-                Usings = pool.Allocate<UsingDirectiveSyntax>();
-                Attributes = pool.Allocate<AttributeListSyntax>();
-                Members = pool.Allocate<MemberDeclarationSyntax>();
-            }
+            public SyntaxListBuilder<ExternAliasDirectiveSyntax> Externs = pool.Allocate<ExternAliasDirectiveSyntax>();
+            public SyntaxListBuilder<UsingDirectiveSyntax> Usings = pool.Allocate<UsingDirectiveSyntax>();
+            public SyntaxListBuilder<AttributeListSyntax> Attributes = pool.Allocate<AttributeListSyntax>();
+            public SyntaxListBuilder<MemberDeclarationSyntax> Members = pool.Allocate<MemberDeclarationSyntax>();
 
             internal void Free(SyntaxListPool pool)
             {
@@ -13969,18 +13961,11 @@ tryAgain:
             base.Release(ref state.BaseResetPoint);
         }
 
-        private ref struct DisposableResetPoint
+        private ref struct DisposableResetPoint(LanguageParser languageParser, bool resetOnDispose, LanguageParser.ResetPoint resetPoint)
         {
-            private readonly LanguageParser _languageParser;
-            private readonly bool _resetOnDispose;
-            private ResetPoint _resetPoint;
-
-            public DisposableResetPoint(LanguageParser languageParser, bool resetOnDispose, ResetPoint resetPoint)
-            {
-                _languageParser = languageParser;
-                _resetOnDispose = resetOnDispose;
-                _resetPoint = resetPoint;
-            }
+            private readonly LanguageParser _languageParser = languageParser;
+            private readonly bool _resetOnDispose = resetOnDispose;
+            private ResetPoint _resetPoint = resetPoint;
 
             public void Reset()
                 => _languageParser.Reset(ref _resetPoint);

@@ -9,14 +9,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.SpellCheck;
 
 [ExportCSharpVisualBasicLspServiceFactory(typeof(WorkspaceSpellCheckHandler)), Shared]
-internal sealed class WorkspaceSpellCheckHandlerFactory : ILspServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WorkspaceSpellCheckHandlerFactory() : ILspServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WorkspaceSpellCheckHandlerFactory()
-    {
-    }
-
     public ILspService CreateILspService(LspServices lspServices, WellKnownLspServerKinds serverKind)
         => new WorkspaceSpellCheckHandler();
 }

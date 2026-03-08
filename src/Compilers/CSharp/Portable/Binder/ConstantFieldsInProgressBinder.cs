@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private readonly ConstantFieldsInProgress _inProgress;
 
         internal ConstantFieldsInProgressBinder(ConstantFieldsInProgress inProgress, Binder next)
-            : base(next, BinderFlags.FieldInitializer | next.Flags)
-        {
-            _inProgress = inProgress;
-        }
+            : base(next, BinderFlags.FieldInitializer | next.Flags) => _inProgress = inProgress;
 
         internal override ConstantFieldsInProgress ConstantFieldsInProgress
         {

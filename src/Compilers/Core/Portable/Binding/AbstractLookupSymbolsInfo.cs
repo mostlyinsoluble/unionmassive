@@ -11,7 +11,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal abstract class AbstractLookupSymbolsInfo<TSymbol>
+    internal abstract class AbstractLookupSymbolsInfo<TSymbol>(IEqualityComparer<string> comparer)
         where TSymbol : class, ISymbolInternal
     {
         public struct ArityEnumerator : IEnumerator<int>
@@ -227,15 +227,9 @@ namespace Microsoft.CodeAnalysis
 #endif
         }
 
-        private readonly IEqualityComparer<string> _comparer;
-        private readonly Dictionary<string, UniqueSymbolOrArities> _nameMap;
+        private readonly IEqualityComparer<string> _comparer = comparer;
+        private readonly Dictionary<string, UniqueSymbolOrArities> _nameMap = new Dictionary<string, UniqueSymbolOrArities>(comparer);
         internal string? FilterName { get; set; }
-
-        protected AbstractLookupSymbolsInfo(IEqualityComparer<string> comparer)
-        {
-            _comparer = comparer;
-            _nameMap = new Dictionary<string, UniqueSymbolOrArities>(comparer);
-        }
 
         public bool CanBeAdded(string name) => FilterName == null || _comparer.Equals(name, FilterName);
 

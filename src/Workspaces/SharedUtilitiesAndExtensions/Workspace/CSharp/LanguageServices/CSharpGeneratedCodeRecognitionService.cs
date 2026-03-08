@@ -10,11 +10,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.GeneratedCodeRecognition;
 
 [ExportLanguageService(typeof(IGeneratedCodeRecognitionService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpGeneratedCodeRecognitionService : AbstractGeneratedCodeRecognitionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpGeneratedCodeRecognitionService() : AbstractGeneratedCodeRecognitionService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpGeneratedCodeRecognitionService()
-    {
-    }
 }

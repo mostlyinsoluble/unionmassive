@@ -14,11 +14,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.CompletionProviders.Snippets;
 [ExportCompletionProvider(nameof(CSharpSnippetCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(FunctionPointerUnmanagedCallingConventionCompletionProvider))]
 [Shared]
-internal sealed class CSharpSnippetCompletionProvider : AbstractSnippetCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSnippetCompletionProvider() : AbstractSnippetCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSnippetCompletionProvider()
-    {
-    }
 }

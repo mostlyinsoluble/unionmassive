@@ -367,20 +367,12 @@ namespace Microsoft.CodeAnalysis.Collections
             return ret;
         }
 
-        public struct Enumerator : IEnumerator<T>
+        public struct Enumerator(SegmentedArray<T> array) : IEnumerator<T>
         {
-            private readonly T[][] _items;
-            private int _nextItemSegment;
-            private int _nextItemIndex;
-            private T _current;
-
-            public Enumerator(SegmentedArray<T> array)
-            {
-                _items = array._items;
-                _nextItemSegment = 0;
-                _nextItemIndex = 0;
-                _current = default!;
-            }
+            private readonly T[][] _items = array._items;
+            private int _nextItemSegment = 0;
+            private int _nextItemIndex = 0;
+            private T _current = default!;
 
             public readonly T Current => _current;
             readonly object? IEnumerator.Current => Current;

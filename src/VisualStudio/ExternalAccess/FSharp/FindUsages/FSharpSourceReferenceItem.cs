@@ -10,16 +10,9 @@ internal class FSharpSourceReferenceItem
 {
 
 #pragma warning disable IDE0051 // Remove unused private members
-    private FSharpSourceReferenceItem(Microsoft.CodeAnalysis.FindUsages.SourceReferenceItem roslynDefinitionItem)
-#pragma warning restore IDE0051 // Remove unused private members
-    {
-        RoslynSourceReferenceItem = roslynDefinitionItem;
-    }
+    private FSharpSourceReferenceItem(Microsoft.CodeAnalysis.FindUsages.SourceReferenceItem roslynDefinitionItem) => RoslynSourceReferenceItem = roslynDefinitionItem;
 
-    public FSharpSourceReferenceItem(FSharpDefinitionItem definition, FSharpDocumentSpan sourceSpan)
-    {
-        RoslynSourceReferenceItem = new Microsoft.CodeAnalysis.FindUsages.SourceReferenceItem(definition.RoslynDefinitionItem, sourceSpan.ToRoslynDocumentSpan(), classifiedSpans: null);
-    }
+    public FSharpSourceReferenceItem(FSharpDefinitionItem definition, FSharpDocumentSpan sourceSpan) => RoslynSourceReferenceItem = new Microsoft.CodeAnalysis.FindUsages.SourceReferenceItem(definition.RoslynDefinitionItem, sourceSpan.ToRoslynDocumentSpan(), classifiedSpans: null);
 
     internal Microsoft.CodeAnalysis.FindUsages.SourceReferenceItem RoslynSourceReferenceItem { get; }
 }

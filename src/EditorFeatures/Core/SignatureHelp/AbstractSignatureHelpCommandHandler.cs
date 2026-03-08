@@ -14,21 +14,14 @@ using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.Editor.CommandHandlers;
 
-internal abstract class AbstractSignatureHelpCommandHandler
+internal abstract class AbstractSignatureHelpCommandHandler(
+    IThreadingContext threadingContext,
+    SignatureHelpControllerProvider controllerProvider,
+    IGlobalOptionService globalOptions)
 {
-    protected readonly IThreadingContext ThreadingContext;
-    private readonly SignatureHelpControllerProvider _controllerProvider;
-    private readonly IGlobalOptionService _globalOptions;
-
-    public AbstractSignatureHelpCommandHandler(
-        IThreadingContext threadingContext,
-        SignatureHelpControllerProvider controllerProvider,
-        IGlobalOptionService globalOptions)
-    {
-        ThreadingContext = threadingContext;
-        _controllerProvider = controllerProvider;
-        _globalOptions = globalOptions;
-    }
+    protected readonly IThreadingContext ThreadingContext = threadingContext;
+    private readonly SignatureHelpControllerProvider _controllerProvider = controllerProvider;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     protected bool TryGetController(EditorCommandArgs args, out Controller controller)
     {

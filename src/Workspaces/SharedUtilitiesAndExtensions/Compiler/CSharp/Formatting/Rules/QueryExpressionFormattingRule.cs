@@ -22,10 +22,7 @@ internal sealed class QueryExpressionFormattingRule : BaseFormattingRule
     {
     }
 
-    private QueryExpressionFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private QueryExpressionFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

@@ -44,10 +44,7 @@ namespace Microsoft.CodeAnalysis
         /// SyntaxTree explicitly when created.
         /// </summary>
         internal SyntaxNode(GreenNode green, int position, SyntaxTree syntaxTree)
-            : this(green, null, position)
-        {
-            this._syntaxTree = syntaxTree;
-        }
+            : this(green, null, position) => this._syntaxTree = syntaxTree;
 
         private string GetDebuggerDisplay()
         {

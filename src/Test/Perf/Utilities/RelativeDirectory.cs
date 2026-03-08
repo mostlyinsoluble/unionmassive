@@ -19,10 +19,7 @@ namespace Roslyn.Test.Performance.Utilities
         {
         }
 
-        public RelativeDirectory(string workingDir)
-        {
-            _workingDir = workingDir;
-        }
+        public RelativeDirectory(string workingDir) => _workingDir = workingDir;
 
         public void SetWorkingDirectory(string workingDir)
         {

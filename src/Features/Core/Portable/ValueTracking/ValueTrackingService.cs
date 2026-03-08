@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.ValueTracking;
 
 [ExportWorkspaceService(typeof(IValueTrackingService)), Shared]
-internal sealed partial class ValueTrackingService : IValueTrackingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class ValueTrackingService() : IValueTrackingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ValueTrackingService()
-    {
-    }
-
     public async Task<ImmutableArray<ValueTrackedItem>> TrackValueSourceAsync(
         TextSpan selection,
         Document document,

@@ -8,20 +8,14 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.CodeQuality;
 
-internal abstract class AbstractCodeQualityDiagnosticAnalyzer : DiagnosticAnalyzer, IBuiltInAnalyzer
+internal abstract class AbstractCodeQualityDiagnosticAnalyzer(
+    ImmutableArray<DiagnosticDescriptor> descriptors,
+    GeneratedCodeAnalysisFlags generatedCodeAnalysisFlags) : DiagnosticAnalyzer, IBuiltInAnalyzer
 {
-    private readonly GeneratedCodeAnalysisFlags _generatedCodeAnalysisFlags;
-
-    protected AbstractCodeQualityDiagnosticAnalyzer(
-        ImmutableArray<DiagnosticDescriptor> descriptors,
-        GeneratedCodeAnalysisFlags generatedCodeAnalysisFlags)
-    {
-        SupportedDiagnostics = descriptors;
-        _generatedCodeAnalysisFlags = generatedCodeAnalysisFlags;
-    }
+    private readonly GeneratedCodeAnalysisFlags _generatedCodeAnalysisFlags = generatedCodeAnalysisFlags;
 
     public bool IsHighPriority => false;
-    public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
+    public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = descriptors;
 
     public sealed override void Initialize(AnalysisContext context)
     {

@@ -11,35 +11,25 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// Additional information for rewriting an async-iterator.
     /// </summary>
-    internal sealed class AsyncIteratorInfo
+    internal sealed class AsyncIteratorInfo(FieldSymbol promiseOfValueOrEndField, FieldSymbol combinedTokensField, FieldSymbol currentField, FieldSymbol disposeModeField,
+        MethodSymbol setResultMethod, MethodSymbol setExceptionMethod)
     {
         // This `ManualResetValueTaskSourceCore<bool>` struct implements the `IValueTaskSource` logic
-        internal FieldSymbol PromiseOfValueOrEndField { get; }
+        internal FieldSymbol PromiseOfValueOrEndField { get; } = promiseOfValueOrEndField;
 
         // This `CancellationTokenSource` field helps combine two cancellation tokens
-        internal FieldSymbol CombinedTokensField { get; }
+        internal FieldSymbol CombinedTokensField { get; } = combinedTokensField;
 
         // Stores the current/yielded value
-        internal FieldSymbol CurrentField { get; }
+        internal FieldSymbol CurrentField { get; } = currentField;
 
         // Whether the state machine is in dispose mode
-        internal FieldSymbol DisposeModeField { get; }
+        internal FieldSymbol DisposeModeField { get; } = disposeModeField;
 
         // Method to fulfill the promise with a result: `void ManualResetValueTaskSourceCore<T>.SetResult(T result)`
-        internal MethodSymbol SetResultMethod { get; }
+        internal MethodSymbol SetResultMethod { get; } = setResultMethod;
 
         // Method to fulfill the promise with an exception: `void ManualResetValueTaskSourceCore<T>.SetException(Exception error)`
-        internal MethodSymbol SetExceptionMethod { get; }
-
-        public AsyncIteratorInfo(FieldSymbol promiseOfValueOrEndField, FieldSymbol combinedTokensField, FieldSymbol currentField, FieldSymbol disposeModeField,
-            MethodSymbol setResultMethod, MethodSymbol setExceptionMethod)
-        {
-            PromiseOfValueOrEndField = promiseOfValueOrEndField;
-            CombinedTokensField = combinedTokensField;
-            CurrentField = currentField;
-            DisposeModeField = disposeModeField;
-            SetResultMethod = setResultMethod;
-            SetExceptionMethod = setExceptionMethod;
-        }
+        internal MethodSymbol SetExceptionMethod { get; } = setExceptionMethod;
     }
 }

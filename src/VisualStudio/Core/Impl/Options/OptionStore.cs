@@ -14,29 +14,21 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options;
 /// Stores values of options read from global options and values set to these options.
 /// Not thread safe.
 /// </summary>
-internal sealed class OptionStore : IOptionsReader
+internal sealed class OptionStore(IGlobalOptionService globalOptions) : IOptionsReader
 {
-    public readonly IGlobalOptionService GlobalOptions;
+    public readonly IGlobalOptionService GlobalOptions = globalOptions;
 
     public event EventHandler<OptionKey2>? OptionChanged;
 
     /// <summary>
     /// Cached values read from global options.
     /// </summary>
-    private ImmutableDictionary<OptionKey2, object?> _globalValues;
+    private ImmutableDictionary<OptionKey2, object?> _globalValues = ImmutableDictionary<OptionKey2, object?>.Empty;
 
     /// <summary>
     /// Updated values.
     /// </summary>
-    private ImmutableDictionary<OptionKey2, object?> _updatedValues;
-
-    public OptionStore(IGlobalOptionService globalOptions)
-    {
-        GlobalOptions = globalOptions;
-
-        _globalValues = ImmutableDictionary<OptionKey2, object?>.Empty;
-        _updatedValues = ImmutableDictionary<OptionKey2, object?>.Empty;
-    }
+    private ImmutableDictionary<OptionKey2, object?> _updatedValues = ImmutableDictionary<OptionKey2, object?>.Empty;
 
     public void Clear()
     {

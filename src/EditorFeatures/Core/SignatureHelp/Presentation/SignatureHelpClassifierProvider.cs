@@ -17,14 +17,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHel
 [Export(typeof(IClassifierProvider))]
 [ContentType(ContentTypeNames.CSharpSignatureHelpContentType)]
 [ContentType(ContentTypeNames.VisualBasicSignatureHelpContentType)]
-internal sealed partial class SignatureHelpClassifierProvider : IClassifierProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class SignatureHelpClassifierProvider(ClassificationTypeMap typeMap) : IClassifierProvider
 {
-    private readonly ClassificationTypeMap _typeMap;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SignatureHelpClassifierProvider(ClassificationTypeMap typeMap)
-        => _typeMap = typeMap;
+    private readonly ClassificationTypeMap _typeMap = typeMap;
 
     public IClassifier GetClassifier(ITextBuffer subjectBuffer)
     {

@@ -121,7 +121,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// </summary>
         internal RunCompilationResult RunCompilation(IEnumerable<string> originalArguments, BuildPaths buildPaths, TextWriter? textWriter = null, string? pipeName = null)
         {
-            textWriter = textWriter ?? Console.Out;
+            textWriter ??= Console.Out;
 
             var args = originalArguments.Select(arg => arg.Trim()).ToArray();
 
@@ -143,7 +143,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
 
             if (hasShared)
             {
-                pipeName = pipeName ?? BuildServerConnection.GetPipeName(buildPaths.ClientDirectory);
+                pipeName ??= BuildServerConnection.GetPipeName(buildPaths.ClientDirectory);
                 var libDirectory = Environment.GetEnvironmentVariable("LIB");
                 var serverResult = RunServerCompilation(textWriter, parsedArgs, buildPaths, libDirectory, pipeName, keepAliveOpt);
                 if (serverResult.HasValue)

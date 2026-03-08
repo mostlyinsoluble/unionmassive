@@ -9,15 +9,9 @@ namespace Microsoft.CodeAnalysis.Remote;
 
 internal abstract partial class BrokeredServiceBase
 {
-    internal readonly struct ServiceConstructionArguments
+    internal readonly struct ServiceConstructionArguments(IServiceProvider serviceProvider, IServiceBroker serviceBroker)
     {
-        public readonly IServiceProvider ServiceProvider;
-        public readonly IServiceBroker ServiceBroker;
-
-        public ServiceConstructionArguments(IServiceProvider serviceProvider, IServiceBroker serviceBroker)
-        {
-            ServiceProvider = serviceProvider;
-            ServiceBroker = serviceBroker;
-        }
+        public readonly IServiceProvider ServiceProvider = serviceProvider;
+        public readonly IServiceBroker ServiceBroker = serviceBroker;
     }
 }

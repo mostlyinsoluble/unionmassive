@@ -14,14 +14,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// this binder simply delegates to it when appropriate. That ensures that the same set of symbols is 
     /// shared across all compilation units.
     /// </summary>
-    internal sealed class SimpleProgramUnitBinder : LocalScopeBinder
+    internal sealed class SimpleProgramUnitBinder(Binder enclosing, SimpleProgramBinder scope) : LocalScopeBinder(enclosing, enclosing.Flags)
     {
-        private readonly SimpleProgramBinder _scope;
-        public SimpleProgramUnitBinder(Binder enclosing, SimpleProgramBinder scope)
-            : base(enclosing, enclosing.Flags)
-        {
-            _scope = scope;
-        }
+        private readonly SimpleProgramBinder _scope = scope;
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {

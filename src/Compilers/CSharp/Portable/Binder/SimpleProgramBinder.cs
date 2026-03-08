@@ -13,15 +13,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// This binder owns the scope for Simple Program top-level statements.
     /// </summary>
-    internal sealed class SimpleProgramBinder : LocalScopeBinder
+    internal sealed class SimpleProgramBinder(Binder enclosing, SynthesizedSimpleProgramEntryPointSymbol entryPoint) : LocalScopeBinder(enclosing, enclosing.Flags)
     {
-        private readonly SynthesizedSimpleProgramEntryPointSymbol _entryPoint;
-
-        public SimpleProgramBinder(Binder enclosing, SynthesizedSimpleProgramEntryPointSymbol entryPoint)
-            : base(enclosing, enclosing.Flags)
-        {
-            _entryPoint = entryPoint;
-        }
+        private readonly SynthesizedSimpleProgramEntryPointSymbol _entryPoint = entryPoint;
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {

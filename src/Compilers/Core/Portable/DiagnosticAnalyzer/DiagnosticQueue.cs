@@ -39,10 +39,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         {
             private readonly AsyncQueue<Diagnostic> _queue;
 
-            public SimpleDiagnosticQueue()
-            {
-                _queue = new AsyncQueue<Diagnostic>();
-            }
+            public SimpleDiagnosticQueue() => _queue = new AsyncQueue<Diagnostic>();
 
             public SimpleDiagnosticQueue(Diagnostic diagnostic)
             {

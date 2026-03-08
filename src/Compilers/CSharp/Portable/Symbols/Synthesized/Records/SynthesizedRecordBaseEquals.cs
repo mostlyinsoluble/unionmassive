@@ -17,10 +17,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class SynthesizedRecordBaseEquals : SynthesizedRecordOrdinaryMethod
     {
         public SynthesizedRecordBaseEquals(SourceMemberContainerTypeSymbol containingType, int memberOffset)
-            : base(containingType, WellKnownMemberNames.ObjectEquals, memberOffset, DeclarationModifiers.Public | DeclarationModifiers.Override | DeclarationModifiers.Sealed)
-        {
-            Debug.Assert(!containingType.IsRecordStruct);
-        }
+            : base(containingType, WellKnownMemberNames.ObjectEquals, memberOffset, DeclarationModifiers.Public | DeclarationModifiers.Override | DeclarationModifiers.Sealed) => Debug.Assert(!containingType.IsRecordStruct);
 
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {

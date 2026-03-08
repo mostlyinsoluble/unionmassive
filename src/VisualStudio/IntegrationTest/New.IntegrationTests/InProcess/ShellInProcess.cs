@@ -194,14 +194,9 @@ internal sealed partial class ShellInProcess
         }
     }
 
-    public readonly struct PauseFileChangesRestorer : IAsyncDisposable
+    public readonly struct PauseFileChangesRestorer(IVsFileChangeEx3 fileChangeService) : IAsyncDisposable
     {
-        private readonly IVsFileChangeEx3 _fileChangeService;
-
-        public PauseFileChangesRestorer(IVsFileChangeEx3 fileChangeService)
-        {
-            _fileChangeService = fileChangeService;
-        }
+        private readonly IVsFileChangeEx3 _fileChangeService = fileChangeService;
 
         public async ValueTask DisposeAsync()
             => await _fileChangeService.Resume();

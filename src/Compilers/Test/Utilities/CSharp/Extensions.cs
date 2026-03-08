@@ -557,7 +557,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             {
                 var v = a.GetValue(i);
                 var c = tc[i];
-                ret = ret & IsEqual(c, v);
+                ret &= IsEqual(c, v);
             }
             return ret;
         }

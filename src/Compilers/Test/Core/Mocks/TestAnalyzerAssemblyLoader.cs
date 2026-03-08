@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslyn.Test.Utilities
 {
-    public class TestAnalyzerAssemblyLoader : IAnalyzerAssemblyLoader
+    public class TestAnalyzerAssemblyLoader(Action<string>? addDependencyLocation = null, Func<string, Assembly>? loadFromPath = null) : IAnalyzerAssemblyLoader
     {
         public static readonly IAnalyzerAssemblyLoader LoadFromFile =
             new TestAnalyzerAssemblyLoader();
@@ -16,14 +16,8 @@ namespace Roslyn.Test.Utilities
         public static readonly IAnalyzerAssemblyLoader LoadNotImplemented =
             new TestAnalyzerAssemblyLoader(loadFromPath: _ => throw new NotImplementedException());
 
-        private readonly Action<string>? _addDependencyLocation;
-        private readonly Func<string, Assembly>? _loadFromPath;
-
-        public TestAnalyzerAssemblyLoader(Action<string>? addDependencyLocation = null, Func<string, Assembly>? loadFromPath = null)
-        {
-            _addDependencyLocation = addDependencyLocation;
-            _loadFromPath = loadFromPath;
-        }
+        private readonly Action<string>? _addDependencyLocation = addDependencyLocation;
+        private readonly Func<string, Assembly>? _loadFromPath = loadFromPath;
 
         public void AddDependencyLocation(string fullPath)
             => _addDependencyLocation?.Invoke(fullPath);

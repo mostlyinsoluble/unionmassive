@@ -151,12 +151,9 @@ internal partial class PickMembersDialog : DialogWindow
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(PickMembersDialog dialog)
     {
-        private readonly PickMembersDialog _dialog;
-
-        public TestAccessor(PickMembersDialog dialog)
-            => _dialog = dialog;
+        private readonly PickMembersDialog _dialog = dialog;
 
         public Button OKButton => _dialog.OKButton;
 

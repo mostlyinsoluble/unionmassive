@@ -14,21 +14,16 @@ namespace Microsoft.VisualStudio.Debugger.Clr
     /// reference that provides a easy way to release the reference to the underlying
     /// COM object. Instances of this struct should always be disposed.
     /// </summary>
-    public readonly struct DkmMetadataImportHolder : IDisposable
+    /// <remarks>
+    /// Creates a new instance of <see cref="DkmMetadataImportHolder"/>.
+    /// </remarks>
+    /// <param name="value">[In] Implementation of IMetadataImport to wrap</param>
+    public readonly struct DkmMetadataImportHolder(IMetadataImport value) : IDisposable
     {
         /// <summary>
         /// The underlying IMetaDataImport interface reference
         /// </summary>
-        public IMetadataImport PortableValue { get; }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="DkmMetadataImportHolder"/>.
-        /// </summary>
-        /// <param name="value">[In] Implementation of IMetadataImport to wrap</param>
-        public DkmMetadataImportHolder(IMetadataImport value)
-        {
-            this.PortableValue = value ?? throw new ArgumentNullException(nameof(value));
-        }
+        public IMetadataImport PortableValue { get; } = value ?? throw new ArgumentNullException(nameof(value));
 
         void IDisposable.Dispose()
         {

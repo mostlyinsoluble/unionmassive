@@ -15,10 +15,7 @@ internal readonly record struct OmniSharpSyntaxFormattingOptionsWrapper
 {
     internal readonly SyntaxFormattingOptions UnderlyingObject;
 
-    internal OmniSharpSyntaxFormattingOptionsWrapper(SyntaxFormattingOptions cleanupOptions)
-    {
-        UnderlyingObject = cleanupOptions;
-    }
+    internal OmniSharpSyntaxFormattingOptionsWrapper(SyntaxFormattingOptions cleanupOptions) => UnderlyingObject = cleanupOptions;
 
     public static async ValueTask<OmniSharpSyntaxFormattingOptionsWrapper> FromDocumentAsync(Document document, OmniSharpLineFormattingOptions fallbackLineFormattingOptions, CancellationToken cancellationToken)
     {

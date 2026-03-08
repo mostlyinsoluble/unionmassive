@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 
 [ExportLanguageServiceFactory(typeof(ITypeImportCompletionService), LanguageNames.CSharp), Shared]
-internal sealed class TypeImportCompletionServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TypeImportCompletionServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TypeImportCompletionServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
         => new CSharpTypeImportCompletionService(languageServices.LanguageServices.SolutionServices);
 

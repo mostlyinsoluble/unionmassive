@@ -7,17 +7,10 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration;
 
-internal sealed class CSharpCodeGenerationContextInfo : CodeGenerationContextInfo
+internal sealed class CSharpCodeGenerationContextInfo(CodeGenerationContext context, CSharpCodeGenerationOptions options, CSharpCodeGenerationService service) : CodeGenerationContextInfo(context)
 {
-    public CSharpCodeGenerationContextInfo(CodeGenerationContext context, CSharpCodeGenerationOptions options, CSharpCodeGenerationService service)
-        : base(context)
-    {
-        Options = options;
-        Service = service;
-    }
-
-    public new CSharpCodeGenerationOptions Options { get; }
-    public new CSharpCodeGenerationService Service { get; }
+    public new CSharpCodeGenerationOptions Options { get; } = options;
+    public new CSharpCodeGenerationService Service { get; } = service;
 
     protected override SyntaxGenerator GeneratorImpl
         => Service.LanguageServices.GetRequiredService<SyntaxGenerator>();

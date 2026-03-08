@@ -15,17 +15,13 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.CodeLens;
 
 [ExportLanguageService(typeof(ICodeLensDisplayInfoService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCodeLensDisplayInfoService : ICodeLensDisplayInfoService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCodeLensDisplayInfoService() : ICodeLensDisplayInfoService
 {
     private static readonly SymbolDisplayFormat Format =
         SymbolDisplayFormat.CSharpErrorMessageFormat.RemoveMemberOptions(
             SymbolDisplayMemberOptions.IncludeExplicitInterface);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCodeLensDisplayInfoService()
-    {
-    }
 
     /// <summary>
     /// Returns the node that should be displayed

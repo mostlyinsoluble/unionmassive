@@ -13,12 +13,9 @@ namespace Microsoft.CodeAnalysis.CSharp.SplitOrMergeIfStatements;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.SplitIntoConsecutiveIfStatements), Shared]
 [ExtensionOrder(After = PredefinedCodeRefactoringProviderNames.InvertLogical, Before = PredefinedCodeRefactoringProviderNames.IntroduceVariable)]
-internal sealed class CSharpSplitIntoConsecutiveIfStatementsCodeRefactoringProvider
-    : AbstractSplitIntoConsecutiveIfStatementsCodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpSplitIntoConsecutiveIfStatementsCodeRefactoringProvider()
+        : AbstractSplitIntoConsecutiveIfStatementsCodeRefactoringProvider
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpSplitIntoConsecutiveIfStatementsCodeRefactoringProvider()
-    {
-    }
 }

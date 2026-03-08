@@ -23,7 +23,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(PartialTypeCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(PartialMethodCompletionProvider))]
 [Shared]
-internal sealed partial class PartialTypeCompletionProvider : AbstractPartialTypeCompletionProvider<CSharpSyntaxContext>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class PartialTypeCompletionProvider() : AbstractPartialTypeCompletionProvider<CSharpSyntaxContext>
 {
     private const string InsertionTextOnLessThan = nameof(InsertionTextOnLessThan);
 
@@ -36,12 +38,6 @@ internal sealed partial class PartialTypeCompletionProvider : AbstractPartialTyp
             miscellaneousOptions:
                 SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
                 SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PartialTypeCompletionProvider()
-    {
-    }
 
     internal override string Language => LanguageNames.CSharp;
 

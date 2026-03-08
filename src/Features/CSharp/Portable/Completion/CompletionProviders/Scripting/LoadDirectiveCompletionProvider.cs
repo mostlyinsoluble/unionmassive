@@ -15,14 +15,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(LoadDirectiveCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(CSharpSnippetCompletionProvider))]
 [Shared]
-internal sealed class LoadDirectiveCompletionProvider : AbstractLoadDirectiveCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LoadDirectiveCompletionProvider() : AbstractLoadDirectiveCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LoadDirectiveCompletionProvider()
-    {
-    }
-
     protected override string DirectiveName => "load";
 
     protected override bool TryGetStringLiteralToken(SyntaxTree tree, int position, out SyntaxToken stringLiteral, CancellationToken cancellationToken)

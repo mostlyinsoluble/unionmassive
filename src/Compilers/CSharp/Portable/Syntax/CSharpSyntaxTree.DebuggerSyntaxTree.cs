@@ -11,22 +11,17 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// Use by Expression Evaluator.
         /// </summary>
-        private sealed class DebuggerSyntaxTree : ParsedSyntaxTree
+        private sealed class DebuggerSyntaxTree(CSharpSyntaxNode root, SourceText text, CSharpParseOptions options) : ParsedSyntaxTree(
+                text,
+                text.Encoding,
+                text.ChecksumAlgorithm,
+                path: "",
+                options: options,
+                root: root,
+                directives: Syntax.InternalSyntax.DirectiveStack.Empty,
+                diagnosticOptions: null,
+                cloneRoot: true)
         {
-            public DebuggerSyntaxTree(CSharpSyntaxNode root, SourceText text, CSharpParseOptions options)
-                : base(
-                    text,
-                    text.Encoding,
-                    text.ChecksumAlgorithm,
-                    path: "",
-                    options: options,
-                    root: root,
-                    directives: Syntax.InternalSyntax.DirectiveStack.Empty,
-                    diagnosticOptions: null,
-                    cloneRoot: true)
-            {
-            }
-
             internal override bool SupportsLocations
             {
                 get { return true; }

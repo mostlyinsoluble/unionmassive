@@ -15,34 +15,22 @@ namespace Microsoft.CodeAnalysis.Threading
     /// A custom awaiter that supports <see cref="YieldAwaitableExtensions.ConfigureAwait"/> for
     /// <see cref="Task.Yield"/>.
     /// </summary>
-    internal readonly struct ConfiguredYieldAwaitable
+    internal readonly struct ConfiguredYieldAwaitable(YieldAwaitable awaitable, bool continueOnCapturedContext)
     {
-        private readonly YieldAwaitable _awaitable;
-        private readonly bool _continueOnCapturedContext;
-
-        public ConfiguredYieldAwaitable(YieldAwaitable awaitable, bool continueOnCapturedContext)
-        {
-            _awaitable = awaitable;
-            _continueOnCapturedContext = continueOnCapturedContext;
-        }
+        private readonly YieldAwaitable _awaitable = awaitable;
+        private readonly bool _continueOnCapturedContext = continueOnCapturedContext;
 
         public ConfiguredYieldAwaiter GetAwaiter()
             => new ConfiguredYieldAwaiter(_awaitable.GetAwaiter(), _continueOnCapturedContext);
 
-        public readonly struct ConfiguredYieldAwaiter
-            : INotifyCompletion, ICriticalNotifyCompletion
+        public readonly struct ConfiguredYieldAwaiter(YieldAwaitable.YieldAwaiter awaiter, bool continueOnCapturedContext)
+                        : INotifyCompletion, ICriticalNotifyCompletion
         {
             private static readonly WaitCallback s_runContinuation =
                 static continuation => ((Action)continuation!)();
 
-            private readonly YieldAwaitable.YieldAwaiter _awaiter;
-            private readonly bool _continueOnCapturedContext;
-
-            public ConfiguredYieldAwaiter(YieldAwaitable.YieldAwaiter awaiter, bool continueOnCapturedContext)
-            {
-                _awaiter = awaiter;
-                _continueOnCapturedContext = continueOnCapturedContext;
-            }
+            private readonly YieldAwaitable.YieldAwaiter _awaiter = awaiter;
+            private readonly bool _continueOnCapturedContext = continueOnCapturedContext;
 
             public bool IsCompleted => _awaiter.IsCompleted;
 

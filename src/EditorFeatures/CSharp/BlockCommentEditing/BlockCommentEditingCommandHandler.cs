@@ -88,7 +88,7 @@ internal sealed class BlockCommentEditingCommandHandler : ICommandHandler<Return
         var start = caretPosition.Position;
         var end = caretPosition;
         while (end < snapshot.Length && SyntaxFacts.IsWhitespace(end.GetChar()) && !SyntaxFacts.IsNewLine(end.GetChar()))
-            end = end + 1;
+            end += 1;
 
         return Span.FromBounds(start, end);
     }

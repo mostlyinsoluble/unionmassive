@@ -11,10 +11,8 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 internal sealed partial class CodeStyleSettingsViewModel
 {
-    internal sealed class SettingsSnapshotFactory : SettingsSnapshotFactoryBase<CodeStyleSetting, SettingsEntriesSnapshot>
+    internal sealed class SettingsSnapshotFactory(ISettingsProvider<CodeStyleSetting> data) : SettingsSnapshotFactoryBase<CodeStyleSetting, SettingsEntriesSnapshot>(data)
     {
-        public SettingsSnapshotFactory(ISettingsProvider<CodeStyleSetting> data) : base(data) { }
-
         protected override SettingsEntriesSnapshot CreateSnapshot(ImmutableArray<CodeStyleSetting> data, int currentVersionNumber)
             => new(data, currentVersionNumber);
     }

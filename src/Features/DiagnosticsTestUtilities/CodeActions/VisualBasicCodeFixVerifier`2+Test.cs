@@ -53,12 +53,6 @@ public static partial class VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>
             MarkupOptions = Testing.MarkupOptions.UseFirstDescriptor;
         }
 
-        /// <summary>
-        /// Gets or sets the language version to use for the test. The default value is
-        /// <see cref="LanguageVersion.VisualBasic16"/>.
-        /// </summary>
-        public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.VisualBasic16;
-
         /// <inheritdoc cref="SharedVerifierState.Options"/>
         internal OptionsCollection Options => _sharedState.Options;
 

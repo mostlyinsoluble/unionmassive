@@ -8,14 +8,8 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 
-internal readonly struct GlobalNodeKey
+internal readonly struct GlobalNodeKey(SyntaxNodeKey nodeKey, SyntaxPath path)
 {
-    public readonly SyntaxNodeKey NodeKey;
-    public readonly SyntaxPath Path;
-
-    public GlobalNodeKey(SyntaxNodeKey nodeKey, SyntaxPath path)
-    {
-        this.NodeKey = nodeKey;
-        this.Path = path;
-    }
+    public readonly SyntaxNodeKey NodeKey = nodeKey;
+    public readonly SyntaxPath Path = path;
 }

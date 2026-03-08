@@ -11,25 +11,17 @@ namespace Xunit.Harness
     using System.Text;
 
     [Serializable]
-    public readonly struct VisualStudioInstanceKey : IEquatable<VisualStudioInstanceKey>
+    public readonly struct VisualStudioInstanceKey(VisualStudioVersion version, string rootSuffix, int maxAttempts, string[] environmentVariables) : IEquatable<VisualStudioInstanceKey>
     {
         public static readonly VisualStudioInstanceKey Unspecified = new(VisualStudioVersion.Unspecified, rootSuffix: string.Empty, maxAttempts: 1, environmentVariables: new string[0]);
 
-        public VisualStudioInstanceKey(VisualStudioVersion version, string rootSuffix, int maxAttempts, string[] environmentVariables)
-        {
-            Version = version;
-            RootSuffix = rootSuffix;
-            MaxAttempts = maxAttempts;
-            EnvironmentVariables = environmentVariables;
-        }
+        public VisualStudioVersion Version { get; } = version;
 
-        public VisualStudioVersion Version { get; }
+        public string RootSuffix { get; } = rootSuffix;
 
-        public string RootSuffix { get; }
+        public int MaxAttempts { get; } = maxAttempts;
 
-        public int MaxAttempts { get; }
-
-        public IReadOnlyList<string> EnvironmentVariables { get; }
+        public IReadOnlyList<string> EnvironmentVariables { get; } = environmentVariables;
 
         public static bool operator ==(VisualStudioInstanceKey left, VisualStudioInstanceKey right)
         {

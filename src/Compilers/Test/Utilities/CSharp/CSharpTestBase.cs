@@ -36,8 +36,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
 {
     public abstract class CSharpTestBase : CommonTestBase
     {
-        public static readonly TheoryData<LanguageVersion> LanguageVersions13AndNewer = new TheoryData<LanguageVersion>([LanguageVersion.CSharp13, LanguageVersion.Preview, LanguageVersion.CSharp14]);
-
         protected static readonly string NullableAttributeDefinition = @"
 namespace System.Runtime.CompilerServices
 {
@@ -1441,7 +1439,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
             EmitOptions? emitOptions = null,
             Verification verify = default)
         {
-            options = options ?? TestOptions.ReleaseDll.WithOutputKind((expectedOutput != null) ? OutputKind.ConsoleApplication : OutputKind.DynamicallyLinkedLibrary);
+            options ??= TestOptions.ReleaseDll.WithOutputKind((expectedOutput != null) ? OutputKind.ConsoleApplication : OutputKind.DynamicallyLinkedLibrary);
             var compilation = CreateExperimentalCompilationWithMscorlib461(source, feature, references, options, parseOptions, assemblyName: GetUniqueName());
 
             return CompileAndVerify(
@@ -1555,7 +1553,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
             TargetFramework targetFramework = TargetFramework.Standard,
             Verification verify = default)
         {
-            options = options ?? (expectedOutput != null ? TestOptions.ReleaseExe : CheckForTopLevelStatements(source.GetSyntaxTrees(parseOptions)));
+            options ??= (expectedOutput != null ? TestOptions.ReleaseExe : CheckForTopLevelStatements(source.GetSyntaxTrees(parseOptions)));
             var compilation = CreateCompilation(source, references, options, parseOptions, targetFramework, assemblyName: GetUniqueName());
             return CompileAndVerify(
                 compilation,
@@ -1628,7 +1626,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
 
         internal CompilationVerifier CompileAndVerifyFieldMarshal(CSharpTestSource source, Func<string, PEAssembly, byte[]> getExpectedBlob, bool isField = true) =>
             CompileAndVerifyFieldMarshalCommon(
-                CreateCompilationWithMscorlib40(source, parseOptions: TestOptions.RegularPreview.WithNoRefSafetyRulesAttribute()),
+                CreateCompilationWithMscorlib40(source, parseOptions: TestOptions.Regular.WithNoRefSafetyRulesAttribute()),
                 getExpectedBlob,
                 isField);
 
@@ -1659,7 +1657,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
 
         public static SyntaxTree ParseWithRoundTripCheck(string text, CSharpParseOptions? options = null)
         {
-            var tree = Parse(text, options: options ?? TestOptions.RegularPreview);
+            var tree = Parse(text, options: options ?? TestOptions.Regular);
             var parsedText = tree.GetRoot();
             // we validate the text roundtrips
             Assert.Equal(text, parsedText.ToFullString());
@@ -1863,7 +1861,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
 
             if (experimentalFeature.HasValue)
             {
-                parseOptions = (parseOptions ?? TestOptions.RegularPreview).WithExperimental(experimentalFeature.Value);
+                parseOptions = (parseOptions ?? TestOptions.Regular).WithExperimental(experimentalFeature.Value);
             }
 
             Func<CSharpCompilation> createCompilationLambda = () => CSharpCompilation.Create(
@@ -1880,7 +1878,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
             var compilation = createCompilationLambda();
             // 'skipUsesIsNullable' may need to be set for some tests, particularly those that want to verify
             // symbols are created lazily, since 'UsesIsNullableVisitor' will eagerly visit all members.
-            if (!skipUsesIsNullable && !IsNullableEnabled(compilation))
+            if (!skipUsesIsNullable && compilation.SyntaxTrees.IsDefaultOrEmpty)
             {
                 VerifyUsesOfNullability(createCompilationLambda().SourceModule.GlobalNamespace, expectedUsesOfNullable: ImmutableArray<string>.Empty);
             }
@@ -1959,18 +1957,6 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
                     Assert.Contains(reference, resolvedReferences);
                 }
             }
-        }
-
-        internal static bool IsNullableEnabled(CSharpCompilation compilation)
-        {
-            // This method should not cause any binding, including resolving references, etc.
-            var trees = compilation.SyntaxTrees;
-            if (trees.IsDefaultOrEmpty)
-            {
-                return false;
-            }
-            var options = (CSharpParseOptions)trees[0].Options;
-            return options.IsFeatureEnabled(MessageID.IDS_FeatureNullableReferenceTypes);
         }
 
         internal static void VerifyUsesOfNullability(Symbol symbol, ImmutableArray<string> expectedUsesOfNullable)
@@ -2331,7 +2317,7 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
             }
 
             Assert.NotNull(node); // If this trips, then node  wasn't found
-            Assert.IsAssignableFrom(typeof(TNode), node);
+            Assert.IsAssignableFrom<TNode>(node);
             Assert.Equal(bindText, node.ToString());
             return ((TNode)node);
         }
@@ -2568,14 +2554,9 @@ class ExpressionPrinter : System.Linq.Expressions.ExpressionVisitor
             return result.AsImmutableOrNull();
         }
 
-        private sealed class Visualizer : ILVisualizer
+        private sealed class Visualizer(MetadataDecoder decoder) : ILVisualizer
         {
-            private readonly MetadataDecoder _decoder;
-
-            public Visualizer(MetadataDecoder decoder)
-            {
-                _decoder = decoder;
-            }
+            private readonly MetadataDecoder _decoder = decoder;
 
             public override string VisualizeUserString(uint token)
             {
@@ -3230,7 +3211,7 @@ namespace System.Runtime.CompilerServices
 
         internal static CSharpCompilation CreateRuntimeAsyncCompilation(CSharpTestSource source, CSharpCompilationOptions? options = null, CSharpParseOptions? parseOptions = null, bool includeSuppression = true)
         {
-            parseOptions ??= WithRuntimeAsync(TestOptions.RegularPreview);
+            parseOptions ??= WithRuntimeAsync(TestOptions.Regular);
             var syntaxTrees = source.GetSyntaxTrees(parseOptions, sourceFileName: "");
             if (options == null)
             {

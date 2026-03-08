@@ -110,14 +110,9 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
                 return null;
             }
 #nullable disable
-            private sealed class EmptyBody : Cci.IMethodBody
+            private sealed class EmptyBody(EmbeddedTypesManager<TPEModuleBuilder, TModuleCompilationState, TEmbeddedTypesManager, TSyntaxNode, TAttributeData, TSymbol, TAssemblySymbol, TNamedTypeSymbol, TFieldSymbol, TMethodSymbol, TEventSymbol, TPropertySymbol, TParameterSymbol, TTypeParameterSymbol, TEmbeddedType, TEmbeddedField, TEmbeddedMethod, TEmbeddedEvent, TEmbeddedProperty, TEmbeddedParameter, TEmbeddedTypeParameter>.CommonEmbeddedMethod method) : Cci.IMethodBody
             {
-                private readonly CommonEmbeddedMethod _method;
-
-                public EmptyBody(CommonEmbeddedMethod method)
-                {
-                    _method = method;
-                }
+                private readonly CommonEmbeddedMethod _method = method;
 
                 ImmutableArray<Cci.ExceptionHandlerRegion> Cci.IMethodBody.ExceptionRegions =>
                     ImmutableArray<Cci.ExceptionHandlerRegion>.Empty;

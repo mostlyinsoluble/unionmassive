@@ -17,25 +17,18 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.Interactive;
 
 [ExportInteractive(typeof(IExecuteInInteractiveCommandHandler), ContentTypeNames.CSharpContentType)]
-internal sealed class CSharpInteractiveCommandHandler : InteractiveCommandHandler, IExecuteInInteractiveCommandHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpInteractiveCommandHandler(
+    CSharpVsInteractiveWindowProvider interactiveWindowProvider,
+    ISendToInteractiveSubmissionProvider sendToInteractiveSubmissionProvider,
+    IContentTypeRegistryService contentTypeRegistryService,
+    EditorOptionsService editorOptionsService,
+    IEditorOperationsFactoryService editorOperationsFactoryService) : InteractiveCommandHandler(contentTypeRegistryService, editorOptionsService, editorOperationsFactoryService), IExecuteInInteractiveCommandHandler
 {
-    private readonly CSharpVsInteractiveWindowProvider _interactiveWindowProvider;
+    private readonly CSharpVsInteractiveWindowProvider _interactiveWindowProvider = interactiveWindowProvider;
 
-    private readonly ISendToInteractiveSubmissionProvider _sendToInteractiveSubmissionProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpInteractiveCommandHandler(
-        CSharpVsInteractiveWindowProvider interactiveWindowProvider,
-        ISendToInteractiveSubmissionProvider sendToInteractiveSubmissionProvider,
-        IContentTypeRegistryService contentTypeRegistryService,
-        EditorOptionsService editorOptionsService,
-        IEditorOperationsFactoryService editorOperationsFactoryService)
-        : base(contentTypeRegistryService, editorOptionsService, editorOperationsFactoryService)
-    {
-        _interactiveWindowProvider = interactiveWindowProvider;
-        _sendToInteractiveSubmissionProvider = sendToInteractiveSubmissionProvider;
-    }
+    private readonly ISendToInteractiveSubmissionProvider _sendToInteractiveSubmissionProvider = sendToInteractiveSubmissionProvider;
 
     protected override ISendToInteractiveSubmissionProvider SendToInteractiveSubmissionProvider => _sendToInteractiveSubmissionProvider;
 

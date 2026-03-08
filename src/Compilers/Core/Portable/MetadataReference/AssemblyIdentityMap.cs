@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis
     {
         private readonly Dictionary<string, OneOrMany<KeyValuePair<AssemblyIdentity, TValue>>> _map;
 
-        public AssemblyIdentityMap()
-        {
-            _map = new Dictionary<string, OneOrMany<KeyValuePair<AssemblyIdentity, TValue>>>(AssemblyIdentityComparer.SimpleNameComparer);
-        }
+        public AssemblyIdentityMap() => _map = new Dictionary<string, OneOrMany<KeyValuePair<AssemblyIdentity, TValue>>>(AssemblyIdentityComparer.SimpleNameComparer);
 
         public bool Contains(AssemblyIdentity identity, bool allowHigherVersion = true)
         {

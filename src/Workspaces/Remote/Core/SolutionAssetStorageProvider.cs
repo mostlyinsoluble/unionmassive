@@ -12,15 +12,11 @@ namespace Microsoft.CodeAnalysis.Remote;
 internal sealed class SolutionAssetStorageProvider : ISolutionAssetStorageProvider
 {
     [ExportWorkspaceServiceFactory(typeof(ISolutionAssetStorageProvider)), Shared]
-    internal sealed class Factory : IWorkspaceServiceFactory
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class Factory() : IWorkspaceServiceFactory
     {
         private readonly SolutionAssetStorage _storage = new();
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public Factory()
-        {
-        }
 
         public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
             => new SolutionAssetStorageProvider(_storage);
@@ -28,8 +24,5 @@ internal sealed class SolutionAssetStorageProvider : ISolutionAssetStorageProvid
 
     public SolutionAssetStorage AssetStorage { get; private set; }
 
-    private SolutionAssetStorageProvider(SolutionAssetStorage storage)
-    {
-        AssetStorage = storage;
-    }
+    private SolutionAssetStorageProvider(SolutionAssetStorage storage) => AssetStorage = storage;
 }

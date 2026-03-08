@@ -18,10 +18,7 @@ internal sealed class AdditionalDocumentState : TextDocumentState
         DocumentInfo.DocumentAttributes attributes,
         ITextAndVersionSource textAndVersionSource,
         LoadTextOptions loadTextOptions)
-        : base(solutionServices, documentServiceProvider, attributes, textAndVersionSource, loadTextOptions)
-    {
-        AdditionalText = new AdditionalTextWithState(this);
-    }
+        : base(solutionServices, documentServiceProvider, attributes, textAndVersionSource, loadTextOptions) => AdditionalText = new AdditionalTextWithState(this);
 
     public AdditionalDocumentState(
         SolutionServices solutionServices,

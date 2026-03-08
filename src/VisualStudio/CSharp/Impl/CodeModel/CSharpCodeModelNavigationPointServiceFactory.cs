@@ -15,14 +15,10 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.CodeModel;
 
 [ExportLanguageServiceFactory(typeof(ICodeModelNavigationPointService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpCodeModelNavigationPointServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CSharpCodeModelNavigationPointServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCodeModelNavigationPointServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices provider)
     {
         // This interface is implemented by the ICodeModelService as well, so just grab the other one and return it

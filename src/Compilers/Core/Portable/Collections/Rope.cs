@@ -84,10 +84,10 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// A rope that wraps a simple string.
         /// </summary>
-        private sealed class StringRope : Rope
+        private sealed class StringRope(string value) : Rope
         {
-            private readonly string _value;
-            public StringRope(string value) => _value = value;
+            private readonly string _value = value;
+
             public override string ToString() => _value;
 
             public override string ToString(int maxLength)

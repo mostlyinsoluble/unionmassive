@@ -463,17 +463,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return Hash.Combine(_name, Hash.Combine(_containingType, _parameters.Length));
         }
 
-        private sealed class SynthesizedOperatorParameterSymbol : SynthesizedParameterSymbolBase
+        private sealed class SynthesizedOperatorParameterSymbol(
+            SynthesizedIntrinsicOperatorSymbol container,
+            TypeSymbol type,
+            int ordinal,
+            string name
+            ) : SynthesizedParameterSymbolBase(container, TypeWithAnnotations.Create(type), ordinal, RefKind.None, ScopedKind.None, name)
         {
-            public SynthesizedOperatorParameterSymbol(
-                SynthesizedIntrinsicOperatorSymbol container,
-                TypeSymbol type,
-                int ordinal,
-                string name
-            ) : base(container, TypeWithAnnotations.Create(type), ordinal, RefKind.None, ScopedKind.None, name)
-            {
-            }
-
             internal override bool IsMetadataIn => RefKind is RefKind.In or RefKind.RefReadOnlyParameter;
 
             internal override bool IsMetadataOut => RefKind == RefKind.Out;

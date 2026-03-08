@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly NamedTypeSymbol _containingType;
         private ThreeState _lazyShouldEmit = ThreeState.Unknown;
 
-        internal SynthesizedStaticConstructor(NamedTypeSymbol containingType)
-        {
-            _containingType = containingType;
-        }
+        internal SynthesizedStaticConstructor(NamedTypeSymbol containingType) => _containingType = containingType;
 
         public override Symbol ContainingSymbol
         {

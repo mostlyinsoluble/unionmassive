@@ -18,16 +18,11 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(FindImplementationsHandler)), Shared]
 [Method(LSP.Methods.TextDocumentImplementationName)]
-internal sealed class FindImplementationsHandler : ILspServiceDocumentRequestHandler<LSP.TextDocumentPositionParams, LSP.Location[]>
+[method: ImportingConstructor]
+[method: System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FindImplementationsHandler(IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<LSP.TextDocumentPositionParams, LSP.Location[]>
 {
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FindImplementationsHandler(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

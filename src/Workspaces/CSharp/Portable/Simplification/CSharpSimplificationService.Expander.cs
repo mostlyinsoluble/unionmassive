@@ -28,7 +28,12 @@ using static SyntaxFactory;
 
 internal partial class CSharpSimplificationService
 {
-    private sealed class Expander : CSharpSyntaxRewriter
+    private sealed class Expander(
+        SemanticModel semanticModel,
+        Func<SyntaxNode, bool> expandInsideNode,
+        bool expandParameter,
+        CancellationToken cancellationToken,
+        SyntaxAnnotation annotationForReplacedAliasIdentifier = null) : CSharpSyntaxRewriter
     {
         private static readonly SyntaxTrivia s_oneWhitespaceSeparator = SyntaxTrivia(SyntaxKind.WhitespaceTrivia, " ");
 
@@ -43,25 +48,11 @@ internal partial class CSharpSimplificationService
                 typeQualificationStyle:
                     SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
-        private readonly SemanticModel _semanticModel;
-        private readonly Func<SyntaxNode, bool> _expandInsideNode;
-        private readonly CancellationToken _cancellationToken;
-        private readonly SyntaxAnnotation _annotationForReplacedAliasIdentifier;
-        private readonly bool _expandParameter;
-
-        public Expander(
-            SemanticModel semanticModel,
-            Func<SyntaxNode, bool> expandInsideNode,
-            bool expandParameter,
-            CancellationToken cancellationToken,
-            SyntaxAnnotation annotationForReplacedAliasIdentifier = null)
-        {
-            _semanticModel = semanticModel;
-            _expandInsideNode = expandInsideNode;
-            _expandParameter = expandParameter;
-            _cancellationToken = cancellationToken;
-            _annotationForReplacedAliasIdentifier = annotationForReplacedAliasIdentifier;
-        }
+        private readonly SemanticModel _semanticModel = semanticModel;
+        private readonly Func<SyntaxNode, bool> _expandInsideNode = expandInsideNode;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
+        private readonly SyntaxAnnotation _annotationForReplacedAliasIdentifier = annotationForReplacedAliasIdentifier;
+        private readonly bool _expandParameter = expandParameter;
 
         public override SyntaxNode Visit(SyntaxNode node)
         {

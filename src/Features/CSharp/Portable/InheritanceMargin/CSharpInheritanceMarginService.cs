@@ -15,14 +15,10 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.CSharp.InheritanceMargin;
 
 [ExportLanguageService(typeof(IInheritanceMarginService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpInheritanceMarginService : AbstractInheritanceMarginService
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+[method: ImportingConstructor]
+internal sealed class CSharpInheritanceMarginService() : AbstractInheritanceMarginService
 {
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    [ImportingConstructor]
-    public CSharpInheritanceMarginService()
-    {
-    }
-
     protected override string GlobalImportsTitle => CSharpFeaturesResources.Global_using_directives;
 
     protected override ImmutableArray<SyntaxNode> GetMembers(IEnumerable<SyntaxNode> nodesToSearch)

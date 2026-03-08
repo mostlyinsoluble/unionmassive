@@ -15,15 +15,11 @@ namespace Microsoft.CodeAnalysis.Editor.UnitTests;
 
 [Export(typeof(IExtensionErrorHandler))]
 [Export(typeof(ITestErrorHandler))]
-internal sealed class TestExtensionErrorHandler : IExtensionErrorHandler, ITestErrorHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestExtensionErrorHandler() : IExtensionErrorHandler, ITestErrorHandler
 {
     public ImmutableList<Exception> Exceptions { get; private set; } = [];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestExtensionErrorHandler()
-    {
-    }
 
     public void HandleError(object sender, Exception exception)
     {

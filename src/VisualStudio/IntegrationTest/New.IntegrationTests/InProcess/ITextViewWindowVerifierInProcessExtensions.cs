@@ -188,14 +188,9 @@ internal static class ITextViewWindowVerifierInProcessExtensions
         }
     }
 
-    private readonly struct LoggerRestorer : IDisposable
+    private readonly struct LoggerRestorer(ILogger? logger) : IDisposable
     {
-        private readonly ILogger? _logger;
-
-        public LoggerRestorer(ILogger? logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger? _logger = logger;
 
         public void Dispose()
         {

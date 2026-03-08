@@ -12,15 +12,9 @@ using Microsoft.CodeAnalysis.Shared.TestHooks;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy.Finders;
 
-internal sealed class BaseMemberFinder : AbstractCallFinder
+internal sealed class BaseMemberFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider) : AbstractCallFinder(symbol, projectId, asyncListener, provider)
 {
-    private readonly string _text;
-
-    public BaseMemberFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider)
-        : base(symbol, projectId, asyncListener, provider)
-    {
-        _text = string.Format(EditorFeaturesResources.Calls_To_Base_Member_0, symbol.ToDisplayString());
-    }
+    private readonly string _text = string.Format(EditorFeaturesResources.Calls_To_Base_Member_0, symbol.ToDisplayString());
 
     public override string DisplayName => _text;
 

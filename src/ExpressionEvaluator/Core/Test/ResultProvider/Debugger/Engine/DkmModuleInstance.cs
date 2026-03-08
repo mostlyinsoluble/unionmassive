@@ -15,10 +15,7 @@ namespace Microsoft.VisualStudio.Debugger
 {
     public class DkmModuleInstance
     {
-        internal DkmModuleInstance(DkmModule module)
-        {
-            this.Module = module;
-        }
+        internal DkmModuleInstance(DkmModule module) => this.Module = module;
 
         public readonly DkmModule Module;
 

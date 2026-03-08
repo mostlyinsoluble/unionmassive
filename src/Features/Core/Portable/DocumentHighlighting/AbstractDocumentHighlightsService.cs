@@ -20,19 +20,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.DocumentHighlighting;
 
-internal abstract partial class AbstractDocumentHighlightsService :
-    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageDocumentHighlighter>,
+internal abstract partial class AbstractDocumentHighlightsService(
+    string languageName,
+    EmbeddedLanguageInfo info,
+    ISyntaxKinds syntaxKinds,
+    IEnumerable<Lazy<IEmbeddedLanguageDocumentHighlighter, EmbeddedLanguageMetadata>> allServices) :
+    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageDocumentHighlighter>(languageName, info, syntaxKinds, allServices),
     IDocumentHighlightsService
 {
-    protected AbstractDocumentHighlightsService(
-        string languageName,
-        EmbeddedLanguageInfo info,
-        ISyntaxKinds syntaxKinds,
-        IEnumerable<Lazy<IEmbeddedLanguageDocumentHighlighter, EmbeddedLanguageMetadata>> allServices)
-        : base(languageName, info, syntaxKinds, allServices)
-    {
-    }
-
     public async Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(
         Document document, int position, IImmutableSet<Document> documentsToSearch, HighlightingOptions options, CancellationToken cancellationToken)
     {

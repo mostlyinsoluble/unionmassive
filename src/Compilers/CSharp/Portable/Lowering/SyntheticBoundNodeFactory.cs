@@ -31,14 +31,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// the only diagnostic handled through this mechanism is a missing special/well-known
         /// member.
         /// </summary>
-        public class MissingPredefinedMember : Exception
+        public class MissingPredefinedMember(Diagnostic error) : Exception(error.ToString())
         {
-            public MissingPredefinedMember(Diagnostic error) : base(error.ToString())
-            {
-                this.Diagnostic = error;
-            }
-
-            public Diagnostic Diagnostic { get; }
+            public Diagnostic Diagnostic { get; } = error;
         }
 
         public CSharpCompilation Compilation { get { return CompilationState.Compilation; } }
@@ -1068,16 +1063,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// An internal helper class for building a switch statement.
         /// </summary>
-        internal readonly struct SyntheticSwitchSection
+        internal readonly struct SyntheticSwitchSection(ImmutableArray<int> values, ImmutableArray<BoundStatement> statements)
         {
-            public readonly ImmutableArray<int> Values;
-            public readonly ImmutableArray<BoundStatement> Statements;
-
-            public SyntheticSwitchSection(ImmutableArray<int> values, ImmutableArray<BoundStatement> statements)
-            {
-                Values = values;
-                Statements = statements;
-            }
+            public readonly ImmutableArray<int> Values = values;
+            public readonly ImmutableArray<BoundStatement> Statements = statements;
         }
 
         public SyntheticSwitchSection SwitchSection(int value, params BoundStatement[] statements)

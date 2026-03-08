@@ -60,16 +60,8 @@ Friend Module ParserTestUtilities
         Return ParseAndVerify(source, VisualBasicParseOptions.Default, expectedDiagnostics, errorCodesOnly:=False)
     End Function
 
-    Public Function ParseAndVerify(source As String, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
-        Return ParseAndVerify(source, options, expectedDiagnostics, errorCodesOnly:=False)
-    End Function
-
-    Public Function ParseAndVerify(source As String, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
-        Return ParseAndVerify(source, VisualBasicParseOptions.Default.WithLanguageVersion(languageVersion), expectedDiagnostics, errorCodesOnly:=False)
-    End Function
-
     Public Function ParseAndVerify(source As String, errorCodesOnly As Boolean, ParamArray expectedDiagnostics() As DiagnosticDescription) As SyntaxTree
-        Return ParseAndVerify(source, VisualBasicParseOptions.Default.WithLanguageVersion(languageVersion), expectedDiagnostics, errorCodesOnly:=errorCodesOnly)
+        Return ParseAndVerify(source, VisualBasicParseOptions.Default, expectedDiagnostics, errorCodesOnly:=errorCodesOnly)
     End Function
 
     Private Function ParseAndVerify(source As String, options As VisualBasicParseOptions, expectedDiagnostics() As DiagnosticDescription, errorCodesOnly As Boolean) As SyntaxTree
@@ -107,7 +99,7 @@ Friend Module ParserTestUtilities
             encoding = Encoding.UTF8
         End If
 
-        Dim tree = VisualBasicSyntaxTree.ParseText(SourceText.From(source, encoding), options:=If(options, TestOptions.RegularLatest), path:=fileName)
+        Dim tree = VisualBasicSyntaxTree.ParseText(SourceText.From(source, encoding), options:=If(options, TestOptions.Regular), path:=fileName)
         Dim root = tree.GetRoot()
         ' Verify FullText
         Assert.Equal(source, root.ToFullString)

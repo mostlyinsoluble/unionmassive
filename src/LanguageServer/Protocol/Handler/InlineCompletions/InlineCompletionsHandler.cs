@@ -32,7 +32,9 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.InlineCompletions;
 /// </summary>
 [ExportCSharpVisualBasicStatelessLspService(typeof(InlineCompletionsHandler)), Shared]
 [Method(VSInternalMethods.TextDocumentInlineCompletionName)]
-internal sealed partial class InlineCompletionsHandler : ILspServiceDocumentRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class InlineCompletionsHandler(XmlSnippetParser xmlSnippetParser, IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>
 {
     /// <summary>
     /// The set of built in snippets from, typically found in
@@ -81,20 +83,12 @@ internal sealed partial class InlineCompletionsHandler : ILspServiceDocumentRequ
         "while",
     ];
 
-    private readonly XmlSnippetParser _xmlSnippetParser;
-    private readonly IGlobalOptionService _globalOptions;
+    private readonly XmlSnippetParser _xmlSnippetParser = xmlSnippetParser;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
 
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InlineCompletionsHandler(XmlSnippetParser xmlSnippetParser, IGlobalOptionService globalOptions)
-    {
-        _xmlSnippetParser = xmlSnippetParser;
-        _globalOptions = globalOptions;
-    }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(VSInternalInlineCompletionRequest request)
     {

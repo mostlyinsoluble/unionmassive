@@ -306,12 +306,8 @@ namespace ObjectFormatterFixtures
         }
 
         [DebuggerDisplay("pxy")]
-        private class Proxy
+        private class Proxy(object x)
         {
-            public Proxy(object x)
-            {
-            }
-
             public readonly int A;
             public readonly int B;
         }
@@ -353,14 +349,9 @@ namespace ObjectFormatterFixtures
         }
     }
 
-    public class ThrowingDictionary : IDictionary
+    public class ThrowingDictionary(int throwAt) : IDictionary
     {
-        private readonly int _throwAt;
-
-        public ThrowingDictionary(int throwAt)
-        {
-            _throwAt = throwAt;
-        }
+        private readonly int _throwAt = throwAt;
 
         public void Add(object key, object value)
         {
@@ -441,15 +432,10 @@ namespace ObjectFormatterFixtures
             return new E(-1);
         }
 
-        private class E : IEnumerator, IDictionaryEnumerator
+        private class E(int throwAt) : IEnumerator, IDictionaryEnumerator
         {
             private int _i;
-            private readonly int _throwAt;
-
-            public E(int throwAt)
-            {
-                _throwAt = throwAt;
-            }
+            private readonly int _throwAt = throwAt;
 
             public object Current
             {

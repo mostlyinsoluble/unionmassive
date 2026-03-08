@@ -12,19 +12,14 @@ using Microsoft.CodeAnalysis.LanguageService;
 namespace Microsoft.CodeAnalysis.UseIsNullCheck;
 
 internal abstract class AbstractUseIsNullCheckForReferenceEqualsDiagnosticAnalyzer<
-    TLanguageKindEnum>
-    : AbstractBuiltInCodeStyleDiagnosticAnalyzer
+    TLanguageKindEnum>(LocalizableString title)
+    : AbstractBuiltInCodeStyleDiagnosticAnalyzer(IDEDiagnosticIds.UseIsNullCheckDiagnosticId,
+           EnforceOnBuildValues.UseIsNullCheck,
+           CodeStyleOptions2.PreferIsNullCheckOverReferenceEqualityMethod,
+           title,
+           new LocalizableResourceString(nameof(AnalyzersResources.Null_check_can_be_simplified), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
     where TLanguageKindEnum : struct
 {
-    protected AbstractUseIsNullCheckForReferenceEqualsDiagnosticAnalyzer(LocalizableString title)
-        : base(IDEDiagnosticIds.UseIsNullCheckDiagnosticId,
-               EnforceOnBuildValues.UseIsNullCheck,
-               CodeStyleOptions2.PreferIsNullCheckOverReferenceEqualityMethod,
-               title,
-               new LocalizableResourceString(nameof(AnalyzersResources.Null_check_can_be_simplified), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
-    {
-    }
-
     public override DiagnosticAnalyzerCategory GetAnalyzerCategory()
         => DiagnosticAnalyzerCategory.SemanticSpanAnalysis;
 
@@ -32,7 +27,7 @@ internal abstract class AbstractUseIsNullCheckForReferenceEqualsDiagnosticAnalyz
         => context.RegisterCompilationStartAction(context =>
         {
             var objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
-            if (objectType != null && IsLanguageVersionSupported(context.Compilation))
+            if (objectType != null)
             {
                 var referenceEqualsMethod = objectType.GetMembers(nameof(ReferenceEquals))
                                                       .OfType<IMethodSymbol>()
@@ -41,19 +36,16 @@ internal abstract class AbstractUseIsNullCheckForReferenceEqualsDiagnosticAnalyz
                 if (referenceEqualsMethod != null)
                 {
                     var syntaxKinds = GetSyntaxFacts().SyntaxKinds;
-                    var unconstraintedGenericSupported = IsUnconstrainedGenericSupported(context.Compilation);
                     context.RegisterSyntaxNodeAction(
-                        c => AnalyzeSyntax(c, referenceEqualsMethod, unconstraintedGenericSupported),
+                        c => AnalyzeSyntax(c, referenceEqualsMethod),
                         syntaxKinds.Convert<TLanguageKindEnum>(syntaxKinds.InvocationExpression));
                 }
             }
         });
 
-    protected abstract bool IsLanguageVersionSupported(Compilation compilation);
-    protected abstract bool IsUnconstrainedGenericSupported(Compilation compilation);
     protected abstract ISyntaxFacts GetSyntaxFacts();
 
-    private void AnalyzeSyntax(SyntaxNodeAnalysisContext context, IMethodSymbol referenceEqualsMethod, bool unconstraintedGenericSupported)
+    private void AnalyzeSyntax(SyntaxNodeAnalysisContext context, IMethodSymbol referenceEqualsMethod)
     {
         var cancellationToken = context.CancellationToken;
 
@@ -116,16 +108,6 @@ internal abstract class AbstractUseIsNullCheckForReferenceEqualsDiagnosticAnalyz
                 // '== null' would generate error CS0019: Operator '==' cannot be applied to operands of type 'T' and '<null>'
                 // 'Is Nothing' would generate error BC30020: 'Is' operator does not accept operands of type 'T'. Operands must be reference or nullable types.
                 return;
-            }
-
-            // HasReferenceTypeConstraint returns false for base type constraint.
-            // IsReferenceType returns true.
-
-            if (!genericParameterSymbol.IsReferenceType && !unconstraintedGenericSupported)
-            {
-                // Needs special casing for C# as long as
-                // 'is null' over unconstrained generic is implemented in C# 8.
-                properties = properties.Add(UseIsNullConstants.UnconstrainedGeneric, "");
             }
         }
 

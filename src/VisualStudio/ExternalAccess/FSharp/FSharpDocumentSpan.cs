@@ -14,21 +14,15 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp;
 /// <summary>
 /// Represents a <see cref="TextSpan"/> location in a <see cref="Document"/>.
 /// </summary>
-internal readonly struct FSharpDocumentSpan : IEquatable<FSharpDocumentSpan>
+internal readonly struct FSharpDocumentSpan(Document document, TextSpan sourceSpan) : IEquatable<FSharpDocumentSpan>
 {
-    public Document Document { get; }
-    public TextSpan SourceSpan { get; }
+    public Document Document { get; } = document;
+    public TextSpan SourceSpan { get; } = sourceSpan;
 
     /// <summary>
     /// Additional information attached to a document span by it creator.
     /// </summary>
     public ImmutableDictionary<string, object> Properties { get; } = ImmutableDictionary<string, object>.Empty;
-
-    public FSharpDocumentSpan(Document document, TextSpan sourceSpan)
-    {
-        Document = document;
-        SourceSpan = sourceSpan;
-    }
 
     public override bool Equals(object obj)
         => Equals((FSharpDocumentSpan)obj);

@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis
             {
                 private readonly Operation _operation;
 
-                internal Reversed(Operation operation)
-                {
-                    _operation = operation;
-                }
+                internal Reversed(Operation operation) => _operation = operation;
 
                 public int Count => _operation.ChildOperationsCount;
 
@@ -122,14 +119,9 @@ namespace Microsoft.CodeAnalysis
                     }
                 }
 
-                private sealed class EnumeratorImpl : IEnumerator<IOperation>
+                private sealed class EnumeratorImpl(Reversed.Enumerator enumerator) : IEnumerator<IOperation>
                 {
-                    private Enumerator _enumerator;
-
-                    public EnumeratorImpl(Enumerator enumerator)
-                    {
-                        _enumerator = enumerator;
-                    }
+                    private Enumerator _enumerator = enumerator;
 
                     public IOperation Current => _enumerator.Current;
                     object? IEnumerator.Current => _enumerator.Current;

@@ -936,10 +936,7 @@ start:
 
                 private readonly bool _ignoreTopLevelNullability;
 
-                private ObliviousDetector(bool ignoreTopLevelNullability)
-                {
-                    _ignoreTopLevelNullability = ignoreTopLevelNullability;
-                }
+                private ObliviousDetector(bool ignoreTopLevelNullability) => _ignoreTopLevelNullability = ignoreTopLevelNullability;
 
                 public override bool VisitField(IFieldSymbol symbol)
                 {

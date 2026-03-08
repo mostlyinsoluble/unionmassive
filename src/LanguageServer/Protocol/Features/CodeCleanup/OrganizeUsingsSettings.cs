@@ -7,14 +7,8 @@ namespace Microsoft.CodeAnalysis.CodeCleanup;
 /// <summary>
 /// Indicates which, if any, Organize Usings features are enabled for code cleanup.
 /// </summary>
-internal sealed class OrganizeUsingsSet
+internal sealed class OrganizeUsingsSet(bool isRemoveUnusedImportEnabled, bool isSortImportsEnabled)
 {
-    public bool IsRemoveUnusedImportEnabled { get; }
-    public bool IsSortImportsEnabled { get; }
-
-    public OrganizeUsingsSet(bool isRemoveUnusedImportEnabled, bool isSortImportsEnabled)
-    {
-        IsRemoveUnusedImportEnabled = isRemoveUnusedImportEnabled;
-        IsSortImportsEnabled = isSortImportsEnabled;
-    }
+    public bool IsRemoveUnusedImportEnabled { get; } = isRemoveUnusedImportEnabled;
+    public bool IsSortImportsEnabled { get; } = isSortImportsEnabled;
 }

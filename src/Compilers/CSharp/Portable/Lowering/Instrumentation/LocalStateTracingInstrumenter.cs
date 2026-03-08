@@ -85,15 +85,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// We define a new <see cref="ContextVariable"/> (of LocalStoreTracker well-known type) in each scope,
         /// so that this variable is always directly accessible within any instrumented code and always stack-allocated.
         /// </summary>
-        private sealed class Scope
+        private sealed class Scope(LocalSymbol contextVariable)
         {
-            public LocalSymbol ContextVariable;
+            public LocalSymbol ContextVariable = contextVariable;
             private ArrayBuilder<LocalSymbol>? _lazyPreviousContextVariables;
-
-            public Scope(LocalSymbol contextVariable)
-            {
-                ContextVariable = contextVariable;
-            }
 
             public void Open(LocalSymbol local)
             {

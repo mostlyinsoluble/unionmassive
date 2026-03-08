@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         where TAbstractAnalysisValue : IEquatable<TAbstractAnalysisValue>
     {
         protected AnalysisEntityDataFlowOperationVisitor(TAnalysisContext analysisContext)
-            : base(analysisContext)
-        {
-            Debug.Assert(!analysisContext.PredicateAnalysis || SupportsPredicateAnalysis);
-        }
+            : base(analysisContext) => Debug.Assert(!analysisContext.PredicateAnalysis || SupportsPredicateAnalysis);
 
         protected virtual bool SupportsPredicateAnalysis => false;
         protected void AddTrackedEntities(HashSet<AnalysisEntity> builder, bool forInterproceduralAnalysis = false)

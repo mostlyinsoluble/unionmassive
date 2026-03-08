@@ -6,10 +6,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 {
     internal abstract class CompilationEvent
     {
-        internal CompilationEvent(Compilation compilation)
-        {
-            this.Compilation = compilation;
-        }
+        internal CompilationEvent(Compilation compilation) => this.Compilation = compilation;
 
         public Compilation Compilation { get; }
     }

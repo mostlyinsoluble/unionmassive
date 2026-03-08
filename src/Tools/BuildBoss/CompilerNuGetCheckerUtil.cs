@@ -35,20 +35,12 @@ namespace BuildBoss
     /// </summary>
     internal sealed class PackageContentsChecker : ICheckerUtil
     {
-        private sealed class PackagePartData
+        private sealed class PackagePartData(PackagePart part, string checksum)
         {
-            public PackagePart PackagePart { get; }
-            public string Name { get; }
-            public string RelativeName { get; }
-            public string Checksum { get; }
-
-            public PackagePartData(PackagePart part, string checksum)
-            {
-                Name = part.GetName();
-                RelativeName = part.GetRelativeName();
-                PackagePart = part;
-                Checksum = checksum;
-            }
+            public PackagePart PackagePart { get; } = part;
+            public string Name { get; } = part.GetName();
+            public string RelativeName { get; } = part.GetRelativeName();
+            public string Checksum { get; } = checksum;
 
             public override string ToString() => RelativeName;
         }
@@ -437,7 +429,7 @@ namespace BuildBoss
 
         private string FindVsix(string fileName)
         {
-            fileName = fileName + ".vsix";
+            fileName += ".vsix";
             var directory = Path.Combine(ArtifactsDirectory, "VSSetup", Configuration);
             var file = Directory.EnumerateFiles(directory, fileName, SearchOption.AllDirectories).SingleOrDefault();
             return file ?? throw new Exception($"Unable to find '{fileName}' in '{directory}'");

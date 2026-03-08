@@ -9,12 +9,8 @@ using Microsoft.CodeAnalysis.Simplification;
 
 namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
-internal abstract partial class AbstractCSharpReducer : AbstractReducer
+internal abstract partial class AbstractCSharpReducer(ObjectPool<AbstractReducer.IReductionRewriter> pool) : AbstractReducer(pool)
 {
-    protected AbstractCSharpReducer(ObjectPool<IReductionRewriter> pool) : base(pool)
-    {
-    }
-
     public sealed override bool IsApplicable(SimplifierOptions options)
         => IsApplicable((CSharpSimplifierOptions)options);
 

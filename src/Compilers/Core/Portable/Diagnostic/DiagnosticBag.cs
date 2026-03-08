@@ -344,14 +344,9 @@ namespace Microsoft.CodeAnalysis
 
         #region Debugger View
 
-        internal sealed class DebuggerProxy
+        internal sealed class DebuggerProxy(DiagnosticBag bag)
         {
-            private readonly DiagnosticBag _bag;
-
-            public DebuggerProxy(DiagnosticBag bag)
-            {
-                _bag = bag;
-            }
+            private readonly DiagnosticBag _bag = bag;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public object[] Diagnostics

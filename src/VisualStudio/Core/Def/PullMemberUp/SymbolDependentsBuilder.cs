@@ -31,27 +31,18 @@ internal static class SymbolDependentsBuilder
             }, cancellationToken));
     }
 
-    private sealed class SymbolWalker : OperationWalker
+    private sealed class SymbolWalker(
+        ImmutableArray<ISymbol> membersInType,
+        Project project,
+        ISymbol member,
+        CancellationToken cancellationToken) : OperationWalker
     {
-        private readonly ImmutableHashSet<ISymbol> _membersInType;
-        private readonly Project _project;
-        private readonly ISymbolDeclarationService _declarationService;
+        private readonly ImmutableHashSet<ISymbol> _membersInType = [.. membersInType];
+        private readonly Project _project = project;
+        private readonly ISymbolDeclarationService _declarationService = project.Services.GetRequiredService<ISymbolDeclarationService>();
         private readonly HashSet<ISymbol> _dependents = [];
-        private readonly ISymbol _member;
-        private readonly CancellationToken _cancellationToken;
-
-        public SymbolWalker(
-            ImmutableArray<ISymbol> membersInType,
-            Project project,
-            ISymbol member,
-            CancellationToken cancellationToken)
-        {
-            _project = project;
-            _declarationService = project.Services.GetRequiredService<ISymbolDeclarationService>();
-            _membersInType = [.. membersInType];
-            _member = member;
-            _cancellationToken = cancellationToken;
-        }
+        private readonly ISymbol _member = member;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
 
         public async Task<ImmutableArray<ISymbol>> FindMemberDependentsAsync()
         {

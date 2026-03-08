@@ -35,9 +35,6 @@ internal sealed class CSharpUseIsNullCheckForCastAndEqualityOperatorDiagnosticAn
     protected override void InitializeWorker(AnalysisContext context)
         => context.RegisterCompilationStartAction(context =>
         {
-            if (context.Compilation.LanguageVersion() < LanguageVersion.CSharp7)
-                return;
-
             context.RegisterSyntaxNodeAction(n => AnalyzeSyntax(n), SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression);
         });
 

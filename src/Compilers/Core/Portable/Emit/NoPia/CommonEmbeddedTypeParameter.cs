@@ -36,16 +36,10 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         TEmbeddedParameter,
         TEmbeddedTypeParameter>
     {
-        internal abstract class CommonEmbeddedTypeParameter : Cci.IEmbeddedDefinition, Cci.IGenericMethodParameter
+        internal abstract class CommonEmbeddedTypeParameter(TEmbeddedMethod containingMethod, TTypeParameterSymbol underlyingTypeParameter) : Cci.IEmbeddedDefinition, Cci.IGenericMethodParameter
         {
-            public readonly TEmbeddedMethod ContainingMethod;
-            public readonly TTypeParameterSymbol UnderlyingTypeParameter;
-
-            protected CommonEmbeddedTypeParameter(TEmbeddedMethod containingMethod, TTypeParameterSymbol underlyingTypeParameter)
-            {
-                this.ContainingMethod = containingMethod;
-                this.UnderlyingTypeParameter = underlyingTypeParameter;
-            }
+            public readonly TEmbeddedMethod ContainingMethod = containingMethod;
+            public readonly TTypeParameterSymbol UnderlyingTypeParameter = underlyingTypeParameter;
 
             public bool IsEncDeleted
                 => false;

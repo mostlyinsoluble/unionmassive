@@ -15,14 +15,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.GoToBase;
 
 [ExportLanguageService(typeof(IGoToBaseService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpGoToBaseService : AbstractGoToBaseService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpGoToBaseService() : AbstractGoToBaseService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpGoToBaseService()
-    {
-    }
-
     protected override async Task<IMethodSymbol?> FindNextConstructorInChainAsync(
         Solution solution, IMethodSymbol constructor, CancellationToken cancellationToken)
     {

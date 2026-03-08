@@ -11,18 +11,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.DebugConfiguration;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(WorkspaceDebugConfigurationHandler)), Shared]
 [Method(MethodName)]
-internal sealed class WorkspaceDebugConfigurationHandler : ILspServiceRequestHandler<WorkspaceDebugConfigurationParams, ProjectDebugConfiguration[]>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WorkspaceDebugConfigurationHandler(ProjectTargetFrameworkManager targetFrameworkManager) : ILspServiceRequestHandler<WorkspaceDebugConfigurationParams, ProjectDebugConfiguration[]>
 {
     private const string MethodName = "workspace/debugConfiguration";
 
-    private readonly ProjectTargetFrameworkManager _targetFrameworkManager;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WorkspaceDebugConfigurationHandler(ProjectTargetFrameworkManager targetFrameworkManager)
-    {
-        _targetFrameworkManager = targetFrameworkManager;
-    }
+    private readonly ProjectTargetFrameworkManager _targetFrameworkManager = targetFrameworkManager;
 
     public bool MutatesSolutionState => false;
 

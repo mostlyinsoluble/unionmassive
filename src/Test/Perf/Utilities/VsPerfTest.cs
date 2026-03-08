@@ -9,40 +9,28 @@ using static Roslyn.Test.Performance.Utilities.TestUtilities;
 
 namespace Roslyn.Test.Performance.Utilities
 {
-    public abstract class VsPerfTest : PerfTest
+    public abstract class VsPerfTest(
+        string testTemplateName,
+        string testName,
+        string solutionToTest,
+        string benchviewUploadName,
+        string[] scenarios,
+        string zipFileToDownload = "RoslynSolutions",
+        int zipFileVersion = 2) : PerfTest()
     {
         private const string _rootSuffix = "RoslynPerf";
 
-        private readonly ILogger _logger;
-        private readonly string _testTemplateName;
-        private readonly string _testName;
-        private readonly string _zipFileToDownload;
-        private readonly int _zipFileVersion;
-        private readonly string _solutionToTest;
-        private readonly string _benchviewUploadName;
-        private readonly string[] _scenarios;
+        private readonly ILogger _logger = new ConsoleAndFileLogger();
+        private readonly string _testTemplateName = testTemplateName;
+        private readonly string _testName = testName;
+        private readonly string _zipFileToDownload = zipFileToDownload;
+        private readonly int _zipFileVersion = zipFileVersion;
+        private readonly string _solutionToTest = solutionToTest;
+        private readonly string _benchviewUploadName = benchviewUploadName;
+        private readonly string[] _scenarios = scenarios;
         private static readonly string _nugetPackagesPath = System.Environment.GetEnvironmentVariable("NUGET_PACKAGES") ??
             Path.Combine(System.Environment.GetEnvironmentVariable("UserProfile"), ".nuget", "packages");
         private static readonly string _installerPath = Path.Combine(_nugetPackagesPath, "roslyntools.vsixexpinstaller", "1.0.0-beta2-63222-01", "tools", "vsixexpinstaller.exe");
-
-        public VsPerfTest(
-            string testTemplateName,
-            string testName,
-            string solutionToTest,
-            string benchviewUploadName,
-            string[] scenarios,
-            string zipFileToDownload = "RoslynSolutions",
-            int zipFileVersion = 2) : base()
-        {
-            _testTemplateName = testTemplateName;
-            _testName = testName;
-            _zipFileToDownload = zipFileToDownload;
-            _zipFileVersion = zipFileVersion;
-            _solutionToTest = solutionToTest;
-            _benchviewUploadName = benchviewUploadName;
-            _scenarios = scenarios;
-            _logger = new ConsoleAndFileLogger();
-        }
 
         public override void Setup()
         {

@@ -18,14 +18,10 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
     [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(CSharpExposeMemberForTesting))]
     [Shared]
-    public sealed class CSharpExposeMemberForTesting : AbstractExposeMemberForTesting<TypeDeclarationSyntax>
+    [method: ImportingConstructor]
+    [method: Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
+    public sealed class CSharpExposeMemberForTesting() : AbstractExposeMemberForTesting<TypeDeclarationSyntax>
     {
-        [ImportingConstructor]
-        [Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
-        public CSharpExposeMemberForTesting()
-        {
-        }
-
         private protected override IRefactoringHelpers RefactoringHelpers => CSharpRefactoringHelpers.Instance;
 
         protected override bool HasRefReturns => true;

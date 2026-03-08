@@ -19,21 +19,14 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace Microsoft.CodeAnalysis.DocumentationComments;
 
 [Export(typeof(CopilotGenerateDocumentationCommentManager))]
-internal sealed class CopilotGenerateDocumentationCommentManager
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CopilotGenerateDocumentationCommentManager([Import(AllowDefault = true)] SuggestionServiceBase? suggestionServiceBase, IThreadingContext threadingContext,
+    IAsynchronousOperationListenerProvider listenerProvider)
 {
-    private readonly SuggestionServiceBase? _suggestionServiceBase;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IAsynchronousOperationListener _asyncListener;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CopilotGenerateDocumentationCommentManager([Import(AllowDefault = true)] SuggestionServiceBase? suggestionServiceBase, IThreadingContext threadingContext,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _suggestionServiceBase = suggestionServiceBase;
-        _threadingContext = threadingContext;
-        _asyncListener = listenerProvider.GetListener(FeatureAttribute.GenerateDocumentation);
-    }
+    private readonly SuggestionServiceBase? _suggestionServiceBase = suggestionServiceBase;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IAsynchronousOperationListener _asyncListener = listenerProvider.GetListener(FeatureAttribute.GenerateDocumentation);
 
     public void StartSuggestionSession(ITextBuffer subjectBuffer, ITextView textView, CancellationToken cancellationToken)
     {

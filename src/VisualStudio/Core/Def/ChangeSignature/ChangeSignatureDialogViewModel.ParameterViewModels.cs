@@ -13,9 +13,9 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ChangeSignature
 
 internal sealed partial class ChangeSignatureDialogViewModel
 {
-    public abstract class ParameterViewModel
+    public abstract class ParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel)
     {
-        protected ChangeSignatureDialogViewModel ChangeSignatureDialogViewModel { get; }
+        protected ChangeSignatureDialogViewModel ChangeSignatureDialogViewModel { get; } = changeSignatureDialogViewModel;
 
         public abstract Parameter Parameter { get; }
 
@@ -34,11 +34,6 @@ internal sealed partial class ChangeSignatureDialogViewModel
         public string ModifierAutomationText => ValueOrNone(Modifier);
         public string DefaultAutomationText => ValueOrNone(Default);
         public string CallSiteAutomationText => ValueOrNone(CallSite);
-
-        public ParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel)
-        {
-            ChangeSignatureDialogViewModel = changeSignatureDialogViewModel;
-        }
 
         private static string ValueOrNone(string value)
         {
@@ -103,16 +98,10 @@ internal sealed partial class ChangeSignatureDialogViewModel
         }
     }
 
-    public sealed class AddedParameterViewModel : ParameterViewModel
+    public sealed class AddedParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel, AddedParameter addedParameter) : ParameterViewModel(changeSignatureDialogViewModel)
     {
         public override Parameter Parameter => _addedParameter;
-        private readonly AddedParameter _addedParameter;
-
-        public AddedParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel, AddedParameter addedParameter)
-            : base(changeSignatureDialogViewModel)
-        {
-            _addedParameter = addedParameter;
-        }
+        private readonly AddedParameter _addedParameter = addedParameter;
 
         public override string Type => _addedParameter.TypeName;
 
@@ -171,24 +160,17 @@ internal sealed partial class ChangeSignatureDialogViewModel
         public override string DefaultValue => _addedParameter.DefaultValue;
     }
 
-    public sealed class ExistingParameterViewModel : ParameterViewModel
+    public sealed class ExistingParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel, ExistingParameter existingParameter, int initialIndex) : ParameterViewModel(changeSignatureDialogViewModel)
     {
         public IParameterSymbol ParameterSymbol => _existingParameter.Symbol;
 
-        private readonly ExistingParameter _existingParameter;
+        private readonly ExistingParameter _existingParameter = existingParameter;
 
         public override Parameter Parameter => _existingParameter;
 
-        public ExistingParameterViewModel(ChangeSignatureDialogViewModel changeSignatureDialogViewModel, ExistingParameter existingParameter, int initialIndex)
-            : base(changeSignatureDialogViewModel)
-        {
-            _existingParameter = existingParameter;
-            InitialIndex = initialIndex.ToString();
-        }
-
         public override string CallSite => string.Empty;
 
-        public override string InitialIndex { get; }
+        public override string InitialIndex { get; } = initialIndex.ToString();
 
         public override string Modifier
         {

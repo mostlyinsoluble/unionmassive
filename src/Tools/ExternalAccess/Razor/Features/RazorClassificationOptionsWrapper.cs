@@ -8,14 +8,11 @@ using Microsoft.CodeAnalysis.Classification;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
     [DataContract]
-    internal readonly struct RazorClassificationOptionsWrapper
+    internal readonly struct RazorClassificationOptionsWrapper(ClassificationOptions underlyingObject)
     {
         public static RazorClassificationOptionsWrapper Default = new(ClassificationOptions.Default);
 
         [DataMember(Order = 0)]
-        internal readonly ClassificationOptions UnderlyingObject;
-
-        public RazorClassificationOptionsWrapper(ClassificationOptions underlyingObject)
-            => UnderlyingObject = underlyingObject;
+        internal readonly ClassificationOptions UnderlyingObject = underlyingObject;
     }
 }

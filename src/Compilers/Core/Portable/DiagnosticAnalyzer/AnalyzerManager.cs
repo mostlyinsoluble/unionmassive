@@ -30,15 +30,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         // Not created as ImmutableDictionary for perf considerations, but should be treated as immutable
         private readonly Dictionary<DiagnosticAnalyzer, AnalyzerExecutionContext> _analyzerExecutionContextMap;
 
-        public AnalyzerManager(ImmutableArray<DiagnosticAnalyzer> analyzers)
-        {
-            _analyzerExecutionContextMap = CreateAnalyzerExecutionContextMap(analyzers);
-        }
+        public AnalyzerManager(ImmutableArray<DiagnosticAnalyzer> analyzers) => _analyzerExecutionContextMap = CreateAnalyzerExecutionContextMap(analyzers);
 
-        public AnalyzerManager(DiagnosticAnalyzer analyzer)
-        {
-            _analyzerExecutionContextMap = CreateAnalyzerExecutionContextMap(SpecializedCollections.SingletonEnumerable(analyzer));
-        }
+        public AnalyzerManager(DiagnosticAnalyzer analyzer) => _analyzerExecutionContextMap = CreateAnalyzerExecutionContextMap(SpecializedCollections.SingletonEnumerable(analyzer));
 
         private Dictionary<DiagnosticAnalyzer, AnalyzerExecutionContext> CreateAnalyzerExecutionContextMap(IEnumerable<DiagnosticAnalyzer> analyzers)
         {

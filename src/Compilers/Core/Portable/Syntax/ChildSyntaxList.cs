@@ -84,33 +84,26 @@ namespace Microsoft.CodeAnalysis
             return green.IsList ? green.SlotCount : 1;
         }
 
-        internal readonly struct SlotData
+        internal readonly struct SlotData(int slotIndex, int precedingOccupantSlotCount, int positionAtSlotIndex)
         {
             /// <summary>
             /// The green node slot index at which to start the search
             /// </summary>
-            public readonly int SlotIndex;
+            public readonly int SlotIndex = slotIndex;
 
             /// <summary>
             /// Indicates the total number of occupants in preceding slots
             /// </summary>
-            public readonly int PrecedingOccupantSlotCount;
+            public readonly int PrecedingOccupantSlotCount = precedingOccupantSlotCount;
 
             /// <summary>
             /// Indicates the node start position plus any prior slot full widths
             /// </summary>
-            public readonly int PositionAtSlotIndex;
+            public readonly int PositionAtSlotIndex = positionAtSlotIndex;
 
             public SlotData(SyntaxNode node)
                 : this(slotIndex: 0, precedingOccupantSlotCount: 0, node.Position)
             {
-            }
-
-            public SlotData(int slotIndex, int precedingOccupantSlotCount, int positionAtSlotIndex)
-            {
-                SlotIndex = slotIndex;
-                PrecedingOccupantSlotCount = precedingOccupantSlotCount;
-                PositionAtSlotIndex = positionAtSlotIndex;
             }
         }
 

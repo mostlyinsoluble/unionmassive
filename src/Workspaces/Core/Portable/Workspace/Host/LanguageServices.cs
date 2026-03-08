@@ -14,10 +14,7 @@ public sealed class LanguageServices
     private readonly HostLanguageServices _services;
     // This ensures a single instance of this type associated with each HostLanguageServices.
     [Obsolete("Do not call directly.  Use HostLanguageServices.ProjectServices to acquire an instance")]
-    internal LanguageServices(HostLanguageServices services)
-    {
-        _services = services;
-    }
+    internal LanguageServices(HostLanguageServices services) => _services = services;
 
     public SolutionServices SolutionServices => _services.WorkspaceServices.SolutionServices;
 

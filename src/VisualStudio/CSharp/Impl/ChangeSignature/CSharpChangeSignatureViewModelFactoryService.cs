@@ -16,15 +16,11 @@ using static Microsoft.VisualStudio.LanguageServices.Implementation.ChangeSignat
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.ChangeSignature;
 
 [ExportLanguageService(typeof(IChangeSignatureViewModelFactoryService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpChangeSignatureViewModelFactoryService : ChangeSignatureViewModelFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpChangeSignatureViewModelFactoryService() : ChangeSignatureViewModelFactoryService
 {
     private static readonly CSharpParseOptions s_langVersionLatestParseOptions = new(LanguageVersion.Preview);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpChangeSignatureViewModelFactoryService()
-    {
-    }
 
     public override SymbolDisplayPart[] GeneratePreviewDisplayParts(AddedParameterViewModel addedParameterViewModel)
     {

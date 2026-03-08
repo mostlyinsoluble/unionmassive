@@ -20,17 +20,12 @@ namespace Microsoft.CodeAnalysis.LanguageServer.ExternalAccess.Razor;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(FormatNewFileHandler)), Shared]
 [Method(FormatNewFileMethodName)]
-internal sealed class FormatNewFileHandler : ILspServiceRequestHandler<FormatNewFileParams, string?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FormatNewFileHandler(IGlobalOptionService globalOptions) : ILspServiceRequestHandler<FormatNewFileParams, string?>
 {
     public const string FormatNewFileMethodName = "roslyn/formatNewFile";
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FormatNewFileHandler(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
 

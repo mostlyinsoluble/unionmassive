@@ -17,13 +17,8 @@ internal sealed partial class TriviaDataFactory
     /// represents a general trivia between two tokens. slightly more expensive than others since it
     /// needs to calculate stuff unlike other cases
     /// </summary>
-    private sealed class ComplexTrivia : AbstractComplexTrivia
+    private sealed class ComplexTrivia(LineFormattingOptions options, TreeData treeInfo, SyntaxToken token1, SyntaxToken token2) : AbstractComplexTrivia(options, treeInfo, token1, token2)
     {
-        public ComplexTrivia(LineFormattingOptions options, TreeData treeInfo, SyntaxToken token1, SyntaxToken token2)
-            : base(options, treeInfo, token1, token2)
-        {
-        }
-
         protected override void ExtractLineAndSpace(string text, out int lines, out int spaces)
             => text.ProcessTextBetweenTokens(this.TreeInfo, this.Token1, this.Options.TabSize, out lines, out spaces);
 

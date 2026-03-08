@@ -7,16 +7,11 @@ namespace Xunit.Harness
     using System;
 
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-    public class RequireExtensionAttribute : Attribute
+    public class RequireExtensionAttribute(string extensionFile) : Attribute
     {
-        public RequireExtensionAttribute(string extensionFile)
-        {
-            ExtensionFile = extensionFile;
-        }
-
         public string ExtensionFile
         {
             get;
-        }
+        } = extensionFile;
     }
 }

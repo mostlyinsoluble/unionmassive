@@ -1026,18 +1026,12 @@ internal sealed partial class CodeFixService : ICodeFixService
         return new(kinds, attribute.DocumentExtensions);
     }
 
-    private sealed class FixerComparer : IComparer<CodeFixProvider>
+    private sealed class FixerComparer(
+        ImmutableArray<CodeFixProvider> allFixers,
+        ImmutableDictionary<CodeFixProvider, int> priorityMap) : IComparer<CodeFixProvider>
     {
-        private readonly Dictionary<CodeFixProvider, int> _fixerToIndex;
-        private readonly ImmutableDictionary<CodeFixProvider, int> _priorityMap;
-
-        public FixerComparer(
-            ImmutableArray<CodeFixProvider> allFixers,
-            ImmutableDictionary<CodeFixProvider, int> priorityMap)
-        {
-            _fixerToIndex = allFixers.Select((fixer, index) => (fixer, index)).ToDictionary(t => t.fixer, t => t.index);
-            _priorityMap = priorityMap;
-        }
+        private readonly Dictionary<CodeFixProvider, int> _fixerToIndex = allFixers.Select((fixer, index) => (fixer, index)).ToDictionary(t => t.fixer, t => t.index);
+        private readonly ImmutableDictionary<CodeFixProvider, int> _priorityMap = priorityMap;
 
         public int Compare([AllowNull] CodeFixProvider x, [AllowNull] CodeFixProvider y)
         {
@@ -1061,14 +1055,9 @@ internal sealed partial class CodeFixService : ICodeFixService
     public TestAccessor GetTestAccessor()
         => new(this);
 
-    public readonly struct TestAccessor
+    public readonly struct TestAccessor(CodeFixService codeFixService)
     {
-        private readonly CodeFixService _codeFixService;
-
-        public TestAccessor(CodeFixService codeFixService)
-        {
-            _codeFixService = codeFixService;
-        }
+        private readonly CodeFixService _codeFixService = codeFixService;
 
         public ImmutableDictionary<LanguageKind, Lazy<ImmutableDictionary<CodeFixProvider, int>>> GetFixerPriorityPerLanguageMap(SolutionServices services)
             => _codeFixService.GetFixerPriorityPerLanguageMap(services);

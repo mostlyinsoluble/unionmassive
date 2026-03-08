@@ -36,10 +36,7 @@ internal readonly struct LineColumnDelta(int lines, int spaces)
     }
 
     public LineColumnDelta(int lines, int spaces, bool whitespaceOnly, bool forceUpdate)
-        : this(lines, spaces, whitespaceOnly)
-    {
-        this.ForceUpdate = forceUpdate;
-    }
+        : this(lines, spaces, whitespaceOnly) => this.ForceUpdate = forceUpdate;
 
     internal LineColumnDelta With(LineColumnDelta delta)
     {

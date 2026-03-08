@@ -32,21 +32,16 @@ namespace Microsoft.CodeAnalysis
     /// If the size of the dictionary is known at creation and it is likely to contain more than 10 elements, 
     /// then regular Dictionary is a better choice.
     /// </summary>
-    internal sealed class SmallDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>
+    internal sealed class SmallDictionary<K, V>(IEqualityComparer<K> comparer) : IEnumerable<KeyValuePair<K, V>>
         where K : notnull
     {
         private AvlNode? _root;
-        public readonly IEqualityComparer<K> Comparer;
+        public readonly IEqualityComparer<K> Comparer = comparer;
 
         // https://github.com/dotnet/roslyn/issues/40344
         public static readonly SmallDictionary<K, V> Empty = new SmallDictionary<K, V>(null!);
 
         public SmallDictionary() : this(EqualityComparer<K>.Default) { }
-
-        public SmallDictionary(IEqualityComparer<K> comparer)
-        {
-            Comparer = comparer;
-        }
 
         public SmallDictionary(SmallDictionary<K, V> other, IEqualityComparer<K> comparer)
             : this(comparer)
@@ -117,40 +112,22 @@ namespace Microsoft.CodeAnalysis
 #endif
         }
 
-        private abstract class Node
+        private abstract class Node(K key, V value)
         {
-            public readonly K Key;
-            public V Value;
-
-            protected Node(K key, V value)
-            {
-                this.Key = key;
-                this.Value = value;
-            }
+            public readonly K Key = key;
+            public V Value = value;
 
             public virtual Node? Next => null;
         }
 
-        private sealed class NodeLinked : Node
+        private sealed class NodeLinked(K key, V value, SmallDictionary<K, V>.Node next) : Node(key, value)
         {
-            public NodeLinked(K key, V value, Node next)
-                : base(key, value)
-            {
-                this.Next = next;
-            }
-
-            public override Node Next { get; }
+            public override Node Next { get; } = next;
         }
 
-        private sealed class AvlNodeHead : AvlNode
+        private sealed class AvlNodeHead(int hashCode, K key, V value, SmallDictionary<K, V>.Node next) : AvlNode(hashCode, key, value)
         {
-            public Node next;
-
-            public AvlNodeHead(int hashCode, K key, V value, Node next)
-                : base(hashCode, key, value)
-            {
-                this.next = next;
-            }
+            public Node next = next;
 
             public override Node Next => next;
         }
@@ -158,26 +135,16 @@ namespace Microsoft.CodeAnalysis
         // separate class to ensure that HashCode field 
         // is located before other AvlNode fields
         // Balance is also here for better packing of AvlNode on 64bit
-        private abstract class HashedNode : Node
+        private abstract class HashedNode(int hashCode, K key, V value) : Node(key, value)
         {
-            public readonly int HashCode;
+            public readonly int HashCode = hashCode;
             public sbyte Balance;
-
-            protected HashedNode(int hashCode, K key, V value)
-                : base(key, value)
-            {
-                this.HashCode = hashCode;
-            }
         }
 
-        private class AvlNode : HashedNode
+        private class AvlNode(int hashCode, K key, V value) : HashedNode(hashCode, key, value)
         {
             public AvlNode? Left;
             public AvlNode? Right;
-
-            public AvlNode(int hashCode, K key, V value)
-                : base(hashCode, key, value)
-            { }
 
 #if DEBUG
             public static int AssertBalanced(AvlNode? V)
@@ -503,14 +470,9 @@ hasBucket:
 
         public KeyCollection Keys => new KeyCollection(this);
 
-        internal readonly struct KeyCollection : IEnumerable<K>
+        internal readonly struct KeyCollection(SmallDictionary<K, V> dict) : IEnumerable<K>
         {
-            private readonly SmallDictionary<K, V> _dict;
-
-            public KeyCollection(SmallDictionary<K, V> dict)
-            {
-                _dict = dict;
-            }
+            private readonly SmallDictionary<K, V> _dict = dict;
 
             public struct Enumerator
             {
@@ -577,14 +539,9 @@ hasBucket:
                 return new Enumerator(_dict);
             }
 
-            public class EnumerableImpl : IEnumerator<K>
+            public class EnumerableImpl(KeyCollection.Enumerator e) : IEnumerator<K>
             {
-                private Enumerator _e;
-
-                public EnumerableImpl(Enumerator e)
-                {
-                    _e = e;
-                }
+                private Enumerator _e = e;
 
                 K IEnumerator<K>.Current => _e.Current;
 
@@ -618,14 +575,9 @@ hasBucket:
 
         public ValueCollection Values => new ValueCollection(this);
 
-        internal readonly struct ValueCollection : IEnumerable<V>
+        internal readonly struct ValueCollection(SmallDictionary<K, V> dict) : IEnumerable<V>
         {
-            private readonly SmallDictionary<K, V> _dict;
-
-            public ValueCollection(SmallDictionary<K, V> dict)
-            {
-                _dict = dict;
-            }
+            private readonly SmallDictionary<K, V> _dict = dict;
 
             public struct Enumerator
             {
@@ -694,14 +646,9 @@ hasBucket:
                 return new Enumerator(_dict);
             }
 
-            public class EnumerableImpl : IEnumerator<V>
+            public class EnumerableImpl(ValueCollection.Enumerator e) : IEnumerator<V>
             {
-                private Enumerator _e;
-
-                public EnumerableImpl(Enumerator e)
-                {
-                    _e = e;
-                }
+                private Enumerator _e = e;
 
                 V IEnumerator<V>.Current => _e.Current;
 
@@ -800,14 +747,9 @@ hasBucket:
             return new Enumerator(this);
         }
 
-        public class EnumerableImpl : IEnumerator<KeyValuePair<K, V>>
+        public class EnumerableImpl(SmallDictionary<K, V>.Enumerator e) : IEnumerator<KeyValuePair<K, V>>
         {
-            private Enumerator _e;
-
-            public EnumerableImpl(Enumerator e)
-            {
-                _e = e;
-            }
+            private Enumerator _e = e;
 
             KeyValuePair<K, V> IEnumerator<KeyValuePair<K, V>>.Current => _e.Current;
 
@@ -849,7 +791,7 @@ hasBucket:
                 cur = cur.Left;
             }
 
-            h = h + h / 2;
+            h += h / 2;
             return h;
         }
     }

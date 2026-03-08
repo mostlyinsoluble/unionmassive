@@ -23,15 +23,11 @@ namespace Microsoft.CodeAnalysis.CSharp.ReplaceDiscardDeclarationsWithAssignment
 using static SyntaxFactory;
 
 [ExportLanguageService(typeof(IReplaceDiscardDeclarationsWithAssignmentsService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpReplaceDiscardDeclarationsWithAssignmentsService : IReplaceDiscardDeclarationsWithAssignmentsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpReplaceDiscardDeclarationsWithAssignmentsService() : IReplaceDiscardDeclarationsWithAssignmentsService
 {
     private const string DiscardVariableName = "_";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpReplaceDiscardDeclarationsWithAssignmentsService()
-    {
-    }
 
     public async Task<SyntaxNode> ReplaceAsync(
         Document document,

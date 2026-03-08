@@ -21,14 +21,10 @@ namespace Microsoft.CodeAnalysis.Editor.Xaml.CodeFixes.RemoveUnusedUsings;
 
 [ExportCodeFixProvider(StringConstants.XamlLanguageName, Name = PredefinedCodeFixProviderNames.RemoveUnnecessaryImports), Shared]
 [ExtensionOrder(After = PredefinedCodeFixProviderNames.AddMissingReference)]
-internal sealed class RemoveUnnecessaryUsingsCodeFixProvider : CodeFixProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RemoveUnnecessaryUsingsCodeFixProvider() : CodeFixProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RemoveUnnecessaryUsingsCodeFixProvider()
-    {
-    }
-
     public sealed override ImmutableArray<string> FixableDiagnosticIds
     {
         get { return [XamlDiagnosticIds.UnnecessaryNamespacesId]; }

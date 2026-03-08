@@ -11,20 +11,13 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class ErrorMethodSymbol : MethodSymbol
+    internal sealed class ErrorMethodSymbol(TypeSymbol containingType, TypeSymbol returnType, string name) : MethodSymbol
     {
         public static readonly ErrorMethodSymbol UnknownMethod = new ErrorMethodSymbol(ErrorTypeSymbol.UnknownResultType, ErrorTypeSymbol.UnknownResultType, string.Empty);
 
-        private readonly TypeSymbol _containingType;
-        private readonly TypeSymbol _returnType;
-        private readonly string _name;
-
-        public ErrorMethodSymbol(TypeSymbol containingType, TypeSymbol returnType, string name)
-        {
-            _containingType = containingType;
-            _returnType = returnType;
-            _name = name;
-        }
+        private readonly TypeSymbol _containingType = containingType;
+        private readonly TypeSymbol _returnType = returnType;
+        private readonly string _name = name;
 
         public override string Name
         {

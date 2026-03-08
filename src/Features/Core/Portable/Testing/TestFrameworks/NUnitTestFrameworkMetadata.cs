@@ -9,14 +9,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Features.Testing;
 
 [Export(typeof(ITestFrameworkMetadata)), Shared]
-internal sealed class NUnitTestFrameworkMetadata : ITestFrameworkMetadata
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NUnitTestFrameworkMetadata() : ITestFrameworkMetadata
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NUnitTestFrameworkMetadata()
-    {
-    }
-
     public bool MatchesAttributeSyntacticName(string attributeSyntacticName)
     {
         return attributeSyntacticName is "TestAttribute" or "TheoryAttribute" or "TestCaseAttribute" or "TestCaseSourceAttribute"

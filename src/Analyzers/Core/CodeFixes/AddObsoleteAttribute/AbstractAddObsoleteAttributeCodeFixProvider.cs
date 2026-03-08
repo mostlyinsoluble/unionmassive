@@ -15,19 +15,13 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.AddObsoleteAttribute;
 
-internal abstract class AbstractAddObsoleteAttributeCodeFixProvider
-    : SyntaxEditorBasedCodeFixProvider
+internal abstract class AbstractAddObsoleteAttributeCodeFixProvider(
+    ISyntaxFacts syntaxFacts,
+    string title)
+        : SyntaxEditorBasedCodeFixProvider
 {
-    private readonly ISyntaxFacts _syntaxFacts;
-    private readonly string _title;
-
-    protected AbstractAddObsoleteAttributeCodeFixProvider(
-        ISyntaxFacts syntaxFacts,
-        string title)
-    {
-        _syntaxFacts = syntaxFacts;
-        _title = title;
-    }
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
+    private readonly string _title = title;
 
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {

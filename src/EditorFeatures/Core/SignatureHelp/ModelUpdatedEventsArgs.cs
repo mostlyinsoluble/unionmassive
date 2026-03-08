@@ -6,12 +6,7 @@ using System;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHelp;
 
-internal sealed class ModelUpdatedEventsArgs : EventArgs
+internal sealed class ModelUpdatedEventsArgs(Model? newModel) : EventArgs
 {
-    public ModelUpdatedEventsArgs(Model? newModel)
-    {
-        NewModel = newModel;
-    }
-
-    public Model? NewModel { get; }
+    public Model? NewModel { get; } = newModel;
 }

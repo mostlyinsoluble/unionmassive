@@ -64,10 +64,7 @@ internal abstract class EditAndContinueTestVerifier
 
     public AbstractEditAndContinueAnalyzer Analyzer { get; }
 
-    protected EditAndContinueTestVerifier(Action<SyntaxNode>? faultInjector)
-    {
-        Analyzer = CreateAnalyzer(faultInjector, LanguageName);
-    }
+    protected EditAndContinueTestVerifier(Action<SyntaxNode>? faultInjector) => Analyzer = CreateAnalyzer(faultInjector, LanguageName);
 
     public abstract ImmutableArray<SyntaxNode> GetDeclarators(ISymbol method);
     public abstract string LanguageName { get; }

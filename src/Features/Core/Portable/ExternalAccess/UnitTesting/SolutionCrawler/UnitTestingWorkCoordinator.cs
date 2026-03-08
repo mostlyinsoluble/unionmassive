@@ -532,10 +532,7 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService
         {
             private readonly UnitTestingWorkCoordinator _workCoordinator;
 
-            internal TestAccessor(UnitTestingWorkCoordinator workCoordinator)
-            {
-                _workCoordinator = workCoordinator;
-            }
+            internal TestAccessor(UnitTestingWorkCoordinator workCoordinator) => _workCoordinator = workCoordinator;
 
             internal void WaitUntilCompletion(ImmutableArray<IUnitTestingIncrementalAnalyzer> workers)
             {

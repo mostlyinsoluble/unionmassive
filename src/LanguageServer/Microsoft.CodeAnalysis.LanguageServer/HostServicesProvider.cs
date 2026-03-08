@@ -13,14 +13,9 @@ namespace Microsoft.CodeAnalysis.LanguageServer;
 /// A simple type to provide a single copy of <see cref="Microsoft.CodeAnalysis.Host.HostServices"/> for the MEF composition.
 /// </summary>
 [Export(typeof(HostServicesProvider)), Shared]
-internal sealed class HostServicesProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class HostServicesProvider(ExportProvider exportProvider)
 {
-    public HostServices HostServices { get; }
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public HostServicesProvider(ExportProvider exportProvider)
-    {
-        HostServices = VisualStudioMefHostServices.Create(exportProvider);
-    }
+    public HostServices HostServices { get; } = VisualStudioMefHostServices.Create(exportProvider);
 }

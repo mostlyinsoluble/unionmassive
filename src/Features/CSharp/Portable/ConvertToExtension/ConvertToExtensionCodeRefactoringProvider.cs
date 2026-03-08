@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.CodeGeneration;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp.CodeGeneration;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
@@ -143,11 +142,6 @@ internal sealed partial class ConvertToExtensionCodeRefactoringProvider() : Code
         var cancellationToken = context.CancellationToken;
 
         var document = context.Document;
-
-        // Only offer if the user us on C# 14 or later where extension types are supported.
-        if (!document.Project.ParseOptions!.LanguageVersion().SupportsExtensions())
-            return;
-
         var semanticModel = await document.GetRequiredSemanticModelAsync(cancellationToken).ConfigureAwait(false);
         var methodDeclaration = await context.TryGetRelevantNodeAsync<MethodDeclarationSyntax>().ConfigureAwait(false);
 
@@ -259,8 +253,7 @@ internal sealed partial class ConvertToExtensionCodeRefactoringProvider() : Code
             var codeGenerationInfo = new CSharpCodeGenerationContextInfo(
                 CodeGenerationContext.Default,
                 CSharpCodeGenerationOptions.Default,
-                (CSharpCodeGenerationService)codeGenerationService,
-                LanguageVersion.CSharp14);
+                (CSharpCodeGenerationService)codeGenerationService);
 
             var firstExtensionInfo = group[0];
             var typeParameters = firstExtensionInfo.MethodTypeParameters.CastArray<ITypeParameterSymbol>();

@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed partial class RemoteKeepAliveService : BrokeredServiceBase, IRemoteKeepAliveService
+internal sealed partial class RemoteKeepAliveService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteKeepAliveService
 {
     internal sealed class Factory : FactoryBase<IRemoteKeepAliveService>
     {
@@ -23,11 +23,6 @@ internal sealed partial class RemoteKeepAliveService : BrokeredServiceBase, IRem
     /// is only there because TaskCompletionSource requires some type on netstandard2.0.
     /// </summary>
     private readonly ConcurrentDictionary<long, TaskCompletionSource<bool>> _sessionIdToCompletionSource = new();
-
-    public RemoteKeepAliveService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
-    }
 
     private TaskCompletionSource<bool> GetSessionCompletionSource(long sessionId)
         => _sessionIdToCompletionSource.GetOrAdd(sessionId, static _ => new());

@@ -17,31 +17,22 @@ using Microsoft.VisualStudio.Language.CallHierarchy;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy.Finders;
 
-internal abstract class AbstractCallFinder
+internal abstract class AbstractCallFinder(
+    ISymbol symbol,
+    ProjectId projectId,
+    IAsynchronousOperationListener asyncListener,
+    CallHierarchyProvider provider)
 {
-    private readonly IAsynchronousOperationListener _asyncListener;
+    private readonly IAsynchronousOperationListener _asyncListener = asyncListener;
     private readonly CancellationTokenSource _cancellationSource = new();
-    private readonly ProjectId _projectId;
-    private readonly SymbolKey _symbolKey;
+    private readonly ProjectId _projectId = projectId;
+    private readonly SymbolKey _symbolKey = symbol.GetSymbolKey();
 
-    protected readonly CallHierarchyProvider Provider;
-    protected readonly string SymbolName;
+    protected readonly CallHierarchyProvider Provider = provider;
+    protected readonly string SymbolName = symbol.Name;
 
     // For Testing only
     internal IImmutableSet<Document> Documents;
-
-    protected AbstractCallFinder(
-        ISymbol symbol,
-        ProjectId projectId,
-        IAsynchronousOperationListener asyncListener,
-        CallHierarchyProvider provider)
-    {
-        _asyncListener = asyncListener;
-        _symbolKey = symbol.GetSymbolKey();
-        this.SymbolName = symbol.Name;
-        _projectId = projectId;
-        this.Provider = provider;
-    }
 
     internal void SetDocuments(IImmutableSet<Document> documents)
         => this.Documents = documents;

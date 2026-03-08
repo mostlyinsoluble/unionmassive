@@ -14,35 +14,24 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.CodeGeneration;
 
-internal abstract class CodeGenerationSymbol : ISymbol
+internal abstract class CodeGenerationSymbol(
+    IAssemblySymbol containingAssembly,
+    INamedTypeSymbol containingType,
+    ImmutableArray<AttributeData> attributes,
+    Accessibility declaredAccessibility,
+    DeclarationModifiers modifiers,
+    string name,
+    string documentationCommentXml = null) : ISymbol
 {
     protected static ConditionalWeakTable<CodeGenerationSymbol, SyntaxAnnotation[]> annotationsTable = new();
 
-    private readonly ImmutableArray<AttributeData> _attributes;
-    protected readonly string _documentationCommentXml;
+    private readonly ImmutableArray<AttributeData> _attributes = attributes.NullToEmpty();
+    protected readonly string _documentationCommentXml = documentationCommentXml;
 
-    public Accessibility DeclaredAccessibility { get; }
-    protected internal DeclarationModifiers Modifiers { get; }
-    public string Name { get; }
-    public INamedTypeSymbol ContainingType { get; protected set; }
-
-    protected CodeGenerationSymbol(
-        IAssemblySymbol containingAssembly,
-        INamedTypeSymbol containingType,
-        ImmutableArray<AttributeData> attributes,
-        Accessibility declaredAccessibility,
-        DeclarationModifiers modifiers,
-        string name,
-        string documentationCommentXml = null)
-    {
-        this.ContainingAssembly = containingAssembly;
-        this.ContainingType = containingType;
-        _attributes = attributes.NullToEmpty();
-        this.DeclaredAccessibility = declaredAccessibility;
-        this.Modifiers = modifiers;
-        this.Name = name;
-        _documentationCommentXml = documentationCommentXml;
-    }
+    public Accessibility DeclaredAccessibility { get; } = declaredAccessibility;
+    protected internal DeclarationModifiers Modifiers { get; } = modifiers;
+    public string Name { get; } = name;
+    public INamedTypeSymbol ContainingType { get; protected set; } = containingType;
 
     protected abstract CodeGenerationSymbol Clone();
 
@@ -76,7 +65,7 @@ internal abstract class CodeGenerationSymbol : ISymbol
 
     public virtual ISymbol ContainingSymbol => null;
 
-    public IAssemblySymbol ContainingAssembly { get; }
+    public IAssemblySymbol ContainingAssembly { get; } = containingAssembly;
 
     public static IMethodSymbol ContainingMethod => null;
 

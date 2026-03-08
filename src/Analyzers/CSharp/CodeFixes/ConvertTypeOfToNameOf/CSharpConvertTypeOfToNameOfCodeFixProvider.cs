@@ -8,7 +8,6 @@ using System.Threading;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.ConvertTypeOfToNameOf;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using Microsoft.CodeAnalysis.CSharp.Shared.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.UseUnboundGenericTypeInNameOf;
 using Microsoft.CodeAnalysis.Shared.Extensions;
@@ -25,9 +24,7 @@ internal sealed class CSharpConvertTypeOfToNameOfCodeFixProvider()
         => CSharpCodeFixesResources.Convert_typeof_to_nameof;
 
     protected override SyntaxNode ConvertToUnboundGeneric(ParseOptions options, SyntaxNode nameOfSyntax)
-        => options.LanguageVersion().IsCSharp14OrAbove()
-            ? CSharpUseUnboundGenericTypeInNameOfCodeFixProvider.ConvertToUnboundGenericNameof(nameOfSyntax)
-            : nameOfSyntax;
+        => CSharpUseUnboundGenericTypeInNameOfCodeFixProvider.ConvertToUnboundGenericNameof(nameOfSyntax);
 
     protected override SyntaxNode GetSymbolTypeExpression(SemanticModel model, MemberAccessExpressionSyntax node, CancellationToken cancellationToken)
     {

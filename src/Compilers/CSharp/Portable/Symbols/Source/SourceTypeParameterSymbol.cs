@@ -416,17 +416,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
     }
 
-    internal sealed class SourceTypeTypeParameterSymbol : SourceTypeParameterSymbol
+    internal sealed class SourceTypeTypeParameterSymbol(SourceNamedTypeSymbol owner, string name, int ordinal, VarianceKind varianceKind, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs) : SourceTypeParameterSymbol(name, ordinal, locations, syntaxRefs)
     {
-        private readonly SourceNamedTypeSymbol _owner;
-        private readonly VarianceKind _varianceKind;
-
-        public SourceTypeTypeParameterSymbol(SourceNamedTypeSymbol owner, string name, int ordinal, VarianceKind varianceKind, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs)
-            : base(name, ordinal, locations, syntaxRefs)
-        {
-            _owner = owner;
-            _varianceKind = varianceKind;
-        }
+        private readonly SourceNamedTypeSymbol _owner = owner;
+        private readonly VarianceKind _varianceKind = varianceKind;
 
         public override TypeParameterKind TypeParameterKind
         {
@@ -562,13 +555,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
     }
 
-    internal abstract class SourceMethodTypeParameterSymbol : SourceTypeParameterSymbol
+    internal abstract class SourceMethodTypeParameterSymbol(string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs) : SourceTypeParameterSymbol(name, ordinal, locations, syntaxRefs)
     {
-        protected SourceMethodTypeParameterSymbol(string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs)
-            : base(name, ordinal, locations, syntaxRefs)
-        {
-        }
-
         public abstract SourceMethodSymbol Owner { get; }
 
         internal sealed override void AddDeclarationDiagnostics(BindingDiagnosticBag diagnostics)
@@ -615,15 +603,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected abstract override TypeParameterBounds ResolveBounds(ConsList<TypeParameterSymbol> inProgress, BindingDiagnosticBag diagnostics);
     }
 
-    internal sealed class SourceNotOverridingMethodTypeParameterSymbol : SourceMethodTypeParameterSymbol
+    internal sealed class SourceNotOverridingMethodTypeParameterSymbol(SourceMethodSymbol owner, string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs) : SourceMethodTypeParameterSymbol(name, ordinal, locations, syntaxRefs)
     {
-        private readonly SourceMethodSymbol _owner;
-
-        public SourceNotOverridingMethodTypeParameterSymbol(SourceMethodSymbol owner, string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs)
-            : base(name, ordinal, locations, syntaxRefs)
-        {
-            _owner = owner;
-        }
+        private readonly SourceMethodSymbol _owner = owner;
 
         public override SourceMethodSymbol Owner => _owner;
 
@@ -746,21 +728,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// that explicitly implements an interface. The map caches the overridden method
     /// and a type map from overridden type parameters to overriding type parameters.
     /// </summary>
-    internal abstract class OverriddenMethodTypeParameterMapBase
+    internal abstract class OverriddenMethodTypeParameterMapBase(SourceOrdinaryMethodSymbol overridingMethod)
     {
         // Method representing overriding or explicit implementation.
-        private readonly SourceOrdinaryMethodSymbol _overridingMethod;
+        private readonly SourceOrdinaryMethodSymbol _overridingMethod = overridingMethod;
 
         // Type map shared by all type parameters for this explicit implementation.
         private TypeMap _lazyTypeMap;
 
         // Overridden or explicitly implemented method. May be null in error cases.
         private MethodSymbol _lazyOverriddenMethod = ErrorMethodSymbol.UnknownMethod;
-
-        protected OverriddenMethodTypeParameterMapBase(SourceOrdinaryMethodSymbol overridingMethod)
-        {
-            _overridingMethod = overridingMethod;
-        }
 
         public SourceOrdinaryMethodSymbol OverridingMethod
         {
@@ -814,10 +791,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class OverriddenMethodTypeParameterMap : OverriddenMethodTypeParameterMapBase
     {
         public OverriddenMethodTypeParameterMap(SourceOrdinaryMethodSymbol overridingMethod)
-            : base(overridingMethod)
-        {
-            Debug.Assert(overridingMethod.IsOverride);
-        }
+            : base(overridingMethod) => Debug.Assert(overridingMethod.IsOverride);
 
         protected override MethodSymbol GetOverriddenMethod(SourceOrdinaryMethodSymbol overridingMethod)
         {
@@ -835,10 +809,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class ExplicitInterfaceMethodTypeParameterMap : OverriddenMethodTypeParameterMapBase
     {
         public ExplicitInterfaceMethodTypeParameterMap(SourceOrdinaryMethodSymbol implementationMethod)
-            : base(implementationMethod)
-        {
-            Debug.Assert(implementationMethod.IsExplicitInterfaceImplementation);
-        }
+            : base(implementationMethod) => Debug.Assert(implementationMethod.IsExplicitInterfaceImplementation);
 
         protected override MethodSymbol GetOverriddenMethod(SourceOrdinaryMethodSymbol overridingMethod)
         {
@@ -857,15 +828,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <remarks>
     /// Exists to copy constraints from the corresponding type parameter of an overridden method.
     /// </remarks>
-    internal sealed class SourceOverridingMethodTypeParameterSymbol : SourceMethodTypeParameterSymbol
+    internal sealed class SourceOverridingMethodTypeParameterSymbol(OverriddenMethodTypeParameterMapBase map, string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs) : SourceMethodTypeParameterSymbol(name, ordinal, locations, syntaxRefs)
     {
-        private readonly OverriddenMethodTypeParameterMapBase _map;
-
-        public SourceOverridingMethodTypeParameterSymbol(OverriddenMethodTypeParameterMapBase map, string name, int ordinal, ImmutableArray<Location> locations, ImmutableArray<SyntaxReference> syntaxRefs)
-            : base(name, ordinal, locations, syntaxRefs)
-        {
-            _map = map;
-        }
+        private readonly OverriddenMethodTypeParameterMapBase _map = map;
 
         public override SourceMethodSymbol Owner
         {

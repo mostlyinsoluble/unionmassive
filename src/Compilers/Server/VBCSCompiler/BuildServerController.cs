@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                 return CommonCompiler.Failed;
             }
 
-            pipeName = pipeName ?? GetDefaultPipeName();
+            pipeName ??= GetDefaultPipeName();
             if (pipeName is null)
             {
                 throw new Exception("Cannot calculate pipe name");

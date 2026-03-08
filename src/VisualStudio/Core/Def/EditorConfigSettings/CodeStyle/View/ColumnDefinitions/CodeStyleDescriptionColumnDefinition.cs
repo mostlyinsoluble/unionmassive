@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Description)]
-internal sealed class CodeStyleDescriptionColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleDescriptionColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleDescriptionColumnDefinition()
-    {
-    }
-
     public override string Name => Description;
     public override string DisplayName => ServicesVSResources.Description;
     public override bool IsFilterable => false;

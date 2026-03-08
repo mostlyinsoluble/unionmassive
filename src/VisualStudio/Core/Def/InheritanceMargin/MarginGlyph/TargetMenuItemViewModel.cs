@@ -23,10 +23,7 @@ internal class TargetMenuItemViewModel : MenuItemViewModel
     internal TargetMenuItemViewModel(
         string displayContent,
         ImageMoniker imageMoniker,
-        DetachedDefinitionItem definitionItem) : base(displayContent, imageMoniker)
-    {
-        DefinitionItem = definitionItem;
-    }
+        DetachedDefinitionItem definitionItem) : base(displayContent, imageMoniker) => DefinitionItem = definitionItem;
 
     public static TargetMenuItemViewModel Create(InheritanceTargetItem target, string displayContent)
         => new(

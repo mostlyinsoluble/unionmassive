@@ -263,21 +263,13 @@ namespace Microsoft.Cci
 
         #region Table Serialization
 
-        private readonly struct Sizes
+        private readonly struct Sizes(int blobHeapSize, int guidHeapSize)
         {
-            public readonly int BlobHeapSize;
-            public readonly int GuidHeapSize;
+            public readonly int BlobHeapSize = blobHeapSize;
+            public readonly int GuidHeapSize = guidHeapSize;
 
-            public readonly int BlobIndexSize;
-            public readonly int GuidIndexSize;
-
-            public Sizes(int blobHeapSize, int guidHeapSize)
-            {
-                BlobHeapSize = blobHeapSize;
-                GuidHeapSize = guidHeapSize;
-                BlobIndexSize = (blobHeapSize <= ushort.MaxValue) ? 2 : 4;
-                GuidIndexSize = (guidHeapSize <= ushort.MaxValue) ? 2 : 4;
-            }
+            public readonly int BlobIndexSize = (blobHeapSize <= ushort.MaxValue) ? 2 : 4;
+            public readonly int GuidIndexSize = (guidHeapSize <= ushort.MaxValue) ? 2 : 4;
         }
 
         internal void SerializeMetadataTables(BlobBuilder writer)

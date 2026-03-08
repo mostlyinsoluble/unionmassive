@@ -236,10 +236,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             private readonly SingleTypeDeclaration _decl;
 
-            internal TypeDeclarationIdentity(SingleTypeDeclaration decl)
-            {
-                _decl = decl;
-            }
+            internal TypeDeclarationIdentity(SingleTypeDeclaration decl) => _decl = decl;
 
             public override bool Equals(object obj)
             {

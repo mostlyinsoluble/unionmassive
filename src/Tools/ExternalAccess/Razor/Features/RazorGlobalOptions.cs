@@ -13,16 +13,11 @@ using Microsoft.CodeAnalysis.Options;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
     [Export(typeof(RazorGlobalOptions)), Shared]
-    internal sealed class RazorGlobalOptions
+    [method: ImportingConstructor]
+    [method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be marked with 'ObsoleteAttribute'", Justification = "Used in test code")]
+    internal sealed class RazorGlobalOptions(IGlobalOptionService globalOptions)
     {
-        private readonly IGlobalOptionService _globalOptions;
-
-        [ImportingConstructor]
-        [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be marked with 'ObsoleteAttribute'", Justification = "Used in test code")]
-        public RazorGlobalOptions(IGlobalOptionService globalOptions)
-        {
-            _globalOptions = globalOptions;
-        }
+        private readonly IGlobalOptionService _globalOptions = globalOptions;
 
         public RazorAutoFormattingOptions GetAutoFormattingOptions()
             => new(_globalOptions.GetAutoFormattingOptions(LanguageNames.CSharp));

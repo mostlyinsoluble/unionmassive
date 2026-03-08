@@ -12,10 +12,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         private readonly BadImageFormatException? _mrEx;
 
-        internal UnsupportedMetadataTypeSymbol(BadImageFormatException? mrEx = null)
-        {
-            _mrEx = mrEx;
-        }
+        internal UnsupportedMetadataTypeSymbol(BadImageFormatException? mrEx = null) => _mrEx = mrEx;
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {

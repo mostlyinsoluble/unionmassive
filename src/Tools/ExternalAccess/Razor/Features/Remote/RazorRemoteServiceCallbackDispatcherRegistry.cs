@@ -9,16 +9,11 @@ using Microsoft.CodeAnalysis.Remote;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal sealed class RazorRemoteServiceCallbackDispatcherRegistry : IRemoteServiceCallbackDispatcherProvider
+    internal sealed class RazorRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, RazorRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers) : IRemoteServiceCallbackDispatcherProvider
     {
         public static readonly RazorRemoteServiceCallbackDispatcherRegistry Empty = new(Array.Empty<(Type, RazorRemoteServiceCallbackDispatcher)>());
 
-        private readonly ImmutableDictionary<Type, RazorRemoteServiceCallbackDispatcher> _lazyDispatchers;
-
-        public RazorRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, RazorRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers)
-        {
-            _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
-        }
+        private readonly ImmutableDictionary<Type, RazorRemoteServiceCallbackDispatcher> _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
 
         IRemoteServiceCallbackDispatcher IRemoteServiceCallbackDispatcherProvider.GetDispatcher(Type serviceType)
             => _lazyDispatchers[serviceType];

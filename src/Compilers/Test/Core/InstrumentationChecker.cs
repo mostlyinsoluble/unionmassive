@@ -278,10 +278,7 @@ End Namespace
         protected StringBuilder _consoleExpectations = new StringBuilder();
         private readonly Dictionary<int /*method*/, MethodChecker> _spanExpectations = new Dictionary<int, MethodChecker>();
 
-        protected BaseInstrumentationChecker()
-        {
-            AddConsoleExpectation($"Flushing");
-        }
+        protected BaseInstrumentationChecker() => AddConsoleExpectation($"Flushing");
 
         /// <summary>
         /// Start recording expectations for a method.

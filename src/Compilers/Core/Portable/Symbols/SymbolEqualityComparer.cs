@@ -36,10 +36,7 @@ namespace Microsoft.CodeAnalysis
 
         internal TypeCompareKind CompareKind { get; }
 
-        internal SymbolEqualityComparer(TypeCompareKind compareKind)
-        {
-            CompareKind = compareKind;
-        }
+        internal SymbolEqualityComparer(TypeCompareKind compareKind) => CompareKind = compareKind;
 
         /// <summary>
         /// Determines if two <see cref="ISymbol" /> instances are equal according to the rules of this comparer

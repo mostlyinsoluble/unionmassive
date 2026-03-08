@@ -9,15 +9,9 @@ namespace Microsoft.CodeAnalysis.MetadataAsSource;
 
 internal abstract partial class AbstractMetadataAsSourceService
 {
-    private abstract class AbstractWrappedNamespaceOrTypeSymbol : AbstractWrappedSymbol, INamespaceOrTypeSymbol
+    private abstract class AbstractWrappedNamespaceOrTypeSymbol(INamespaceOrTypeSymbol symbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService) : AbstractWrappedSymbol(symbol, canImplementImplicitly, docCommentFormattingService), INamespaceOrTypeSymbol
     {
-        private readonly INamespaceOrTypeSymbol _symbol;
-
-        protected AbstractWrappedNamespaceOrTypeSymbol(INamespaceOrTypeSymbol symbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService)
-            : base(symbol, canImplementImplicitly, docCommentFormattingService)
-        {
-            _symbol = symbol;
-        }
+        private readonly INamespaceOrTypeSymbol _symbol = symbol;
 
         public abstract ImmutableArray<ISymbol> GetMembers();
         public abstract ImmutableArray<ISymbol> GetMembers(string name);

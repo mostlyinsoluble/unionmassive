@@ -24,15 +24,11 @@ namespace Microsoft.CodeAnalysis.CodeFixes.Configuration.ConfigureCodeStyle;
 [ExportConfigurationFixProvider(PredefinedConfigurationFixProviderNames.ConfigureCodeStyleOption, LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
 [ExtensionOrder(Before = PredefinedConfigurationFixProviderNames.ConfigureSeverity)]
 [ExtensionOrder(After = PredefinedConfigurationFixProviderNames.Suppression)]
-internal sealed partial class ConfigureCodeStyleOptionCodeFixProvider : IConfigurationFixProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed partial class ConfigureCodeStyleOptionCodeFixProvider() : IConfigurationFixProvider
 {
     private static readonly ImmutableArray<bool> s_boolValues = [true, false];
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public ConfigureCodeStyleOptionCodeFixProvider()
-    {
-    }
 
     public bool IsFixableDiagnostic(Diagnostic diagnostic)
     {

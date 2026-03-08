@@ -740,7 +740,7 @@ internal sealed class GenerateTypeDialogViewModel : AbstractNotifyPropertyChange
         }
     }
 
-    public sealed class ProjectSelectItem
+    public sealed class ProjectSelectItem(Project project)
     {
         public string Name
         {
@@ -750,10 +750,7 @@ internal sealed class GenerateTypeDialogViewModel : AbstractNotifyPropertyChange
             }
         }
 
-        public Project Project { get; }
-
-        public ProjectSelectItem(Project project)
-            => Project = project;
+        public Project Project { get; } = project;
     }
 
     public sealed class DocumentSelectItem

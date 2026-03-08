@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Host;
 
 [ExportWorkspaceService(typeof(ITextFactoryService), ServiceLayer.Default), Shared]
-internal sealed class TextFactoryService : ITextFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TextFactoryService() : ITextFactoryService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TextFactoryService()
-    {
-    }
-
     public SourceText CreateText(Stream stream, Encoding? defaultEncoding, SourceHashAlgorithm checksumAlgorithm, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

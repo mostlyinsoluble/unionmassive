@@ -16,19 +16,15 @@ using Microsoft.CodeAnalysis.MoveDeclarationNearReference;
 namespace Microsoft.CodeAnalysis.CSharp.MoveDeclarationNearReference;
 
 [ExportLanguageService(typeof(IMoveDeclarationNearReferenceService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpMoveDeclarationNearReferenceService :
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CSharpMoveDeclarationNearReferenceService() :
     AbstractMoveDeclarationNearReferenceService<
         CSharpMoveDeclarationNearReferenceService,
         StatementSyntax,
         LocalDeclarationStatementSyntax,
         VariableDeclaratorSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpMoveDeclarationNearReferenceService()
-    {
-    }
-
     protected override bool IsMeaningfulBlock(SyntaxNode node)
     {
         return node is AnonymousFunctionExpressionSyntax or

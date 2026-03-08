@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Information decoded from <see cref="ObsoleteAttribute"/>.
     /// </summary>
-    internal sealed class ObsoleteAttributeData
+    internal sealed class ObsoleteAttributeData(ObsoleteAttributeKind kind, string? message, bool isError, string? diagnosticId, string? urlFormat)
     {
         public static readonly ObsoleteAttributeData Uninitialized = new ObsoleteAttributeData(ObsoleteAttributeKind.Uninitialized, message: null, isError: false, diagnosticId: null, urlFormat: null);
         public static readonly ObsoleteAttributeData WindowsExperimental = new ObsoleteAttributeData(ObsoleteAttributeKind.WindowsExperimental, message: null, isError: false, diagnosticId: null, urlFormat: null);
@@ -27,34 +27,24 @@ namespace Microsoft.CodeAnalysis
         public const string DiagnosticIdPropertyName = "DiagnosticId";
         public const string UrlFormatPropertyName = "UrlFormat";
         public const string MessagePropertyName = "Message";
-
-        public ObsoleteAttributeData(ObsoleteAttributeKind kind, string? message, bool isError, string? diagnosticId, string? urlFormat)
-        {
-            Kind = kind;
-            Message = message;
-            IsError = isError;
-            DiagnosticId = diagnosticId;
-            UrlFormat = urlFormat;
-        }
-
-        public readonly ObsoleteAttributeKind Kind;
+        public readonly ObsoleteAttributeKind Kind = kind;
 
         /// <summary>
         /// True if an error should be thrown for the <see cref="ObsoleteAttribute"/>. Default is false in which case
         /// a warning is thrown.
         /// </summary>
-        public readonly bool IsError;
+        public readonly bool IsError = isError;
 
         /// <summary>
         /// The message that will be shown when an error/warning is created for <see cref="ObsoleteAttribute"/>.
         /// </summary>
-        public readonly string? Message;
+        public readonly string? Message = message;
 
         /// <summary>
         /// The custom diagnostic ID to use for obsolete diagnostics.
         /// If null, diagnostics are produced using the compiler default diagnostic IDs.
         /// </summary>
-        public readonly string? DiagnosticId;
+        public readonly string? DiagnosticId = diagnosticId;
 
         /// <summary>
         /// <para>
@@ -72,7 +62,7 @@ namespace Microsoft.CodeAnalysis
         /// the diagnostic will have the HelpLinkUri <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/TEST1/"/>.
         /// </example>
         /// </summary>
-        public readonly string? UrlFormat;
+        public readonly string? UrlFormat = urlFormat;
 
         internal bool IsUninitialized
         {

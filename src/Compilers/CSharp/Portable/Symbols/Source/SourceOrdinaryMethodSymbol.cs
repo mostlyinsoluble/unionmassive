@@ -936,24 +936,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        private sealed class SourceOrdinaryMethodSymbolSimple : SourceOrdinaryMethodSymbol
+        private sealed class SourceOrdinaryMethodSymbolSimple(
+            NamedTypeSymbol containingType,
+            string name,
+            Location location,
+            MethodDeclarationSyntax syntax,
+            MethodKind methodKind,
+            bool isNullableAnalysisEnabled,
+            BindingDiagnosticBag diagnostics) : SourceOrdinaryMethodSymbol(containingType, name, location, syntax, methodKind, isNullableAnalysisEnabled, diagnostics)
         {
             // Avoid adding fields here if possible.  This 'simple' type handles the majority of source methods in any
             // compilation.  So any fields here can add significantly to heap usage.  In measurements, there are roughly
             // 25:1 more 'simple' methods than 'complex' methods. So consider placing new data in
             // SourceOrdinaryMethodSymbolComplex instead if it is state for rare methods.
 
-            public SourceOrdinaryMethodSymbolSimple(
-                NamedTypeSymbol containingType,
-                string name,
-                Location location,
-                MethodDeclarationSyntax syntax,
-                MethodKind methodKind,
-                bool isNullableAnalysisEnabled,
-                BindingDiagnosticBag diagnostics)
-                : base(containingType, name, location, syntax, methodKind, isNullableAnalysisEnabled, diagnostics)
-            {
-            }
 
             internal sealed override SourceOrdinaryMethodSymbol OtherPartOfPartial
                 => null;

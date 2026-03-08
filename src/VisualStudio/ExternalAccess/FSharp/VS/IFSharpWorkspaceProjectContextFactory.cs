@@ -38,18 +38,12 @@ internal interface IFSharpWorkspaceProjectContext : IDisposable
 [Shared]
 [Export(typeof(FSharpWorkspaceProjectContextFactory))]
 [Export(typeof(IFSharpWorkspaceProjectContextFactory))]
-internal sealed class FSharpWorkspaceProjectContextFactory : IFSharpWorkspaceProjectContextFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FSharpWorkspaceProjectContextFactory(IWorkspaceProjectContextFactory factory, IThreadingContext threadingContext) : IFSharpWorkspaceProjectContextFactory
 {
-    private readonly IWorkspaceProjectContextFactory _factory;
-    private readonly IThreadingContext _threadingContext;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpWorkspaceProjectContextFactory(IWorkspaceProjectContextFactory factory, IThreadingContext threadingContext)
-    {
-        _factory = factory;
-        _threadingContext = threadingContext;
-    }
+    private readonly IWorkspaceProjectContextFactory _factory = factory;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     IFSharpWorkspaceProjectContext IFSharpWorkspaceProjectContextFactory.CreateProjectContext(string filePath, string uniqueName)
         => CreateProjectContext(filePath, uniqueName);
@@ -71,16 +65,10 @@ internal sealed class FSharpWorkspaceProjectContextFactory : IFSharpWorkspacePro
             hostObject: hierarchy,
             CancellationToken.None)));
 
-    private sealed class FSharpEvaluationData : EvaluationData
+    private sealed class FSharpEvaluationData(string projectFilePath, string? binOutputPath) : EvaluationData
     {
-        private readonly string _projectFilePath;
-        private readonly string? _binOutputPath;
-
-        public FSharpEvaluationData(string projectFilePath, string? binOutputPath)
-        {
-            _projectFilePath = projectFilePath;
-            _binOutputPath = binOutputPath;
-        }
+        private readonly string _projectFilePath = projectFilePath;
+        private readonly string? _binOutputPath = binOutputPath;
 
         public override string GetPropertyValue(string name)
             => name switch
@@ -95,19 +83,12 @@ internal sealed class FSharpWorkspaceProjectContextFactory : IFSharpWorkspacePro
     }
 }
 
-internal sealed class FSharpWorkspaceProjectContext : IFSharpWorkspaceProjectContext
+internal sealed class FSharpWorkspaceProjectContext(IWorkspaceProjectContext vsProjectContext) : IFSharpWorkspaceProjectContext
 {
-    private readonly IWorkspaceProjectContext _vsProjectContext;
+    private readonly IWorkspaceProjectContext _vsProjectContext = vsProjectContext;
 
-    private ImmutableDictionary<string, IFSharpWorkspaceProjectContext> _projectReferences;
-    private ImmutableHashSet<string> _metadataReferences;
-
-    public FSharpWorkspaceProjectContext(IWorkspaceProjectContext vsProjectContext)
-    {
-        _vsProjectContext = vsProjectContext;
-        _projectReferences = ImmutableDictionary.Create<string, IFSharpWorkspaceProjectContext>(StringComparer.OrdinalIgnoreCase);
-        _metadataReferences = ImmutableHashSet.Create<string>(StringComparer.OrdinalIgnoreCase);
-    }
+    private ImmutableDictionary<string, IFSharpWorkspaceProjectContext> _projectReferences = ImmutableDictionary.Create<string, IFSharpWorkspaceProjectContext>(StringComparer.OrdinalIgnoreCase);
+    private ImmutableHashSet<string> _metadataReferences = ImmutableHashSet.Create<string>(StringComparer.OrdinalIgnoreCase);
 
     public void Dispose()
         => _vsProjectContext.Dispose();

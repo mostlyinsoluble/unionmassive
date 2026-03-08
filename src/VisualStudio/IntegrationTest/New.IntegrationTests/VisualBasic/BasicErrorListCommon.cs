@@ -14,13 +14,8 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests.VisualBasic;
 
-public abstract class BasicErrorListCommon : AbstractEditorTest
+public abstract class BasicErrorListCommon(string templateName) : AbstractEditorTest(nameof(BasicErrorListCommon), templateName)
 {
-    protected BasicErrorListCommon(string templateName)
-        : base(nameof(BasicErrorListCommon), templateName)
-    {
-    }
-
     protected override string LanguageName => LanguageNames.VisualBasic;
 
     [IdeFact(Skip = "https://github.com/dotnet/roslyn/issues/63041")]

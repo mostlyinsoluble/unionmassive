@@ -45,24 +45,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             return (TRoot?)result;
         }
 
-        private sealed class SyntaxRemover : CSharpSyntaxRewriter
+        private sealed class SyntaxRemover(
+            SyntaxNode[] nodesToRemove,
+            SyntaxRemoveOptions options) : CSharpSyntaxRewriter(nodesToRemove.Any(n => n.IsPartOfStructuredTrivia()))
         {
-            private readonly HashSet<SyntaxNode> _nodesToRemove;
-            private readonly SyntaxRemoveOptions _options;
-            private readonly TextSpan _searchSpan;
-            private readonly SyntaxTriviaListBuilder _residualTrivia;
+            private readonly HashSet<SyntaxNode> _nodesToRemove = new HashSet<SyntaxNode>(nodesToRemove);
+            private readonly SyntaxRemoveOptions _options = options;
+            private readonly TextSpan _searchSpan = ComputeTotalSpan(nodesToRemove);
+            private readonly SyntaxTriviaListBuilder _residualTrivia = SyntaxTriviaListBuilder.Create();
             private HashSet<SyntaxNode>? _directivesToKeep;
-
-            public SyntaxRemover(
-                SyntaxNode[] nodesToRemove,
-                SyntaxRemoveOptions options)
-                : base(nodesToRemove.Any(n => n.IsPartOfStructuredTrivia()))
-            {
-                _nodesToRemove = new HashSet<SyntaxNode>(nodesToRemove);
-                _options = options;
-                _searchSpan = ComputeTotalSpan(nodesToRemove);
-                _residualTrivia = SyntaxTriviaListBuilder.Create();
-            }
 
             private static TextSpan ComputeTotalSpan(SyntaxNode[] nodes)
             {

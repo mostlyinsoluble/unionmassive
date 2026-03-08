@@ -24,10 +24,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         private readonly InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> _instructionDecoder;
 
-        internal LanguageInstructionDecoder(InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> instructionDecoder)
-        {
-            _instructionDecoder = instructionDecoder;
-        }
+        internal LanguageInstructionDecoder(InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> instructionDecoder) => _instructionDecoder = instructionDecoder;
 
         string IDkmLanguageInstructionDecoder.GetMethodName(DkmLanguageInstructionAddress languageInstructionAddress, DkmVariableInfoFlags argumentFlags)
         {

@@ -462,9 +462,7 @@ internal static partial class SyntaxGeneratorExtensions
     {
         var identifier = factory.IdentifierName(identifierName);
         var nullExpr = factory.NullLiteralExpression();
-        var condition = generatorInternal.SupportsPatterns(semanticModel.SyntaxTree.Options)
-            ? generatorInternal.IsPatternExpression(identifier, generatorInternal.ConstantPattern(nullExpr))
-            : factory.ReferenceEqualsExpression(identifier, nullExpr);
+        var condition = generatorInternal.IsPatternExpression(identifier, generatorInternal.ConstantPattern(nullExpr));
         return condition;
     }
 

@@ -21,10 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal AnonymousTypePropertyGetAccessorSymbol(AnonymousTypePropertySymbol property)
                 // winmdobj output only effects setters, so we can always set this to false
-                : base(property.ContainingType, SourcePropertyAccessorSymbol.GetAccessorName(property.Name, getNotSet: true, isWinMdOutput: false))
-            {
-                _property = property;
-            }
+                : base(property.ContainingType, SourcePropertyAccessorSymbol.GetAccessorName(property.Name, getNotSet: true, isWinMdOutput: false)) => _property = property;
 
             public override MethodKind MethodKind
             {

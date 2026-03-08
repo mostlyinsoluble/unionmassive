@@ -6,41 +6,43 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Structure;
 
-internal readonly struct OmniSharpBlockSpan
+internal readonly struct OmniSharpBlockSpan(
+#pragma warning restore RS0059 // Do not add multiple public overloads with optional parameters
+    string type, bool isCollapsible, TextSpan textSpan, TextSpan hintSpan, string bannerText = OmniSharpBlockSpan.Ellipses, bool autoCollapse = false, bool isDefaultCollapsed = false)
 {
     private const string Ellipses = "...";
 
     /// <summary>
     /// Whether or not this span can be collapsed.
     /// </summary>
-    public bool IsCollapsible { get; }
+    public bool IsCollapsible { get; } = isCollapsible;
 
     /// <summary>
     /// The span of text to collapse.
     /// </summary>
-    public TextSpan TextSpan { get; }
+    public TextSpan TextSpan { get; } = textSpan;
 
     /// <summary>
     /// The span of text to display in the hint on mouse hover.
     /// </summary>
-    public TextSpan HintSpan { get; }
+    public TextSpan HintSpan { get; } = hintSpan;
 
     /// <summary>
     /// The text to display inside the collapsed region.
     /// </summary>
-    public string BannerText { get; }
+    public string BannerText { get; } = bannerText;
 
     /// <summary>
     /// Whether or not this region should be automatically collapsed when the 'Collapse to Definitions' command is invoked.
     /// </summary>
-    public bool AutoCollapse { get; }
+    public bool AutoCollapse { get; } = autoCollapse;
 
     /// <summary>
     /// Whether this region should be collapsed by default when a file is opened the first time.
     /// </summary>
-    public bool IsDefaultCollapsed { get; }
+    public bool IsDefaultCollapsed { get; } = isDefaultCollapsed;
 
-    public string Type { get; }
+    public string Type { get; } = type;
 
 #pragma warning disable RS0059 // Do not add multiple public overloads with optional parameters
     public OmniSharpBlockSpan(
@@ -51,18 +53,7 @@ internal readonly struct OmniSharpBlockSpan
     }
 
 #pragma warning disable RS0059 // Do not add multiple public overloads with optional parameters
-    public OmniSharpBlockSpan(
 #pragma warning restore RS0059 // Do not add multiple public overloads with optional parameters
-        string type, bool isCollapsible, TextSpan textSpan, TextSpan hintSpan, string bannerText = Ellipses, bool autoCollapse = false, bool isDefaultCollapsed = false)
-    {
-        TextSpan = textSpan;
-        BannerText = bannerText;
-        HintSpan = hintSpan;
-        AutoCollapse = autoCollapse;
-        IsDefaultCollapsed = isDefaultCollapsed;
-        IsCollapsible = isCollapsible;
-        Type = type;
-    }
 
     public override string ToString()
     {

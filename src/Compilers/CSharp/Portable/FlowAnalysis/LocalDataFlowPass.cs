@@ -52,10 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundNode lastInRegion,
             bool trackRegions,
             bool trackUnassignments)
-            : base(compilation, member, node, firstInRegion, lastInRegion, trackRegions: trackRegions, nonMonotonicTransferFunction: trackUnassignments)
-        {
-            _emptyStructTypeCache = emptyStructs;
-        }
+            : base(compilation, member, node, firstInRegion, lastInRegion, trackRegions: trackRegions, nonMonotonicTransferFunction: trackUnassignments) => _emptyStructTypeCache = emptyStructs;
 
         protected abstract bool TryGetVariable(VariableIdentifier identifier, out int slot);
 

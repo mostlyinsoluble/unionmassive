@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// need to be revised if emit phase is changed to support multithreading when
     /// translating a particular type.
     /// </remarks>
-    internal sealed class TypeCompilationState
+    internal sealed class TypeCompilationState(NamedTypeSymbol? typeOpt, CSharpCompilation compilation, PEModuleBuilder? moduleBuilderOpt)
     {
         /// <summary> Synthesized method info </summary>
         internal readonly struct MethodWithBody
@@ -54,12 +54,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// Type symbol being compiled, or null if we compile a synthesized type that doesn't have a symbol (e.g. PrivateImplementationDetails).
         /// </summary>
-        private readonly NamedTypeSymbol? _typeOpt;
+        private readonly NamedTypeSymbol? _typeOpt = typeOpt;
 
         /// <summary>
         /// The builder for generating code, or null if not in emit phase.
         /// </summary>
-        public readonly PEModuleBuilder? ModuleBuilderOpt;
+        public readonly PEModuleBuilder? ModuleBuilderOpt = moduleBuilderOpt;
 
         /// <summary>
         /// Any generated methods that don't suppress debug info will use this
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public ImportChain? CurrentImportChain;
 
-        public readonly CSharpCompilation Compilation;
+        public readonly CSharpCompilation Compilation = compilation;
 
         public SynthesizedClosureEnvironment? StaticLambdaFrame;
 
@@ -78,13 +78,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// Used to detect and report initializer cycles.
         /// </summary>
         private SmallDictionary<MethodSymbol, MethodSymbol>? _constructorInitializers;
-
-        public TypeCompilationState(NamedTypeSymbol? typeOpt, CSharpCompilation compilation, PEModuleBuilder? moduleBuilderOpt)
-        {
-            this.Compilation = compilation;
-            _typeOpt = typeOpt;
-            this.ModuleBuilderOpt = moduleBuilderOpt;
-        }
 
         /// <summary>
         /// The type for which this compilation state is being used.

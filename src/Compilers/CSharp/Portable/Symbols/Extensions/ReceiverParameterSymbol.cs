@@ -9,15 +9,9 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class ReceiverParameterSymbol : RewrittenParameterSymbol
+    internal sealed class ReceiverParameterSymbol(NamedTypeSymbol containingType, ParameterSymbol originalParameter) : RewrittenParameterSymbol(originalParameter)
     {
-        private readonly NamedTypeSymbol _containingType;
-
-        public ReceiverParameterSymbol(NamedTypeSymbol containingType, ParameterSymbol originalParameter) :
-            base(originalParameter)
-        {
-            _containingType = containingType;
-        }
+        private readonly NamedTypeSymbol _containingType = containingType;
 
         public override Symbol ContainingSymbol
         {

@@ -27,10 +27,7 @@ internal abstract class AbstractLogAggregator<TKey, TValue> : IEnumerable<KeyVal
     private readonly ConcurrentDictionary<object, TValue> _map = new(concurrencyLevel: 2, capacity: 2);
     private readonly Func<object, TValue> _createCounter;
 
-    protected AbstractLogAggregator()
-    {
-        _createCounter = _ => CreateCounter();
-    }
+    protected AbstractLogAggregator() => _createCounter = _ => CreateCounter();
 
     protected abstract TValue CreateCounter();
 

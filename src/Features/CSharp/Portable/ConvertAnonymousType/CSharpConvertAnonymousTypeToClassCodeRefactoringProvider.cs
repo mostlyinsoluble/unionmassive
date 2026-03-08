@@ -16,7 +16,9 @@ using static CSharpSyntaxTokens;
 
 [ExtensionOrder(Before = PredefinedCodeRefactoringProviderNames.IntroduceVariable)]
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertAnonymousTypeToClass), Shared]
-internal sealed class CSharpConvertAnonymousTypeToClassCodeRefactoringProvider :
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpConvertAnonymousTypeToClassCodeRefactoringProvider() :
     AbstractConvertAnonymousTypeToClassCodeRefactoringProvider<
         ExpressionSyntax,
         NameSyntax,
@@ -25,12 +27,6 @@ internal sealed class CSharpConvertAnonymousTypeToClassCodeRefactoringProvider :
         AnonymousObjectCreationExpressionSyntax,
         BaseNamespaceDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpConvertAnonymousTypeToClassCodeRefactoringProvider()
-    {
-    }
-
     protected override ObjectCreationExpressionSyntax CreateObjectCreationExpression(
         NameSyntax nameNode, AnonymousObjectCreationExpressionSyntax anonymousObject)
     {

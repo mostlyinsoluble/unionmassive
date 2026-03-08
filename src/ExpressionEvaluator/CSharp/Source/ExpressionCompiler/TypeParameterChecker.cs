@@ -37,14 +37,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
                 : null;
         }
 
-        private class BlockChecker : BoundTreeWalkerWithStackGuard
+        private class BlockChecker(TypeParameterChecker typeParameterChecker) : BoundTreeWalkerWithStackGuard
         {
-            private readonly TypeParameterChecker _typeParameterChecker;
-
-            public BlockChecker(TypeParameterChecker typeParameterChecker)
-            {
-                _typeParameterChecker = typeParameterChecker;
-            }
+            private readonly TypeParameterChecker _typeParameterChecker = typeParameterChecker;
 
             public override BoundNode Visit(BoundNode node)
             {

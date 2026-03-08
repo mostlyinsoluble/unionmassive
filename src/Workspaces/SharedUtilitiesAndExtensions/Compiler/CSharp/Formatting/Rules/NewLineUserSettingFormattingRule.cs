@@ -19,10 +19,7 @@ internal sealed class NewLineUserSettingFormattingRule : BaseFormattingRule
     {
     }
 
-    private NewLineUserSettingFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private NewLineUserSettingFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

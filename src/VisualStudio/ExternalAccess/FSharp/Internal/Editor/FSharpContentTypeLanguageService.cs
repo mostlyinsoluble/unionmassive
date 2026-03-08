@@ -14,16 +14,11 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor;
 
 [ExportContentTypeLanguageService(FSharpContentTypeNames.FSharpContentType, LanguageNames.FSharp), Shared]
-internal class FSharpContentTypeLanguageService : IContentTypeLanguageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry) : IContentTypeLanguageService
 {
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry)
-    {
-        _contentTypeRegistry = contentTypeRegistry;
-    }
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry;
 
     public IContentType GetDefaultContentType()
     {

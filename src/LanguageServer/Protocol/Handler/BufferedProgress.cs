@@ -15,25 +15,19 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// expected to be.  Namely, multiple client can be calling <see cref="IProgress{T}.Report(T)"/> on it at the same
 /// time.  This is safe, though the order that the items are reported in when called concurrently is not specified.
 /// </summary>
-internal readonly struct BufferedProgress<T> : IProgress<T>, IDisposable
+internal readonly struct BufferedProgress<T>(IProgress<T>? underlyingProgress) : IProgress<T>, IDisposable
 {
     /// <summary>
     /// The progress stream to report results to.  May be <see langword="null"/> for clients that do not support streaming.
     /// If <see langword="null"/> then <see cref="_buffer"/> will be non null and will contain all the produced values.
     /// </summary>
-    private readonly IProgress<T>? _underlyingProgress;
+    private readonly IProgress<T>? _underlyingProgress = underlyingProgress;
 
     /// <summary>
     /// A buffer that results are held in if the client does not support streaming.  Values of this can be retrieved
     /// using <see cref="GetValues"/>.
     /// </summary>
-    private readonly ArrayBuilder<T>? _buffer;
-
-    public BufferedProgress(IProgress<T>? underlyingProgress)
-    {
-        _underlyingProgress = underlyingProgress;
-        _buffer = underlyingProgress == null ? ArrayBuilder<T>.GetInstance() : null;
-    }
+    private readonly ArrayBuilder<T>? _buffer = underlyingProgress == null ? ArrayBuilder<T>.GetInstance() : null;
 
     public void Dispose()
         => _buffer?.Free();

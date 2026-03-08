@@ -15,13 +15,8 @@ using PropertySymbolAdapter = Microsoft.CodeAnalysis.CSharp.Symbols.PropertySymb
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 {
-    internal sealed class EmbeddedProperty : EmbeddedTypesManager.CommonEmbeddedProperty
+    internal sealed class EmbeddedProperty(PropertySymbolAdapter underlyingProperty, EmbeddedMethod getter, EmbeddedMethod setter) : EmbeddedTypesManager.CommonEmbeddedProperty(underlyingProperty, getter, setter)
     {
-        public EmbeddedProperty(PropertySymbolAdapter underlyingProperty, EmbeddedMethod getter, EmbeddedMethod setter) :
-            base(underlyingProperty, getter, setter)
-        {
-        }
-
         protected override IEnumerable<CSharpAttributeData> GetCustomAttributesToEmit(PEModuleBuilder moduleBuilder)
         {
             return UnderlyingProperty.AdaptedPropertySymbol.GetCustomAttributesToEmit(moduleBuilder);

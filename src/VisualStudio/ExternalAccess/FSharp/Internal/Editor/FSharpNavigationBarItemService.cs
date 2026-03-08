@@ -24,20 +24,14 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor;
 
 [Shared]
 [ExportLanguageService(typeof(INavigationBarItemService), LanguageNames.FSharp)]
-internal class FSharpNavigationBarItemService : INavigationBarItemService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpNavigationBarItemService(
+    IThreadingContext threadingContext,
+    IFSharpNavigationBarItemService service) : INavigationBarItemService
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IFSharpNavigationBarItemService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpNavigationBarItemService(
-        IThreadingContext threadingContext,
-        IFSharpNavigationBarItemService service)
-    {
-        _threadingContext = threadingContext;
-        _service = service;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IFSharpNavigationBarItemService _service = service;
 
     public Task<ImmutableArray<NavigationBarItem>> GetItemsAsync(Document document, ITextVersion textVersion, CancellationToken cancellationToken)
     {

@@ -16,14 +16,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Enabled)]
-internal sealed class AnalyzerEnabledColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerEnabledColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerEnabledColumnDefinition()
-    {
-    }
-
     public override string Name => Enabled;
     public override string DisplayName => ServicesVSResources.Enabled;
     public override bool IsFilterable => true;

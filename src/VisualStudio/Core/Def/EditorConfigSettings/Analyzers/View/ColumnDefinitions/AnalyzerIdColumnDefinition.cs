@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Id)]
-internal sealed class AnalyzerIdColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerIdColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerIdColumnDefinition()
-    {
-    }
-
     public override string Name => Id;
     public override string DisplayName => ServicesVSResources.Id;
     public override bool IsFilterable => true;

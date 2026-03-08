@@ -57,10 +57,7 @@ namespace Roslyn.Test.PdbUtilities
 
         private class BitAccess
         {
-            internal BitAccess(int capacity)
-            {
-                _buffer = new byte[capacity];
-            }
+            internal BitAccess(int capacity) => _buffer = new byte[capacity];
 
             internal byte[] Buffer
             {

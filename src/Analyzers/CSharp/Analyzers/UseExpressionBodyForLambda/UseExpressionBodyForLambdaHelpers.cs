@@ -29,12 +29,9 @@ internal static class UseExpressionBodyForLambdaHelpers
             return false;
         }
 
-        var expressionBodyOpt = GetBodyAsExpression(declaration);
-        if (expressionBodyOpt == null)
-        {
+        if (GetBodyAsExpression(declaration) is not ExpressionSyntax expressionBody)
             // they already have a block body.
             return false;
-        }
 
         // We need to know what sort of lambda this is (void returning or not) in order to be
         // able to create the right sort of block body (i.e. with a return-statement or
@@ -45,7 +42,7 @@ internal static class UseExpressionBodyForLambdaHelpers
             return false;
         }
 
-        var canOffer = expressionBodyOpt.TryConvertToStatement(
+        var canOffer = expressionBody.TryConvertToStatement(
             semicolonTokenOpt: null, createReturnStatementForExpression: false, out _);
         if (!canOffer)
         {

@@ -15,16 +15,11 @@ using Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespace.ViewModel;
 
 [Export(typeof(IEnumSettingViewModelFactory)), Shared]
-internal sealed class OperatorPlacementWhenWrappingViewModelFactory : IEnumSettingViewModelFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OperatorPlacementWhenWrappingViewModelFactory() : IEnumSettingViewModelFactory
 {
-    private readonly OptionKey2 _key;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OperatorPlacementWhenWrappingViewModelFactory()
-    {
-        _key = new OptionKey2(CodeStyleOptions2.OperatorPlacementWhenWrapping);
-    }
+    private readonly OptionKey2 _key = new OptionKey2(CodeStyleOptions2.OperatorPlacementWhenWrapping);
 
     public IEnumSettingViewModel CreateViewModel(Setting setting)
     {
@@ -33,14 +28,9 @@ internal sealed class OperatorPlacementWhenWrappingViewModelFactory : IEnumSetti
 
     public bool IsSupported(OptionKey2 key) => _key == key;
 
-    private sealed class OperatorPlacementWhenWrappingViewModel : EnumSettingViewModel<OperatorPlacementWhenWrappingPreference>
+    private sealed class OperatorPlacementWhenWrappingViewModel(Setting setting) : EnumSettingViewModel<OperatorPlacementWhenWrappingPreference>
     {
-        private readonly Setting _setting;
-
-        public OperatorPlacementWhenWrappingViewModel(Setting setting)
-        {
-            _setting = setting;
-        }
+        private readonly Setting _setting = setting;
 
         protected override void ChangePropertyTo(OperatorPlacementWhenWrappingPreference newValue)
         {

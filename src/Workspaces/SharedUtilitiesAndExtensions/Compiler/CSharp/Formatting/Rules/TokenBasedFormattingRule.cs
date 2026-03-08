@@ -25,10 +25,7 @@ internal sealed class TokenBasedFormattingRule : BaseFormattingRule
     {
     }
 
-    private TokenBasedFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private TokenBasedFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

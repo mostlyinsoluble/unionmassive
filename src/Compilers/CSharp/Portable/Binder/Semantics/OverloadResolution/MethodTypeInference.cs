@@ -68,24 +68,17 @@ namespace Microsoft.CodeAnalysis.CSharp
     }
 
     // Method type inference can fail, but we still might have some best guesses. 
-    internal readonly struct MethodTypeInferenceResult
+    internal readonly struct MethodTypeInferenceResult(
+        bool success,
+        ImmutableArray<TypeWithAnnotations> inferredTypeArguments,
+        bool hasTypeArgumentInferredFromFunctionType)
     {
-        public readonly ImmutableArray<TypeWithAnnotations> InferredTypeArguments;
+        public readonly ImmutableArray<TypeWithAnnotations> InferredTypeArguments = inferredTypeArguments;
         /// <summary>
         /// At least one type argument was inferred from a function type.
         /// </summary>
-        public readonly bool HasTypeArgumentInferredFromFunctionType;
-        public readonly bool Success;
-
-        public MethodTypeInferenceResult(
-            bool success,
-            ImmutableArray<TypeWithAnnotations> inferredTypeArguments,
-            bool hasTypeArgumentInferredFromFunctionType)
-        {
-            this.Success = success;
-            this.InferredTypeArguments = inferredTypeArguments;
-            this.HasTypeArgumentInferredFromFunctionType = hasTypeArgumentInferredFromFunctionType;
-        }
+        public readonly bool HasTypeArgumentInferredFromFunctionType = hasTypeArgumentInferredFromFunctionType;
+        public readonly bool Success = success;
     }
 
     internal struct MethodTypeInferrer

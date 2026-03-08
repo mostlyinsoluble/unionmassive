@@ -20,15 +20,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return new RefKindVector(capacity);
         }
 
-        private RefKindVector(int capacity)
-        {
-            _bits = BitVector.Create(capacity * BitsPerRefKind);
-        }
+        private RefKindVector(int capacity) => _bits = BitVector.Create(capacity * BitsPerRefKind);
 
-        private RefKindVector(BitVector bits)
-        {
-            _bits = bits;
-        }
+        private RefKindVector(BitVector bits) => _bits = bits;
 
         internal bool IsNull => _bits.IsNull;
 

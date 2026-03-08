@@ -15,14 +15,10 @@ using Microsoft.CodeAnalysis.UnusedReferences.ProjectAssets;
 namespace Microsoft.CodeAnalysis.UnusedReferences;
 
 [ExportWorkspaceService(typeof(IUnusedReferenceAnalysisService)), Shared]
-internal sealed partial class UnusedReferenceAnalysisService : IUnusedReferenceAnalysisService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class UnusedReferenceAnalysisService() : IUnusedReferenceAnalysisService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public UnusedReferenceAnalysisService()
-    {
-    }
-
     public async Task<ImmutableArray<ReferenceInfo>> GetUnusedReferencesAsync(Solution solution, string projectFilePath, string projectAssetsFilePath, ImmutableArray<ReferenceInfo> projectReferences, CancellationToken cancellationToken)
     {
         using var logger = Logger.LogBlock(FunctionId.UnusedReferences_GetUnusedReferences, message: null, cancellationToken, LogLevel.Information);

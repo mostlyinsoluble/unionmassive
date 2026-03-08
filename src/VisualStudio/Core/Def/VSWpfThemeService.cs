@@ -20,10 +20,7 @@ internal sealed class VSWpfThemeService : IWpfThemeService
 
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VSWpfThemeService()
-    {
-        _themeDictionary.Source = new Uri("/Microsoft.VisualStudio.LanguageServices;component/VSThemeDictionary.xaml", UriKind.Relative);
-    }
+    public VSWpfThemeService() => _themeDictionary.Source = new Uri("/Microsoft.VisualStudio.LanguageServices;component/VSThemeDictionary.xaml", UriKind.Relative);
 
     public void ApplyThemeToElement(FrameworkElement frameworkElement)
     {

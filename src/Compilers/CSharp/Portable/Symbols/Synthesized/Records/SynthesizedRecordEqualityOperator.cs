@@ -22,13 +22,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     ///The 'Equals' method called by the '==' operator is the 'Equals(R? other)' (<see cref="SynthesizedRecordEquals"/>).
     ///The '!=' operator delegates to the '==' operator. It is an error if the operators are declared explicitly.
     /// </summary>
-    internal sealed class SynthesizedRecordEqualityOperator : SynthesizedRecordEqualityOperatorBase
+    internal sealed class SynthesizedRecordEqualityOperator(SourceMemberContainerTypeSymbol containingType, int memberOffset, BindingDiagnosticBag diagnostics) : SynthesizedRecordEqualityOperatorBase(containingType, WellKnownMemberNames.EqualityOperatorName, memberOffset, diagnostics)
     {
-        public SynthesizedRecordEqualityOperator(SourceMemberContainerTypeSymbol containingType, int memberOffset, BindingDiagnosticBag diagnostics)
-            : base(containingType, WellKnownMemberNames.EqualityOperatorName, memberOffset, diagnostics)
-        {
-        }
-
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
             var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);

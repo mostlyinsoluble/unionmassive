@@ -13,17 +13,13 @@ using Microsoft.CodeAnalysis.SemanticModelReuse;
 namespace Microsoft.CodeAnalysis.CSharp.SemanticModelReuse;
 
 [ExportLanguageService(typeof(ISemanticModelReuseLanguageService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpSemanticModelReuseLanguageService : AbstractSemanticModelReuseLanguageService<
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSemanticModelReuseLanguageService() : AbstractSemanticModelReuseLanguageService<
     MemberDeclarationSyntax,
     BasePropertyDeclarationSyntax,
     AccessorDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSemanticModelReuseLanguageService()
-    {
-    }
-
     protected override ISyntaxFacts SyntaxFacts => CSharpSyntaxFacts.Instance;
 
     protected override BasePropertyDeclarationSyntax GetBasePropertyDeclaration(AccessorDeclarationSyntax accessor)

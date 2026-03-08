@@ -10,14 +10,9 @@ using Microsoft.CodeAnalysis.CSharp.Symbols;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal abstract class CapturedSymbolReplacement
+    internal abstract class CapturedSymbolReplacement(bool isReusable)
     {
-        public readonly bool IsReusable;
-
-        public CapturedSymbolReplacement(bool isReusable)
-        {
-            this.IsReusable = isReusable;
-        }
+        public readonly bool IsReusable = isReusable;
 
         /// <summary>
         /// Rewrite the replacement expression for the hoisted local so all synthesized field are accessed as members
@@ -26,15 +21,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         public abstract BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg);
     }
 
-    internal sealed class CapturedToFrameSymbolReplacement : CapturedSymbolReplacement
+    internal sealed class CapturedToFrameSymbolReplacement(LambdaCapturedVariable hoistedField, bool isReusable) : CapturedSymbolReplacement(isReusable)
     {
-        public readonly LambdaCapturedVariable HoistedField;
-
-        public CapturedToFrameSymbolReplacement(LambdaCapturedVariable hoistedField, bool isReusable)
-            : base(isReusable)
-        {
-            this.HoistedField = hoistedField;
-        }
+        public readonly LambdaCapturedVariable HoistedField = hoistedField;
 
         public override BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg)
         {
@@ -44,15 +33,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
     }
 
-    internal sealed class CapturedToStateMachineFieldReplacement : CapturedSymbolReplacement
+    internal sealed class CapturedToStateMachineFieldReplacement(StateMachineFieldSymbol hoistedField, bool isReusable) : CapturedSymbolReplacement(isReusable)
     {
-        public readonly StateMachineFieldSymbol HoistedField;
-
-        public CapturedToStateMachineFieldReplacement(StateMachineFieldSymbol hoistedField, bool isReusable)
-            : base(isReusable)
-        {
-            this.HoistedField = hoistedField;
-        }
+        public readonly StateMachineFieldSymbol HoistedField = hoistedField;
 
         public override BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg)
         {
@@ -62,18 +45,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
     }
 
-    internal sealed class CapturedToExpressionSymbolReplacement<THoistedSymbolType> : CapturedSymbolReplacement
+    internal sealed class CapturedToExpressionSymbolReplacement<THoistedSymbolType>(BoundExpression replacement, ImmutableArray<THoistedSymbolType> hoistedSymbols, bool isReusable) : CapturedSymbolReplacement(isReusable)
         where THoistedSymbolType : Symbol
     {
-        private readonly BoundExpression _replacement;
-        public readonly ImmutableArray<THoistedSymbolType> HoistedSymbols;
-
-        public CapturedToExpressionSymbolReplacement(BoundExpression replacement, ImmutableArray<THoistedSymbolType> hoistedSymbols, bool isReusable)
-            : base(isReusable)
-        {
-            _replacement = replacement;
-            this.HoistedSymbols = hoistedSymbols;
-        }
+        private readonly BoundExpression _replacement = replacement;
+        public readonly ImmutableArray<THoistedSymbolType> HoistedSymbols = hoistedSymbols;
 
         public override BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg)
         {

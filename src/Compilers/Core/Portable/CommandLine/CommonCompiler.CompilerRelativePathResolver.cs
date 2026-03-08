@@ -24,10 +24,7 @@ namespace Microsoft.CodeAnalysis
             internal ICommonCompilerFileSystem FileSystem { get; }
 
             internal CompilerRelativePathResolver(ICommonCompilerFileSystem fileSystem, ImmutableArray<string> searchPaths, string? baseDirectory)
-                : base(searchPaths, baseDirectory)
-            {
-                FileSystem = fileSystem;
-            }
+                : base(searchPaths, baseDirectory) => FileSystem = fileSystem;
 
             protected override bool FileExists(string fullPath) => FileSystem.FileExists(fullPath);
         }

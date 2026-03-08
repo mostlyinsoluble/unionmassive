@@ -584,14 +584,13 @@ internal static partial class RoslynParallelExtensions
                 IEnumerable<TSource> source, Func<object, Task> taskBody,
                 int dop, TaskScheduler scheduler, CancellationToken cancellationToken,
                 Func<TSource, CancellationToken, ValueTask> body) :
-                base(taskBody, needsLock: true, dop, scheduler, cancellationToken, body)
-            {
+                base(taskBody, needsLock: true, dop, scheduler, cancellationToken, body) =>
 #if false
                 Enumerator = source.GetEnumerator() ?? throw new InvalidOperationException(SR.Parallel_ForEach_NullEnumerator);
 #else
                 Enumerator = source.GetEnumerator() ?? throw new InvalidOperationException();
 #endif
-            }
+
 
             public void Dispose()
             {
@@ -610,14 +609,13 @@ internal static partial class RoslynParallelExtensions
                 IAsyncEnumerable<TSource> source, Func<object, Task> taskBody,
                 int dop, TaskScheduler scheduler, CancellationToken cancellationToken,
                 Func<TSource, CancellationToken, ValueTask> body) :
-                base(taskBody, needsLock: true, dop, scheduler, cancellationToken, body)
-            {
+                base(taskBody, needsLock: true, dop, scheduler, cancellationToken, body) =>
 #if false
                 Enumerator = source.GetAsyncEnumerator(Cancellation.Token) ?? throw new InvalidOperationException(SR.Parallel_ForEach_NullEnumerator);
 #else
                 Enumerator = source.GetAsyncEnumerator(Cancellation.Token) ?? throw new InvalidOperationException();
 #endif
-            }
+
 
             public ValueTask DisposeAsync()
             {
@@ -628,20 +626,13 @@ internal static partial class RoslynParallelExtensions
 
         /// <summary>Stores the state associated with an IAsyncEnumerable ForEachAsync operation, shared between all its workers.</summary>
         /// <typeparam name="T">Specifies the type of data being enumerated.</typeparam>
-        private sealed class ForEachState<T> : ForEachAsyncState<T>, IDisposable
+        private sealed class ForEachState<T>(
+            T fromExclusive, T toExclusive, Func<object, Task> taskBody,
+            bool needsLock, int dop, TaskScheduler scheduler, CancellationToken cancellationToken,
+            Func<T, CancellationToken, ValueTask> body) : ForEachAsyncState<T>(taskBody, needsLock, dop, scheduler, cancellationToken, body), IDisposable
         {
-            public T NextAvailable;
-            public readonly T ToExclusive;
-
-            public ForEachState(
-                T fromExclusive, T toExclusive, Func<object, Task> taskBody,
-                bool needsLock, int dop, TaskScheduler scheduler, CancellationToken cancellationToken,
-                Func<T, CancellationToken, ValueTask> body) :
-                base(taskBody, needsLock, dop, scheduler, cancellationToken, body)
-            {
-                NextAvailable = fromExclusive;
-                ToExclusive = toExclusive;
-            }
+            public T NextAvailable = fromExclusive;
+            public readonly T ToExclusive = toExclusive;
 
             public void Dispose() => _registration.Dispose();
         }

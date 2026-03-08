@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MatchFolderAndNamespace;
 #endif
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 internal sealed class CSharpMatchFolderAndNamespaceDiagnosticAnalyzer
-    : AbstractMatchFolderAndNamespaceDiagnosticAnalyzer<SyntaxKind, BaseNamespaceDeclarationSyntax>
+        : AbstractMatchFolderAndNamespaceDiagnosticAnalyzer<SyntaxKind, BaseNamespaceDeclarationSyntax>
 {
 #if !CODE_STYLE
     [ImportingConstructor]

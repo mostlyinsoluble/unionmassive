@@ -26,14 +26,10 @@ using static CSharpSyntaxTokens;
 using static SyntaxFactory;
 
 [ExportConfigurationFixProvider(PredefinedConfigurationFixProviderNames.Suppression, LanguageNames.CSharp), Shared]
-internal sealed class CSharpSuppressionCodeFixProvider : AbstractSuppressionCodeFixProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpSuppressionCodeFixProvider() : AbstractSuppressionCodeFixProvider
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpSuppressionCodeFixProvider()
-    {
-    }
-
     protected override SyntaxTriviaList CreatePragmaRestoreDirectiveTrivia(Diagnostic diagnostic, Func<SyntaxNode, CancellationToken, SyntaxNode> formatNode, bool needsLeadingEndOfLine, bool needsTrailingEndOfLine, CancellationToken cancellationToken)
     {
         var restoreKeyword = RestoreKeyword;

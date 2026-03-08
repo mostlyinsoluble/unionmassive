@@ -19,16 +19,10 @@ public partial class MSBuildProjectLoader
 {
     private sealed partial class Worker
     {
-        private readonly struct ResolvedReferences
+        private readonly struct ResolvedReferences(ImmutableHashSet<ProjectReference> projectReferences, ImmutableArray<MetadataReference> metadataReferences)
         {
-            public ImmutableHashSet<ProjectReference> ProjectReferences { get; }
-            public ImmutableArray<MetadataReference> MetadataReferences { get; }
-
-            public ResolvedReferences(ImmutableHashSet<ProjectReference> projectReferences, ImmutableArray<MetadataReference> metadataReferences)
-            {
-                ProjectReferences = projectReferences;
-                MetadataReferences = metadataReferences;
-            }
+            public ImmutableHashSet<ProjectReference> ProjectReferences { get; } = projectReferences;
+            public ImmutableArray<MetadataReference> MetadataReferences { get; } = metadataReferences;
         }
 
         /// <summary>

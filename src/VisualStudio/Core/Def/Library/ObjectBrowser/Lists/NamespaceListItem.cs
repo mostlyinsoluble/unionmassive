@@ -6,10 +6,6 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser.Lists;
 
-internal sealed class NamespaceListItem : SymbolListItem<INamespaceSymbol>
+internal sealed class NamespaceListItem(ProjectId projectId, INamespaceSymbol namespaceSymbol, string displayText, string fullNameText, string searchText) : SymbolListItem<INamespaceSymbol>(projectId, namespaceSymbol, displayText, fullNameText, searchText, isHidden: false)
 {
-    public NamespaceListItem(ProjectId projectId, INamespaceSymbol namespaceSymbol, string displayText, string fullNameText, string searchText)
-        : base(projectId, namespaceSymbol, displayText, fullNameText, searchText, isHidden: false)
-    {
-    }
 }

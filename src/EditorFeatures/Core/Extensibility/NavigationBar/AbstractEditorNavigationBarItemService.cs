@@ -15,14 +15,9 @@ using static Microsoft.CodeAnalysis.NavigationBar.RoslynNavigationBarItem;
 
 namespace Microsoft.CodeAnalysis.Editor.Extensibility.NavigationBar;
 
-internal abstract class AbstractEditorNavigationBarItemService : INavigationBarItemService
+internal abstract class AbstractEditorNavigationBarItemService(IThreadingContext threadingContext) : INavigationBarItemService
 {
-    protected readonly IThreadingContext ThreadingContext;
-
-    protected AbstractEditorNavigationBarItemService(IThreadingContext threadingContext)
-    {
-        ThreadingContext = threadingContext;
-    }
+    protected readonly IThreadingContext ThreadingContext = threadingContext;
 
     protected abstract Task<bool> TryNavigateToItemAsync(Document document, WrappedNavigationBarItem item, ITextView textView, ITextVersion textVersion, CancellationToken cancellationToken);
 

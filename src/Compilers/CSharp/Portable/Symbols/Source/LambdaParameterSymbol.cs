@@ -9,33 +9,25 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class LambdaParameterSymbol : SourceComplexParameterSymbolBase
+    internal sealed class LambdaParameterSymbol(
+       LambdaSymbol owner,
+       SyntaxReference? syntaxRef,
+       SyntaxList<AttributeListSyntax> attributeLists,
+       TypeWithAnnotations parameterType,
+       int ordinal,
+       RefKind refKind,
+       ScopedKind scope,
+       string name,
+       bool isDiscard,
+       bool hasParamsModifier,
+       Location location) : SourceComplexParameterSymbolBase(owner, ordinal, refKind, name, location, syntaxRef, hasParamsModifier: hasParamsModifier, isParams: hasParamsModifier, isExtensionMethodThis: false, scope)
     {
-        private readonly TypeWithAnnotations _parameterType;
-        private readonly SyntaxList<AttributeListSyntax> _attributeLists;
-
-        public LambdaParameterSymbol(
-           LambdaSymbol owner,
-           SyntaxReference? syntaxRef,
-           SyntaxList<AttributeListSyntax> attributeLists,
-           TypeWithAnnotations parameterType,
-           int ordinal,
-           RefKind refKind,
-           ScopedKind scope,
-           string name,
-           bool isDiscard,
-           bool hasParamsModifier,
-           Location location)
-           : base(owner, ordinal, refKind, name, location, syntaxRef, hasParamsModifier: hasParamsModifier, isParams: hasParamsModifier, isExtensionMethodThis: false, scope)
-        {
-            _parameterType = parameterType;
-            _attributeLists = attributeLists;
-            IsDiscard = isDiscard;
-        }
+        private readonly TypeWithAnnotations _parameterType = parameterType;
+        private readonly SyntaxList<AttributeListSyntax> _attributeLists = attributeLists;
 
         public override TypeWithAnnotations TypeWithAnnotations => _parameterType;
 
-        public override bool IsDiscard { get; }
+        public override bool IsDiscard { get; } = isDiscard;
 
         public override ImmutableArray<CustomModifier> RefCustomModifiers
         {

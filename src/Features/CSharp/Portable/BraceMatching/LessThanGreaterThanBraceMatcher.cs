@@ -10,12 +10,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.BraceMatching;
 
 [ExportBraceMatcher(LanguageNames.CSharp), Shared]
-internal sealed class LessThanGreaterThanBraceMatcher : AbstractCSharpBraceMatcher
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LessThanGreaterThanBraceMatcher() : AbstractCSharpBraceMatcher(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LessThanGreaterThanBraceMatcher()
-        : base(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
-    {
-    }
 }

@@ -10,17 +10,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal abstract class LoopBinder : LocalScopeBinder
+    internal abstract class LoopBinder(Binder enclosing) : LocalScopeBinder(enclosing)
     {
-        private readonly GeneratedLabelSymbol _breakLabel;
-        private readonly GeneratedLabelSymbol _continueLabel;
-
-        protected LoopBinder(Binder enclosing)
-            : base(enclosing)
-        {
-            _breakLabel = new GeneratedLabelSymbol("break");
-            _continueLabel = new GeneratedLabelSymbol("continue");
-        }
+        private readonly GeneratedLabelSymbol _breakLabel = new GeneratedLabelSymbol("break");
+        private readonly GeneratedLabelSymbol _continueLabel = new GeneratedLabelSymbol("continue");
 
         internal override GeneratedLabelSymbol BreakLabel
         {

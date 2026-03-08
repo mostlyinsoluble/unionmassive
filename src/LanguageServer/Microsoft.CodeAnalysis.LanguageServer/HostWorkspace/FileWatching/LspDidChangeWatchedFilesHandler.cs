@@ -12,14 +12,10 @@ namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace.FileWatching;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(LspDidChangeWatchedFilesHandler)), Shared]
 [Method("workspace/didChangeWatchedFiles")]
-internal sealed class LspDidChangeWatchedFilesHandler : ILspServiceNotificationHandler<DidChangeWatchedFilesParams>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LspDidChangeWatchedFilesHandler() : ILspServiceNotificationHandler<DidChangeWatchedFilesParams>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LspDidChangeWatchedFilesHandler()
-    {
-    }
-
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => false;
 

@@ -26,36 +26,24 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Interactive;
 
-internal abstract class VsInteractiveWindowProvider
+internal abstract class VsInteractiveWindowProvider(
+   SVsServiceProvider serviceProvider,
+   IVsInteractiveWindowFactory interactiveWindowFactory,
+   IViewClassifierAggregatorService classifierAggregator,
+   IContentTypeRegistryService contentTypeRegistry,
+   IInteractiveWindowCommandsFactory commandsFactory,
+   IInteractiveWindowCommand[] commands,
+   VisualStudioWorkspace workspace)
 {
-    private readonly IVsInteractiveWindowFactory _vsInteractiveWindowFactory;
-    private readonly SVsServiceProvider _vsServiceProvider;
-    private readonly VisualStudioWorkspace _vsWorkspace;
-    private readonly IViewClassifierAggregatorService _classifierAggregator;
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
+    private readonly IVsInteractiveWindowFactory _vsInteractiveWindowFactory = interactiveWindowFactory;
+    private readonly SVsServiceProvider _vsServiceProvider = serviceProvider;
+    private readonly VisualStudioWorkspace _vsWorkspace = workspace;
+    private readonly IViewClassifierAggregatorService _classifierAggregator = classifierAggregator;
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry;
 
     // TODO: support multi-instance windows
     // single instance of the Interactive Window
     private IVsInteractiveWindow _vsInteractiveWindow;
-
-    public VsInteractiveWindowProvider(
-       SVsServiceProvider serviceProvider,
-       IVsInteractiveWindowFactory interactiveWindowFactory,
-       IViewClassifierAggregatorService classifierAggregator,
-       IContentTypeRegistryService contentTypeRegistry,
-       IInteractiveWindowCommandsFactory commandsFactory,
-       IInteractiveWindowCommand[] commands,
-       VisualStudioWorkspace workspace)
-    {
-        _vsServiceProvider = serviceProvider;
-        _classifierAggregator = classifierAggregator;
-        _contentTypeRegistry = contentTypeRegistry;
-        _vsWorkspace = workspace;
-        Commands = GetApplicableCommands(commands, coreContentType: PredefinedInteractiveCommandsContentTypes.InteractiveCommandContentTypeName,
-            specializedContentType: InteractiveWindowContentTypes.CommandContentTypeName);
-        _vsInteractiveWindowFactory = interactiveWindowFactory;
-        CommandsFactory = commandsFactory;
-    }
 
     protected abstract CSharpInteractiveEvaluator CreateInteractiveEvaluator(
         SVsServiceProvider serviceProvider,
@@ -68,9 +56,10 @@ internal abstract class VsInteractiveWindowProvider
     protected abstract string Title { get; }
     protected abstract FunctionId InteractiveWindowFunctionId { get; }
 
-    protected IInteractiveWindowCommandsFactory CommandsFactory { get; }
+    protected IInteractiveWindowCommandsFactory CommandsFactory { get; } = commandsFactory;
 
-    protected ImmutableArray<IInteractiveWindowCommand> Commands { get; }
+    protected ImmutableArray<IInteractiveWindowCommand> Commands { get; } = GetApplicableCommands(commands, coreContentType: PredefinedInteractiveCommandsContentTypes.InteractiveCommandContentTypeName,
+            specializedContentType: InteractiveWindowContentTypes.CommandContentTypeName);
 
     public void Create(int instanceId)
     {

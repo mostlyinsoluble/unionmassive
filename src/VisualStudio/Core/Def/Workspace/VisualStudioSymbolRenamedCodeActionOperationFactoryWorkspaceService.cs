@@ -18,17 +18,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 using Workspace = Microsoft.CodeAnalysis.Workspace;
 
 [ExportWorkspaceService(typeof(ISymbolRenamedCodeActionOperationFactoryWorkspaceService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioSymbolRenamedCodeActionOperationFactoryWorkspaceService : ISymbolRenamedCodeActionOperationFactoryWorkspaceService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioSymbolRenamedCodeActionOperationFactoryWorkspaceService(
+    [ImportMany] IEnumerable<IRefactorNotifyService> refactorNotifyServices) : ISymbolRenamedCodeActionOperationFactoryWorkspaceService
 {
-    private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioSymbolRenamedCodeActionOperationFactoryWorkspaceService(
-        [ImportMany] IEnumerable<IRefactorNotifyService> refactorNotifyServices)
-    {
-        _refactorNotifyServices = refactorNotifyServices;
-    }
+    private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices = refactorNotifyServices;
 
     public CodeActionOperation CreateSymbolRenamedOperation(ISymbol symbol, string newName, Solution startingSolution, Solution updatedSolution)
     {
@@ -40,27 +35,18 @@ internal sealed class VisualStudioSymbolRenamedCodeActionOperationFactoryWorkspa
             updatedSolution ?? throw new ArgumentNullException(nameof(updatedSolution)));
     }
 
-    private sealed class RenameSymbolOperation : CodeActionOperation
+    private sealed class RenameSymbolOperation(
+        IEnumerable<IRefactorNotifyService> refactorNotifyServices,
+        ISymbol symbol,
+        string newName,
+        Solution startingSolution,
+        Solution updatedSolution) : CodeActionOperation
     {
-        private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices;
-        private readonly ISymbol _symbol;
-        private readonly string _newName;
-        private readonly Solution _startingSolution;
-        private readonly Solution _updatedSolution;
-
-        public RenameSymbolOperation(
-            IEnumerable<IRefactorNotifyService> refactorNotifyServices,
-            ISymbol symbol,
-            string newName,
-            Solution startingSolution,
-            Solution updatedSolution)
-        {
-            _refactorNotifyServices = refactorNotifyServices;
-            _symbol = symbol;
-            _newName = newName;
-            _startingSolution = startingSolution;
-            _updatedSolution = updatedSolution;
-        }
+        private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices = refactorNotifyServices;
+        private readonly ISymbol _symbol = symbol;
+        private readonly string _newName = newName;
+        private readonly Solution _startingSolution = startingSolution;
+        private readonly Solution _updatedSolution = updatedSolution;
 
         public override void Apply(Workspace workspace, CancellationToken cancellationToken = default)
         {

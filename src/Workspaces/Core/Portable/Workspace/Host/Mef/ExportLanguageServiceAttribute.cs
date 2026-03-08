@@ -44,8 +44,5 @@ public class ExportLanguageServiceAttribute(Type type, string language, string l
     internal IReadOnlyList<string> WorkspaceKinds { get; } = [];
 
     internal ExportLanguageServiceAttribute(Type type, string language, string[] workspaceKinds)
-        : this(type, language)
-    {
-        WorkspaceKinds = workspaceKinds;
-    }
+        : this(type, language) => WorkspaceKinds = workspaceKinds;
 }

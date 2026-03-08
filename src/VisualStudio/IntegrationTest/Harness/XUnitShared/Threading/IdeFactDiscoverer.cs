@@ -12,14 +12,9 @@ namespace Xunit.Threading
     using Xunit.Harness;
     using Xunit.Sdk;
 
-    public class IdeFactDiscoverer : IXunitTestCaseDiscoverer
+    public class IdeFactDiscoverer(IMessageSink diagnosticMessageSink) : IXunitTestCaseDiscoverer
     {
-        private readonly IMessageSink _diagnosticMessageSink;
-
-        public IdeFactDiscoverer(IMessageSink diagnosticMessageSink)
-        {
-            _diagnosticMessageSink = diagnosticMessageSink;
-        }
+        private readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
         public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
         {

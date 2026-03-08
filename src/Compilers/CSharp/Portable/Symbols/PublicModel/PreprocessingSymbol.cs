@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
     {
         private readonly string _name;
 
-        internal PreprocessingSymbol(string name)
-        {
-            _name = name;
-        }
+        internal PreprocessingSymbol(string name) => _name = name;
 
         ISymbol ISymbol.OriginalDefinition => this;
 

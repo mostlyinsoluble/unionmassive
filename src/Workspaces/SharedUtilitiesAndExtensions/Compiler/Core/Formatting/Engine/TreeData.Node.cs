@@ -12,10 +12,7 @@ internal abstract partial class TreeData
     private sealed class Node : TreeData
     {
         public Node(SyntaxNode root)
-            : base(root)
-        {
-            Contract.ThrowIfFalse(root.GetFirstToken(includeZeroWidth: true).RawKind != 0);
-        }
+            : base(root) => Contract.ThrowIfFalse(root.GetFirstToken(includeZeroWidth: true).RawKind != 0);
 
         public override int GetOriginalColumn(int tabSize, SyntaxToken token)
         {

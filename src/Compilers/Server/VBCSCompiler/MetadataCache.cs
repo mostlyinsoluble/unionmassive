@@ -108,17 +108,11 @@ namespace Microsoft.CodeAnalysis.CompilerServer
         }
     }
 
-    internal sealed class CachingMetadataReference : PortableExecutableReference
+    internal sealed class CachingMetadataReference(string fullPath, MetadataReferenceProperties properties) : PortableExecutableReference(properties, fullPath)
     {
         private static readonly MetadataAndSymbolCache s_mdCache = new MetadataAndSymbolCache();
 
-        public new string FilePath { get; }
-
-        public CachingMetadataReference(string fullPath, MetadataReferenceProperties properties)
-            : base(properties, fullPath)
-        {
-            FilePath = fullPath;
-        }
+        public new string FilePath { get; } = fullPath;
 
         protected override DocumentationProvider CreateDocumentationProvider()
         {

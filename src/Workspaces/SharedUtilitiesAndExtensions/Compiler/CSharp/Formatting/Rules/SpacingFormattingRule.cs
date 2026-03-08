@@ -22,10 +22,7 @@ internal sealed class SpacingFormattingRule : BaseFormattingRule
     {
     }
 
-    private SpacingFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private SpacingFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

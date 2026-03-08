@@ -9,16 +9,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class AddDocumentUndoUnit : AbstractAddDocumentUndoUnit
+    private sealed class AddDocumentUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        DocumentInfo docInfo,
+        SourceText text) : AbstractAddDocumentUndoUnit(workspace, docInfo, text)
     {
-        public AddDocumentUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            DocumentInfo docInfo,
-            SourceText text)
-            : base(workspace, docInfo, text)
-        {
-        }
-
         protected override Project AddDocument(Project fromProject)
             => fromProject.AddDocument(DocumentInfo.Name, Text, DocumentInfo.Folders, DocumentInfo.FilePath).Project;
     }

@@ -23,17 +23,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// A source method that can have attributes, including a member method, accessor, or local function.
     /// </summary>
-    internal abstract partial class SourceMethodSymbol : IAttributeTargetSymbol
+    internal abstract partial class SourceMethodSymbol(SyntaxReference syntaxReferenceOpt) : IAttributeTargetSymbol
     {
         private CustomAttributesBag<CSharpAttributeData> _lazyCustomAttributesBag;
         private CustomAttributesBag<CSharpAttributeData> _lazyReturnTypeCustomAttributesBag;
 
         // some symbols may not have a syntax (e.g. lambdas, synthesized event accessors)
-        protected readonly SyntaxReference syntaxReferenceOpt;
-        protected SourceMethodSymbol(SyntaxReference syntaxReferenceOpt)
-        {
-            this.syntaxReferenceOpt = syntaxReferenceOpt;
-        }
+        protected readonly SyntaxReference syntaxReferenceOpt = syntaxReferenceOpt;
 
 #nullable enable
         /// <summary>

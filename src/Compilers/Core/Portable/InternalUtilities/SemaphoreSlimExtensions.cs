@@ -25,14 +25,9 @@ namespace Roslyn.Utilities
         }
 
         [NonCopyable]
-        internal struct SemaphoreDisposer : IDisposable
+        internal struct SemaphoreDisposer(SemaphoreSlim semaphore) : IDisposable
         {
-            private SemaphoreSlim? _semaphore;
-
-            public SemaphoreDisposer(SemaphoreSlim semaphore)
-            {
-                _semaphore = semaphore;
-            }
+            private SemaphoreSlim? _semaphore = semaphore;
 
             public void Dispose()
             {

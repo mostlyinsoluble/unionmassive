@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private PackedFlags _flags;
 
-        private struct PackedFlags
+        private struct PackedFlags(bool isSpecialName, bool isRuntimeSpecialName, bool callMethodsDirectly)
         {
             // Layout:
             // |.................|e|f|p|c|o|d|uu|rr|c|n|s|
@@ -79,14 +79,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             private const int RequiresUnsafeBit = 1 << 12;
             private const int RequiresUnsafePopulatedBit = 1 << 13;
 
-            private int _bits;
-
-            public PackedFlags(bool isSpecialName, bool isRuntimeSpecialName, bool callMethodsDirectly)
-            {
-                _bits = (isSpecialName ? IsSpecialNameFlag : 0)
+            private int _bits = (isSpecialName ? IsSpecialNameFlag : 0)
                         | (isRuntimeSpecialName ? IsRuntimeSpecialNameFlag : 0)
                         | (callMethodsDirectly ? CallMethodsDirectlyFlag : 0);
-            }
 
             public void SetHasRequiredMemberAttribute(bool isRequired)
             {

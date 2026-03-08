@@ -9,13 +9,10 @@ using Microsoft.CodeAnalysis.Remote;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal readonly struct RazorRemoteCallbackWrapper<T>
+    internal readonly struct RazorRemoteCallbackWrapper<T>(T callback)
         where T : class
     {
-        internal readonly RemoteCallback<T> UnderlyingObject;
-
-        public RazorRemoteCallbackWrapper(T callback)
-            => UnderlyingObject = new RemoteCallback<T>(callback);
+        internal readonly RemoteCallback<T> UnderlyingObject = new RemoteCallback<T>(callback);
 
         public ValueTask InvokeAsync(Func<T, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
             => UnderlyingObject.InvokeAsync(invocation, cancellationToken);

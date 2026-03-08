@@ -26,14 +26,9 @@ namespace Microsoft.CodeAnalysis
         public static SyntaxTreeKey Create(SyntaxTree tree)
             => new DefaultSyntaxTreeKey(tree);
 
-        private sealed class DefaultSyntaxTreeKey : SyntaxTreeKey
+        private sealed class DefaultSyntaxTreeKey(SyntaxTree tree) : SyntaxTreeKey
         {
-            private readonly SyntaxTree _tree;
-
-            public DefaultSyntaxTreeKey(SyntaxTree tree)
-            {
-                _tree = tree;
-            }
+            private readonly SyntaxTree _tree = tree;
 
             public override string FilePath
                 => _tree.FilePath;

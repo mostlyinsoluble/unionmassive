@@ -113,12 +113,9 @@ internal partial class GenerateTypeDialog : DialogWindow
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(GenerateTypeDialog dialog)
     {
-        private readonly GenerateTypeDialog _dialog;
-
-        public TestAccessor(GenerateTypeDialog dialog)
-            => _dialog = dialog;
+        private readonly GenerateTypeDialog _dialog = dialog;
 
         public Button OKButton => _dialog.OKButton;
 

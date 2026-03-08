@@ -593,16 +593,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
     }
 
-    internal abstract class SubstitutedErrorTypeSymbol : ErrorTypeSymbol
+    internal abstract class SubstitutedErrorTypeSymbol(ErrorTypeSymbol originalDefinition, NamedTypeSymbol.TupleExtraData? tupleData = null) : ErrorTypeSymbol(tupleData)
     {
-        private readonly ErrorTypeSymbol _originalDefinition;
+        private readonly ErrorTypeSymbol _originalDefinition = originalDefinition;
         private int _hashCode;
-
-        protected SubstitutedErrorTypeSymbol(ErrorTypeSymbol originalDefinition, TupleExtraData? tupleData = null)
-            : base(tupleData)
-        {
-            _originalDefinition = originalDefinition;
-        }
 
         public override NamedTypeSymbol OriginalDefinition
         {
@@ -662,19 +656,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
     }
 
-    internal sealed class ConstructedErrorTypeSymbol : SubstitutedErrorTypeSymbol
+    internal sealed class ConstructedErrorTypeSymbol(ErrorTypeSymbol constructedFrom, ImmutableArray<TypeWithAnnotations> typeArgumentsWithAnnotations, NamedTypeSymbol.TupleExtraData? tupleData = null) : SubstitutedErrorTypeSymbol((ErrorTypeSymbol)constructedFrom.OriginalDefinition, tupleData)
     {
-        private readonly ErrorTypeSymbol _constructedFrom;
-        private readonly ImmutableArray<TypeWithAnnotations> _typeArgumentsWithAnnotations;
-        private readonly TypeMap _map;
-
-        public ConstructedErrorTypeSymbol(ErrorTypeSymbol constructedFrom, ImmutableArray<TypeWithAnnotations> typeArgumentsWithAnnotations, TupleExtraData? tupleData = null) :
-            base((ErrorTypeSymbol)constructedFrom.OriginalDefinition, tupleData)
-        {
-            _constructedFrom = constructedFrom;
-            _typeArgumentsWithAnnotations = typeArgumentsWithAnnotations;
-            _map = new TypeMap(constructedFrom.ContainingType, constructedFrom.OriginalDefinition.TypeParameters, typeArgumentsWithAnnotations);
-        }
+        private readonly ErrorTypeSymbol _constructedFrom = constructedFrom;
+        private readonly ImmutableArray<TypeWithAnnotations> _typeArgumentsWithAnnotations = typeArgumentsWithAnnotations;
+        private readonly TypeMap _map = new TypeMap(constructedFrom.ContainingType, constructedFrom.OriginalDefinition.TypeParameters, typeArgumentsWithAnnotations);
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {

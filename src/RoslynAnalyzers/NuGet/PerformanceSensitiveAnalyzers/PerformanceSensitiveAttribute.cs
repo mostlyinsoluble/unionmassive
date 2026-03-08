@@ -19,10 +19,7 @@ namespace Roslyn.Utilities
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
     internal sealed class PerformanceSensitiveAttribute : Attribute
     {
-        public PerformanceSensitiveAttribute(string uri)
-        {
-            Uri = uri;
-        }
+        public PerformanceSensitiveAttribute(string uri) => Uri = uri;
 
         /// <summary>
         /// Gets the location where the original problem is documented, likely with steps to reproduce the issue and/or

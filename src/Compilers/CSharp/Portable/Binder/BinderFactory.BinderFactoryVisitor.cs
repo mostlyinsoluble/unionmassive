@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (usage == NodeUsage.MethodBody)
                     {
-                        method = method ?? GetMethodSymbol(methodDecl, resultBinder);
+                        method ??= GetMethodSymbol(methodDecl, resultBinder);
                         isIteratorBody = method.IsIterator;
                         resultBinder = new InMethodBinder(method, resultBinder);
                     }

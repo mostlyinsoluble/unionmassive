@@ -14,14 +14,9 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Operations
 {
-    internal sealed partial class CSharpOperationFactory
+    internal sealed partial class CSharpOperationFactory(SemanticModel semanticModel)
     {
-        private readonly SemanticModel _semanticModel;
-
-        public CSharpOperationFactory(SemanticModel semanticModel)
-        {
-            _semanticModel = semanticModel;
-        }
+        private readonly SemanticModel _semanticModel = semanticModel;
 
         [return: NotNullIfNotNull(nameof(boundNode))]
         public IOperation? Create(BoundNode? boundNode)

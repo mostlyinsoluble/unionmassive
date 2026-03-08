@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis
     {
         private ReadOnlySpan<byte> _span;
 
-        public LittleEndianReader(ReadOnlySpan<byte> span)
-        {
-            _span = span;
-        }
+        public LittleEndianReader(ReadOnlySpan<byte> span) => _span = span;
 
         internal uint ReadUInt32()
         {

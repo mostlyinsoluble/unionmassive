@@ -29,14 +29,10 @@ internal static class RichNavOptions
 [DefaultScope]
 [Name(PredefinedScopeFilterNames.LoadedSolutionScopeFilter)]
 [Order(Before = PredefinedScopeFilterNames.AllItemsScopeFilter)]
-internal sealed class LoadedSolutionScopeFilterFactory : IReplacingScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LoadedSolutionScopeFilterFactory() : IReplacingScopeFilterFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LoadedSolutionScopeFilterFactory()
-    {
-    }
-
     public IErrorListFilterHandler CreateFilter(IWpfTableControl tableControl)
     {
         // We're only replacing an existing filter, and not creating a new one.
@@ -58,20 +54,13 @@ internal sealed class LoadedSolutionScopeFilterFactory : IReplacingScopeFilterFa
     }
 }
 
-internal abstract class RoslynFilterHandler : FilterHandlerBase
+internal abstract class RoslynFilterHandler(int id, string displayName, ItemOrigin origin) : FilterHandlerBase
 {
-    private readonly ItemOrigin _origin;
+    private readonly ItemOrigin _origin = origin;
 
-    protected RoslynFilterHandler(int id, string displayName, ItemOrigin origin)
-    {
-        FilterId = id;
-        FilterDisplayName = displayName;
-        _origin = origin;
-    }
+    public sealed override int FilterId { get; } = id;
 
-    public sealed override int FilterId { get; }
-
-    public sealed override string FilterDisplayName { get; }
+    public sealed override string FilterDisplayName { get; } = displayName;
 
     public sealed override IEntryFilter GetFilter(out string displayText)
     {
@@ -80,13 +69,9 @@ internal abstract class RoslynFilterHandler : FilterHandlerBase
     }
 }
 
-internal sealed class LoadedSolutionFilterHandler : RoslynFilterHandler
+internal sealed class LoadedSolutionFilterHandler(string displayName) : RoslynFilterHandler(LoadedSolutionFilterHandlerFilterId, displayName, ItemOrigin.ExactMetadata)
 {
     private const int LoadedSolutionFilterHandlerFilterId = 20;
-    public LoadedSolutionFilterHandler(string displayName)
-        : base(LoadedSolutionFilterHandlerFilterId, displayName, ItemOrigin.ExactMetadata)
-    {
-    }
 }
 
 [Export(typeof(IScopeFilterFactory))]
@@ -95,15 +80,11 @@ internal sealed class LoadedSolutionFilterHandler : RoslynFilterHandler
 [DeferCreation(OptionName = RichNavOptions.RichNavAvailableOptionName)] // This factory will not be loaded unless this option is set to Boolean true
 [Name(AllSourcesFilterHandlerFactory.AllSourcesScopeFilter)]
 [Order(Before = PredefinedScopeFilterNames.EntireRepositoryScopeFilter)]
-internal sealed class AllSourcesFilterHandlerFactory : IScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AllSourcesFilterHandlerFactory() : IScopeFilterFactory
 {
     private const string AllSourcesScopeFilter = "All Sources";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AllSourcesFilterHandlerFactory()
-    {
-    }
 
     public IErrorListFilterHandler CreateFilter(IWpfTableControl tableControl)
         => new AllSourcesFilterHandler();
@@ -125,14 +106,10 @@ internal sealed class AllSourcesFilterHandler : RoslynFilterHandler
 [DeferCreation(OptionName = RichNavOptions.RichNavAvailableOptionName)] // This factory will not be loaded unless this option is set to Boolean true
 [Name(PredefinedScopeFilterNames.EntireRepositoryScopeFilter)]
 [Order(Before = PredefinedScopeFilterNames.LoadedSolutionScopeFilter)]
-internal sealed class EntireRepositoryFilterHandlerFactory : IScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EntireRepositoryFilterHandlerFactory() : IScopeFilterFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EntireRepositoryFilterHandlerFactory()
-    {
-    }
-
     public IErrorListFilterHandler CreateFilter(IWpfTableControl tableControl)
         => new EntireRepositoryFilterHandler();
 }

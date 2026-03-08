@@ -59,8 +59,5 @@ internal sealed class WrappedAddImportFixData
 
     #endregion
 
-    internal WrappedAddImportFixData(AddImportFixData underlying)
-    {
-        Underlying = underlying;
-    }
+    internal WrappedAddImportFixData(AddImportFixData underlying) => Underlying = underlying;
 }

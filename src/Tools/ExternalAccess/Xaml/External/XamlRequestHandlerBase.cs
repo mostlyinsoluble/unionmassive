@@ -10,14 +10,9 @@ using LSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
-internal abstract class XamlRequestHandlerBase<TRequest, TResponse> : ILspServiceDocumentRequestHandler<TRequest, TResponse>
+internal abstract class XamlRequestHandlerBase<TRequest, TResponse>(IXamlRequestHandler<TRequest, TResponse>? xamlRequestHandler) : ILspServiceDocumentRequestHandler<TRequest, TResponse>
 {
-    private readonly IXamlRequestHandler<TRequest, TResponse>? _xamlRequestHandler;
-
-    public XamlRequestHandlerBase(IXamlRequestHandler<TRequest, TResponse>? xamlRequestHandler)
-    {
-        _xamlRequestHandler = xamlRequestHandler;
-    }
+    private readonly IXamlRequestHandler<TRequest, TResponse>? _xamlRequestHandler = xamlRequestHandler;
 
     public bool MutatesSolutionState => _xamlRequestHandler?.MutatesSolutionState ?? false;
 

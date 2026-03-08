@@ -31,10 +31,7 @@ internal sealed class AnalyzerSettingsProvider
         AnalyzerSettingsUpdater settingsUpdater,
         Workspace workspace,
         IGlobalOptionService optionService)
-        : base(threadingContext, fileName, settingsUpdater, workspace, optionService)
-    {
-        Update();
-    }
+        : base(threadingContext, fileName, settingsUpdater, workspace, optionService) => Update();
 
     protected override async Task UpdateOptionsAsync(
         TieredAnalyzerConfigOptions options, ImmutableArray<Project> projectsInScope, CancellationToken cancellationToken)

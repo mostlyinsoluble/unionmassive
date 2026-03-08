@@ -1118,14 +1118,11 @@ namespace Microsoft.CodeAnalysis.CodeGen
             Cci.IMethodReference encodingGetString,
             ushort maxStack,
             ImmutableArray<byte> il)
-            : base(containingType, maxStack, il)
-        {
-            _parameters =
+            : base(containingType, maxStack, il) => _parameters =
             [
                 new BytesParameter(encodingGetString), // byte* bytes
                 LengthParameterDefinition.Instance,    // int length
             ];
-        }
 
         public static BytesToStringHelper Create(
             CommonPEModuleBuilder moduleBuilder,

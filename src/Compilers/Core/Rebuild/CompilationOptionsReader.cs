@@ -23,7 +23,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Rebuild
 {
-    public class CompilationOptionsReader
+    public class CompilationOptionsReader(ILogger logger, MetadataReader pdbReader, PEReader peReader)
     {
         // GUIDs specified in https://github.com/dotnet/runtime/blob/main/docs/design/specs/PortablePdb-Metadata.md#document-table-0x30
         public static readonly Guid HashAlgorithmSha1 = unchecked(new Guid((int)0xff1816ec, (short)0xaa5e, 0x4d10, 0x87, 0xf7, 0x6f, 0x49, 0x63, 0x83, 0x34, 0x60));
@@ -43,21 +43,14 @@ namespace Microsoft.CodeAnalysis.Rebuild
         // https://github.com/dotnet/runtime/blob/main/docs/design/specs/PortablePdb-Metadata.md#source-link-c-and-vb-compilers
         public static readonly Guid SourceLinkGuid = new Guid("CC110556-A091-4D38-9FEC-25AB9A351A6A");
 
-        public MetadataReader PdbReader { get; }
-        public PEReader PeReader { get; }
-        private readonly ILogger _logger;
+        public MetadataReader PdbReader { get; } = pdbReader;
+        public PEReader PeReader { get; } = peReader;
+        private readonly ILogger _logger = logger;
 
         public bool HasMetadataCompilationOptions => TryGetMetadataCompilationOptions(out _);
 
         private MetadataCompilationOptions? _metadataCompilationOptions;
         private byte[]? _sourceLinkUtf8;
-
-        public CompilationOptionsReader(ILogger logger, MetadataReader pdbReader, PEReader peReader)
-        {
-            _logger = logger;
-            PdbReader = pdbReader;
-            PeReader = peReader;
-        }
 
         public bool TryGetMetadataCompilationOptionsBlobReader(out BlobReader reader)
         {

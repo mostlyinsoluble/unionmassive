@@ -21,15 +21,11 @@ namespace Microsoft.CodeAnalysis.CSharp.GenerateMember.GenerateVariable;
 using static SyntaxFactory;
 
 [ExportLanguageService(typeof(IGenerateVariableService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpGenerateVariableService :
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CSharpGenerateVariableService() :
     AbstractGenerateVariableService<CSharpGenerateVariableService, SimpleNameSyntax, ExpressionSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpGenerateVariableService()
-    {
-    }
-
     protected override bool IsExplicitInterfaceGeneration(SyntaxNode node)
         => node is PropertyDeclarationSyntax;
 

@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
         private readonly LoadContext _inMemoryAssemblyContext;
 
         internal CoreAssemblyLoaderImpl(InteractiveAssemblyLoader loader)
-            : base(loader)
-        {
-            _inMemoryAssemblyContext = new LoadContext(Loader, null);
-        }
+            : base(loader) => _inMemoryAssemblyContext = new LoadContext(Loader, null);
 
         public override Assembly LoadFromStream(Stream peStream, Stream pdbStream)
         {

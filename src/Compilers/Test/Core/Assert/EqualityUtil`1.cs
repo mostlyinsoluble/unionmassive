@@ -17,21 +17,14 @@ namespace Roslyn.Test.Utilities
     /// Base class which does a lot of the boiler plate work for testing that the equality pattern
     /// is properly implemented in objects
     /// </summary>
-    public sealed class EqualityUtil<T>
+    public sealed class EqualityUtil<T>(
+        IEnumerable<EqualityUnit<T>> equalityUnits,
+        Func<T, T, bool> compEquality = null,
+        Func<T, T, bool> compInequality = null)
     {
-        private readonly ReadOnlyCollection<EqualityUnit<T>> _equalityUnits;
-        private readonly Func<T, T, bool> _compareWithEqualityOperator;
-        private readonly Func<T, T, bool> _compareWithInequalityOperator;
-
-        public EqualityUtil(
-            IEnumerable<EqualityUnit<T>> equalityUnits,
-            Func<T, T, bool> compEquality = null,
-            Func<T, T, bool> compInequality = null)
-        {
-            _equalityUnits = equalityUnits.ToList().AsReadOnly();
-            _compareWithEqualityOperator = compEquality;
-            _compareWithInequalityOperator = compInequality;
-        }
+        private readonly ReadOnlyCollection<EqualityUnit<T>> _equalityUnits = equalityUnits.ToList().AsReadOnly();
+        private readonly Func<T, T, bool> _compareWithEqualityOperator = compEquality;
+        private readonly Func<T, T, bool> _compareWithInequalityOperator = compInequality;
 
         public void RunAll(bool checkIEquatable = true)
         {

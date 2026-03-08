@@ -15,14 +15,11 @@ using Microsoft.VisualStudio.Shell;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CallHierarchy;
 
 [Export(typeof(ICallHierarchyPresenter))]
-internal sealed class CallHierarchyPresenter : ICallHierarchyPresenter
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CallHierarchyPresenter(SVsServiceProvider serviceProvider) : ICallHierarchyPresenter
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CallHierarchyPresenter(SVsServiceProvider serviceProvider)
-        => _serviceProvider = serviceProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void PresentRoot(CallHierarchyItem root)
     {

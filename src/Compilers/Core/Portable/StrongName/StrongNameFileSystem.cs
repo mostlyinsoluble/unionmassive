@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis
         internal static readonly StrongNameFileSystem Instance = new StrongNameFileSystem();
         internal readonly string? _signingTempPath;
 
-        internal StrongNameFileSystem(string? signingTempPath = null)
-        {
-            _signingTempPath = signingTempPath;
-        }
+        internal StrongNameFileSystem(string? signingTempPath = null) => _signingTempPath = signingTempPath;
 
         internal virtual FileStream CreateFileStream(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {

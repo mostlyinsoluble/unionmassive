@@ -18,15 +18,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         internal XmlSyntaxDiagnosticInfo(int offset, int width, XmlParseErrorCode code, params object[] args)
-            : base(offset, width, ErrorCode.WRN_XMLParseError, args)
-        {
-            _xmlErrorCode = code;
-        }
+            : base(offset, width, ErrorCode.WRN_XMLParseError, args) => _xmlErrorCode = code;
 
-        private XmlSyntaxDiagnosticInfo(XmlSyntaxDiagnosticInfo original, DiagnosticSeverity severity) : base(original, severity)
-        {
-            _xmlErrorCode = original._xmlErrorCode;
-        }
+        private XmlSyntaxDiagnosticInfo(XmlSyntaxDiagnosticInfo original, DiagnosticSeverity severity) : base(original, severity) => _xmlErrorCode = original._xmlErrorCode;
 
         protected override DiagnosticInfo GetInstanceWithSeverityCore(DiagnosticSeverity severity)
         {

@@ -12,22 +12,13 @@ internal sealed partial class SuggestedActionsSourceProvider
 {
     private partial class SuggestedActionsSource
     {
-        private sealed class State : IDisposable
+        private sealed class State(SuggestedActionsSourceProvider.SuggestedActionsSource source, SuggestedActionsSourceProvider owner, ITextView textView, ITextBuffer textBuffer) : IDisposable
         {
-            private readonly SuggestedActionsSource _source;
+            private readonly SuggestedActionsSource _source = source;
 
-            public readonly SuggestedActionsSourceProvider Owner;
-            public readonly ITextView TextView;
-            public readonly ITextBuffer SubjectBuffer;
-
-            public State(SuggestedActionsSource source, SuggestedActionsSourceProvider owner, ITextView textView, ITextBuffer textBuffer)
-            {
-                _source = source;
-
-                Owner = owner;
-                TextView = textView;
-                SubjectBuffer = textBuffer;
-            }
+            public readonly SuggestedActionsSourceProvider Owner = owner;
+            public readonly ITextView TextView = textView;
+            public readonly ITextBuffer SubjectBuffer = textBuffer;
 
             void IDisposable.Dispose()
             {

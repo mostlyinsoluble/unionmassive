@@ -220,10 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     isAdder: isAdder,
                     isIterator: false,
                     isNullableAnalysisEnabled: ev.DeclaringCompilation.IsNullableAnalysisEnabledIn(ev.CSharpSyntaxNode),
-                    isExpressionBodied: false)
-            {
-                Debug.Assert(ev.IsPartialDefinition);
-            }
+                    isExpressionBodied: false) => Debug.Assert(ev.IsPartialDefinition);
 
             public override Accessibility DeclaredAccessibility => AssociatedEvent.DeclaredAccessibility;
 

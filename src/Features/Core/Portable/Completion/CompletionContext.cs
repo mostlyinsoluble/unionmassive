@@ -122,12 +122,11 @@ public sealed class CompletionContext
                trigger,
                // Publicly available options do not affect this API.
                CompletionOptions.Default,
-               cancellationToken)
-    {
+               cancellationToken) =>
 #pragma warning disable RS0030 // Do not used banned APIs
         Options = options ?? OptionSet.Empty;
 #pragma warning restore
-    }
+
 
     /// <summary>
     /// Creates a <see cref="CompletionContext"/> instance.

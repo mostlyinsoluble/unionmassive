@@ -248,7 +248,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {   // more than one access modifier
                 if ((modifiers & DeclarationModifiers.Partial) != 0)
                     diagnostics.Add(ErrorCode.ERR_PartialModifierConflict, GetFirstLocation(), this);
-                access = access & ~(access - 1); // narrow down to one access modifier
+                access &= ~(access - 1); // narrow down to one access modifier
                 modifiers &= ~DeclarationModifiers.AccessibilityMask; // remove them all
                 modifiers |= (DeclarationModifiers)access; // except the one
             }

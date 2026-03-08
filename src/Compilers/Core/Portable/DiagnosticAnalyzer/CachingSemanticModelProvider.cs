@@ -53,21 +53,14 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             s_providerCache.Remove(compilation);
         }
 
-        private sealed class PerCompilationProvider
+        private sealed class PerCompilationProvider(Compilation compilation)
         {
-            private readonly Compilation _compilation;
-            private readonly ConcurrentDictionary<SyntaxTree, SemanticModel> _semanticModelsMap;
+            private readonly Compilation _compilation = compilation;
+            private readonly ConcurrentDictionary<SyntaxTree, SemanticModel> _semanticModelsMap = new ConcurrentDictionary<SyntaxTree, SemanticModel>();
 
             // Cached delegate to avoid allocations in ConcurrentDictionary.GetOrAdd invocations.
             // We only care about caching semantic models for internal callers, which use the default 'ignoreAccessibility = false'.
-            private readonly Func<SyntaxTree, SemanticModel> _createSemanticModel;
-
-            public PerCompilationProvider(Compilation compilation)
-            {
-                _compilation = compilation;
-                _semanticModelsMap = new ConcurrentDictionary<SyntaxTree, SemanticModel>();
-                _createSemanticModel = tree => compilation.CreateSemanticModel(tree, options: default);
-            }
+            private readonly Func<SyntaxTree, SemanticModel> _createSemanticModel = tree => compilation.CreateSemanticModel(tree, options: default);
 
             public SemanticModel GetSemanticModel(SyntaxTree tree, SemanticModelOptions options)
             {

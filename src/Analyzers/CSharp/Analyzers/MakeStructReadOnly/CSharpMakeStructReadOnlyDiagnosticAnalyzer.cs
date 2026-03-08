@@ -29,10 +29,6 @@ internal sealed class CSharpMakeStructReadOnlyDiagnosticAnalyzer : AbstractBuilt
     protected override void InitializeWorker(AnalysisContext context)
         => context.RegisterCompilationStartAction(context =>
         {
-            var compilation = context.Compilation;
-            if (compilation.LanguageVersion() < LanguageVersion.CSharp7_2)
-                return;
-
             context.RegisterSymbolStartAction(context =>
             {
                 // First, see if this at least strongly looks like a struct that could be converted.

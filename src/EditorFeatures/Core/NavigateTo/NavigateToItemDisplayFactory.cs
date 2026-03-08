@@ -10,21 +10,14 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.NavigateTo;
 
-internal sealed class NavigateToItemDisplayFactory : INavigateToItemDisplayFactory
+internal sealed class NavigateToItemDisplayFactory(
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    IAsynchronousOperationListener asyncListener) : INavigateToItemDisplayFactory
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
-    private readonly IAsynchronousOperationListener _asyncListener;
-
-    public NavigateToItemDisplayFactory(
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        IAsynchronousOperationListener asyncListener)
-    {
-        _threadingContext = threadingContext;
-        _threadOperationExecutor = threadOperationExecutor;
-        _asyncListener = asyncListener;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
+    private readonly IAsynchronousOperationListener _asyncListener = asyncListener;
 
     public INavigateToItemDisplay CreateItemDisplay(NavigateToItem item)
         => new NavigateToItemDisplay(

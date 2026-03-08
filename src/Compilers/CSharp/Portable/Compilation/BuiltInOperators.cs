@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ImmutableArray<BinaryOperatorSignature>[][] _builtInOperators;
         private SingleInitNullable<BinaryOperatorSignature> _builtInUtf8Concatenation;
 
-        internal BuiltInOperators(CSharpCompilation compilation)
-        {
-            _compilation = compilation;
-        }
+        internal BuiltInOperators(CSharpCompilation compilation) => _compilation = compilation;
 
         // PERF: Use int instead of UnaryOperatorKind so the compiler can use array literal initialization.
         //       The most natural type choice, Enum arrays, are not blittable due to a CLR limitation.

@@ -29,10 +29,7 @@ internal abstract class AbstractUseCompoundAssignmentCodeFixProvider<
     private readonly ImmutableDictionary<TSyntaxKind, TSyntaxKind> _assignmentToTokenMap;
 
     protected AbstractUseCompoundAssignmentCodeFixProvider(
-        ImmutableArray<(TSyntaxKind exprKind, TSyntaxKind assignmentKind, TSyntaxKind tokenKind)> kinds)
-    {
-        UseCompoundAssignmentUtilities.GenerateMaps(kinds, out _binaryToAssignmentMap, out _assignmentToTokenMap);
-    }
+        ImmutableArray<(TSyntaxKind exprKind, TSyntaxKind assignmentKind, TSyntaxKind tokenKind)> kinds) => UseCompoundAssignmentUtilities.GenerateMaps(kinds, out _binaryToAssignmentMap, out _assignmentToTokenMap);
 
     protected abstract SyntaxToken Token(TSyntaxKind kind);
     protected abstract TAssignmentSyntax Assignment(

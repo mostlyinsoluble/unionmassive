@@ -35,10 +35,7 @@ internal abstract partial class AbstractTypeImportCompletionService : ITypeImpor
 
     protected abstract string Language { get; }
 
-    internal AbstractTypeImportCompletionService(SolutionServices services)
-    {
-        CacheService = services.GetRequiredService<IImportCompletionCacheService<TypeImportCompletionCacheEntry, TypeImportCompletionCacheEntry>>();
-    }
+    internal AbstractTypeImportCompletionService(SolutionServices services) => CacheService = services.GetRequiredService<IImportCompletionCacheService<TypeImportCompletionCacheEntry, TypeImportCompletionCacheEntry>>();
 
     public void QueueCacheWarmUpTask(Project project)
     {

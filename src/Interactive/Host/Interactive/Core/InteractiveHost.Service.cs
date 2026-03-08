@@ -43,20 +43,12 @@ namespace Microsoft.CodeAnalysis.Interactive
 
             private static readonly InteractiveHostPlatformInfo s_currentPlatformInfo = InteractiveHostPlatformInfo.GetCurrentPlatformInfo();
 
-            private sealed class ServiceState : IDisposable
+            private sealed class ServiceState(InteractiveAssemblyLoader assemblyLoader, MetadataShadowCopyProvider metadataFileProvider, ReplServiceProvider replServiceProvider, InteractiveScriptGlobals globals) : IDisposable
             {
-                public readonly InteractiveAssemblyLoader AssemblyLoader;
-                public readonly MetadataShadowCopyProvider MetadataFileProvider;
-                public readonly ReplServiceProvider ReplServiceProvider;
-                public readonly InteractiveScriptGlobals Globals;
-
-                public ServiceState(InteractiveAssemblyLoader assemblyLoader, MetadataShadowCopyProvider metadataFileProvider, ReplServiceProvider replServiceProvider, InteractiveScriptGlobals globals)
-                {
-                    AssemblyLoader = assemblyLoader;
-                    MetadataFileProvider = metadataFileProvider;
-                    ReplServiceProvider = replServiceProvider;
-                    Globals = globals;
-                }
+                public readonly InteractiveAssemblyLoader AssemblyLoader = assemblyLoader;
+                public readonly MetadataShadowCopyProvider MetadataFileProvider = metadataFileProvider;
+                public readonly ReplServiceProvider ReplServiceProvider = replServiceProvider;
+                public readonly InteractiveScriptGlobals Globals = globals;
 
                 public void Dispose()
                     => MetadataFileProvider.Dispose();
@@ -812,12 +804,12 @@ namespace Microsoft.CodeAnalysis.Interactive
                     {
                         if (i < 10)
                         {
-                            i = i + 1;
+                            i++;
                         }
                         else if (i == 10)
                         {
                             Console.Error.WriteLine("in the loop");
-                            i = i + 1;
+                            i++;
                         }
                     }
                 });

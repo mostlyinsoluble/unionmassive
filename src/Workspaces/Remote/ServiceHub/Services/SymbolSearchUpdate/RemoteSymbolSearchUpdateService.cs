@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.LanguageServices.Storage;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteSymbolSearchUpdateService : BrokeredServiceBase, IRemoteSymbolSearchUpdateService
+internal sealed class RemoteSymbolSearchUpdateService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteSymbolSearchUpdateService
 {
     internal sealed class Factory : FactoryBase<IRemoteSymbolSearchUpdateService>
     {
@@ -18,13 +18,7 @@ internal sealed class RemoteSymbolSearchUpdateService : BrokeredServiceBase, IRe
             => new RemoteSymbolSearchUpdateService(arguments);
     }
 
-    private readonly ISymbolSearchUpdateEngine _updateEngine;
-
-    public RemoteSymbolSearchUpdateService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
-        _updateEngine = SymbolSearchUpdateEngineFactory.CreateEngineInProcess(FileDownloader.Factory.Instance);
-    }
+    private readonly ISymbolSearchUpdateEngine _updateEngine = SymbolSearchUpdateEngineFactory.CreateEngineInProcess(FileDownloader.Factory.Instance);
 
     public ValueTask UpdateContinuouslyAsync(string sourceName, string localSettingsDirectory, CancellationToken cancellationToken)
     {

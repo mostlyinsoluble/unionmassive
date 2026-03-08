@@ -140,10 +140,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             internal readonly BinaryOperatorKind Kind;
 
             internal NullNull(BinaryOperatorKind kind)
-                : base(leftConvertedTypeOpt: null, rightConvertedTypeOpt: null)
-            {
-                Kind = kind;
-            }
+                : base(leftConvertedTypeOpt: null, rightConvertedTypeOpt: null) => Kind = kind;
 
             internal override TupleBinaryOperatorInfoKind InfoKind
                 => TupleBinaryOperatorInfoKind.NullNull;

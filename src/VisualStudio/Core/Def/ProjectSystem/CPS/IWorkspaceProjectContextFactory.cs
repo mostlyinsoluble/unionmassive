@@ -89,15 +89,8 @@ internal abstract class EvaluationData
     }
 }
 
-internal sealed class InvalidProjectDataException : Exception
+internal sealed class InvalidProjectDataException(string name, string value, string message) : Exception(message)
 {
-    public string Name { get; }
-    public string Value { get; }
-
-    public InvalidProjectDataException(string name, string value, string message)
-        : base(message)
-    {
-        Name = name;
-        Value = value;
-    }
+    public string Name { get; } = name;
+    public string Value { get; } = value;
 }

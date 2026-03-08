@@ -15,15 +15,10 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests.Workspaces;
 
-public abstract class WorkspaceBase : AbstractIntegrationTest
+public abstract class WorkspaceBase(string projectTemplate) : AbstractIntegrationTest()
 {
-    private readonly string _defaultProjectTemplate;
+    private readonly string _defaultProjectTemplate = projectTemplate;
     private readonly string _defaultlanguageName = LanguageNames.CSharp;
-
-    protected WorkspaceBase(string projectTemplate) : base()
-    {
-        _defaultProjectTemplate = projectTemplate;
-    }
 
     protected async Task InitializeWithDefaultSolution()
     {

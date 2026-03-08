@@ -269,11 +269,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             reportSuppressedDiagnostics: other.ReportSuppressedDiagnostics,
             publicSign: other.PublicSign,
             topLevelBinderFlags: other.TopLevelBinderFlags,
-            nullableContextOptions: other.NullableContextOptions)
-        {
+            nullableContextOptions: other.NullableContextOptions) =>
             // https://github.com/dotnet/roslyn/issues/82546: should be in the constructor
             MemorySafetyRules = other.MemorySafetyRules;
-        }
 
         public override string Language => LanguageNames.CSharp;
 
@@ -631,7 +629,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public new CSharpCompilationOptions WithAssemblyIdentityComparer(AssemblyIdentityComparer? comparer)
         {
-            comparer = comparer ?? AssemblyIdentityComparer.Default;
+            comparer ??= AssemblyIdentityComparer.Default;
 
             if (ReferenceEquals(comparer, this.AssemblyIdentityComparer))
             {

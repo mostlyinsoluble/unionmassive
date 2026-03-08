@@ -20,14 +20,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
 [ExportNewDocumentFormattingProvider(LanguageNames.CSharp), Shared]
-internal sealed class CSharpNamespaceDeclarationNewDocumentFormattingProvider : INewDocumentFormattingProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpNamespaceDeclarationNewDocumentFormattingProvider() : INewDocumentFormattingProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpNamespaceDeclarationNewDocumentFormattingProvider()
-    {
-    }
-
     public async Task<Document> FormatNewDocumentAsync(Document document, Document? hintDocument, CodeCleanupOptions options, CancellationToken cancellationToken)
     {
         var root = (CompilationUnitSyntax)await document.GetRequiredSyntaxRootAsync(cancellationToken).ConfigureAwait(false);

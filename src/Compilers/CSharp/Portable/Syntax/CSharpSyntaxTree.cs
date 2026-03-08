@@ -45,10 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
         }
 
-        internal CSharpSyntaxTree(InternalSyntax.DirectiveStack directives)
-        {
-            _lazyDirectives = directives;
-        }
+        internal CSharpSyntaxTree(InternalSyntax.DirectiveStack directives) => _lazyDirectives = directives;
 
         /// <summary>
         /// The options used by the parser to produce the syntax tree.
@@ -489,7 +486,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 throw new ArgumentNullException(nameof(text));
             }
 
-            options = options ?? CSharpParseOptions.Default;
+            options ??= CSharpParseOptions.Default;
 
             using var lexer = new InternalSyntax.Lexer(text, options);
             using var parser = new InternalSyntax.LanguageParser(lexer, oldTree: null, changes: null, cancellationToken: cancellationToken);

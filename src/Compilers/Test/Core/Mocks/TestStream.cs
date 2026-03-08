@@ -9,37 +9,24 @@ using System.IO;
 
 namespace Roslyn.Test.Utilities
 {
-    public class TestStream : Stream
+    public class TestStream(
+        bool? canRead = null,
+        bool? canSeek = null,
+        bool? canWrite = null,
+        Func<byte[], int, int, int> readFunc = null,
+        long? length = null,
+        Func<long> getPosition = null,
+        Action<long> setPosition = null,
+        Stream backingStream = null,
+        Action dispose = null) : Stream
     {
-        private readonly bool? _canRead, _canSeek, _canWrite;
-        private readonly Func<byte[], int, int, int> _readFunc;
-        private readonly long? _length;
-        private readonly Func<long> _getPosition;
-        private readonly Action<long> _setPosition;
-        private readonly Stream _backingStream;
-        private readonly Action _dispose;
-
-        public TestStream(
-            bool? canRead = null,
-            bool? canSeek = null,
-            bool? canWrite = null,
-            Func<byte[], int, int, int> readFunc = null,
-            long? length = null,
-            Func<long> getPosition = null,
-            Action<long> setPosition = null,
-            Stream backingStream = null,
-            Action dispose = null)
-        {
-            _canRead = canRead;
-            _canSeek = canSeek;
-            _canWrite = canWrite;
-            _readFunc = readFunc;
-            _length = length;
-            _getPosition = getPosition;
-            _setPosition = setPosition;
-            _backingStream = backingStream;
-            _dispose = dispose;
-        }
+        private readonly bool? _canRead = canRead, _canSeek = canSeek, _canWrite = canWrite;
+        private readonly Func<byte[], int, int, int> _readFunc = readFunc;
+        private readonly long? _length = length;
+        private readonly Func<long> _getPosition = getPosition;
+        private readonly Action<long> _setPosition = setPosition;
+        private readonly Stream _backingStream = backingStream;
+        private readonly Action _dispose = dispose;
 
         public override bool CanRead => _canRead ?? _backingStream?.CanRead ?? false;
 

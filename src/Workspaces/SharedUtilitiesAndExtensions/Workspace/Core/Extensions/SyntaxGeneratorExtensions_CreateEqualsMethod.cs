@@ -159,54 +159,9 @@ internal static partial class SyntaxGeneratorExtensions
         }
         else
         {
-            if (generatorInternal.SupportsPatterns(parseOptions))
-            {
-                // If we support patterns then we can do "return obj is MyType myType && ..."
-                expressions.Add(
+            expressions.Add(
                     generatorInternal.IsPatternExpression(objNameExpression,
                         generatorInternal.DeclarationPattern(containingType, localName)));
-            }
-            else if (containingType.IsValueType)
-            {
-                // If we're a value type, then we need an is-check first to make sure
-                // the object is our type:
-                //
-                //      if (!(obj is MyType))
-                //      {
-                //          return false;
-                //      }
-                var ifStatement = factory.IfStatement(
-                    factory.LogicalNotExpression(
-                        factory.IsTypeExpression(
-                            objNameExpression,
-                            containingType)),
-                    [factory.ReturnStatement(factory.FalseLiteralExpression())]);
-
-                // Next, we cast the argument to our type:
-                //
-                //      var myType = (MyType)obj;
-
-                var localDeclaration = factory.SimpleLocalDeclarationStatement(generatorInternal,
-                    containingType, localName, factory.CastExpression(containingType, objNameExpression));
-
-                statements.Add(ifStatement);
-                statements.Add(localDeclaration);
-            }
-            else
-            {
-                // It's not a value type, we can just use "as" to test the parameter is the right type:
-                //
-                //      var myType = obj as MyType;
-
-                var localDeclaration = factory.SimpleLocalDeclarationStatement(generatorInternal,
-                    containingType, localName, factory.TryCastExpression(objNameExpression, containingType));
-
-                statements.Add(localDeclaration);
-
-                // Ensure that the parameter we got was not null (which also ensures the 'as' test succeeded):
-                AddReferenceNotNullCheck(
-                    factory, generatorInternal, compilation, parseOptions, localNameExpression, expressions);
-            }
         }
 
         if (!containingType.IsValueType && HasExistingBaseEqualsMethod(containingType))

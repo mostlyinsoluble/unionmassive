@@ -9,13 +9,10 @@ using Microsoft.CodeAnalysis.Remote;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.Api;
 
-internal readonly struct UnitTestingRemoteCallbackWrapper<T>
+internal readonly struct UnitTestingRemoteCallbackWrapper<T>(T callback)
     where T : class
 {
-    internal readonly RemoteCallback<T> UnderlyingObject;
-
-    public UnitTestingRemoteCallbackWrapper(T callback)
-        => UnderlyingObject = new RemoteCallback<T>(callback);
+    internal readonly RemoteCallback<T> UnderlyingObject = new RemoteCallback<T>(callback);
 
     public ValueTask InvokeAsync(Func<T, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         => UnderlyingObject.InvokeAsync(invocation, cancellationToken);

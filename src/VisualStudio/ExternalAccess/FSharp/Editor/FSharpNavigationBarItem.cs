@@ -11,33 +11,22 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor;
 
-internal class FSharpNavigationBarItem
+internal class FSharpNavigationBarItem(
+    string text,
+    FSharpGlyph glyph,
+    IList<TextSpan> spans,
+    IList<FSharpNavigationBarItem> childItems = null,
+    int indent = 0,
+    bool bolded = false,
+    bool grayed = false)
 {
-    public string Text { get; }
-    public FSharpGlyph Glyph { get; }
-    public bool Bolded { get; }
-    public bool Grayed { get; }
-    public int Indent { get; }
-    public IList<FSharpNavigationBarItem> ChildItems { get; }
+    public string Text { get; } = text;
+    public FSharpGlyph Glyph { get; } = glyph;
+    public bool Bolded { get; } = bolded;
+    public bool Grayed { get; } = grayed;
+    public int Indent { get; } = indent;
+    public IList<FSharpNavigationBarItem> ChildItems { get; } = childItems ?? SpecializedCollections.EmptyList<FSharpNavigationBarItem>();
 
-    public IList<TextSpan> Spans { get; internal set; }
+    public IList<TextSpan> Spans { get; internal set; } = spans;
     internal IList<ITrackingSpan> TrackingSpans { get; set; }
-
-    public FSharpNavigationBarItem(
-        string text,
-        FSharpGlyph glyph,
-        IList<TextSpan> spans,
-        IList<FSharpNavigationBarItem> childItems = null,
-        int indent = 0,
-        bool bolded = false,
-        bool grayed = false)
-    {
-        this.Text = text;
-        this.Glyph = glyph;
-        this.Spans = spans;
-        this.ChildItems = childItems ?? SpecializedCollections.EmptyList<FSharpNavigationBarItem>();
-        this.Indent = indent;
-        this.Bolded = bolded;
-        this.Grayed = grayed;
-    }
 }

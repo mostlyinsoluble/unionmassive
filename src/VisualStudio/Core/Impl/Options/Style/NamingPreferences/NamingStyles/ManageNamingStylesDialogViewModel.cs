@@ -13,26 +13,19 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options.Style.NamingPreferences;
 
-internal sealed class ManageNamingStylesDialogViewModel : AbstractNotifyPropertyChanged, IManageNamingStylesInfoDialogViewModel
+internal sealed class ManageNamingStylesDialogViewModel(
+    ObservableCollection<MutableNamingStyle> namingStyles,
+    List<NamingStyleOptionPageViewModel.NamingRuleViewModel> namingRules,
+    INotificationService notificationService) : AbstractNotifyPropertyChanged, IManageNamingStylesInfoDialogViewModel
 {
-    private readonly INotificationService _notificationService;
+    private readonly INotificationService _notificationService = notificationService;
 
-    public ObservableCollection<INamingStylesInfoDialogViewModel> Items { get; set; }
-
-    public string DialogTitle => ServicesVSResources.Manage_naming_styles;
-
-    public ManageNamingStylesDialogViewModel(
-        ObservableCollection<MutableNamingStyle> namingStyles,
-        List<NamingStyleOptionPageViewModel.NamingRuleViewModel> namingRules,
-        INotificationService notificationService)
-    {
-        _notificationService = notificationService;
-
-        Items = [.. namingStyles.Select(style => new NamingStyleViewModel(
+    public ObservableCollection<INamingStylesInfoDialogViewModel> Items { get; set; } = [.. namingStyles.Select(style => new NamingStyleViewModel(
             style.Clone(),
             !namingRules.Any(rule => rule.SelectedStyle?.ID == style.ID),
             notificationService))];
-    }
+
+    public string DialogTitle => ServicesVSResources.Manage_naming_styles;
 
     internal void RemoveNamingStyle(NamingStyleViewModel namingStyle)
         => Items.Remove(namingStyle);

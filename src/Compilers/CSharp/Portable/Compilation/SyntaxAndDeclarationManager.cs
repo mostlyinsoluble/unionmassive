@@ -31,10 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             CommonMessageProvider messageProvider,
             bool isSubmission,
             State state)
-            : base(externalSyntaxTrees, scriptClassName, resolver, messageProvider, isSubmission)
-        {
-            _lazyState = state;
-        }
+            : base(externalSyntaxTrees, scriptClassName, resolver, messageProvider, isSubmission) => _lazyState = state;
 
         internal State GetLazyState()
         {

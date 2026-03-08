@@ -41,19 +41,14 @@ using LSP = Roslyn.LanguageServer.Protocol;
 namespace Roslyn.Test.Utilities;
 
 [UseExportProvider]
-public abstract partial class AbstractLanguageServerProtocolTests
+public abstract partial class AbstractLanguageServerProtocolTests(ITestOutputHelper? testOutputHelper)
 {
     protected static readonly JsonSerializerOptions JsonSerializerOptions = RoslynLanguageServer.CreateJsonMessageFormatter().JsonSerializerOptions;
 
     private protected static DocumentUri CreateAbsoluteDocumentUri(string suffix)
         => ProtocolConversions.CreateAbsoluteDocumentUri(TestHelpers.CreateAbsolutePath(suffix));
 
-    private protected readonly AbstractLspLogger TestOutputLspLogger;
-    protected AbstractLanguageServerProtocolTests(ITestOutputHelper? testOutputHelper)
-    {
-        TestOutputLspLogger = testOutputHelper != null ? new TestOutputLspLogger(testOutputHelper) : NoOpLspLogger.Instance;
-    }
-
+    private protected readonly AbstractLspLogger TestOutputLspLogger = testOutputHelper != null ? new TestOutputLspLogger(testOutputHelper) : NoOpLspLogger.Instance;
     protected static readonly TestComposition FeaturesLspComposition = LspTestCompositions.LanguageServerProtocol
         .AddParts(typeof(TestDocumentTrackingService))
         .AddParts(typeof(TestWorkspaceRegistrationService));
@@ -578,13 +573,8 @@ public abstract partial class AbstractLanguageServerProtocolTests
     /// Implementation of <see cref="AbstractTestLspServer{TWorkspace, TDocument, TProject, TSolution}"/>
     /// using the <see cref="LspTestWorkspace"/> workspace.
     /// </summary>
-    internal sealed class TestLspServer : AbstractTestLspServer<LspTestWorkspace, TestHostDocument, TestHostProject, TestHostSolution>
+    internal sealed class TestLspServer(LspTestWorkspace testWorkspace, Dictionary<string, IList<LSP.Location>> locations, AbstractLanguageServerProtocolTests.InitializationOptions initializationOptions, AbstractLspLogger logger) : AbstractTestLspServer<LspTestWorkspace, TestHostDocument, TestHostProject, TestHostSolution>(testWorkspace, locations, initializationOptions, logger)
     {
-        public TestLspServer(LspTestWorkspace testWorkspace, Dictionary<string, IList<LSP.Location>> locations, InitializationOptions initializationOptions, AbstractLspLogger logger)
-            : base(testWorkspace, locations, initializationOptions, logger)
-        {
-        }
-
         public static async Task<TestLspServer> CreateAsync(LspTestWorkspace testWorkspace, InitializationOptions initializationOptions, AbstractLspLogger logger)
         {
             var locations = await GetAnnotatedLocationsAsync(testWorkspace, testWorkspace.CurrentSolution);

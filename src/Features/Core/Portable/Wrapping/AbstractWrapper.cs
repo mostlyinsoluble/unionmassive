@@ -24,12 +24,9 @@ namespace Microsoft.CodeAnalysis.Wrapping;
 /// Individual subclasses may be targeted at specific syntactic forms.  For example, wrapping
 /// lists, or wrapping logical expressions.
 /// </summary>
-internal abstract partial class AbstractSyntaxWrapper : ISyntaxWrapper
+internal abstract partial class AbstractSyntaxWrapper(IIndentationService indentationService) : ISyntaxWrapper
 {
-    protected IIndentationService IndentationService { get; }
-
-    protected AbstractSyntaxWrapper(IIndentationService indentationService)
-        => IndentationService = indentationService;
+    protected IIndentationService IndentationService { get; } = indentationService;
 
     public abstract Task<ICodeActionComputer?> TryCreateComputerAsync(
         Document document, int position, SyntaxNode node, SyntaxWrappingOptions options, bool containsSyntaxError, CancellationToken cancellationToken);

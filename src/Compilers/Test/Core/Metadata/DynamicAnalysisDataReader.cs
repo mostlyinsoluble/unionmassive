@@ -18,46 +18,25 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal readonly struct DynamicAnalysisDocument
+    internal readonly struct DynamicAnalysisDocument(BlobHandle name, GuidHandle hashAlgorithm, BlobHandle hash)
     {
-        public readonly BlobHandle Name;
-        public readonly GuidHandle HashAlgorithm;
-        public readonly BlobHandle Hash;
-
-        public DynamicAnalysisDocument(BlobHandle name, GuidHandle hashAlgorithm, BlobHandle hash)
-        {
-            Name = name;
-            HashAlgorithm = hashAlgorithm;
-            Hash = hash;
-        }
+        public readonly BlobHandle Name = name;
+        public readonly GuidHandle HashAlgorithm = hashAlgorithm;
+        public readonly BlobHandle Hash = hash;
     }
 
-    internal readonly struct DynamicAnalysisMethod
+    internal readonly struct DynamicAnalysisMethod(BlobHandle blob)
     {
-        public readonly BlobHandle Blob;
-
-        public DynamicAnalysisMethod(BlobHandle blob)
-        {
-            Blob = blob;
-        }
+        public readonly BlobHandle Blob = blob;
     }
 
-    internal readonly struct DynamicAnalysisSpan
+    internal readonly struct DynamicAnalysisSpan(int documentRowId, int startLine, int startColumn, int endLine, int endColumn)
     {
-        public readonly int DocumentRowId;
-        public readonly int StartLine;
-        public readonly int StartColumn;
-        public readonly int EndLine;
-        public readonly int EndColumn;
-
-        public DynamicAnalysisSpan(int documentRowId, int startLine, int startColumn, int endLine, int endColumn)
-        {
-            DocumentRowId = documentRowId;
-            StartLine = startLine;
-            StartColumn = startColumn;
-            EndLine = endLine;
-            EndColumn = endColumn;
-        }
+        public readonly int DocumentRowId = documentRowId;
+        public readonly int StartLine = startLine;
+        public readonly int StartColumn = startColumn;
+        public readonly int EndLine = endLine;
+        public readonly int EndColumn = endColumn;
     }
 
     internal sealed unsafe class DynamicAnalysisDataReader
@@ -253,16 +232,10 @@ namespace Microsoft.CodeAnalysis
 
         //TODO: some of the helpers below should be provided by System.Reflection.Metadata
 
-        private readonly unsafe struct Blob
+        private readonly unsafe struct Blob(byte* pointer, int length)
         {
-            public readonly byte* Pointer;
-            public readonly int Length;
-
-            public Blob(byte* pointer, int length)
-            {
-                Pointer = pointer;
-                Length = length;
-            }
+            public readonly byte* Pointer = pointer;
+            public readonly int Length = length;
         }
 
         public Guid GetGuid(GuidHandle handle)

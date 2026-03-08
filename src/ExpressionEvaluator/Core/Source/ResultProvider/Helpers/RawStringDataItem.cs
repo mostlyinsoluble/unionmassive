@@ -11,13 +11,8 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     /// <summary>
     /// Data item to associate a computed raw string with a DkmClrValue.
     /// </summary>
-    internal sealed class RawStringDataItem : DkmDataItem
+    internal sealed class RawStringDataItem(string rawString) : DkmDataItem
     {
-        public readonly string RawString;
-
-        public RawStringDataItem(string rawString)
-        {
-            RawString = rawString;
-        }
+        public readonly string RawString = rawString;
     }
 }

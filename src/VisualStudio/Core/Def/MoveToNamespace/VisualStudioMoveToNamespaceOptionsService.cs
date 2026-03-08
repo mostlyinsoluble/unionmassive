@@ -23,16 +23,10 @@ internal sealed class VisualStudioMoveToNamespaceOptionsService : IMoveToNamespa
 
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioMoveToNamespaceOptionsService()
-    {
-        _showDialog = viewModel => new MoveToNamespaceDialog(viewModel).ShowModal();
-    }
+    public VisualStudioMoveToNamespaceOptionsService() => _showDialog = viewModel => new MoveToNamespaceDialog(viewModel).ShowModal();
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("RoslynDiagnosticsReliability", "RS0034:Exported parts should be marked with 'ImportingConstructorAttribute'", Justification = "Test constructor")]
-    internal VisualStudioMoveToNamespaceOptionsService(Func<MoveToNamespaceDialogViewModel, bool?> showDialog)
-    {
-        _showDialog = showDialog;
-    }
+    internal VisualStudioMoveToNamespaceOptionsService(Func<MoveToNamespaceDialogViewModel, bool?> showDialog) => _showDialog = showDialog;
 
     public MoveToNamespaceOptionsResult GetChangeNamespaceOptions(
         string defaultNamespace,

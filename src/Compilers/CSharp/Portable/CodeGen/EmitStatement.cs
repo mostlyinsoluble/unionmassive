@@ -402,7 +402,7 @@ oneMoreTime:
 
                 if (taken)
                 {
-                    dest = dest ?? new object();
+                    dest ??= new object();
                     _builder.EmitBranch(ILOpCode.Br, dest);
                 }
                 else
@@ -514,7 +514,7 @@ oneMoreTime:
                             EmitExpression(binOp.Right, true);
                             ILOpCode revOpCode;
                             ilcode = CodeForJump(binOp, sense, out revOpCode);
-                            dest = dest ?? new object();
+                            dest ??= new object();
                             _builder.EmitBranch(ilcode, dest, revOpCode);
                             return;
                     }
@@ -595,7 +595,7 @@ oneMoreTime:
                     _builder.EmitOpCode(ILOpCode.Isinst);
                     EmitSymbolToken(isOp.TargetType.Type, isOp.TargetType.Syntax);
                     ilcode = sense ? ILOpCode.Brtrue : ILOpCode.Brfalse;
-                    dest = dest ?? new object();
+                    dest ??= new object();
                     _builder.EmitBranch(ilcode, dest);
                     return;
 
@@ -614,7 +614,7 @@ oneMoreTime:
                     }
 
                     ilcode = sense ? ILOpCode.Brtrue : ILOpCode.Brfalse;
-                    dest = dest ?? new object();
+                    dest ??= new object();
                     _builder.EmitBranch(ilcode, dest);
                     return;
             }

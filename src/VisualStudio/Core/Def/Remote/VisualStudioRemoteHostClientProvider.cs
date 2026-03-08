@@ -30,38 +30,27 @@ namespace Microsoft.VisualStudio.LanguageServices.Remote;
 internal sealed class VisualStudioRemoteHostClientProvider : IRemoteHostClientProvider
 {
     [ExportWorkspaceServiceFactory(typeof(IRemoteHostClientProvider), [WorkspaceKind.Host, WorkspaceKind.Preview]), Shared]
-    internal sealed class Factory : IWorkspaceServiceFactory
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class Factory(
+        VisualStudioWorkspace vsWorkspace,
+        IVsService<SVsBrokeredServiceContainer, IBrokeredServiceContainer> brokeredServiceContainer,
+        SVsServiceProvider serviceProvider,
+        AsynchronousOperationListenerProvider listenerProvider,
+        IGlobalOptionService globalOptions,
+        IThreadingContext threadingContext,
+        [ImportMany] IEnumerable<Lazy<IRemoteServiceCallbackDispatcher, RemoteServiceCallbackDispatcherRegistry.ExportMetadata>> callbackDispatchers) : IWorkspaceServiceFactory
     {
-        private readonly VisualStudioWorkspace _vsWorkspace;
-        private readonly IVsService<IBrokeredServiceContainer> _brokeredServiceContainer;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly AsynchronousOperationListenerProvider _listenerProvider;
-        private readonly RemoteServiceCallbackDispatcherRegistry _callbackDispatchers;
-        private readonly IGlobalOptionService _globalOptions;
-        private readonly IThreadingContext _threadingContext;
+        private readonly VisualStudioWorkspace _vsWorkspace = vsWorkspace;
+        private readonly IVsService<IBrokeredServiceContainer> _brokeredServiceContainer = brokeredServiceContainer;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
+        private readonly AsynchronousOperationListenerProvider _listenerProvider = listenerProvider;
+        private readonly RemoteServiceCallbackDispatcherRegistry _callbackDispatchers = new RemoteServiceCallbackDispatcherRegistry(callbackDispatchers);
+        private readonly IGlobalOptionService _globalOptions = globalOptions;
+        private readonly IThreadingContext _threadingContext = threadingContext;
 
         private readonly object _gate = new();
         private VisualStudioRemoteHostClientProvider? _cachedVSInstance;
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public Factory(
-            VisualStudioWorkspace vsWorkspace,
-            IVsService<SVsBrokeredServiceContainer, IBrokeredServiceContainer> brokeredServiceContainer,
-            SVsServiceProvider serviceProvider,
-            AsynchronousOperationListenerProvider listenerProvider,
-            IGlobalOptionService globalOptions,
-            IThreadingContext threadingContext,
-            [ImportMany] IEnumerable<Lazy<IRemoteServiceCallbackDispatcher, RemoteServiceCallbackDispatcherRegistry.ExportMetadata>> callbackDispatchers)
-        {
-            _globalOptions = globalOptions;
-            _vsWorkspace = vsWorkspace;
-            _brokeredServiceContainer = brokeredServiceContainer;
-            _serviceProvider = serviceProvider;
-            _listenerProvider = listenerProvider;
-            _threadingContext = threadingContext;
-            _callbackDispatchers = new RemoteServiceCallbackDispatcherRegistry(callbackDispatchers);
-        }
 
         [Obsolete(MefConstruction.FactoryMethodMessage, error: true)]
         public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)

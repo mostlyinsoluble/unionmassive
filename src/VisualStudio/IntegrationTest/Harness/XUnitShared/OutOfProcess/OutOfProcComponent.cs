@@ -7,17 +7,12 @@ namespace Xunit.OutOfProcess
     using Xunit.Harness;
     using Xunit.InProcess;
 
-    internal abstract class OutOfProcComponent
+    internal abstract class OutOfProcComponent(VisualStudioInstance visualStudioInstance)
     {
-        protected OutOfProcComponent(VisualStudioInstance visualStudioInstance)
-        {
-            VisualStudioInstance = visualStudioInstance;
-        }
-
         protected VisualStudioInstance VisualStudioInstance
         {
             get;
-        }
+        } = visualStudioInstance;
 
         internal static TInProcComponent CreateInProcComponent<TInProcComponent>(VisualStudioInstance visualStudioInstance)
             where TInProcComponent : InProcComponent

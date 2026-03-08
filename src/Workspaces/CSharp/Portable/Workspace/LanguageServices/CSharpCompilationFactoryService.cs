@@ -13,15 +13,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp;
 
 [ExportLanguageService(typeof(ICompilationFactoryService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCompilationFactoryService : ICompilationFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCompilationFactoryService() : ICompilationFactoryService
 {
     private static readonly CSharpCompilationOptions s_defaultOptions = new(OutputKind.ConsoleApplication, concurrentBuild: false);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCompilationFactoryService()
-    {
-    }
 
     Compilation ICompilationFactoryService.CreateCompilation(string assemblyName, CompilationOptions options)
     {

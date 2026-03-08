@@ -13,10 +13,7 @@ internal abstract class EmbeddedLanguageCompletionProvider
 {
     public string Name { get; }
 
-    internal EmbeddedLanguageCompletionProvider()
-    {
-        Name = GetType().FullName!;
-    }
+    internal EmbeddedLanguageCompletionProvider() => Name = GetType().FullName!;
 
     public abstract ImmutableHashSet<char> TriggerCharacters { get; }
     public abstract bool ShouldTriggerCompletion(SourceText text, int caretPosition, CompletionTrigger trigger);

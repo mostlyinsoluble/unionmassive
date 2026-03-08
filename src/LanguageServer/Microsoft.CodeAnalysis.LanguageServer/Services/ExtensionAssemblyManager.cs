@@ -27,22 +27,15 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Services;
 ///       to contribute multiple assemblies to the catalog, each assembly must be passed as an extension assembly path.
 ///   2.  If an extension assembly contains an analyzer, we will re-use the same extension load context to load the analyzer.
 /// </summary>
-internal sealed class ExtensionAssemblyManager
+internal sealed class ExtensionAssemblyManager(ImmutableDictionary<string, AssemblyLoadContext> directoryLoadContexts,
+    ImmutableDictionary<string, AssemblyLoadContext> assemblyFullNameToLoadContext,
+    ImmutableArray<string> extensionAssemblyPaths)
 {
-    private readonly ImmutableDictionary<string, AssemblyLoadContext> _directoryLoadContexts;
+    private readonly ImmutableDictionary<string, AssemblyLoadContext> _directoryLoadContexts = directoryLoadContexts;
 
-    private readonly ImmutableDictionary<string, AssemblyLoadContext> _assemblyFullNameToLoadContext;
+    private readonly ImmutableDictionary<string, AssemblyLoadContext> _assemblyFullNameToLoadContext = assemblyFullNameToLoadContext;
 
-    public ImmutableArray<string> ExtensionAssemblyPaths { get; }
-
-    public ExtensionAssemblyManager(ImmutableDictionary<string, AssemblyLoadContext> directoryLoadContexts,
-        ImmutableDictionary<string, AssemblyLoadContext> assemblyFullNameToLoadContext,
-        ImmutableArray<string> extensionAssemblyPaths)
-    {
-        _directoryLoadContexts = directoryLoadContexts;
-        _assemblyFullNameToLoadContext = assemblyFullNameToLoadContext;
-        ExtensionAssemblyPaths = extensionAssemblyPaths;
-    }
+    public ImmutableArray<string> ExtensionAssemblyPaths { get; } = extensionAssemblyPaths;
 
     public static ExtensionAssemblyManager Create(ServerConfiguration serverConfiguration, ILoggerFactory loggerFactory)
     {
@@ -183,16 +176,10 @@ internal sealed class ExtensionAssemblyManager
     /// If the assembly is not found in the extension context it will continue with
     /// normal assembly loading to check the host (or potentially other extensions) for the assembly.
     /// </summary>
-    private sealed class ExtensionAssemblyLoadContext : AssemblyLoadContext
+    private sealed class ExtensionAssemblyLoadContext(string extensionDirectory, ILoggerFactory loggerFactory) : AssemblyLoadContext(extensionDirectory)
     {
-        private readonly string _extensionDirectory;
-        private readonly ILogger _logger;
-
-        public ExtensionAssemblyLoadContext(string extensionDirectory, ILoggerFactory loggerFactory) : base(extensionDirectory)
-        {
-            _extensionDirectory = extensionDirectory;
-            _logger = loggerFactory.CreateLogger($"ALC-{extensionDirectory}");
-        }
+        private readonly string _extensionDirectory = extensionDirectory;
+        private readonly ILogger _logger = loggerFactory.CreateLogger($"ALC-{extensionDirectory}");
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {

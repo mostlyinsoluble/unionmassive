@@ -28,9 +28,6 @@ internal sealed partial class ConvertSwitchStatementToExpressionDiagnosticAnalyz
     protected override void InitializeWorker(AnalysisContext context)
         => context.RegisterCompilationStartAction(context =>
         {
-            if (context.Compilation.LanguageVersion() < LanguageVersion.CSharp8)
-                return;
-
             context.RegisterSyntaxNodeAction(AnalyzeSyntax, SyntaxKind.SwitchStatement);
         });
 

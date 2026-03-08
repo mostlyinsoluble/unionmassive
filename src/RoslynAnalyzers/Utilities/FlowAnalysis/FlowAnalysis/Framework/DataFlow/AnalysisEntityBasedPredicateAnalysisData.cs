@@ -18,21 +18,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// </summary>
     public abstract class AnalysisEntityBasedPredicateAnalysisData<TValue> : PredicatedAnalysisData<AnalysisEntity, TValue>
     {
-        protected AnalysisEntityBasedPredicateAnalysisData()
-        {
-            CoreAnalysisData = [];
-        }
+        protected AnalysisEntityBasedPredicateAnalysisData() => CoreAnalysisData = [];
 
-        protected AnalysisEntityBasedPredicateAnalysisData(IDictionary<AnalysisEntity, TValue> fromData)
-        {
-            CoreAnalysisData = [.. fromData];
-        }
+        protected AnalysisEntityBasedPredicateAnalysisData(IDictionary<AnalysisEntity, TValue> fromData) => CoreAnalysisData = [.. fromData];
 
         protected AnalysisEntityBasedPredicateAnalysisData(AnalysisEntityBasedPredicateAnalysisData<TValue> fromData)
-            : base(fromData)
-        {
-            CoreAnalysisData = [.. fromData.CoreAnalysisData];
-        }
+            : base(fromData) => CoreAnalysisData = [.. fromData.CoreAnalysisData];
 
         protected AnalysisEntityBasedPredicateAnalysisData(
             AnalysisEntityBasedPredicateAnalysisData<TValue> data1,
@@ -53,10 +44,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             bool isReachableData,
             MapAbstractDomain<AnalysisEntity, TValue> coreDataAnalysisDomain)
             : base(predicatedData1, predicatedData2, mergedCoreAnalysisData,
-                  mergedCoreAnalysisData, isReachableData, coreDataAnalysisDomain)
-        {
-            CoreAnalysisData = mergedCoreAnalysisData;
-        }
+                  mergedCoreAnalysisData, isReachableData, coreDataAnalysisDomain) => CoreAnalysisData = mergedCoreAnalysisData;
 
         public DictionaryAnalysisData<AnalysisEntity, TValue> CoreAnalysisData { get; }
 

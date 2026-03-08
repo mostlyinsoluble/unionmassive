@@ -16,9 +16,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
 internal abstract partial class AbstractCSharpReducer
 {
-    protected abstract class AbstractReductionRewriter : CSharpSyntaxRewriter, IReductionRewriter
+    protected abstract class AbstractReductionRewriter(ObjectPool<AbstractReducer.IReductionRewriter> pool) : CSharpSyntaxRewriter, IReductionRewriter
     {
-        private readonly ObjectPool<IReductionRewriter> _pool;
+        private readonly ObjectPool<IReductionRewriter> _pool = pool;
 
         protected CSharpParseOptions? ParseOptions { get; private set; }
         protected CSharpSimplifierOptions? Options { get; private set; }
@@ -32,9 +32,6 @@ internal abstract partial class AbstractCSharpReducer
         protected bool alwaysSimplify;
 
         private readonly HashSet<SyntaxNode> _processedParentNodes = [];
-
-        protected AbstractReductionRewriter(ObjectPool<IReductionRewriter> pool)
-            => _pool = pool;
 
         public void Initialize(ParseOptions parseOptions, SimplifierOptions options, CancellationToken cancellationToken)
         {

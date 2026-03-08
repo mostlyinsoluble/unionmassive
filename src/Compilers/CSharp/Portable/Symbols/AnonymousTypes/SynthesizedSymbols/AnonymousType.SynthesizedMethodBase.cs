@@ -17,16 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <summary>
         /// Represents a base implementation for anonymous type synthesized methods.
         /// </summary>
-        private abstract class SynthesizedMethodBase : SynthesizedMethodSymbol
+        private abstract class SynthesizedMethodBase(NamedTypeSymbol containingType, string name) : SynthesizedMethodSymbol
         {
-            private readonly NamedTypeSymbol _containingType;
-            private readonly string _name;
-
-            public SynthesizedMethodBase(NamedTypeSymbol containingType, string name)
-            {
-                _containingType = containingType;
-                _name = name;
-            }
+            private readonly NamedTypeSymbol _containingType = containingType;
+            private readonly string _name = name;
 
             internal sealed override bool GenerateDebugInfo
             {

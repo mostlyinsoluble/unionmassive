@@ -35,10 +35,7 @@ internal abstract class AbstractSpellCheckHandler<TParams, TReport>
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
 
-    protected AbstractSpellCheckHandler()
-    {
-        _versionedCache = new(this.GetType().Name);
-    }
+    protected AbstractSpellCheckHandler() => _versionedCache = new(this.GetType().Name);
 
     public abstract TextDocumentIdentifier? GetTextDocumentIdentifier(TParams requestParams);
 

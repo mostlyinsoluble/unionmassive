@@ -15,17 +15,12 @@ namespace Microsoft.CodeAnalysis.GenerateMember.GenerateParameterizedMember;
 
 internal abstract partial class AbstractGenerateParameterizedMemberService<TService, TSimpleNameSyntax, TExpressionSyntax, TInvocationExpressionSyntax>
 {
-    internal abstract class AbstractInvocationInfo : SignatureInfo
+    internal abstract class AbstractInvocationInfo(SemanticDocument document, AbstractGenerateParameterizedMemberService<TService, TSimpleNameSyntax, TExpressionSyntax, TInvocationExpressionSyntax>.State state) : SignatureInfo(document, state)
     {
         protected abstract bool IsIdentifierName();
 
         protected abstract ImmutableArray<ITypeParameterSymbol> GetCapturedTypeParameters(CancellationToken cancellationToken);
         protected abstract ImmutableArray<ITypeParameterSymbol> GenerateTypeParameters(CancellationToken cancellationToken);
-
-        protected AbstractInvocationInfo(SemanticDocument document, State state)
-            : base(document, state)
-        {
-        }
 
         protected override ImmutableArray<ITypeParameterSymbol> DetermineTypeParametersWorker(
             CancellationToken cancellationToken)

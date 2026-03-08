@@ -15,17 +15,13 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Notification;
 
 [ExportWorkspaceServiceFactory(typeof(INotificationService), ServiceLayer.Editor)]
 [Shared]
-internal sealed class EditorNotificationServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EditorNotificationServiceFactory() : IWorkspaceServiceFactory
 {
     private static readonly object s_gate = new();
 
     private static EditorDialogService s_singleton;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EditorNotificationServiceFactory()
-    {
-    }
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {

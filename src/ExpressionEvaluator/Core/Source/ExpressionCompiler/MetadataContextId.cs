@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         internal readonly Guid ModuleVersionId;
 
-        internal MetadataContextId(Guid moduleVersionId)
-        {
-            ModuleVersionId = moduleVersionId;
-        }
+        internal MetadataContextId(Guid moduleVersionId) => ModuleVersionId = moduleVersionId;
 
         public bool Equals(MetadataContextId other)
             => ModuleVersionId.Equals(other.ModuleVersionId);

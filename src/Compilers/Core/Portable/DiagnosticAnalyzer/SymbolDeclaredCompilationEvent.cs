@@ -13,26 +13,18 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// Note that some symbols may have multiple declarations (namespaces, partial types) and may therefore
     /// have multiple events.
     /// </summary>
-    internal sealed class SymbolDeclaredCompilationEvent : CompilationEvent
+    internal sealed class SymbolDeclaredCompilationEvent(
+        Compilation compilation,
+        ISymbolInternal symbolInternal,
+        SemanticModel? semanticModelWithCachedBoundNodes = null) : CompilationEvent(compilation)
     {
-        private ImmutableArray<SyntaxReference> _lazyCachedDeclaringReferences;
-
-        public SymbolDeclaredCompilationEvent(
-            Compilation compilation,
-            ISymbolInternal symbolInternal,
-            SemanticModel? semanticModelWithCachedBoundNodes = null)
-            : base(compilation)
-        {
-            SymbolInternal = symbolInternal;
-            SemanticModelWithCachedBoundNodes = semanticModelWithCachedBoundNodes;
-            _lazyCachedDeclaringReferences = default;
-        }
+        private ImmutableArray<SyntaxReference> _lazyCachedDeclaringReferences = default;
 
         public ISymbol Symbol => SymbolInternal.GetISymbol();
 
-        public ISymbolInternal SymbolInternal { get; }
+        public ISymbolInternal SymbolInternal { get; } = symbolInternal;
 
-        public SemanticModel? SemanticModelWithCachedBoundNodes { get; }
+        public SemanticModel? SemanticModelWithCachedBoundNodes { get; } = semanticModelWithCachedBoundNodes;
 
         // PERF: We avoid allocations in re-computing syntax references for declared symbol during event processing by caching them directly on this member.
         public ImmutableArray<SyntaxReference> DeclaringSyntaxReferences

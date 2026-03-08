@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.SemanticModelReuse;
 
 [ExportWorkspaceServiceFactory(typeof(ISemanticModelReuseWorkspaceService), ServiceLayer.Default), Shared]
-internal sealed partial class SemanticModelReuseWorkspaceServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class SemanticModelReuseWorkspaceServiceFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SemanticModelReuseWorkspaceServiceFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new SemanticModelReuseWorkspaceService(workspaceServices.Workspace);
 }

@@ -9,14 +9,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Host;
 
 [ExportWorkspaceServiceFactory(typeof(IFrameworkAssemblyPathResolver), ServiceLayer.Default), Shared]
-internal sealed class FrameworkAssemblyPathResolverFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FrameworkAssemblyPathResolverFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FrameworkAssemblyPathResolverFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new Service();
 

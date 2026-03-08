@@ -20,14 +20,19 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
     internal abstract partial class CommonObjectFormatter
     {
-        private sealed partial class Visitor
+        private sealed partial class Visitor(
+            CommonObjectFormatter formatter,
+CommonObjectFormatter.BuilderOptions builderOptions,
+            CommonPrimitiveFormatterOptions primitiveOptions,
+            CommonTypeNameFormatterOptions typeNameOptions,
+            MemberDisplayFormat memberDisplayFormat)
         {
-            private readonly CommonObjectFormatter _formatter;
+            private readonly CommonObjectFormatter _formatter = formatter;
 
-            private readonly BuilderOptions _builderOptions;
-            private CommonPrimitiveFormatterOptions _primitiveOptions;
-            private readonly CommonTypeNameFormatterOptions _typeNameOptions;
-            private MemberDisplayFormat _memberDisplayFormat;
+            private readonly BuilderOptions _builderOptions = builderOptions;
+            private CommonPrimitiveFormatterOptions _primitiveOptions = primitiveOptions;
+            private readonly CommonTypeNameFormatterOptions _typeNameOptions = typeNameOptions;
+            private MemberDisplayFormat _memberDisplayFormat = memberDisplayFormat;
 
             private HashSet<object> _lazyVisitedObjects;
 
@@ -39,20 +44,6 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
 
                     return _lazyVisitedObjects;
                 }
-            }
-
-            public Visitor(
-                CommonObjectFormatter formatter,
-                BuilderOptions builderOptions,
-                CommonPrimitiveFormatterOptions primitiveOptions,
-                CommonTypeNameFormatterOptions typeNameOptions,
-                MemberDisplayFormat memberDisplayFormat)
-            {
-                _formatter = formatter;
-                _builderOptions = builderOptions;
-                _primitiveOptions = primitiveOptions;
-                _typeNameOptions = typeNameOptions;
-                _memberDisplayFormat = memberDisplayFormat;
             }
 
             private Builder MakeMemberBuilder(int limit)

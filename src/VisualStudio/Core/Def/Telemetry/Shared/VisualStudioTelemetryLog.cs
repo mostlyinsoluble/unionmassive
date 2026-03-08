@@ -8,16 +8,10 @@ using Microsoft.CodeAnalysis.Telemetry;
 
 namespace Microsoft.VisualStudio.LanguageServices.Telemetry;
 
-internal sealed class VisualStudioTelemetryLog : ITelemetryBlockLog
+internal sealed class VisualStudioTelemetryLog(ILogger telemetryLogger, FunctionId functionId) : ITelemetryBlockLog
 {
-    private readonly ILogger _telemetryLogger;
-    private readonly FunctionId _functionId;
-
-    public VisualStudioTelemetryLog(ILogger telemetryLogger, FunctionId functionId)
-    {
-        _telemetryLogger = telemetryLogger;
-        _functionId = functionId;
-    }
+    private readonly ILogger _telemetryLogger = telemetryLogger;
+    private readonly FunctionId _functionId = functionId;
 
     public void Log(KeyValueLogMessage logMessage)
     {

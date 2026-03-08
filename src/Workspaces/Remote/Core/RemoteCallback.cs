@@ -18,15 +18,10 @@ namespace Microsoft.CodeAnalysis.Remote;
 /// The purpose of this type is to handle exceptions thrown by the underlying remoting infrastructure
 /// in manner that's compatible with our exception handling policies.
 /// </summary>
-internal readonly struct RemoteCallback<T>
+internal readonly struct RemoteCallback<T>(T callback)
     where T : class
 {
-    private readonly T _callback;
-
-    public RemoteCallback(T callback)
-    {
-        _callback = callback;
-    }
+    private readonly T _callback = callback;
 
     /// <summary>
     /// Use to perform a callback from ServiceHub process to an arbitrary brokered service hosted in the original process (usually devenv).

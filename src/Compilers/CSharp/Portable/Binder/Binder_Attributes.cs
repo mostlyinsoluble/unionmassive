@@ -744,14 +744,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// Walk a custom attribute argument bound node and return a TypedConstant.  Verify that the expression is a constant expression.
         /// </summary>
-        private readonly struct AttributeExpressionVisitor
+        private readonly struct AttributeExpressionVisitor(Binder binder)
         {
-            private readonly Binder _binder;
-
-            public AttributeExpressionVisitor(Binder binder)
-            {
-                _binder = binder;
-            }
+            private readonly Binder _binder = binder;
 
             public ImmutableArray<TypedConstant> VisitArguments(ImmutableArray<BoundExpression> arguments, BindingDiagnosticBag diagnostics, ref bool attrHasErrors, bool parentHasErrors = false)
             {

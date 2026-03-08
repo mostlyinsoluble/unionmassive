@@ -363,7 +363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            binder = binder ?? rootBinder.GetBinder(root) ?? rootBinder;
+            binder ??= rootBinder.GetBinder(root) ?? rootBinder;
             Debug.Assert(binder != null);
 
             if (ownerOfTypeParametersInScope != null)
@@ -2412,10 +2412,7 @@ foundParent:;
             private readonly MemberSemanticModel _semanticModel;
 
             internal IncrementalBinder(MemberSemanticModel semanticModel, Binder next)
-                : base(next)
-            {
-                _semanticModel = semanticModel;
-            }
+                : base(next) => _semanticModel = semanticModel;
 
             /// <summary>
             /// We override GetBinder so that the BindStatement override is still

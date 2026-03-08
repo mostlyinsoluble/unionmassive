@@ -35,7 +35,7 @@ internal sealed partial class CSharpCodeGenerationService(LanguageServices langu
         => new CSharpCodeGenerationOptions(options);
 
     public override CSharpCodeGenerationContextInfo GetInfo(CodeGenerationContext context, CodeGenerationOptions options, ParseOptions parseOptions)
-        => new(context, (CSharpCodeGenerationOptions)options, this, ((CSharpParseOptions)parseOptions).LanguageVersion);
+        => new(context, (CSharpCodeGenerationOptions)options, this);
 
     public override CodeGenerationDestination GetDestination(SyntaxNode node)
         => CSharpCodeGenerationHelpers.GetDestination(node);

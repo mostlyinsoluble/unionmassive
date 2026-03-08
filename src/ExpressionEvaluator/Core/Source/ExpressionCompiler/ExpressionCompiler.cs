@@ -20,7 +20,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 {
-    public abstract class ExpressionCompiler :
+    public abstract class ExpressionCompiler(IDkmLanguageFrameDecoder languageFrameDecoder, IDkmLanguageInstructionDecoder languageInstructionDecoder) :
         IDkmClrExpressionCompiler,
         IDkmClrExpressionCompilerCallback,
         IDkmMetaDataPointerInvalidatedNotification,
@@ -31,16 +31,9 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         // Need to support IDkmLanguageFrameDecoder and IDkmLanguageInstructionDecoder
         // See https://github.com/dotnet/roslyn/issues/22620
-        private readonly IDkmLanguageFrameDecoder _languageFrameDecoder;
-        private readonly IDkmLanguageInstructionDecoder _languageInstructionDecoder;
-        private readonly bool _useReferencedAssembliesOnly;
-
-        public ExpressionCompiler(IDkmLanguageFrameDecoder languageFrameDecoder, IDkmLanguageInstructionDecoder languageInstructionDecoder)
-        {
-            _languageFrameDecoder = languageFrameDecoder;
-            _languageInstructionDecoder = languageInstructionDecoder;
-            _useReferencedAssembliesOnly = GetUseReferencedAssembliesOnlySetting();
-        }
+        private readonly IDkmLanguageFrameDecoder _languageFrameDecoder = languageFrameDecoder;
+        private readonly IDkmLanguageInstructionDecoder _languageInstructionDecoder = languageInstructionDecoder;
+        private readonly bool _useReferencedAssembliesOnly = GetUseReferencedAssembliesOnlySetting();
 
         DkmCompiledClrLocalsQuery IDkmClrExpressionCompiler.GetClrLocalVariableQuery(
             DkmInspectionContext inspectionContext,

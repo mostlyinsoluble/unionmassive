@@ -26,15 +26,11 @@ namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 using static SyntaxFactory;
 
 [ExportSignatureHelpProvider("ElementAccessExpressionSignatureHelpProvider", LanguageNames.CSharp), Shared]
-internal sealed class ElementAccessExpressionSignatureHelpProvider : AbstractCSharpSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ElementAccessExpressionSignatureHelpProvider() : AbstractCSharpSignatureHelpProvider
 {
     private static readonly ImmutableArray<char> s_triggerCharacters = ['[', ','];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ElementAccessExpressionSignatureHelpProvider()
-    {
-    }
 
     public override ImmutableArray<char> TriggerCharacters => s_triggerCharacters;
 

@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeFixes.FullyQualify;
 using static CSharpSyntaxTokens;
 
 [ExportLanguageService(typeof(IFullyQualifyService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpFullyQualifyService : AbstractFullyQualifyService<SimpleNameSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpFullyQualifyService() : AbstractFullyQualifyService<SimpleNameSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpFullyQualifyService()
-    {
-    }
-
     protected override bool CanFullyQualify(SyntaxNode node, [NotNullWhen(true)] out SimpleNameSyntax? simpleName)
     {
         simpleName = node as SimpleNameSyntax;

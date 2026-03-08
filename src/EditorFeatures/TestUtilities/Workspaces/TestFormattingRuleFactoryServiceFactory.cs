@@ -15,14 +15,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces;
 
 [ExportWorkspaceServiceFactory(typeof(IHostDependentFormattingRuleFactoryService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-internal sealed class TestFormattingRuleFactoryServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestFormattingRuleFactoryServiceFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestFormattingRuleFactoryServiceFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {
         // return new factory per workspace

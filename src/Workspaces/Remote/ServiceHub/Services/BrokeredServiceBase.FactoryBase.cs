@@ -30,10 +30,7 @@ internal abstract partial class BrokeredServiceBase
     internal abstract class FactoryBase<TService> : IServiceHubServiceFactory, IFactory
         where TService : class
     {
-        static FactoryBase()
-        {
-            Debug.Assert(typeof(TService).IsInterface);
-        }
+        static FactoryBase() => Debug.Assert(typeof(TService).IsInterface);
 
         protected abstract TService CreateService(in ServiceConstructionArguments arguments);
 
@@ -112,10 +109,7 @@ internal abstract partial class BrokeredServiceBase
         where TService : class
         where TCallback : class
     {
-        static FactoryBase()
-        {
-            Debug.Assert(typeof(TCallback).IsInterface);
-        }
+        static FactoryBase() => Debug.Assert(typeof(TCallback).IsInterface);
 
         protected abstract TService CreateService(in ServiceConstructionArguments arguments, RemoteCallback<TCallback> callback);
 

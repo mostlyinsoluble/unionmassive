@@ -23,10 +23,7 @@ namespace Microsoft.CodeAnalysis
         public static CommonAttributeDataComparer InstanceIgnoringNamedArgumentOrder = new CommonAttributeDataComparer(considerNamedArgumentsOrder: false);
 
         private readonly bool _considerNamedArgumentsOrder;
-        private CommonAttributeDataComparer(bool considerNamedArgumentsOrder)
-        {
-            this._considerNamedArgumentsOrder = considerNamedArgumentsOrder;
-        }
+        private CommonAttributeDataComparer(bool considerNamedArgumentsOrder) => this._considerNamedArgumentsOrder = considerNamedArgumentsOrder;
 
         public bool Equals(AttributeData attr1, AttributeData attr2)
         {

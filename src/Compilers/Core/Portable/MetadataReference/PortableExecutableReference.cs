@@ -13,21 +13,14 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Reference to metadata stored in the standard ECMA-335 metadata format.
     /// </summary>
-    public abstract class PortableExecutableReference : MetadataReference
+    public abstract class PortableExecutableReference(
+        MetadataReferenceProperties properties,
+        string? fullPath = null,
+        DocumentationProvider? initialDocumentation = null) : MetadataReference(properties)
     {
-        private readonly string? _filePath;
+        private readonly string? _filePath = fullPath;
 
-        private DocumentationProvider? _lazyDocumentation;
-
-        protected PortableExecutableReference(
-            MetadataReferenceProperties properties,
-            string? fullPath = null,
-            DocumentationProvider? initialDocumentation = null)
-            : base(properties)
-        {
-            _filePath = fullPath;
-            _lazyDocumentation = initialDocumentation;
-        }
+        private DocumentationProvider? _lazyDocumentation = initialDocumentation;
 
         /// <summary>
         /// Display string used in error messages to identity the reference.

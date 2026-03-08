@@ -6,15 +6,9 @@ using System.Reflection.Metadata;
 
 namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 {
-    internal readonly struct AssemblyReaders
+    internal readonly struct AssemblyReaders(MetadataReader metadataReader, object symReader)
     {
-        public readonly MetadataReader MetadataReader;
-        public readonly object SymReader;
-
-        public AssemblyReaders(MetadataReader metadataReader, object symReader)
-        {
-            MetadataReader = metadataReader;
-            SymReader = symReader;
-        }
+        public readonly MetadataReader MetadataReader = metadataReader;
+        public readonly object SymReader = symReader;
     }
 }

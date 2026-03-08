@@ -10,13 +10,10 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.PullMemberUp.WarningDialog;
 
-internal sealed class PullMemberUpWarningViewModel : AbstractNotifyPropertyChanged
+internal sealed class PullMemberUpWarningViewModel(PullMembersUpOptions options) : AbstractNotifyPropertyChanged
 {
-    public ImmutableArray<string> WarningMessageContainer { get; set; }
+    public ImmutableArray<string> WarningMessageContainer { get; set; } = GenerateMessage(options);
     public string ProblemsListViewAutomationText => ServicesVSResources.Review_Changes;
-
-    public PullMemberUpWarningViewModel(PullMembersUpOptions options)
-        => WarningMessageContainer = GenerateMessage(options);
 
     private static ImmutableArray<string> GenerateMessage(PullMembersUpOptions options)
     {

@@ -803,16 +803,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        protected readonly struct SavedPending
+        protected readonly struct SavedPending(AbstractFlowPass<TLocalState, TLocalFunctionState>.PendingBranchesCollection pendingBranches, PooledHashSet<BoundStatement> labelsSeen)
         {
-            public readonly PendingBranchesCollection PendingBranches;
-            public readonly PooledHashSet<BoundStatement> LabelsSeen;
-
-            public SavedPending(PendingBranchesCollection pendingBranches, PooledHashSet<BoundStatement> labelsSeen)
-            {
-                this.PendingBranches = pendingBranches;
-                this.LabelsSeen = labelsSeen;
-            }
+            public readonly PendingBranchesCollection PendingBranches = pendingBranches;
+            public readonly PooledHashSet<BoundStatement> LabelsSeen = labelsSeen;
         }
 
         /// <summary>

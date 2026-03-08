@@ -12,15 +12,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslyn.Test.Utilities
 {
-    internal sealed class VirtualizedRelativePathResolver : RelativePathResolver
+    internal sealed class VirtualizedRelativePathResolver(IEnumerable<string> existingFullPaths, string baseDirectory = null, ImmutableArray<string> searchPaths = default) : RelativePathResolver(searchPaths.NullToEmpty(), baseDirectory)
     {
-        private readonly HashSet<string> _existingFullPaths;
-
-        public VirtualizedRelativePathResolver(IEnumerable<string> existingFullPaths, string baseDirectory = null, ImmutableArray<string> searchPaths = default)
-            : base(searchPaths.NullToEmpty(), baseDirectory)
-        {
-            _existingFullPaths = new HashSet<string>(existingFullPaths, StringComparer.Ordinal);
-        }
+        private readonly HashSet<string> _existingFullPaths = new HashSet<string>(existingFullPaths, StringComparer.Ordinal);
 
         protected override bool FileExists(string fullPath)
         {

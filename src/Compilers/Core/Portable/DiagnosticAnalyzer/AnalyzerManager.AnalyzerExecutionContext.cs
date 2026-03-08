@@ -17,15 +17,15 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 {
     internal partial class AnalyzerManager
     {
-        private sealed class AnalyzerExecutionContext
+        private sealed class AnalyzerExecutionContext(DiagnosticAnalyzer analyzer)
         {
             /// <summary>
             /// Cached mapping of localizable strings in this descriptor to any exceptions thrown while obtaining them.
             /// </summary>
             private static ImmutableDictionary<LocalizableString, Exception?> s_localizableStringToException = ImmutableDictionary<LocalizableString, Exception?>.Empty.WithComparers(ReferenceEqualityComparer.Instance);
 
-            private readonly DiagnosticAnalyzer _analyzer;
-            private readonly object _gate;
+            private readonly DiagnosticAnalyzer _analyzer = analyzer;
+            private readonly object _gate = new object();
 
             /// <summary>
             /// Map from (symbol, analyzer) to count of its member symbols whose symbol declared events are not yet processed.
@@ -62,12 +62,6 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             /// Supported suppression descriptors for diagnostic suppressor, if any.
             /// </summary>
             private ImmutableArray<SuppressionDescriptor> _lazySuppressionDescriptors;
-
-            public AnalyzerExecutionContext(DiagnosticAnalyzer analyzer)
-            {
-                _analyzer = analyzer;
-                _gate = new object();
-            }
 
             [PerformanceSensitive(
                 "https://github.com/dotnet/roslyn/issues/26778",

@@ -8,12 +8,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Structure;
 
-internal sealed class OmniSharpBlockStructure
+internal sealed class OmniSharpBlockStructure(ImmutableArray<OmniSharpBlockSpan> spans)
 {
-    public ImmutableArray<OmniSharpBlockSpan> Spans { get; }
-
-    public OmniSharpBlockStructure(ImmutableArray<OmniSharpBlockSpan> spans)
-    {
-        Spans = spans;
-    }
+    public ImmutableArray<OmniSharpBlockSpan> Spans { get; } = spans;
 }

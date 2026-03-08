@@ -205,10 +205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected BoundTreeRewriterWithStackGuard()
         { }
 
-        protected BoundTreeRewriterWithStackGuard(int recursionDepth)
-        {
-            _recursionDepth = recursionDepth;
-        }
+        protected BoundTreeRewriterWithStackGuard(int recursionDepth) => _recursionDepth = recursionDepth;
 
         protected int RecursionDepth => _recursionDepth;
 

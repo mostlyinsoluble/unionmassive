@@ -34,10 +34,7 @@ namespace Roslyn.Test.Utilities
 
         private readonly Dictionary<string, object> _sources;
 
-        private TestSourceReferenceResolver(Dictionary<string, object> sources)
-        {
-            _sources = sources;
-        }
+        private TestSourceReferenceResolver(Dictionary<string, object> sources) => _sources = sources;
 
         public override string NormalizePath(string path, string baseFilePath) => path;
 

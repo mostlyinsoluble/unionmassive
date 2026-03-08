@@ -12,14 +12,9 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Microsoft.CodeAnalysis.Editor.LineSeparators;
 
-internal sealed class LineSeparatorAdornmentManager : AbstractAdornmentManager<LineSeparatorTag>
+internal sealed class LineSeparatorAdornmentManager(IThreadingContext threadingContext, IWpfTextView textView,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService, IAsynchronousOperationListener asyncListener, string adornmentLayerName) : AbstractAdornmentManager<LineSeparatorTag>(threadingContext, textView, tagAggregatorFactoryService, asyncListener, adornmentLayerName)
 {
-    public LineSeparatorAdornmentManager(IThreadingContext threadingContext, IWpfTextView textView,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService, IAsynchronousOperationListener asyncListener, string adornmentLayerName)
-        : base(threadingContext, textView, tagAggregatorFactoryService, asyncListener, adornmentLayerName)
-    {
-    }
-
     protected override void AddAdornmentsToAdornmentLayer_CallOnlyOnUIThread(NormalizedSnapshotSpanCollection changedSpanCollection)
     {
         // this method should only run on UI thread as we do WPF here.

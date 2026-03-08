@@ -13,20 +13,12 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings;
 
 internal sealed partial class SettingsEditorPane
 {
-    private sealed partial class SearchHandler : IVsWindowSearch
+    private sealed partial class SearchHandler(IThreadingContext threadingContext, int controlMinWidth, int controlMaxWidth, IWpfTableControl[] wpfTableControls) : IVsWindowSearch
     {
-        private readonly IThreadingContext _threadingContext;
-        private readonly int _controlMinWidth;
-        private readonly int _controlMaxWidth;
-        private readonly IWpfTableControl[] _wpfTableControls;
-
-        public SearchHandler(IThreadingContext threadingContext, int controlMinWidth, int controlMaxWidth, IWpfTableControl[] wpfTableControls)
-        {
-            _threadingContext = threadingContext;
-            _controlMinWidth = controlMinWidth;
-            _controlMaxWidth = controlMaxWidth;
-            _wpfTableControls = wpfTableControls;
-        }
+        private readonly IThreadingContext _threadingContext = threadingContext;
+        private readonly int _controlMinWidth = controlMinWidth;
+        private readonly int _controlMaxWidth = controlMaxWidth;
+        private readonly IWpfTableControl[] _wpfTableControls = wpfTableControls;
 
         public IVsSearchTask? CreateSearch(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback)
             => new SearchTask(dwCookie, pSearchQuery, pSearchCallback, _wpfTableControls, _threadingContext);

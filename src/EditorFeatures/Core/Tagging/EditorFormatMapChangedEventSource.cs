@@ -7,12 +7,9 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Tagging;
 
-internal sealed class EditorFormatMapChangedEventSource : AbstractTaggerEventSource
+internal sealed class EditorFormatMapChangedEventSource(IEditorFormatMap editorFormatMap) : AbstractTaggerEventSource
 {
-    private readonly IEditorFormatMap _editorFormatMap;
-
-    public EditorFormatMapChangedEventSource(IEditorFormatMap editorFormatMap)
-        => _editorFormatMap = editorFormatMap;
+    private readonly IEditorFormatMap _editorFormatMap = editorFormatMap;
 
     public override void Connect()
         => _editorFormatMap.FormatMappingChanged += OnEditorFormatMapChanged;

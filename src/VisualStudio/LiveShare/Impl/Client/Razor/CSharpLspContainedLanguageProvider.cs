@@ -16,22 +16,15 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client.Razor;
 
 [Export(typeof(IContainedLanguageProvider))]
-internal sealed class CSharpLspContainedLanguageProvider : IContainedLanguageProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpLspContainedLanguageProvider(IContentTypeRegistryService contentTypeRegistry,
+    SVsServiceProvider serviceProvider,
+    CSharpLspRazorProjectFactory razorProjectFactory) : IContainedLanguageProvider
 {
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
-    private readonly SVsServiceProvider _serviceProvider;
-    private readonly CSharpLspRazorProjectFactory _razorProjectFactory;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpLspContainedLanguageProvider(IContentTypeRegistryService contentTypeRegistry,
-        SVsServiceProvider serviceProvider,
-        CSharpLspRazorProjectFactory razorProjectFactory)
-    {
-        _contentTypeRegistry = contentTypeRegistry ?? throw new ArgumentNullException(nameof(contentTypeRegistry));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _razorProjectFactory = razorProjectFactory ?? throw new ArgumentNullException(nameof(razorProjectFactory));
-    }
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry ?? throw new ArgumentNullException(nameof(contentTypeRegistry));
+    private readonly SVsServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+    private readonly CSharpLspRazorProjectFactory _razorProjectFactory = razorProjectFactory ?? throw new ArgumentNullException(nameof(razorProjectFactory));
 
     public IContentType GetContentType(string filePath)
         => _contentTypeRegistry.GetContentType(ContentTypeNames.CSharpContentType);

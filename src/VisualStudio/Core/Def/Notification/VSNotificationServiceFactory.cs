@@ -15,18 +15,15 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Notification;
 
 [ExportWorkspaceServiceFactory(typeof(INotificationService), ServiceLayer.Host), Shared]
-internal sealed class VSNotificationServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VSNotificationServiceFactory(SVsServiceProvider serviceProvider) : IWorkspaceServiceFactory
 {
-    private readonly IVsUIShell _uiShellService;
+    private readonly IVsUIShell _uiShellService = (IVsUIShell)serviceProvider.GetService(typeof(SVsUIShell));
 
     private static readonly object s_gate = new();
 
     private static VSDialogService s_singleton;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VSNotificationServiceFactory(SVsServiceProvider serviceProvider)
-        => _uiShellService = (IVsUIShell)serviceProvider.GetService(typeof(SVsUIShell));
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {
@@ -38,17 +35,14 @@ internal sealed class VSNotificationServiceFactory : IWorkspaceServiceFactory
         return s_singleton;
     }
 
-    private sealed class VSDialogService : INotificationService, INotificationServiceCallback
+    private sealed class VSDialogService(IVsUIShell uiShellService) : INotificationService, INotificationServiceCallback
     {
-        private readonly IVsUIShell _uiShellService;
+        private readonly IVsUIShell _uiShellService = uiShellService;
 
         /// <summary>
         /// For testing purposes only.  If non-null, this callback will be invoked instead of showing a dialog.
         /// </summary>
         public Action<string, string, NotificationSeverity> NotificationCallback { get; set; }
-
-        public VSDialogService(IVsUIShell uiShellService)
-            => _uiShellService = uiShellService;
 
         public void SendNotification(
             string message,

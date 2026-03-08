@@ -283,27 +283,17 @@ start:
         /// on a binary OR pattern we're visiting inside a normalized pattern,
         /// and collect the redundant nodes that are identified.
         /// </summary>
-        private readonly struct ReachabilityAnalysisContext
+        private readonly struct ReachabilityAnalysisContext(ArrayBuilder<DecisionDagBuilder.StateForCase> previousCases, int patternIndex,
+            DecisionDagBuilder builder, BoundDagTemp rootIdentifier, SyntaxNode syntax, PooledHashSet<SyntaxNode> redundantNodes)
         {
-            public readonly ArrayBuilder<StateForCase> PreviousCases;
-            public readonly int PatternIndex;
-            public readonly DecisionDagBuilder Builder;
-            public readonly BoundDagTemp RootIdentifier;
-            public readonly SyntaxNode Syntax;
+            public readonly ArrayBuilder<StateForCase> PreviousCases = previousCases;
+            public readonly int PatternIndex = patternIndex;
+            public readonly DecisionDagBuilder Builder = builder;
+            public readonly BoundDagTemp RootIdentifier = rootIdentifier;
+            public readonly SyntaxNode Syntax = syntax;
 
             /// <summary>Collects the nodes we intend to report.</summary>
-            public readonly PooledHashSet<SyntaxNode> RedundantNodes;
-
-            public ReachabilityAnalysisContext(ArrayBuilder<StateForCase> previousCases, int patternIndex,
-                DecisionDagBuilder builder, BoundDagTemp rootIdentifier, SyntaxNode syntax, PooledHashSet<SyntaxNode> redundantNodes)
-            {
-                PreviousCases = previousCases;
-                PatternIndex = patternIndex;
-                Builder = builder;
-                RootIdentifier = rootIdentifier;
-                Syntax = syntax;
-                RedundantNodes = redundantNodes;
-            }
+            public readonly PooledHashSet<SyntaxNode> RedundantNodes = redundantNodes;
 
 #if ROSLYN_TEST_REDUNDANT_PATTERN
             public readonly StringBuilder Logger = new StringBuilder();

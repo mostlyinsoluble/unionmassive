@@ -38,10 +38,10 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         TEmbeddedParameter,
         TEmbeddedTypeParameter>
     {
-        internal abstract class CommonEmbeddedType : Cci.IEmbeddedDefinition, Cci.INamespaceTypeDefinition
+        internal abstract class CommonEmbeddedType(TEmbeddedTypesManager typeManager, TNamedTypeSymbol underlyingNamedType) : Cci.IEmbeddedDefinition, Cci.INamespaceTypeDefinition
         {
-            public readonly TEmbeddedTypesManager TypeManager;
-            public readonly TNamedTypeSymbol UnderlyingNamedType;
+            public readonly TEmbeddedTypesManager TypeManager = typeManager;
+            public readonly TNamedTypeSymbol UnderlyingNamedType = underlyingNamedType;
 
             private ImmutableArray<Cci.IFieldDefinition> _lazyFields;
             private ImmutableArray<Cci.IMethodDefinition> _lazyMethods;
@@ -49,12 +49,6 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
             private ImmutableArray<Cci.IEventDefinition> _lazyEvents;
             private ImmutableArray<TAttributeData> _lazyAttributes;
             private int _lazyAssemblyRefIndex = -1;
-
-            protected CommonEmbeddedType(TEmbeddedTypesManager typeManager, TNamedTypeSymbol underlyingNamedType)
-            {
-                this.TypeManager = typeManager;
-                this.UnderlyingNamedType = underlyingNamedType;
-            }
 
             public bool IsEncDeleted
                 => false;

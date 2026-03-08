@@ -8,15 +8,9 @@ namespace Microsoft.CodeAnalysis
 {
     internal abstract partial class CommonCompiler
     {
-        internal sealed class LoggingStrongNameFileSystem : StrongNameFileSystem
+        internal sealed class LoggingStrongNameFileSystem(TouchedFileLogger? logger, string? customTempPath) : StrongNameFileSystem(customTempPath)
         {
-            private readonly TouchedFileLogger? _loggerOpt;
-
-            public LoggingStrongNameFileSystem(TouchedFileLogger? logger, string? customTempPath)
-                : base(customTempPath)
-            {
-                _loggerOpt = logger;
-            }
+            private readonly TouchedFileLogger? _loggerOpt = logger;
 
             internal override bool FileExists(string? fullPath)
             {

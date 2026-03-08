@@ -70,12 +70,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return customModifier.IsOptional ? CreateOptional(modifier) : CreateRequired(modifier);
         }
 
-        private class OptionalCustomModifier : CSharpCustomModifier
+        private class OptionalCustomModifier(NamedTypeSymbol modifier) : CSharpCustomModifier(modifier)
         {
-            public OptionalCustomModifier(NamedTypeSymbol modifier)
-                : base(modifier)
-            { }
-
             public override bool IsOptional
             {
                 get
@@ -102,12 +98,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        private class RequiredCustomModifier : CSharpCustomModifier
+        private class RequiredCustomModifier(NamedTypeSymbol modifier) : CSharpCustomModifier(modifier)
         {
-            public RequiredCustomModifier(NamedTypeSymbol modifier)
-                : base(modifier)
-            { }
-
             public override bool IsOptional
             {
                 get

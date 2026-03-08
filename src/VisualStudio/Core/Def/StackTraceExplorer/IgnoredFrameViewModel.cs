@@ -11,15 +11,9 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace Microsoft.VisualStudio.LanguageServices.StackTraceExplorer;
 
-internal sealed class IgnoredFrameViewModel : FrameViewModel
+internal sealed class IgnoredFrameViewModel(IgnoredFrame frame, IClassificationFormatMap formatMap, ClassificationTypeMap typeMap) : FrameViewModel(formatMap, typeMap)
 {
-    private readonly IgnoredFrame _frame;
-
-    public IgnoredFrameViewModel(IgnoredFrame frame, IClassificationFormatMap formatMap, ClassificationTypeMap typeMap)
-        : base(formatMap, typeMap)
-    {
-        _frame = frame;
-    }
+    private readonly IgnoredFrame _frame = frame;
 
     public override bool ShowMouseOver => false;
 

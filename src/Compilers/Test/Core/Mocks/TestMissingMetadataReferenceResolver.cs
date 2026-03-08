@@ -12,18 +12,12 @@ using Roslyn.Utilities;
 
 namespace Roslyn.Test.Utilities
 {
-    internal class TestMissingMetadataReferenceResolver : MetadataReferenceResolver
+    internal class TestMissingMetadataReferenceResolver(Dictionary<string, MetadataReference> map) : MetadataReferenceResolver
     {
-        internal readonly struct ReferenceAndIdentity
+        internal readonly struct ReferenceAndIdentity(MetadataReference reference, AssemblyIdentity identity)
         {
-            public readonly MetadataReference Reference;
-            public readonly AssemblyIdentity Identity;
-
-            public ReferenceAndIdentity(MetadataReference reference, AssemblyIdentity identity)
-            {
-                Reference = reference;
-                Identity = identity;
-            }
+            public readonly MetadataReference Reference = reference;
+            public readonly AssemblyIdentity Identity = identity;
 
             public override string ToString()
             {
@@ -31,13 +25,8 @@ namespace Roslyn.Test.Utilities
             }
         }
 
-        private readonly Dictionary<string, MetadataReference> _map;
+        private readonly Dictionary<string, MetadataReference> _map = map;
         public readonly List<ReferenceAndIdentity> ResolutionAttempts = new List<ReferenceAndIdentity>();
-
-        public TestMissingMetadataReferenceResolver(Dictionary<string, MetadataReference> map)
-        {
-            _map = map;
-        }
 
         public override PortableExecutableReference ResolveMissingAssembly(MetadataReference definition, AssemblyIdentity referenceIdentity)
         {

@@ -11,10 +11,8 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespac
 
 internal sealed partial class WhitespaceViewModel
 {
-    internal sealed class SettingsEntriesSnapshot : SettingsEntriesSnapshotBase<Setting>
+    internal sealed class SettingsEntriesSnapshot(ImmutableArray<Setting> data, int currentVersionNumber) : SettingsEntriesSnapshotBase<Setting>(data, currentVersionNumber)
     {
-        public SettingsEntriesSnapshot(ImmutableArray<Setting> data, int currentVersionNumber) : base(data, currentVersionNumber) { }
-
         protected override bool TryGetValue(Setting result, string keyName, out object? content)
         {
             content = keyName switch

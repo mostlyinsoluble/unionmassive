@@ -65,10 +65,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             private readonly FunctionPointerMethodSymbol _underlying;
             internal ISignature Underlying => _underlying.GetCciAdapter();
 
-            internal FunctionPointerMethodSignature(FunctionPointerMethodSymbol underlying)
-            {
-                _underlying = underlying;
-            }
+            internal FunctionPointerMethodSignature(FunctionPointerMethodSymbol underlying) => _underlying = underlying;
 
             public CallingConvention CallingConvention => Underlying.CallingConvention;
             public ushort ParameterCount => Underlying.ParameterCount;
@@ -122,10 +119,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class FunctionPointerTypeSymbolAdapter
     {
-        internal FunctionPointerTypeSymbolAdapter(FunctionPointerTypeSymbol underlyingFunctionPointerTypeSymbol)
-        {
-            AdaptedFunctionPointerTypeSymbol = underlyingFunctionPointerTypeSymbol;
-        }
+        internal FunctionPointerTypeSymbolAdapter(FunctionPointerTypeSymbol underlyingFunctionPointerTypeSymbol) => AdaptedFunctionPointerTypeSymbol = underlyingFunctionPointerTypeSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedFunctionPointerTypeSymbol;
         internal FunctionPointerTypeSymbol AdaptedFunctionPointerTypeSymbol { get; }

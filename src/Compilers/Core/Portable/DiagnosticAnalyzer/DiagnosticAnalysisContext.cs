@@ -319,11 +319,11 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// </item>
     /// </list>
     /// </summary>
-    public abstract class CompilationStartAnalysisContext
+    public abstract class CompilationStartAnalysisContext(Compilation compilation, AnalyzerOptions options, CancellationToken cancellationToken)
     {
-        private readonly Compilation _compilation;
-        private readonly AnalyzerOptions _options;
-        private readonly CancellationToken _cancellationToken;
+        private readonly Compilation _compilation = compilation;
+        private readonly AnalyzerOptions _options = options;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
 
         /// <summary>
         /// <see cref="CodeAnalysis.Compilation"/> that is the subject of the analysis.
@@ -339,13 +339,6 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         /// Token to check for requested cancellation of the analysis.
         /// </summary>
         public CancellationToken CancellationToken { get { return _cancellationToken; } }
-
-        protected CompilationStartAnalysisContext(Compilation compilation, AnalyzerOptions options, CancellationToken cancellationToken)
-        {
-            _compilation = compilation;
-            _options = options;
-            _cancellationToken = cancellationToken;
-        }
 
         /// <summary>
         /// Register an action to be executed at compilation end.

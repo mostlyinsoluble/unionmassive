@@ -17,10 +17,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class BuildHost : IBuildHost
+internal sealed class BuildHost(BuildHostLogger logger, RpcServer server) : IBuildHost
 {
-    private readonly BuildHostLogger _logger;
-    private readonly RpcServer _server;
+    private readonly BuildHostLogger _logger = logger;
+    private readonly RpcServer _server = server;
     private readonly object _gate = new();
     private ProjectBuildManager? _buildManager;
 
@@ -38,12 +38,6 @@ internal sealed class BuildHost : IBuildHost
     /// The binary log path to use for all builds; should not be changed once the <see cref="_buildManager"/> is initialized.
     /// </summary>
     private string? _binaryLogPath;
-
-    public BuildHost(BuildHostLogger logger, RpcServer server)
-    {
-        _logger = logger;
-        _server = server;
-    }
 
     private bool TryEnsureMSBuildLoaded(string projectOrSolutionFilePath)
     {

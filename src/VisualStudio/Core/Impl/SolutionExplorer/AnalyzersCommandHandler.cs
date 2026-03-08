@@ -40,13 +40,20 @@ using Workspace = Microsoft.CodeAnalysis.Workspace;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.SolutionExplorer;
 
 [Export]
-internal sealed class AnalyzersCommandHandler : IAnalyzersCommandHandler, IVsUpdateSolutionEvents
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class AnalyzersCommandHandler(
+    AnalyzerItemsTracker tracker,
+    AnalyzerReferenceManager analyzerReferenceManager,
+    IThreadingContext threadingContext,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider) : IAnalyzersCommandHandler, IVsUpdateSolutionEvents
 {
-    private readonly AnalyzerItemsTracker _tracker;
-    private readonly AnalyzerReferenceManager _analyzerReferenceManager;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IAsynchronousOperationListener _listener;
+    private readonly AnalyzerItemsTracker _tracker = tracker;
+    private readonly AnalyzerReferenceManager _analyzerReferenceManager = analyzerReferenceManager;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IAsynchronousOperationListener _listener = listenerProvider.GetListener(FeatureAttribute.RuleSetEditor);
     private ContextMenuController _analyzerFolderContextMenuController;
     private ContextMenuController _analyzerContextMenuController;
     private ContextMenuController _diagnosticContextMenuController;
@@ -76,22 +83,6 @@ internal sealed class AnalyzersCommandHandler : IAnalyzersCommandHandler, IVsUpd
 
     private bool _allowProjectSystemOperations = true;
     private bool _initialized;
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public AnalyzersCommandHandler(
-        AnalyzerItemsTracker tracker,
-        AnalyzerReferenceManager analyzerReferenceManager,
-        IThreadingContext threadingContext,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider)
-    {
-        _tracker = tracker;
-        _analyzerReferenceManager = analyzerReferenceManager;
-        _threadingContext = threadingContext;
-        _serviceProvider = serviceProvider;
-        _listener = listenerProvider.GetListener(FeatureAttribute.RuleSetEditor);
-    }
 
     /// <summary>
     /// Hook up the context menu handlers.

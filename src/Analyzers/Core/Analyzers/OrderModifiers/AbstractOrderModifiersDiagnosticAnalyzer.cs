@@ -11,24 +11,17 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.OrderModifiers;
 
-internal abstract class AbstractOrderModifiersDiagnosticAnalyzer : AbstractBuiltInCodeStyleDiagnosticAnalyzer
+internal abstract class AbstractOrderModifiersDiagnosticAnalyzer(
+    ISyntaxFacts syntaxFacts,
+    Option2<CodeStyleOption2<string>> option,
+    AbstractOrderModifiersHelpers helpers) : AbstractBuiltInCodeStyleDiagnosticAnalyzer(IDEDiagnosticIds.OrderModifiersDiagnosticId,
+           EnforceOnBuildValues.OrderModifiers,
+           option,
+           new LocalizableResourceString(nameof(AnalyzersResources.Order_modifiers), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)),
+           new LocalizableResourceString(nameof(AnalyzersResources.Modifiers_are_not_ordered), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
 {
-    private readonly ISyntaxFacts _syntaxFacts;
-    private readonly AbstractOrderModifiersHelpers _helpers;
-
-    protected AbstractOrderModifiersDiagnosticAnalyzer(
-        ISyntaxFacts syntaxFacts,
-        Option2<CodeStyleOption2<string>> option,
-        AbstractOrderModifiersHelpers helpers)
-        : base(IDEDiagnosticIds.OrderModifiersDiagnosticId,
-               EnforceOnBuildValues.OrderModifiers,
-               option,
-               new LocalizableResourceString(nameof(AnalyzersResources.Order_modifiers), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)),
-               new LocalizableResourceString(nameof(AnalyzersResources.Modifiers_are_not_ordered), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
-    {
-        _syntaxFacts = syntaxFacts;
-        _helpers = helpers;
-    }
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
+    private readonly AbstractOrderModifiersHelpers _helpers = helpers;
 
     public override DiagnosticAnalyzerCategory GetAnalyzerCategory()
         => DiagnosticAnalyzerCategory.SyntaxTreeWithoutSemanticsAnalysis;

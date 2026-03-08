@@ -12,31 +12,24 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Represents a line mapping defined by a single line mapping directive (<c>#line</c> in C# or <c>#ExternalSource</c> in VB).
     /// </summary>
-    public readonly struct LineMapping : IEquatable<LineMapping>
+    public readonly struct LineMapping(LinePositionSpan span, int? characterOffset, FileLinePositionSpan mappedSpan) : IEquatable<LineMapping>
     {
         /// <summary>
         /// The span in the syntax tree containing the line mapping directive.
         /// </summary>
-        public readonly LinePositionSpan Span { get; }
+        public readonly LinePositionSpan Span { get; } = span;
 
         /// <summary>
         /// The optional offset in the syntax tree for the line immediately following an enhanced <c>#line</c> directive in C#.
         /// </summary>
-        public readonly int? CharacterOffset { get; }
+        public readonly int? CharacterOffset { get; } = characterOffset;
 
         /// <summary>
         /// If the line mapping directive maps the span into an explicitly specified file the <see cref="FileLinePositionSpan.HasMappedPath"/> is true.
         /// If the path is not mapped <see cref="FileLinePositionSpan.Path"/> is empty and <see cref="FileLinePositionSpan.HasMappedPath"/> is false.
         /// If the line mapping directive marks hidden code <see cref="FileLinePositionSpan.IsValid"/> is false.
         /// </summary>
-        public readonly FileLinePositionSpan MappedSpan { get; }
-
-        public LineMapping(LinePositionSpan span, int? characterOffset, FileLinePositionSpan mappedSpan)
-        {
-            Span = span;
-            CharacterOffset = characterOffset;
-            MappedSpan = mappedSpan;
-        }
+        public readonly FileLinePositionSpan MappedSpan { get; } = mappedSpan;
 
         /// <summary>
         /// True if the line mapping marks hidden code.

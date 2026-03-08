@@ -21,10 +21,7 @@ namespace Microsoft.VisualStudio.LanguageServices;
 /// </summary>
 public abstract class VisualStudioWorkspace : Workspace
 {
-    static VisualStudioWorkspace()
-    {
-        FaultReporter.InitializeFatalErrorHandlers();
-    }
+    static VisualStudioWorkspace() => FaultReporter.InitializeFatalErrorHandlers();
 
     internal VisualStudioWorkspace(HostServices hostServices)
         : base(hostServices, WorkspaceKind.Host)

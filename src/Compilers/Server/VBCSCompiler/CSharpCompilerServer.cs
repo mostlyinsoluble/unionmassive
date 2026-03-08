@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
         }
 
         internal CSharpCompilerServer(Func<string, MetadataReferenceProperties, PortableExecutableReference> metadataProvider, string? responseFile, string[] args, BuildPaths buildPaths, string? libDirectory, IAnalyzerAssemblyLoader analyzerLoader, GeneratorDriverCache driverCache)
-            : base(CSharpCommandLineParser.Default, responseFile, args, buildPaths, libDirectory, analyzerLoader, driverCache)
-        {
-            _metadataProvider = metadataProvider;
-        }
+            : base(CSharpCommandLineParser.Default, responseFile, args, buildPaths, libDirectory, analyzerLoader, driverCache) => _metadataProvider = metadataProvider;
 
         internal override Func<string, MetadataReferenceProperties, PortableExecutableReference> GetMetadataProvider()
         {

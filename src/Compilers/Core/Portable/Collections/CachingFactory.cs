@@ -32,7 +32,10 @@ namespace Microsoft.CodeAnalysis
     //                  in a case where it is not possible to create a static valueFactory, it is advisable
     //                  to set valueFactory to null and use TryGetValue/Add pattern instead of GetOrMakeValue.
     //
-    internal class CachingFactory<TKey, TValue> : CachingBase<CachingFactory<TKey, TValue>.Entry>
+    internal class CachingFactory<TKey, TValue>(int size,
+            Func<TKey, TValue> valueFactory,
+            Func<TKey, int> keyHash,
+            Func<TKey, TValue, bool> keyValueEquality) : CachingBase<CachingFactory<TKey, TValue>.Entry>(size)
         where TKey : notnull
     {
         internal struct Entry
@@ -41,22 +44,10 @@ namespace Microsoft.CodeAnalysis
             internal TValue value;
         }
 
-        private readonly int _size;
-        private readonly Func<TKey, TValue> _valueFactory;
-        private readonly Func<TKey, int> _keyHash;
-        private readonly Func<TKey, TValue, bool> _keyValueEquality;
-
-        public CachingFactory(int size,
-                Func<TKey, TValue> valueFactory,
-                Func<TKey, int> keyHash,
-                Func<TKey, TValue, bool> keyValueEquality) :
-            base(size)
-        {
-            _size = size;
-            _valueFactory = valueFactory;
-            _keyHash = keyHash;
-            _keyValueEquality = keyValueEquality;
-        }
+        private readonly int _size = size;
+        private readonly Func<TKey, TValue> _valueFactory = valueFactory;
+        private readonly Func<TKey, int> _keyHash = keyHash;
+        private readonly Func<TKey, TValue, bool> _keyValueEquality = keyValueEquality;
 
         public void Add(TKey key, TValue value)
         {
@@ -125,10 +116,10 @@ namespace Microsoft.CodeAnalysis
     //      keyValueEquality    is an object == for the new and old keys 
     //                          NOTE: we do store the key in this case 
     //                          reference comparison of keys is as cheap as comparing hash codes.
-    internal class CachingIdentityFactory<TKey, TValue> : CachingBase<CachingIdentityFactory<TKey, TValue>.Entry>
+    internal class CachingIdentityFactory<TKey, TValue>(int size, Func<TKey, TValue> valueFactory) : CachingBase<CachingIdentityFactory<TKey, TValue>.Entry>(size)
         where TKey : class
     {
-        private readonly Func<TKey, TValue> _valueFactory;
+        private readonly Func<TKey, TValue> _valueFactory = valueFactory;
         private readonly ObjectPool<CachingIdentityFactory<TKey, TValue>>? _pool;
 
         internal struct Entry
@@ -137,17 +128,8 @@ namespace Microsoft.CodeAnalysis
             internal TValue value;
         }
 
-        public CachingIdentityFactory(int size, Func<TKey, TValue> valueFactory) :
-            base(size)
-        {
-            _valueFactory = valueFactory;
-        }
-
         public CachingIdentityFactory(int size, Func<TKey, TValue> valueFactory, ObjectPool<CachingIdentityFactory<TKey, TValue>> pool) :
-            this(size, valueFactory)
-        {
-            _pool = pool;
-        }
+            this(size, valueFactory) => _pool = pool;
 
         public void Add(TKey key, TValue value)
         {

@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects
         private readonly ObjectPool<PooledHashSet<T>> _pool;
 
         private PooledHashSet(ObjectPool<PooledHashSet<T>> pool, IEqualityComparer<T> equalityComparer) :
-            base(equalityComparer)
-        {
-            _pool = pool;
-        }
+            base(equalityComparer) => _pool = pool;
 
         public void Free()
         {

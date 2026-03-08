@@ -17,16 +17,10 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics;
 
-public sealed class TestDiagnosticAnalyzerDriver
+public sealed class TestDiagnosticAnalyzerDriver(Workspace workspace, bool includeSuppressedDiagnostics = false)
 {
-    private readonly IDiagnosticAnalyzerService _diagnosticAnalyzerService;
-    private readonly bool _includeSuppressedDiagnostics;
-
-    public TestDiagnosticAnalyzerDriver(Workspace workspace, bool includeSuppressedDiagnostics = false)
-    {
-        _diagnosticAnalyzerService = workspace.Services.GetRequiredService<IDiagnosticAnalyzerService>();
-        _includeSuppressedDiagnostics = includeSuppressedDiagnostics;
-    }
+    private readonly IDiagnosticAnalyzerService _diagnosticAnalyzerService = workspace.Services.GetRequiredService<IDiagnosticAnalyzerService>();
+    private readonly bool _includeSuppressedDiagnostics = includeSuppressedDiagnostics;
 
     private async Task<IEnumerable<Diagnostic>> GetDiagnosticsAsync(
         Project project,

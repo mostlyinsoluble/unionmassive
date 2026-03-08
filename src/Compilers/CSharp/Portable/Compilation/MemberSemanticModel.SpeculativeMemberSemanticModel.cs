@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 TypeSyntax root,
                 Binder rootBinder,
                 ImmutableDictionary<Symbol, Symbol> parentRemappedSymbolsOpt)
-                : base(root, owner, rootBinder, containingPublicSemanticModel: containingPublicSemanticModel, parentRemappedSymbolsOpt)
-            {
-                Debug.Assert(containingPublicSemanticModel is not null);
-            }
+                : base(root, owner, rootBinder, containingPublicSemanticModel: containingPublicSemanticModel, parentRemappedSymbolsOpt) => Debug.Assert(containingPublicSemanticModel is not null);
 
             protected override NullableWalker.SnapshotManager GetSnapshotManager()
             {

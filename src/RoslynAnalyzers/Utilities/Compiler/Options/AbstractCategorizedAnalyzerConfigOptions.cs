@@ -20,10 +20,7 @@ namespace Analyzer.Utilities
 
         private readonly ConcurrentDictionary<OptionKey, (bool found, object? value)> _computedOptionValuesMap;
 
-        protected AbstractCategorizedAnalyzerConfigOptions()
-        {
-            _computedOptionValuesMap = new ConcurrentDictionary<OptionKey, (bool found, object? value)>();
-        }
+        protected AbstractCategorizedAnalyzerConfigOptions() => _computedOptionValuesMap = new ConcurrentDictionary<OptionKey, (bool found, object? value)>();
 
         public abstract bool IsEmpty { get; }
         protected abstract bool TryGetOptionValue(string optionKeyPrefix, string? optionKeySuffix, string optionName, [NotNullWhen(returnValue: true)] out string? valueString);

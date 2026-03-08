@@ -31,31 +31,22 @@ internal class LiveShareInitializeHandler : ILspRequestHandler<InitializeParams,
 
 [ExportLspRequestHandler(LiveShareConstants.RoslynContractName, Methods.InitializeName)]
 [Obsolete("Used for backwards compatibility with old liveshare clients.")]
-internal sealed class RoslynInitializeHandlerShim : LiveShareInitializeHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RoslynInitializeHandlerShim() : LiveShareInitializeHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RoslynInitializeHandlerShim()
-    {
-    }
 }
 
 [ExportLspRequestHandler(LiveShareConstants.CSharpContractName, Methods.InitializeName)]
-internal sealed class CSharpInitializeHandlerShim : LiveShareInitializeHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpInitializeHandlerShim() : LiveShareInitializeHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpInitializeHandlerShim()
-    {
-    }
 }
 
 [ExportLspRequestHandler(LiveShareConstants.VisualBasicContractName, Methods.InitializeName)]
-internal sealed class VisualBasicInitializeHandlerShim : LiveShareInitializeHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualBasicInitializeHandlerShim() : LiveShareInitializeHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualBasicInitializeHandlerShim()
-    {
-    }
 }

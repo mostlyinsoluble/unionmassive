@@ -26,17 +26,23 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options;
 /// selected notification preference
 /// plus, styling for visual elements.
 /// </remarks>
-internal abstract class AbstractCodeStyleOptionViewModel : AbstractNotifyPropertyChanged
+internal abstract class AbstractCodeStyleOptionViewModel(
+    IOption2 option,
+    string description,
+    AbstractOptionPreviewViewModel info,
+    string groupName,
+    List<CodeStylePreference> preferences = null,
+    List<NotificationOptionViewModel> notificationPreferences = null) : AbstractNotifyPropertyChanged
 {
-    protected AbstractOptionPreviewViewModel Info { get; }
-    public IOption2 Option { get; }
+    protected AbstractOptionPreviewViewModel Info { get; } = info;
+    public IOption2 Option { get; } = option;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = description;
     public double DescriptionMargin { get; set; } = 12d;
-    public string GroupName { get; set; }
-    public string GroupNameAndDescription { get; set; }
-    public List<CodeStylePreference> Preferences { get; set; }
-    public List<NotificationOptionViewModel> NotificationPreferences { get; set; }
+    public string GroupName { get; set; } = groupName;
+    public string GroupNameAndDescription { get; set; } = $"{groupName}, {description}";
+    public List<CodeStylePreference> Preferences { get; set; } = preferences ?? GetDefaultPreferences();
+    public List<NotificationOptionViewModel> NotificationPreferences { get; set; } = notificationPreferences ?? GetDefaultNotifications();
 
     public abstract CodeStylePreference SelectedPreference { get; set; }
     public abstract string GetPreview();
@@ -45,23 +51,6 @@ internal abstract class AbstractCodeStyleOptionViewModel : AbstractNotifyPropert
     {
         get { return NotificationPreferences.First(); }
         set { }
-    }
-
-    public AbstractCodeStyleOptionViewModel(
-        IOption2 option,
-        string description,
-        AbstractOptionPreviewViewModel info,
-        string groupName,
-        List<CodeStylePreference> preferences = null,
-        List<NotificationOptionViewModel> notificationPreferences = null)
-    {
-        Info = info;
-        Option = option;
-        Description = description;
-        Preferences = preferences ?? GetDefaultPreferences();
-        NotificationPreferences = notificationPreferences ?? GetDefaultNotifications();
-        GroupName = groupName;
-        GroupNameAndDescription = $"{groupName}, {description}";
     }
 
     private static List<NotificationOptionViewModel> GetDefaultNotifications()

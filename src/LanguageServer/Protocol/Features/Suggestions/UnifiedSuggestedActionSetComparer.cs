@@ -10,12 +10,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Suggestions;
 
-internal sealed class UnifiedSuggestedActionSetComparer : IComparer<SuggestedActionSet>
+internal sealed class UnifiedSuggestedActionSetComparer(TextSpan? targetSpan) : IComparer<SuggestedActionSet>
 {
-    private readonly TextSpan? _targetSpan;
-
-    public UnifiedSuggestedActionSetComparer(TextSpan? targetSpan)
-        => _targetSpan = targetSpan;
+    private readonly TextSpan? _targetSpan = targetSpan;
 
     private static int Distance(TextSpan? maybeA, TextSpan? maybeB)
     {

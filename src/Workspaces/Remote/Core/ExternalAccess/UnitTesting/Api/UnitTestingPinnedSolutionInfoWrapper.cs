@@ -7,13 +7,10 @@ using System.Runtime.Serialization;
 namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.Api;
 
 [DataContract]
-internal readonly struct UnitTestingPinnedSolutionInfoWrapper
+internal readonly struct UnitTestingPinnedSolutionInfoWrapper(Checksum underlyingObject)
 {
     [DataMember(Order = 0)]
-    internal readonly Checksum UnderlyingObject;
-
-    public UnitTestingPinnedSolutionInfoWrapper(Checksum underlyingObject)
-        => UnderlyingObject = underlyingObject;
+    internal readonly Checksum UnderlyingObject = underlyingObject;
 
     public static implicit operator UnitTestingPinnedSolutionInfoWrapper(Checksum info)
         => new(info);

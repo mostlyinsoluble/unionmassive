@@ -22,13 +22,8 @@ internal sealed partial class CSharpCodeModelService
     protected override AbstractCodeModelEventCollector CreateCodeModelEventCollector()
         => new CodeModelEventCollector(this);
 
-    private sealed class CodeModelEventCollector : AbstractCodeModelEventCollector
+    private sealed class CodeModelEventCollector(AbstractCodeModelService codeModelService) : AbstractCodeModelEventCollector(codeModelService)
     {
-        public CodeModelEventCollector(AbstractCodeModelService codeModelService)
-            : base(codeModelService)
-        {
-        }
-
         private static IReadOnlyList<MemberDeclarationSyntax> GetValidMembers(SyntaxNode node)
         {
             return CSharpCodeModelService

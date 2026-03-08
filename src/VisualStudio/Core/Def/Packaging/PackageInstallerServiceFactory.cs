@@ -736,12 +736,9 @@ internal sealed partial class PackageInstallerService : AbstractDelayStartedServ
     {
     }
 
-    private sealed class SearchQuery : IVsSearchQuery
+    private sealed class SearchQuery(string packageName) : IVsSearchQuery
     {
-        public SearchQuery(string packageName)
-            => this.SearchString = packageName;
-
-        public string SearchString { get; }
+        public string SearchString { get; } = packageName;
 
         public uint ParseError => 0;
 

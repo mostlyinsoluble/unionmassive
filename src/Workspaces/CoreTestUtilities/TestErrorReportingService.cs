@@ -12,14 +12,10 @@ using Xunit;
 namespace Microsoft.CodeAnalysis.Test.Utilities;
 
 [ExportWorkspaceService(typeof(IErrorReportingService), ServiceLayer.Test), Shared]
-internal sealed class TestErrorReportingService : IErrorReportingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestErrorReportingService() : IErrorReportingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestErrorReportingService()
-    {
-    }
-
     public Action<string> OnError { get; set; } = message => Assert.False(true, message);
 
     public string HostDisplayName

@@ -15,14 +15,9 @@ using System.Threading.Tasks;
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
-    internal abstract class AbstractTypeParameterMap : AbstractTypeMap
+    internal abstract class AbstractTypeParameterMap(SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> mapping) : AbstractTypeMap
     {
-        protected readonly SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> Mapping;
-
-        protected AbstractTypeParameterMap(SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> mapping)
-        {
-            this.Mapping = mapping;
-        }
+        protected readonly SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> Mapping = mapping;
 
         protected sealed override TypeWithAnnotations SubstituteTypeParameter(TypeParameterSymbol typeParameter)
         {

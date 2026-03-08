@@ -24,10 +24,7 @@ internal sealed class CommonWhitespaceSettingsProvider : SettingsProviderBase<Se
         OptionUpdater settingsUpdater,
         Workspace workspace,
         IGlobalOptionService globalOptions)
-        : base(threadingContext, fileName, settingsUpdater, workspace, globalOptions)
-    {
-        Update();
-    }
+        : base(threadingContext, fileName, settingsUpdater, workspace, globalOptions) => Update();
 
     protected override Task UpdateOptionsAsync(
         TieredAnalyzerConfigOptions options, ImmutableArray<Project> projectsInScope, CancellationToken cancellationToken)

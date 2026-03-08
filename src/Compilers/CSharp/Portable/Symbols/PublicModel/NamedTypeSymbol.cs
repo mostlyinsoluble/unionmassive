@@ -10,14 +10,9 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
 {
-    internal abstract class NamedTypeSymbol : TypeSymbol, INamedTypeSymbol
+    internal abstract class NamedTypeSymbol(CodeAnalysis.NullableAnnotation nullableAnnotation = CodeAnalysis.NullableAnnotation.None) : TypeSymbol(nullableAnnotation), INamedTypeSymbol
     {
         private ImmutableArray<ITypeSymbol> _lazyTypeArguments;
-
-        public NamedTypeSymbol(CodeAnalysis.NullableAnnotation nullableAnnotation = CodeAnalysis.NullableAnnotation.None)
-            : base(nullableAnnotation)
-        {
-        }
 
         internal abstract Symbols.NamedTypeSymbol UnderlyingNamedTypeSymbol { get; }
 

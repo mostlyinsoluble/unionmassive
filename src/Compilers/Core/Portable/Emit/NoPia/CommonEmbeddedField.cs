@@ -32,15 +32,9 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         TEmbeddedParameter,
         TEmbeddedTypeParameter>
     {
-        internal abstract class CommonEmbeddedField : CommonEmbeddedMember<TFieldSymbol>, Cci.IFieldDefinition
+        internal abstract class CommonEmbeddedField(TEmbeddedType containingType, TFieldSymbol underlyingField) : CommonEmbeddedMember<TFieldSymbol>(underlyingField), Cci.IFieldDefinition
         {
-            public readonly TEmbeddedType ContainingType;
-
-            protected CommonEmbeddedField(TEmbeddedType containingType, TFieldSymbol underlyingField) :
-                base(underlyingField)
-            {
-                this.ContainingType = containingType;
-            }
+            public readonly TEmbeddedType ContainingType = containingType;
 
             public TFieldSymbol UnderlyingField
             {

@@ -20,31 +20,18 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities
 {
-    public class OperationTreeVerifier : OperationWalker
+    public class OperationTreeVerifier(Compilation compilation, IOperation root, int initialIndent) : OperationWalker
     {
-        protected readonly Compilation _compilation;
-        protected readonly IOperation _root;
-        protected readonly StringBuilder _builder;
-        private readonly Dictionary<SyntaxNode, IOperation> _explicitNodeMap;
-        private readonly Dictionary<ILabelSymbol, uint> _labelIdMap;
+        protected readonly Compilation _compilation = compilation;
+        protected readonly IOperation _root = root;
+        protected readonly StringBuilder _builder = new StringBuilder();
+        private readonly Dictionary<SyntaxNode, IOperation> _explicitNodeMap = new Dictionary<SyntaxNode, IOperation>();
+        private readonly Dictionary<ILabelSymbol, uint> _labelIdMap = new Dictionary<ILabelSymbol, uint>();
 
         private const string indent = "  ";
-        protected string _currentIndent;
-        private bool _pendingIndent;
+        protected string _currentIndent = new string(' ', initialIndent);
+        private bool _pendingIndent = true;
         private uint _currentLabelId = 0;
-
-        public OperationTreeVerifier(Compilation compilation, IOperation root, int initialIndent)
-        {
-            _compilation = compilation;
-            _root = root;
-            _builder = new StringBuilder();
-
-            _currentIndent = new string(' ', initialIndent);
-            _pendingIndent = true;
-
-            _explicitNodeMap = new Dictionary<SyntaxNode, IOperation>();
-            _labelIdMap = new Dictionary<ILabelSymbol, uint>();
-        }
 
         public static string GetOperationTree(Compilation compilation, IOperation operation, int initialIndent = 0)
         {

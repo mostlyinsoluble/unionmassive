@@ -15,14 +15,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(PreprocessorCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(ExternAliasCompletionProvider))]
 [Shared]
-internal sealed class PreprocessorCompletionProvider : AbstractPreprocessorCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreprocessorCompletionProvider() : AbstractPreprocessorCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreprocessorCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     public override bool IsInsertionTrigger(SourceText text, int characterPosition, CompletionOptions options)

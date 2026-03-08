@@ -14,18 +14,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Options;
 /// </summary>
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class)]
-internal sealed class ExportVisualStudioStorageReadFallbackAttribute : ExportAttribute
+internal sealed class ExportVisualStudioStorageReadFallbackAttribute(string configName) : ExportAttribute(typeof(IVisualStudioStorageReadFallback))
 {
     /// <summary>
     /// Option unique name. <see cref="OptionDefinition.ConfigName"/>.
     /// </summary>
-    public string ConfigName { get; }
-
-    public ExportVisualStudioStorageReadFallbackAttribute(string configName)
-        : base(typeof(IVisualStudioStorageReadFallback))
-    {
-        ConfigName = configName;
-    }
+    public string ConfigName { get; } = configName;
 }
 
 internal sealed class OptionNameMetadata

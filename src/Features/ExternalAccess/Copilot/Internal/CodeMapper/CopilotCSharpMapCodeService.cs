@@ -16,16 +16,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Copilot.Internal.CodeMapper;
 
 [ExportLanguageService(typeof(IMapCodeService), language: LanguageNames.CSharp), Shared]
-internal sealed class CSharpMapCodeService : IMapCodeService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpMapCodeService(ICSharpCopilotMapCodeService service) : IMapCodeService
 {
-    private readonly ICSharpCopilotMapCodeService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpMapCodeService(ICSharpCopilotMapCodeService service)
-    {
-        _service = service;
-    }
+    private readonly ICSharpCopilotMapCodeService _service = service;
 
     public Task<ImmutableArray<TextChange>?> MapCodeAsync(Document document, ImmutableArray<string> contents, ImmutableArray<(Document, TextSpan)> focusLocations, CancellationToken cancellationToken)
     {

@@ -44,10 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private HashSet<PrefixUnaryExpressionSyntax> _unassignedVariableAddressOfSyntaxes;
         private bool? _succeeded;
 
-        internal CSharpDataFlowAnalysis(RegionAnalysisContext context)
-        {
-            _context = context;
-        }
+        internal CSharpDataFlowAnalysis(RegionAnalysisContext context) => _context = context;
 
         /// <summary>
         /// A collection of the local variables that are declared within the region. Note that the region must be

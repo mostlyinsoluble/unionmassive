@@ -15,18 +15,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Represents a compiler generated backing field for a primary constructor parameter.
     /// </summary>
-    internal sealed class SynthesizedPrimaryConstructorParameterBackingFieldSymbol : SynthesizedBackingFieldSymbolBase
+    internal sealed class SynthesizedPrimaryConstructorParameterBackingFieldSymbol(
+        ParameterSymbol parameterSymbol,
+        string name,
+        bool isReadOnly) : SynthesizedBackingFieldSymbolBase(name, isReadOnly, isStatic: false)
     {
-        public readonly ParameterSymbol ParameterSymbol;
-
-        public SynthesizedPrimaryConstructorParameterBackingFieldSymbol(
-            ParameterSymbol parameterSymbol,
-            string name,
-            bool isReadOnly)
-            : base(name, isReadOnly, isStatic: false)
-        {
-            ParameterSymbol = parameterSymbol;
-        }
+        public readonly ParameterSymbol ParameterSymbol = parameterSymbol;
 
         internal override bool HasInitializer => true;
 

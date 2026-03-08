@@ -34,22 +34,17 @@ namespace Microsoft.CodeAnalysis.Editor.CommandHandlers;
 // Ensure roslyn comes after LSP to allow them to provide results.
 // https://github.com/dotnet/roslyn/issues/42338
 [Order(After = "LSP SignatureHelpCommandHandler")]
-internal sealed class SignatureHelpBeforeCompletionCommandHandler :
-    AbstractSignatureHelpCommandHandler,
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SignatureHelpBeforeCompletionCommandHandler(
+    IThreadingContext threadingContext,
+    SignatureHelpControllerProvider controllerProvider,
+    IGlobalOptionService globalOptions) :
+    AbstractSignatureHelpCommandHandler(threadingContext, controllerProvider, globalOptions),
     IChainedCommandHandler<TypeCharCommandArgs>,
     IChainedCommandHandler<InvokeSignatureHelpCommandArgs>
 {
     public string DisplayName => EditorFeaturesResources.Signature_Help;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SignatureHelpBeforeCompletionCommandHandler(
-        IThreadingContext threadingContext,
-        SignatureHelpControllerProvider controllerProvider,
-        IGlobalOptionService globalOptions)
-        : base(threadingContext, controllerProvider, globalOptions)
-    {
-    }
 
     private bool TryGetControllerCommandHandler<TCommandArgs>(TCommandArgs args, out ICommandHandler commandHandler)
         where TCommandArgs : EditorCommandArgs

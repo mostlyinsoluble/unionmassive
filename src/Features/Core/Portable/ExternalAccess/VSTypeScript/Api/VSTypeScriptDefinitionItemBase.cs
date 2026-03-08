@@ -9,19 +9,15 @@ using Microsoft.CodeAnalysis.FindUsages;
 namespace Microsoft.CodeAnalysis.ExternalAccess.VSTypeScript.Api;
 
 [Obsolete]
-internal abstract class VSTypeScriptDefinitionItemBase : DefinitionItem
+internal abstract class VSTypeScriptDefinitionItemBase(ImmutableArray<string> tags, ImmutableArray<TaggedText> displayParts) : DefinitionItem(
+        tags,
+        displayParts,
+        nameDisplayParts: [],
+        sourceSpans: default,
+        metadataLocations: [],
+        classifiedSpans: default,
+        properties: null,
+        displayableProperties: [],
+        displayIfNoReferences: true)
 {
-    protected VSTypeScriptDefinitionItemBase(ImmutableArray<string> tags, ImmutableArray<TaggedText> displayParts)
-        : base(
-            tags,
-            displayParts,
-            nameDisplayParts: [],
-            sourceSpans: default,
-            metadataLocations: [],
-            classifiedSpans: default,
-            properties: null,
-            displayableProperties: [],
-            displayIfNoReferences: true)
-    {
-    }
 }

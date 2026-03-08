@@ -7,24 +7,18 @@ using System.Windows.Input;
 
 namespace Microsoft.VisualStudio.LanguageServices.Utilities;
 
-internal sealed class DelegateCommand : ICommand
+internal sealed class DelegateCommand(Action<object> action, Func<object, bool> canExecute) : ICommand
 {
     public event EventHandler? CanExecuteChanged;
 
-    private readonly Func<object, bool> _canExecute;
-    private readonly Action<object> _action;
+    private readonly Func<object, bool> _canExecute = canExecute;
+    private readonly Action<object> _action = action;
 
     private bool _lastCanExecute;
 
     public DelegateCommand(Action<object> action)
         : this(action, (_) => true)
     {
-    }
-
-    public DelegateCommand(Action<object> action, Func<object, bool> canExecute)
-    {
-        _canExecute = canExecute;
-        _action = action;
     }
 
     public bool CanExecute(object parameter)

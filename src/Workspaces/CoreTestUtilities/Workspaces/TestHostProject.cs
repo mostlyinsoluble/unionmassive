@@ -245,7 +245,7 @@ public abstract class TestHostProject<TDocument> : AbstractTestHostProject
 
         _id = ProjectId.CreateNewId(debugName: this.Name);
 
-        language = language ?? LanguageNames.CSharp;
+        language ??= LanguageNames.CSharp;
         _languageServices = hostServices.GetLanguageServices(language);
 
         CompilationOptions = compilationOptions ?? this.LanguageServiceProvider.GetService<ICompilationFactoryService>().GetDefaultCompilationOptions();

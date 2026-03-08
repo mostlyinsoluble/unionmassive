@@ -19,40 +19,22 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     internal abstract class CSharpSyntaxNode : GreenNode
     {
         internal CSharpSyntaxNode(SyntaxKind kind)
-            : base((ushort)kind)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind) => GreenStats.NoteGreen(this);
 
         internal CSharpSyntaxNode(SyntaxKind kind, int fullWidth)
-            : base((ushort)kind, fullWidth)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind, fullWidth) => GreenStats.NoteGreen(this);
 
         internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics)
-            : base((ushort)kind, diagnostics)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind, diagnostics) => GreenStats.NoteGreen(this);
 
         internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, int fullWidth)
-            : base((ushort)kind, diagnostics, fullWidth)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind, diagnostics, fullWidth) => GreenStats.NoteGreen(this);
 
         internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-            : base((ushort)kind, diagnostics, annotations)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind, diagnostics, annotations) => GreenStats.NoteGreen(this);
 
         internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, int fullWidth)
-            : base((ushort)kind, diagnostics, annotations, fullWidth)
-        {
-            GreenStats.NoteGreen(this);
-        }
+            : base((ushort)kind, diagnostics, annotations, fullWidth) => GreenStats.NoteGreen(this);
 
         public override string Language
         {

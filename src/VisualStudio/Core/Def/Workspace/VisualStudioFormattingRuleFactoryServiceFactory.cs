@@ -17,13 +17,10 @@ using Microsoft.VisualStudio.Text.Projection;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 
 [ExportWorkspaceService(typeof(IHostDependentFormattingRuleFactoryService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioFormattingRuleFactoryService : IHostDependentFormattingRuleFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioFormattingRuleFactoryService() : IHostDependentFormattingRuleFactoryService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioFormattingRuleFactoryService()
-    {
-    }
     public bool ShouldUseBaseIndentation(DocumentId documentId)
         => IsContainedDocument(documentId);
 

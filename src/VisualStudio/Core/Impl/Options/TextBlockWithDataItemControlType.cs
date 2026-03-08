@@ -14,12 +14,8 @@ internal sealed class TextBlockWithDataItemControlType : TextBlock
     protected override AutomationPeer OnCreateAutomationPeer()
         => new TextBlockWithDataItemControlTypeAutomationPeer(this);
 
-    private sealed class TextBlockWithDataItemControlTypeAutomationPeer : TextBlockAutomationPeer
+    private sealed class TextBlockWithDataItemControlTypeAutomationPeer(TextBlock owner) : TextBlockAutomationPeer(owner)
     {
-        public TextBlockWithDataItemControlTypeAutomationPeer(TextBlock owner) : base(owner)
-        {
-        }
-
         protected override AutomationControlType GetAutomationControlTypeCore()
             => AutomationControlType.DataItem;
     }

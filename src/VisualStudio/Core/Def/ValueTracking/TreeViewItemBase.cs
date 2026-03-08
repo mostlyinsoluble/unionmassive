@@ -34,10 +34,7 @@ internal class TreeViewItemBase : ViewModelBase
         set => SetProperty(ref field, value);
     }
 
-    public TreeViewItemBase()
-    {
-        ChildItems.CollectionChanged += ChildItems_CollectionChanged;
-    }
+    public TreeViewItemBase() => ChildItems.CollectionChanged += ChildItems_CollectionChanged;
 
     /// <summary>
     /// Returns the next logical item in the tree that could be seen (Parent is expanded)

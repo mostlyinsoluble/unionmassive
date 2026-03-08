@@ -12,28 +12,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 {
     internal partial struct Blender
     {
-        internal struct Reader
+        internal struct Reader(Blender blender)
         {
-            private readonly Lexer _lexer;
-            private Cursor _oldTreeCursor;
-            private ImmutableStack<TextChangeRange> _changes;
-            private int _newPosition;
-            private int _changeDelta;
-            private DirectiveStack _newDirectives;
-            private DirectiveStack _oldDirectives;
-            private LexerMode _newLexerDrivenMode;
-
-            public Reader(Blender blender)
-            {
-                _lexer = blender._lexer;
-                _oldTreeCursor = blender._oldTreeCursor;
-                _changes = blender._changes;
-                _newPosition = blender._newPosition;
-                _changeDelta = blender._changeDelta;
-                _newDirectives = blender._newDirectives;
-                _oldDirectives = blender._oldDirectives;
-                _newLexerDrivenMode = blender._newLexerDrivenMode;
-            }
+            private readonly Lexer _lexer = blender._lexer;
+            private Cursor _oldTreeCursor = blender._oldTreeCursor;
+            private ImmutableStack<TextChangeRange> _changes = blender._changes;
+            private int _newPosition = blender._newPosition;
+            private int _changeDelta = blender._changeDelta;
+            private DirectiveStack _newDirectives = blender._newDirectives;
+            private DirectiveStack _oldDirectives = blender._oldDirectives;
+            private LexerMode _newLexerDrivenMode = blender._newLexerDrivenMode;
 
             internal BlendedNode ReadNodeOrToken(LexerMode mode, bool asToken)
             {

@@ -18,17 +18,12 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Navigation;
 /// work here.
 /// </summary>
 [Export(typeof(ICrossLanguageSymbolNavigationService)), Shared]
-internal sealed class FSharpCrossLanguageSymbolNavigationService : ICrossLanguageSymbolNavigationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FSharpCrossLanguageSymbolNavigationService(
+    [Import(AllowDefault = true)] IFSharpCrossLanguageSymbolNavigationService underlyingService) : ICrossLanguageSymbolNavigationService
 {
-    private readonly IFSharpCrossLanguageSymbolNavigationService _underlyingService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpCrossLanguageSymbolNavigationService(
-        [Import(AllowDefault = true)] IFSharpCrossLanguageSymbolNavigationService underlyingService)
-    {
-        _underlyingService = underlyingService;
-    }
+    private readonly IFSharpCrossLanguageSymbolNavigationService _underlyingService = underlyingService;
 
     public async Task<INavigableLocation?> TryGetNavigableLocationAsync(
         string assemblyName, string documentationCommentId, CancellationToken cancellationToken)

@@ -14,12 +14,8 @@ namespace Microsoft.CodeAnalysis.Telemetry;
 /// of this class corresponds to a specific FunctionId operation and can support counting aggregated values for each
 /// metric name logged.
 /// </summary>
-internal sealed class AggregatingCounterLog : AbstractAggregatingLog<ICounter<long>, long>
+internal sealed class AggregatingCounterLog(TelemetrySession session, FunctionId functionId) : AbstractAggregatingLog<ICounter<long>, long>(session, functionId)
 {
-    public AggregatingCounterLog(TelemetrySession session, FunctionId functionId) : base(session, functionId)
-    {
-    }
-
     protected override ICounter<long> CreateAggregator(IMeter meter, string metricName)
     {
         return meter.CreateCounter<long>(metricName);

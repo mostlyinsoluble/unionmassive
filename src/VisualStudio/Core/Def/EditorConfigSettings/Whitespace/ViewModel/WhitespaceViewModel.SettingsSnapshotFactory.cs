@@ -11,10 +11,8 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespac
 
 internal sealed partial class WhitespaceViewModel
 {
-    internal sealed class SettingsSnapshotFactory : SettingsSnapshotFactoryBase<Setting, SettingsEntriesSnapshot>
+    internal sealed class SettingsSnapshotFactory(ISettingsProvider<Setting> data) : SettingsSnapshotFactoryBase<Setting, SettingsEntriesSnapshot>(data)
     {
-        public SettingsSnapshotFactory(ISettingsProvider<Setting> data) : base(data) { }
-
         protected override SettingsEntriesSnapshot CreateSnapshot(ImmutableArray<Setting> data, int currentVersionNumber)
             => new(data, currentVersionNumber);
     }

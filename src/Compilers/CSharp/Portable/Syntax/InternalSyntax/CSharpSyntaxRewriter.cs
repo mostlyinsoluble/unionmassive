@@ -8,15 +8,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 {
     using Microsoft.CodeAnalysis.Syntax.InternalSyntax;
 
-    internal partial class CSharpSyntaxRewriter : CSharpSyntaxVisitor<CSharpSyntaxNode>
+    internal partial class CSharpSyntaxRewriter(bool visitIntoStructuredTrivia = false) : CSharpSyntaxVisitor<CSharpSyntaxNode>
 #nullable disable
     {
-        protected readonly bool VisitIntoStructuredTrivia;
-
-        public CSharpSyntaxRewriter(bool visitIntoStructuredTrivia = false)
-        {
-            this.VisitIntoStructuredTrivia = visitIntoStructuredTrivia;
-        }
+        protected readonly bool VisitIntoStructuredTrivia = visitIntoStructuredTrivia;
 
         public override CSharpSyntaxNode VisitToken(SyntaxToken token)
         {

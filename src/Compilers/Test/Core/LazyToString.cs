@@ -8,12 +8,9 @@ using System;
 
 namespace Roslyn.Test.Utilities
 {
-    internal sealed class LazyToString
+    internal sealed class LazyToString(Func<object> evaluator)
     {
-        private readonly Func<object> _evaluator;
-
-        public LazyToString(Func<object> evaluator)
-            => _evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
+        private readonly Func<object> _evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
 
         public override string ToString()
             => _evaluator().ToString();

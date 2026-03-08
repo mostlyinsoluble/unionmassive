@@ -13,30 +13,22 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options.Style.NamingPreferences;
 
-internal sealed class ManageSymbolSpecificationsDialogViewModel : AbstractNotifyPropertyChanged, IManageNamingStylesInfoDialogViewModel
+internal sealed class ManageSymbolSpecificationsDialogViewModel(
+    ObservableCollection<SymbolSpecification> specifications,
+    List<NamingStyleOptionPageViewModel.NamingRuleViewModel> namingRules,
+    string languageName,
+    INotificationService notificationService) : AbstractNotifyPropertyChanged, IManageNamingStylesInfoDialogViewModel
 {
-    private readonly INotificationService _notificationService;
+    private readonly INotificationService _notificationService = notificationService;
 
-    public ObservableCollection<INamingStylesInfoDialogViewModel> Items { get; set; }
-    public string LanguageName { get; private set; }
-
-    public string DialogTitle => ServicesVSResources.Manage_specifications;
-
-    public ManageSymbolSpecificationsDialogViewModel(
-        ObservableCollection<SymbolSpecification> specifications,
-        List<NamingStyleOptionPageViewModel.NamingRuleViewModel> namingRules,
-        string languageName,
-        INotificationService notificationService)
-    {
-        LanguageName = languageName;
-        _notificationService = notificationService;
-
-        Items = [.. specifications.Select(specification => new SymbolSpecificationViewModel(
+    public ObservableCollection<INamingStylesInfoDialogViewModel> Items { get; set; } = [.. specifications.Select(specification => new SymbolSpecificationViewModel(
             languageName,
             specification,
             !namingRules.Any(rule => rule.SelectedSpecification?.ID == specification.ID),
             notificationService))];
-    }
+    public string LanguageName { get; private set; } = languageName;
+
+    public string DialogTitle => ServicesVSResources.Manage_specifications;
 
     internal void AddSymbolSpecification(INamingStylesInfoDialogViewModel _)
     {

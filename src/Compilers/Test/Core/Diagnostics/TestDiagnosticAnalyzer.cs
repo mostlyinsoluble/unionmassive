@@ -101,14 +101,9 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             OnOptions(context.Options);
         }
 
-        private class NestedCodeBlockAnalyzer
+        private class NestedCodeBlockAnalyzer(TestDiagnosticAnalyzer<TLanguageKindEnum> container)
         {
-            private readonly TestDiagnosticAnalyzer<TLanguageKindEnum> _container;
-
-            public NestedCodeBlockAnalyzer(TestDiagnosticAnalyzer<TLanguageKindEnum> container)
-            {
-                _container = container;
-            }
+            private readonly TestDiagnosticAnalyzer<TLanguageKindEnum> _container = container;
 
             public void Initialize(CodeBlockStartAnalysisContext<TLanguageKindEnum> context)
             {

@@ -12,16 +12,10 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class EvaluatedConstant
+    internal sealed class EvaluatedConstant(ConstantValue value, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
     {
-        public readonly ConstantValue Value;
-        public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics;
-
-        public EvaluatedConstant(ConstantValue value, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
-        {
-            this.Value = value;
-            this.Diagnostics = diagnostics.NullToEmpty();
-        }
+        public readonly ConstantValue Value = value;
+        public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics = diagnostics.NullToEmpty();
     }
 
     internal static class ConstantValueUtils
@@ -127,7 +121,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         // by changing the value to "null", but by updating the type of the constant.  Consequently,
                         // we retain the unconverted constant value so that it can propagate through the rest of
                         // constant folding.
-                        constantValue = constantValue ?? unconvertedConstantValue;
+                        constantValue ??= unconvertedConstantValue;
                     }
 
                     if (constantValue != null && !hasDynamicConversion)
@@ -144,14 +138,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return value;
         }
 
-        private sealed class CheckConstantInterpolatedStringValidity : BoundTreeWalkerWithStackGuardWithoutRecursionOnTheLeftOfBinaryOperator
+        private sealed class CheckConstantInterpolatedStringValidity(BindingDiagnosticBag diagnostics) : BoundTreeWalkerWithStackGuardWithoutRecursionOnTheLeftOfBinaryOperator
         {
-            internal readonly BindingDiagnosticBag diagnostics;
-
-            public CheckConstantInterpolatedStringValidity(BindingDiagnosticBag diagnostics)
-            {
-                this.diagnostics = diagnostics;
-            }
+            internal readonly BindingDiagnosticBag diagnostics = diagnostics;
 
             public override BoundNode VisitInterpolatedString(BoundInterpolatedString node)
             {

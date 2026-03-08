@@ -13,15 +13,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting;
 
 [ExportWorkspaceServiceFactory(typeof(IUnitTestingStackTraceServiceAccessor))]
 [Shared]
-
-internal sealed class UnitTestingStackTraceServiceAccessorFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class UnitTestingStackTraceServiceAccessorFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public UnitTestingStackTraceServiceAccessorFactory()
-    {
-    }
-
     [Obsolete(MefConstruction.FactoryMethodMessage, error: true)]
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {

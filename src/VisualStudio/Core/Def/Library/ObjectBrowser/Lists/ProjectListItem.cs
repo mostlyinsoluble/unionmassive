@@ -8,15 +8,9 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser.Lists;
 
-internal sealed class ProjectListItem : ObjectListItem
+internal sealed class ProjectListItem(Project project) : ObjectListItem(project.Id, GetProjectGlyph(project))
 {
-    private readonly string _displayText;
-
-    public ProjectListItem(Project project)
-        : base(project.Id, GetProjectGlyph(project))
-    {
-        _displayText = project.GetProjectDisplayName();
-    }
+    private readonly string _displayText = project.GetProjectDisplayName();
 
     private static StandardGlyphGroup GetProjectGlyph(Project project)
     {

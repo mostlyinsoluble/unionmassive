@@ -128,16 +128,10 @@ namespace CSharpSyntaxGenerator
             }
         }
 
-        private sealed class SourceTextReader : TextReader
+        private sealed class SourceTextReader(SourceText sourceText) : TextReader
         {
-            private readonly SourceText _sourceText;
-            private int _position;
-
-            public SourceTextReader(SourceText sourceText)
-            {
-                _sourceText = sourceText;
-                _position = 0;
-            }
+            private readonly SourceText _sourceText = sourceText;
+            private int _position = 0;
 
             public override int Peek()
             {
@@ -168,16 +162,10 @@ namespace CSharpSyntaxGenerator
             }
         }
 
-        private sealed class StringBuilderText : SourceText
+        private sealed class StringBuilderText(StringBuilder builder, Encoding? encoding) : SourceText
         {
-            private readonly StringBuilder _builder;
-            private readonly Encoding? _encoding;
-
-            public StringBuilderText(StringBuilder builder, Encoding? encoding)
-            {
-                _builder = builder;
-                _encoding = encoding;
-            }
+            private readonly StringBuilder _builder = builder;
+            private readonly Encoding? _encoding = encoding;
 
             public override Encoding? Encoding => _encoding;
             public override int Length => _builder.Length;

@@ -30,14 +30,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Preview;
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(TextViewRoles.PreviewRole)]
-internal sealed class PreviewStaticClassificationTaggerProvider : ITaggerProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewStaticClassificationTaggerProvider(ClassificationTypeMap typeMap) : ITaggerProvider
 {
-    private readonly ClassificationTypeMap _typeMap;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewStaticClassificationTaggerProvider(ClassificationTypeMap typeMap)
-        => _typeMap = typeMap;
+    private readonly ClassificationTypeMap _typeMap = typeMap;
 
     public ITagger<T> CreateTagger<T>(ITextBuffer buffer)
         where T : ITag
@@ -45,16 +42,10 @@ internal sealed class PreviewStaticClassificationTaggerProvider : ITaggerProvide
         return new Tagger(_typeMap, buffer) as ITagger<T>;
     }
 
-    private sealed class Tagger : ITagger<IClassificationTag>
+    private sealed class Tagger(ClassificationTypeMap typeMap, ITextBuffer buffer) : ITagger<IClassificationTag>
     {
-        private readonly ClassificationTypeMap _typeMap;
-        private readonly ITextBuffer _buffer;
-
-        public Tagger(ClassificationTypeMap typeMap, ITextBuffer buffer)
-        {
-            _typeMap = typeMap;
-            _buffer = buffer;
-        }
+        private readonly ClassificationTypeMap _typeMap = typeMap;
+        private readonly ITextBuffer _buffer = buffer;
 
         /// <summary>
         /// The tags never change for this tagger.

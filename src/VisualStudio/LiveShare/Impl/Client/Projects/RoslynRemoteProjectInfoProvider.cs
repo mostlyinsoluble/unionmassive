@@ -20,21 +20,15 @@ using Microsoft.VisualStudio.LiveShare.LanguageServices;
 namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client.Projects;
 
 [Export(typeof(IRemoteProjectInfoProvider))]
-internal sealed class RoslynRemoteProjectInfoProvider : IRemoteProjectInfoProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RoslynRemoteProjectInfoProvider(CSharpLspClientServiceFactory roslynLspClientServiceFactory, RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace) : IRemoteProjectInfoProvider
 {
     private const string SystemUriSchemeExternal = "vslsexternal";
 
     private readonly string[] _secondaryBufferFileExtensions = [".cshtml", ".razor", ".html", ".aspx", ".vue"];
-    private readonly CSharpLspClientServiceFactory _roslynLspClientServiceFactory;
-    private readonly RemoteLanguageServiceWorkspace _remoteLanguageServiceWorkspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RoslynRemoteProjectInfoProvider(CSharpLspClientServiceFactory roslynLspClientServiceFactory, RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace)
-    {
-        _roslynLspClientServiceFactory = roslynLspClientServiceFactory ?? throw new ArgumentNullException(nameof(roslynLspClientServiceFactory));
-        _remoteLanguageServiceWorkspace = remoteLanguageServiceWorkspace ?? throw new ArgumentNullException(nameof(RemoteLanguageServiceWorkspace));
-    }
+    private readonly CSharpLspClientServiceFactory _roslynLspClientServiceFactory = roslynLspClientServiceFactory ?? throw new ArgumentNullException(nameof(roslynLspClientServiceFactory));
+    private readonly RemoteLanguageServiceWorkspace _remoteLanguageServiceWorkspace = remoteLanguageServiceWorkspace ?? throw new ArgumentNullException(nameof(RemoteLanguageServiceWorkspace));
 
     public async Task<ImmutableArray<ProjectInfo>> GetRemoteProjectInfosAsync(CancellationToken cancellationToken)
     {

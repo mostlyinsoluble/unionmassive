@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static NumericValueSet<T> NoValues(INumericTC<T> tc) => new NumericValueSet<T>(ImmutableArray<(T first, T last)>.Empty, tc);
 
-            internal NumericValueSet(T first, T last, INumericTC<T> tc) : this(ImmutableArray.Create((first, last)), tc)
-            {
-                Debug.Assert(tc.Related(LessThanOrEqual, first, last));
-            }
+            internal NumericValueSet(T first, T last, INumericTC<T> tc) : this(ImmutableArray.Create((first, last)), tc) => Debug.Assert(tc.Related(LessThanOrEqual, first, last));
 
             internal NumericValueSet(ImmutableArray<(T first, T last)> intervals, INumericTC<T> tc)
             {

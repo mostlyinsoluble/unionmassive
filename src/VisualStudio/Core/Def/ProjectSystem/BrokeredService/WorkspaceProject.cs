@@ -12,16 +12,11 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.ProjectSystem.BrokeredService;
 
-internal sealed class WorkspaceProject : IWorkspaceProject
+internal sealed class WorkspaceProject(IWorkspaceProjectContext project) : IWorkspaceProject
 {
     // For the sake of the in-proc implementation here, we're going to build this atop IWorkspaceProjectContext so semantics are preserved
     // for a few edge cases. Once the project system has moved onto this directly, we can flatten the implementations out.
-    private readonly IWorkspaceProjectContext _project;
-
-    public WorkspaceProject(IWorkspaceProjectContext project)
-    {
-        _project = project;
-    }
+    private readonly IWorkspaceProjectContext _project = project;
 
     public void Dispose()
     {
@@ -188,14 +183,9 @@ internal sealed class WorkspaceProject : IWorkspaceProject
         return new WorkspaceProjectBatch(disposableBatchScope);
     }
 
-    private sealed class WorkspaceProjectBatch : IWorkspaceProjectBatch
+    private sealed class WorkspaceProjectBatch(IAsyncDisposable batch) : IWorkspaceProjectBatch
     {
-        private IAsyncDisposable? _batch;
-
-        public WorkspaceProjectBatch(IAsyncDisposable batch)
-        {
-            _batch = batch;
-        }
+        private IAsyncDisposable? _batch = batch;
 
         public async Task ApplyAsync(CancellationToken cancellationToken)
         {

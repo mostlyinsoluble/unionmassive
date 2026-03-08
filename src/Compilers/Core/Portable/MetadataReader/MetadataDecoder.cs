@@ -20,17 +20,11 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis
 {
     [StructLayout(LayoutKind.Auto)]
-    internal readonly struct ModifierInfo<TypeSymbol>
+    internal readonly struct ModifierInfo<TypeSymbol>(bool isOptional, TypeSymbol modifier)
         where TypeSymbol : class
     {
-        internal readonly bool IsOptional;
-        internal readonly TypeSymbol Modifier;
-
-        public ModifierInfo(bool isOptional, TypeSymbol modifier)
-        {
-            IsOptional = isOptional;
-            Modifier = modifier;
-        }
+        internal readonly bool IsOptional = isOptional;
+        internal readonly TypeSymbol Modifier = modifier;
     }
 
     internal static class ModifierInfoExtensions

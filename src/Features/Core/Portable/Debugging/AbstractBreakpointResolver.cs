@@ -18,7 +18,11 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Debugging;
 
-internal abstract partial class AbstractBreakpointResolver
+internal abstract partial class AbstractBreakpointResolver(
+    Solution solution,
+    string text,
+    string language,
+    IEqualityComparer<string> identifierComparer)
 {
     // I believe this is a close approximation of the IVsDebugName string format produced 
     // by the native language service implementations:
@@ -54,22 +58,10 @@ internal abstract partial class AbstractBreakpointResolver
                 SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
                 SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-    protected readonly string Text;
-    private readonly string _language;
-    private readonly Solution _solution;
-    private readonly IEqualityComparer<string> _identifierComparer;
-
-    protected AbstractBreakpointResolver(
-        Solution solution,
-        string text,
-        string language,
-        IEqualityComparer<string> identifierComparer)
-    {
-        _solution = solution;
-        Text = text;
-        _language = language;
-        _identifierComparer = identifierComparer;
-    }
+    protected readonly string Text = text;
+    private readonly string _language = language;
+    private readonly Solution _solution = solution;
+    private readonly IEqualityComparer<string> _identifierComparer = identifierComparer;
 
     protected abstract void ParseText(out IList<NameAndArity> nameParts, out int? parameterCount);
     protected abstract IEnumerable<ISymbol> GetMembers(INamedTypeSymbol type, string name);

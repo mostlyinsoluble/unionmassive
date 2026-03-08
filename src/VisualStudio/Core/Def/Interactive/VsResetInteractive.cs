@@ -173,8 +173,8 @@ internal sealed class VsResetInteractive : ResetInteractive
 
         return platform switch
         {
-            Platform.Arm or Platform.AnyCpu32BitPreferred or Platform.X86 => (CodeAnalysis.Interactive.InteractiveHostPlatform?)InteractiveHostPlatform.Desktop32,
-            Platform.Itanium or Platform.X64 or Platform.Arm64 => (CodeAnalysis.Interactive.InteractiveHostPlatform?)InteractiveHostPlatform.Desktop64,
+            Platform.Arm or Platform.AnyCpu32BitPreferred or Platform.X86 => InteractiveHostPlatform.Desktop32,
+            Platform.Itanium or Platform.X64 or Platform.Arm64 => InteractiveHostPlatform.Desktop64,
             _ => null,
         };
     }

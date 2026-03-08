@@ -33,10 +33,7 @@ public class ExternalOverloadsCollection : AbstractCodeElementCollection
         CodeModelState state,
         ExternalCodeFunction parent,
         ProjectId projectId)
-        : base(state, parent)
-    {
-        _projectId = projectId;
-    }
+        : base(state, parent) => _projectId = projectId;
 
     private ExternalCodeFunction ParentElement
     {

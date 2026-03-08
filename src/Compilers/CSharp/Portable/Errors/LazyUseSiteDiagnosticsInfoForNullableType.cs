@@ -10,15 +10,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private readonly TypeWithAnnotations _possiblyNullableTypeSymbol;
 
-        internal LazyUseSiteDiagnosticsInfoForNullableType(TypeWithAnnotations possiblyNullableTypeSymbol)
-        {
-            _possiblyNullableTypeSymbol = possiblyNullableTypeSymbol;
-        }
+        internal LazyUseSiteDiagnosticsInfoForNullableType(TypeWithAnnotations possiblyNullableTypeSymbol) => _possiblyNullableTypeSymbol = possiblyNullableTypeSymbol;
 
-        private LazyUseSiteDiagnosticsInfoForNullableType(LazyUseSiteDiagnosticsInfoForNullableType original, DiagnosticSeverity severity) : base(original, severity)
-        {
-            _possiblyNullableTypeSymbol = original._possiblyNullableTypeSymbol;
-        }
+        private LazyUseSiteDiagnosticsInfoForNullableType(LazyUseSiteDiagnosticsInfoForNullableType original, DiagnosticSeverity severity) : base(original, severity) => _possiblyNullableTypeSymbol = original._possiblyNullableTypeSymbol;
 
         protected override DiagnosticInfo GetInstanceWithSeverityCore(DiagnosticSeverity severity)
         {

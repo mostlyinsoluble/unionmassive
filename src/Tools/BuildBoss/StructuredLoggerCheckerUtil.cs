@@ -21,10 +21,7 @@ namespace BuildBoss
     {
         private readonly string _logFilePath;
 
-        internal StructuredLoggerCheckerUtil(string logFilePath)
-        {
-            _logFilePath = logFilePath;
-        }
+        internal StructuredLoggerCheckerUtil(string logFilePath) => _logFilePath = logFilePath;
 
         public bool Check(TextWriter textWriter)
         {

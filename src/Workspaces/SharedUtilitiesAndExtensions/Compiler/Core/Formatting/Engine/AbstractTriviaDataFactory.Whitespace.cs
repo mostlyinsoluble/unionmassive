@@ -20,10 +20,7 @@ internal abstract partial class AbstractTriviaDataFactory
         private readonly bool _elastic;
 
         public Whitespace(LineFormattingOptions options, int space, bool elastic)
-            : this(options, lineBreaks: 0, indentation: space, elastic: elastic)
-        {
-            Contract.ThrowIfFalse(space >= 0);
-        }
+            : this(options, lineBreaks: 0, indentation: space, elastic: elastic) => Contract.ThrowIfFalse(space >= 0);
 
         public Whitespace(LineFormattingOptions options, int lineBreaks, int indentation, bool elastic)
             : base(options)

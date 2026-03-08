@@ -19,18 +19,14 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.InlineCompletions;
 /// internal representation of an XML snippet.
 /// </summary>
 [Export(typeof(XmlSnippetParser)), Shared]
-internal sealed partial class XmlSnippetParser
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class XmlSnippetParser()
 {
     /// <summary>
     /// Cache to hold onto the parsed XML for a particular snippet.
     /// </summary>
     private readonly ConcurrentDictionary<string, ParsedXmlSnippet?> _parsedSnippetsCache = [];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XmlSnippetParser()
-    {
-    }
 
     internal ParsedXmlSnippet? GetParsedXmlSnippet(SnippetInfo matchingSnippetInfo, ILspLogger logger)
     {
@@ -102,13 +98,9 @@ internal sealed partial class XmlSnippetParser
 
     internal TestAccessor GetTestAccessor() => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(XmlSnippetParser snippetParser)
     {
-        private readonly XmlSnippetParser _snippetParser;
-        public TestAccessor(XmlSnippetParser snippetParser)
-        {
-            _snippetParser = snippetParser;
-        }
+        private readonly XmlSnippetParser _snippetParser = snippetParser;
 
         public int GetCachedSnippetsCount() => _snippetParser._parsedSnippetsCache.Count;
 

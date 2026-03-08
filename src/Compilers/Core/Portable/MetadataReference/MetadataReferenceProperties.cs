@@ -73,10 +73,7 @@ namespace Microsoft.CodeAnalysis
         }
 
         internal MetadataReferenceProperties(MetadataImageKind kind, ImmutableArray<string> aliases, bool embedInteropTypes, bool hasRecursiveAliases)
-            : this(kind, aliases, embedInteropTypes)
-        {
-            HasRecursiveAliases = hasRecursiveAliases;
-        }
+            : this(kind, aliases, embedInteropTypes) => HasRecursiveAliases = hasRecursiveAliases;
 
         /// <summary>
         /// Returns <see cref="MetadataReferenceProperties"/> with specified aliases.

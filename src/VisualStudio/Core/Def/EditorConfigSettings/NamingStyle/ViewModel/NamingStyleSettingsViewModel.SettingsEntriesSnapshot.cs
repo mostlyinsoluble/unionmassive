@@ -10,10 +10,8 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.NamingSty
 
 internal sealed partial class NamingStyleSettingsViewModel
 {
-    internal sealed class SettingsEntriesSnapshot : SettingsEntriesSnapshotBase<NamingStyleSetting>
+    internal sealed class SettingsEntriesSnapshot(ImmutableArray<NamingStyleSetting> data, int currentVersionNumber) : SettingsEntriesSnapshotBase<NamingStyleSetting>(data, currentVersionNumber)
     {
-        public SettingsEntriesSnapshot(ImmutableArray<NamingStyleSetting> data, int currentVersionNumber) : base(data, currentVersionNumber) { }
-
         protected override bool TryGetValue(NamingStyleSetting result, string keyName, out object? content)
         {
             content = keyName switch

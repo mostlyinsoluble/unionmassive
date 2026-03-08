@@ -12,10 +12,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.CodeActions;
 
-internal sealed class SharedVerifierState
+internal sealed class SharedVerifierState(AnalyzerTest<DefaultVerifier> test, string defaultFileExt)
 {
-    private readonly AnalyzerTest<DefaultVerifier> _test;
-    private readonly string _defaultFileExt;
+    private readonly AnalyzerTest<DefaultVerifier> _test = test;
+    private readonly string _defaultFileExt = defaultFileExt;
 
     /// <summary>
     /// The index in <see cref="Testing.ProjectState.AnalyzerConfigFiles"/> of the generated
@@ -30,20 +30,13 @@ internal sealed class SharedVerifierState
     /// </summary>
     private Func<Solution, ProjectId, Solution>? _remainingOptionsSolutionTransform;
 
-    public SharedVerifierState(AnalyzerTest<DefaultVerifier> test, string defaultFileExt)
-    {
-        _test = test;
-        _defaultFileExt = defaultFileExt;
-        Options = new OptionsCollection(test.Language);
-    }
-
     public string? EditorConfig { get; set; }
 
     /// <summary>
     /// Gets a collection of options to apply to <see cref="Solution.Options"/> for testing. Values may be added
     /// using a collection initializer.
     /// </summary>
-    internal OptionsCollection Options { get; }
+    internal OptionsCollection Options { get; } = new OptionsCollection(test.Language);
 
     internal void Apply()
     {

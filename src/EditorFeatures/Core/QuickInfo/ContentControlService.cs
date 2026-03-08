@@ -23,29 +23,20 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Editor.QuickInfo;
 
 [ExportWorkspaceService(typeof(IContentControlService), layer: ServiceLayer.Editor), Shared]
-internal sealed partial class ContentControlService : IContentControlService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class ContentControlService(
+    IThreadingContext threadingContext,
+    ITextEditorFactoryService textEditorFactoryService,
+    IContentTypeRegistryService contentTypeRegistryService,
+    IProjectionBufferFactoryService projectionBufferFactoryService,
+    EditorOptionsService editorOptionsService) : IContentControlService
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly ITextEditorFactoryService _textEditorFactoryService;
-    private readonly IContentTypeRegistryService _contentTypeRegistryService;
-    private readonly IProjectionBufferFactoryService _projectionBufferFactoryService;
-    private readonly EditorOptionsService _editorOptionsService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ContentControlService(
-        IThreadingContext threadingContext,
-        ITextEditorFactoryService textEditorFactoryService,
-        IContentTypeRegistryService contentTypeRegistryService,
-        IProjectionBufferFactoryService projectionBufferFactoryService,
-        EditorOptionsService editorOptionsService)
-    {
-        _threadingContext = threadingContext;
-        _textEditorFactoryService = textEditorFactoryService;
-        _contentTypeRegistryService = contentTypeRegistryService;
-        _projectionBufferFactoryService = projectionBufferFactoryService;
-        _editorOptionsService = editorOptionsService;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ITextEditorFactoryService _textEditorFactoryService = textEditorFactoryService;
+    private readonly IContentTypeRegistryService _contentTypeRegistryService = contentTypeRegistryService;
+    private readonly IProjectionBufferFactoryService _projectionBufferFactoryService = projectionBufferFactoryService;
+    private readonly EditorOptionsService _editorOptionsService = editorOptionsService;
 
     public void AttachToolTipToControl(FrameworkElement element, Func<DisposableToolTip> createToolTip)
         => LazyToolTip.AttachTo(element, _threadingContext, createToolTip);

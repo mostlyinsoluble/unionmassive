@@ -50,15 +50,7 @@ namespace Microsoft.CodeAnalysis
 
         // creates a copy
         private ModuleMetadata(ModuleMetadata metadata)
-            : base(isImageOwner: false, id: metadata.Id)
-        {
-            _module = metadata.Module;
-
-            // note: we intentionally do not pass the _onDispose callback to the copy.  Only the owner owns the callback
-            // and controls calling it.  This does mean that the callback (and underlying memory it holds onto) may
-            // disappear once the owner is disposed or GC'd.  But that's ok as that is expected semantics.  Once an image
-            // owner is gone, all copies are no longer in a valid state for use.
-        }
+            : base(isImageOwner: false, id: metadata.Id) => _module = metadata.Module;// note: we intentionally do not pass the _onDispose callback to the copy.  Only the owner owns the callback// and controls calling it.  This does mean that the callback (and underlying memory it holds onto) may// disappear once the owner is disposed or GC'd.  But that's ok as that is expected semantics.  Once an image// owner is gone, all copies are no longer in a valid state for use.
 
         /// <summary>
         /// Create metadata module from a raw memory pointer to metadata directory of a PE image or .cormeta section of an object file.

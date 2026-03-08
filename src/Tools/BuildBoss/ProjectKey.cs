@@ -15,10 +15,7 @@ namespace BuildBoss
 
         internal string FileName => FilePath != null ? Path.GetFileName(FilePath) : "";
 
-        internal ProjectKey(string filePath)
-        {
-            FilePath = Path.GetFullPath(filePath);
-        }
+        internal ProjectKey(string filePath) => FilePath = Path.GetFullPath(filePath);
 
         public static bool operator ==(ProjectKey left, ProjectKey right) => StringComparer.OrdinalIgnoreCase.Equals(left.FilePath, right.FilePath);
         public static bool operator !=(ProjectKey left, ProjectKey right) => !(left == right);

@@ -10,14 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.Rebuild
 {
-    internal class MetadataCompilationOptions
+    internal class MetadataCompilationOptions(ImmutableArray<(string optionName, string value)> options)
     {
-        private readonly ImmutableArray<(string optionName, string value)> _options;
-
-        public MetadataCompilationOptions(ImmutableArray<(string optionName, string value)> options)
-        {
-            _options = options;
-        }
+        private readonly ImmutableArray<(string optionName, string value)> _options = options;
 
         public int Length => _options.Length;
 

@@ -10,18 +10,11 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 
-internal sealed class CodeModelEvent : IEquatable<CodeModelEvent>
+internal sealed class CodeModelEvent(SyntaxNode node, SyntaxNode parentNode, CodeModelEventType type) : IEquatable<CodeModelEvent>
 {
-    public readonly SyntaxNode Node;
-    public readonly SyntaxNode ParentNode;
-    public CodeModelEventType Type;
-
-    public CodeModelEvent(SyntaxNode node, SyntaxNode parentNode, CodeModelEventType type)
-    {
-        this.Node = node;
-        this.ParentNode = parentNode;
-        this.Type = type;
-    }
+    public readonly SyntaxNode Node = node;
+    public readonly SyntaxNode ParentNode = parentNode;
+    public CodeModelEventType Type = type;
 
     public override int GetHashCode()
         => Hash.Combine(Node, Hash.Combine(ParentNode, ((int)Type).GetHashCode()));

@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -13,10 +13,6 @@ namespace Microsoft.CommonLanguageServerProtocol.Framework;
 /// Thrown when an operation requires the language server to have been asked to shut down,
 /// but shutdown has not yet been initiated or completed.
 /// </summary>
-internal sealed class ServerNotShutDownException : InvalidOperationException
+internal sealed class ServerNotShutDownException(string message) : InvalidOperationException(message)
 {
-    public ServerNotShutDownException(string message)
-        : base(message)
-    {
-    }
 }

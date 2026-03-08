@@ -22,10 +22,7 @@ public partial class ProjectionBufferMargin : UserControl
     public IWpfTextView TextView { get; set; }
     public ITextEditorFactoryService TextEditorFactory { get; set; }
 
-    public ProjectionBufferMargin()
-    {
-        InitializeComponent();
-    }
+    public ProjectionBufferMargin() => InitializeComponent();
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

@@ -18,10 +18,7 @@ namespace Xunit.InProcess
 
     internal class TestInvoker_InProc : InProcComponent
     {
-        private TestInvoker_InProc()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += VisualStudioInstanceFactory.AssemblyResolveHandler;
-        }
+        private TestInvoker_InProc() => AppDomain.CurrentDomain.AssemblyResolve += VisualStudioInstanceFactory.AssemblyResolveHandler;
 
         // NOTE: This is called by OutOfProcComponent.CreateInProcComponent using Activator.
         public static TestInvoker_InProc Create()

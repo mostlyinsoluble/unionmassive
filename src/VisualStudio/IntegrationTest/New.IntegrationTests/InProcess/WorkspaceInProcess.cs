@@ -174,16 +174,10 @@ internal sealed partial class WorkspaceInProcess
     /// This event listener is an adapter to expose asynchronous file save operations to Roslyn via its standard
     /// workspace event waiters.
     /// </summary>
-    private sealed class RunningDocumentTableEventListener : IVsRunningDocTableEvents, IVsRunningDocTableEvents7
+    private sealed class RunningDocumentTableEventListener(IThreadingContext threadingContext, IAsynchronousOperationListener asynchronousOperationListener) : IVsRunningDocTableEvents, IVsRunningDocTableEvents7
     {
-        private readonly IThreadingContext _threadingContext;
-        private readonly IAsynchronousOperationListener _asynchronousOperationListener;
-
-        public RunningDocumentTableEventListener(IThreadingContext threadingContext, IAsynchronousOperationListener asynchronousOperationListener)
-        {
-            _threadingContext = threadingContext;
-            _asynchronousOperationListener = asynchronousOperationListener;
-        }
+        private readonly IThreadingContext _threadingContext = threadingContext;
+        private readonly IAsynchronousOperationListener _asynchronousOperationListener = asynchronousOperationListener;
 
         int IVsRunningDocTableEvents.OnAfterFirstDocumentLock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining, uint dwEditLocksRemaining)
             => VSConstants.S_OK;

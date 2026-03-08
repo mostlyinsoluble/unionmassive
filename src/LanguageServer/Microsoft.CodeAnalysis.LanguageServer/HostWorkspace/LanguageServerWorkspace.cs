@@ -39,18 +39,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 /// client.
 /// </summary>
 [DebuggerDisplay("{GetDebuggerDisplay(),nq}")]
-internal sealed class LanguageServerWorkspace : Workspace, ILspWorkspace
+internal sealed class LanguageServerWorkspace(HostServices host, string workspaceKind) : Workspace(host, workspaceKind), ILspWorkspace
 {
     /// <summary>
     /// Will be set by LanguageServerProjectSystem immediately after creating this instance.  Can't be passed into the
     /// constructor as the factory needs a reference to this type.
     /// </summary>
     public ProjectSystemProjectFactory ProjectSystemProjectFactory { private get; set; } = null!;
-
-    public LanguageServerWorkspace(HostServices host, string workspaceKind)
-        : base(host, workspaceKind)
-    {
-    }
 
     protected internal override bool PartialSemanticsEnabled => true;
 

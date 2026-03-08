@@ -195,10 +195,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private const int sha256LengthHexChars = sha256LengthBytes * 2;
         private static readonly string s_regexPatternString = $@"<([a-zA-Z_0-9]*)>F([0-9A-F]{{{sha256LengthHexChars}}})__";
 
-        static GeneratedNameParser()
-        {
-            Debug.Assert(s_regexPatternString[0] == FileTypeNameStartChar);
-        }
+        static GeneratedNameParser() => Debug.Assert(s_regexPatternString[0] == FileTypeNameStartChar);
 
         // A full metadata name for a generic file-local type looks like:
         // <ContainingFile>FN__ClassName`A

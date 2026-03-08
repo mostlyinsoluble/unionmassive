@@ -12,26 +12,18 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.MoveStaticMembers;
 
-internal sealed class StaticMemberSelectionViewModel : AbstractNotifyPropertyChanged
+internal sealed class StaticMemberSelectionViewModel(
+    IUIThreadOperationExecutor uiThreadOperationExecutor,
+    ImmutableArray<SymbolViewModel<ISymbol>> members,
+    ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> dependentsMap) : AbstractNotifyPropertyChanged
 {
-    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
-    private readonly ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> _symbolToDependentsMap;
-    private readonly ImmutableDictionary<ISymbol, SymbolViewModel<ISymbol>> _symbolToMemberViewMap;
-
-    public StaticMemberSelectionViewModel(
-        IUIThreadOperationExecutor uiThreadOperationExecutor,
-        ImmutableArray<SymbolViewModel<ISymbol>> members,
-        ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> dependentsMap)
-    {
-        _uiThreadOperationExecutor = uiThreadOperationExecutor;
-        _members = members;
-        _symbolToDependentsMap = dependentsMap;
-        _symbolToMemberViewMap = members.ToImmutableDictionary(memberViewModel => memberViewModel.Symbol);
-    }
+    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor = uiThreadOperationExecutor;
+    private readonly ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> _symbolToDependentsMap = dependentsMap;
+    private readonly ImmutableDictionary<ISymbol, SymbolViewModel<ISymbol>> _symbolToMemberViewMap = members.ToImmutableDictionary(memberViewModel => memberViewModel.Symbol);
 
     public ImmutableArray<SymbolViewModel<ISymbol>> CheckedMembers => Members.WhereAsArray(m => m.IsChecked);
 
-    private ImmutableArray<SymbolViewModel<ISymbol>> _members;
+    private ImmutableArray<SymbolViewModel<ISymbol>> _members = members;
     public ImmutableArray<SymbolViewModel<ISymbol>> Members
     {
         get => _members;

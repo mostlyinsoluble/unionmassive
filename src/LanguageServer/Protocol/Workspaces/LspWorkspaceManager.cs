@@ -43,7 +43,12 @@ namespace Microsoft.CodeAnalysis.LanguageServer;
 ///   <item>The code is relatively straightforward</item>
 /// </list>
 /// </remarks>
-internal sealed class LspWorkspaceManager : IDocumentChangeTracker, ILspService
+internal sealed class LspWorkspaceManager(
+    ILspLogger logger,
+    ILspMiscellaneousFilesWorkspaceProvider? lspMiscellaneousFilesWorkspace,
+    LspWorkspaceRegistrationService lspWorkspaceRegistrationService,
+    ILanguageInfoProvider languageInfoProvider,
+    RequestTelemetryLogger requestTelemetryLogger) : IDocumentChangeTracker, ILspService
 {
     /// <summary>
     /// A cache from workspace to the last solution we returned for LSP.
@@ -64,27 +69,11 @@ internal sealed class LspWorkspaceManager : IDocumentChangeTracker, ILspService
     /// </summary>
     private ImmutableDictionary<DocumentUri, TrackedDocumentInfo> _trackedDocuments = ImmutableDictionary<DocumentUri, TrackedDocumentInfo>.Empty;
 
-    private readonly ILspLogger _logger;
-    private readonly ILspMiscellaneousFilesWorkspaceProvider? _lspMiscellaneousFilesWorkspaceProvider;
-    private readonly LspWorkspaceRegistrationService _lspWorkspaceRegistrationService;
-    private readonly ILanguageInfoProvider _languageInfoProvider;
-    private readonly RequestTelemetryLogger _requestTelemetryLogger;
-
-    public LspWorkspaceManager(
-        ILspLogger logger,
-        ILspMiscellaneousFilesWorkspaceProvider? lspMiscellaneousFilesWorkspace,
-        LspWorkspaceRegistrationService lspWorkspaceRegistrationService,
-        ILanguageInfoProvider languageInfoProvider,
-        RequestTelemetryLogger requestTelemetryLogger)
-    {
-        _lspMiscellaneousFilesWorkspaceProvider = lspMiscellaneousFilesWorkspace;
-        _logger = logger;
-        _requestTelemetryLogger = requestTelemetryLogger;
-
-        _lspWorkspaceRegistrationService = lspWorkspaceRegistrationService;
-        _languageInfoProvider = languageInfoProvider;
-    }
-
+    private readonly ILspLogger _logger = logger;
+    private readonly ILspMiscellaneousFilesWorkspaceProvider? _lspMiscellaneousFilesWorkspaceProvider = lspMiscellaneousFilesWorkspace;
+    private readonly LspWorkspaceRegistrationService _lspWorkspaceRegistrationService = lspWorkspaceRegistrationService;
+    private readonly ILanguageInfoProvider _languageInfoProvider = languageInfoProvider;
+    private readonly RequestTelemetryLogger _requestTelemetryLogger = requestTelemetryLogger;
     public EventHandler<EventArgs>? LspTextChanged;
 
     #region Implementation of IDocumentChangeTracker
@@ -578,12 +567,9 @@ internal sealed class LspWorkspaceManager : IDocumentChangeTracker, ILspService
     internal TestAccessor GetTestAccessor()
             => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(LspWorkspaceManager manager)
     {
-        private readonly LspWorkspaceManager _manager;
-
-        public TestAccessor(LspWorkspaceManager manager)
-            => _manager = manager;
+        private readonly LspWorkspaceManager _manager = manager;
 
         public ValueTask<bool> IsMiscellaneousFilesDocumentAsync(TextDocument document)
         {

@@ -19,7 +19,9 @@ namespace Microsoft.CodeAnalysis.CodeFixes.Configuration.ConfigureSeverity;
 
 [ExportConfigurationFixProvider(PredefinedConfigurationFixProviderNames.ConfigureSeverity, LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
 [ExtensionOrder(After = PredefinedConfigurationFixProviderNames.Suppression)]
-internal sealed partial class ConfigureSeverityLevelCodeFixProvider : IConfigurationFixProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed partial class ConfigureSeverityLevelCodeFixProvider() : IConfigurationFixProvider
 {
     private static readonly ImmutableArray<(string value, string title)> s_editorConfigSeverityStrings =
         [
@@ -29,12 +31,6 @@ internal sealed partial class ConfigureSeverityLevelCodeFixProvider : IConfigura
             (EditorConfigSeverityStrings.Warning, WorkspacesResources.Warning),
             (EditorConfigSeverityStrings.Error, WorkspacesResources.Error),
         ];
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public ConfigureSeverityLevelCodeFixProvider()
-    {
-    }
 
     // We only offer fix for configurable diagnostics.
     // Also skip suppressed diagnostics defensively, though the code fix engine should ideally never call us for suppressed diagnostics.

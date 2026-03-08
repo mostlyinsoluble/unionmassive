@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 /// </summary>
 [ExportCompletionProvider(nameof(FirstBuiltInCompletionProvider), LanguageNames.CSharp)]
 [Shared]
-internal sealed class FirstBuiltInCompletionProvider : CompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FirstBuiltInCompletionProvider() : CompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FirstBuiltInCompletionProvider()
-    {
-    }
-
     public override Task ProvideCompletionsAsync(CompletionContext context)
         => Task.CompletedTask;
 }

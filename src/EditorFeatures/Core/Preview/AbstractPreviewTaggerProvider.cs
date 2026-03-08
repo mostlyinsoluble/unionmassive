@@ -27,18 +27,11 @@ internal class AbstractPreviewTaggerProvider<TTag> : ITaggerProvider
     public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         => new Tagger(buffer, _key, _tagInstance) as ITagger<T>;
 
-    private sealed class Tagger : ITagger<TTag>
+    private sealed class Tagger(ITextBuffer buffer, object key, TTag tagInstance) : ITagger<TTag>
     {
-        private readonly ITextBuffer _buffer;
-        private readonly object _key;
-        private readonly TTag _tagInstance;
-
-        public Tagger(ITextBuffer buffer, object key, TTag tagInstance)
-        {
-            _buffer = buffer;
-            _key = key;
-            _tagInstance = tagInstance;
-        }
+        private readonly ITextBuffer _buffer = buffer;
+        private readonly object _key = key;
+        private readonly TTag _tagInstance = tagInstance;
 
         IEnumerable<ITagSpan<TTag>> ITagger<TTag>.GetTags(NormalizedSnapshotSpanCollection spans)
             => GetTags(spans);

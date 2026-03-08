@@ -17,21 +17,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         /// <summary>
         /// An abstract analysis domain implementation for <see cref="CorePointsToAnalysisData"/> tracked by <see cref="PointsToAnalysis"/>.
         /// </summary>
-        private sealed class CorePointsToAnalysisDataDomain : AnalysisEntityMapAbstractDomain<PointsToAbstractValue>
+        private sealed class CorePointsToAnalysisDataDomain(
+            DefaultPointsToValueGenerator defaultPointsToValueGenerator,
+            AbstractValueDomain<PointsToAbstractValue> valueDomain,
+            Func<ITypeSymbol?, bool> isDisposable) : AnalysisEntityMapAbstractDomain<PointsToAbstractValue>(valueDomain, defaultPointsToValueGenerator.IsTrackedEntity, defaultPointsToValueGenerator.IsTrackedPointsToValue)
         {
-            private readonly Func<ITypeSymbol?, bool> _isDisposable;
+            private readonly Func<ITypeSymbol?, bool> _isDisposable = isDisposable;
 
-            public CorePointsToAnalysisDataDomain(
-                DefaultPointsToValueGenerator defaultPointsToValueGenerator,
-                AbstractValueDomain<PointsToAbstractValue> valueDomain,
-                Func<ITypeSymbol?, bool> isDisposable)
-                : base(valueDomain, defaultPointsToValueGenerator.IsTrackedEntity, defaultPointsToValueGenerator.IsTrackedPointsToValue)
-            {
-                DefaultPointsToValueGenerator = defaultPointsToValueGenerator;
-                this._isDisposable = isDisposable;
-            }
-
-            public DefaultPointsToValueGenerator DefaultPointsToValueGenerator { get; }
+            public DefaultPointsToValueGenerator DefaultPointsToValueGenerator { get; } = defaultPointsToValueGenerator;
 
             protected override PointsToAbstractValue GetDefaultValue(AnalysisEntity analysisEntity) => DefaultPointsToValueGenerator.GetOrCreateDefaultValue(analysisEntity);
 

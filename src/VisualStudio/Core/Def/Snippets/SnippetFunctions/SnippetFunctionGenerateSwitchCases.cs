@@ -16,22 +16,15 @@ using VsTextSpan = Microsoft.VisualStudio.TextManager.Interop.TextSpan;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Snippets;
 
-internal class SnippetFunctionGenerateSwitchCases : AbstractSnippetFunction
+internal class SnippetFunctionGenerateSwitchCases(
+    SnippetExpansionClient snippetExpansionClient,
+    ITextBuffer subjectBuffer,
+    string caseGenerationLocationField,
+    string switchExpressionField,
+    IThreadingContext threadingContext) : AbstractSnippetFunction(snippetExpansionClient, subjectBuffer, threadingContext)
 {
-    protected readonly string CaseGenerationLocationField;
-    protected readonly string SwitchExpressionField;
-
-    public SnippetFunctionGenerateSwitchCases(
-        SnippetExpansionClient snippetExpansionClient,
-        ITextBuffer subjectBuffer,
-        string caseGenerationLocationField,
-        string switchExpressionField,
-        IThreadingContext threadingContext)
-        : base(snippetExpansionClient, subjectBuffer, threadingContext)
-    {
-        this.CaseGenerationLocationField = caseGenerationLocationField;
-        this.SwitchExpressionField = switchExpressionField is ['$', .. var middle, '$'] ? middle : switchExpressionField;
-    }
+    protected readonly string CaseGenerationLocationField = caseGenerationLocationField;
+    protected readonly string SwitchExpressionField = switchExpressionField is ['$', .. var middle, '$'] ? middle : switchExpressionField;
 
     protected override int FieldChanged(string field, out int requeryFunction)
     {

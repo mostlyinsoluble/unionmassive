@@ -12,7 +12,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.FindSymbols;
 
-internal abstract partial class AbstractSyntaxIndex<TIndex>
+internal abstract partial class AbstractSyntaxIndex<TIndex>(Checksum? checksum)
     where TIndex : AbstractSyntaxIndex<TIndex>
 {
     protected delegate TIndex? IndexReader(StringTable stringTable, ObjectReader reader, Checksum? checksum);
@@ -20,11 +20,6 @@ internal abstract partial class AbstractSyntaxIndex<TIndex>
 
     private static readonly ConditionalWeakTable<DocumentState, TIndex?> s_documentToIndex = new();
     private static readonly ConditionalWeakTable<DocumentId, TIndex?> s_documentIdToIndex = new();
-
-    protected AbstractSyntaxIndex(Checksum? checksum)
-    {
-        this.Checksum = checksum;
-    }
 
     protected static async ValueTask<TIndex> GetRequiredIndexAsync(
         SolutionKey solutionKey, ProjectState project, DocumentState document, IndexReader read, IndexCreator create, CancellationToken cancellationToken)

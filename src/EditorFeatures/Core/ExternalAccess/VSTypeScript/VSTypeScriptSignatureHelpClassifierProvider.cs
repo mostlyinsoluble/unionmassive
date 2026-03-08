@@ -15,15 +15,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.VSTypeScript;
 
 [Export(typeof(IVSTypeScriptSignatureHelpClassifierProvider))]
 [Shared]
-internal sealed class VSTypeScriptSignatureHelpClassifierProvider
-    : IVSTypeScriptSignatureHelpClassifierProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VSTypeScriptSignatureHelpClassifierProvider()
+        : IVSTypeScriptSignatureHelpClassifierProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VSTypeScriptSignatureHelpClassifierProvider()
-    {
-    }
-
     public IClassifier Create(ITextBuffer textBuffer, ClassificationTypeMap typeMap)
         => new SignatureHelpClassifier(textBuffer, typeMap);
 }

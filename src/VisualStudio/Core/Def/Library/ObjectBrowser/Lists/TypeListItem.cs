@@ -9,10 +9,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectB
 internal sealed class TypeListItem : SymbolListItem<INamedTypeSymbol>
 {
     internal TypeListItem(ProjectId projectId, INamedTypeSymbol typeSymbol, string displayText, string fullNameText, string searchText, bool isHidden)
-        : base(projectId, typeSymbol, displayText, fullNameText, searchText, isHidden)
-    {
-        Kind = typeSymbol.TypeKind;
-    }
+        : base(projectId, typeSymbol, displayText, fullNameText, searchText, isHidden) => Kind = typeSymbol.TypeKind;
 
     public TypeKind Kind { get; }
 }

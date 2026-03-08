@@ -17,16 +17,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor.Implement
 
 [Shared]
 [ExportLanguageService(typeof(IBreakpointResolutionService), LanguageNames.FSharp)]
-internal class FSharpBreakpointResolutionService : IBreakpointResolutionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpBreakpointResolutionService(IFSharpBreakpointResolutionService service) : IBreakpointResolutionService
 {
-    private readonly IFSharpBreakpointResolutionService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpBreakpointResolutionService(IFSharpBreakpointResolutionService service)
-    {
-        _service = service;
-    }
+    private readonly IFSharpBreakpointResolutionService _service = service;
 
     public async Task<BreakpointResolutionResult?> ResolveBreakpointAsync(Document document, TextSpan textSpan, CancellationToken cancellationToken = default)
         => (await _service.ResolveBreakpointAsync(document, textSpan, cancellationToken).ConfigureAwait(false))?.UnderlyingObject;

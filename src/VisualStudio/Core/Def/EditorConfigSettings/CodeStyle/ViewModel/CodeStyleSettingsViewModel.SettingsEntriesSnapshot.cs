@@ -11,10 +11,8 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 internal sealed partial class CodeStyleSettingsViewModel
 {
-    internal sealed class SettingsEntriesSnapshot : SettingsEntriesSnapshotBase<CodeStyleSetting>
+    internal sealed class SettingsEntriesSnapshot(ImmutableArray<CodeStyleSetting> data, int currentVersionNumber) : SettingsEntriesSnapshotBase<CodeStyleSetting>(data, currentVersionNumber)
     {
-        public SettingsEntriesSnapshot(ImmutableArray<CodeStyleSetting> data, int currentVersionNumber) : base(data, currentVersionNumber) { }
-
         protected override bool TryGetValue(CodeStyleSetting result, string keyName, out object? content)
         {
             content = keyName switch

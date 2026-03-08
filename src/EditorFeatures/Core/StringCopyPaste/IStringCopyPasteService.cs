@@ -16,13 +16,10 @@ internal interface IStringCopyPasteService : IWorkspaceService
 }
 
 [ExportWorkspaceService(typeof(IStringCopyPasteService)), Shared]
-internal sealed class DefaultStringCopyPasteService : IStringCopyPasteService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultStringCopyPasteService() : IStringCopyPasteService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultStringCopyPasteService()
-    {
-    }
 
     // Note: we very intentionally do not try to store/retrieve any data in this default implementation. at this
     // layer we have no information about the clipboard, so it would be dangerous to presume that that information

@@ -8,13 +8,8 @@ namespace Xunit.Harness
     using Xunit.Abstractions;
     using Xunit.Sdk;
 
-    public class IdeTestFramework : XunitTestFramework
+    public class IdeTestFramework(IMessageSink diagnosticMessageSink) : XunitTestFramework(diagnosticMessageSink)
     {
-        public IdeTestFramework(IMessageSink diagnosticMessageSink)
-            : base(diagnosticMessageSink)
-        {
-        }
-
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
             return new IdeTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);

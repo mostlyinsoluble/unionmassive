@@ -18,20 +18,14 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Wrapping.BinaryExpression;
 
-internal abstract partial class AbstractBinaryExpressionWrapper<TBinaryExpressionSyntax> : AbstractSyntaxWrapper
+internal abstract partial class AbstractBinaryExpressionWrapper<TBinaryExpressionSyntax>(
+    IIndentationService indentationService,
+    ISyntaxFacts syntaxFacts,
+    IPrecedenceService precedenceService) : AbstractSyntaxWrapper(indentationService)
     where TBinaryExpressionSyntax : SyntaxNode
 {
-    private readonly ISyntaxFacts _syntaxFacts;
-    private readonly IPrecedenceService _precedenceService;
-
-    protected AbstractBinaryExpressionWrapper(
-        IIndentationService indentationService,
-        ISyntaxFacts syntaxFacts,
-        IPrecedenceService precedenceService) : base(indentationService)
-    {
-        _syntaxFacts = syntaxFacts;
-        _precedenceService = precedenceService;
-    }
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
+    private readonly IPrecedenceService _precedenceService = precedenceService;
 
     /// <summary>
     /// Get's the language specific trivia that should be inserted before an operator if the

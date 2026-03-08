@@ -10,12 +10,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.CodeAnalysis.CSharp.Utilities;
 
-internal sealed class NameSyntaxIterator : IEnumerable<NameSyntax>
+internal sealed class NameSyntaxIterator(NameSyntax name) : IEnumerable<NameSyntax>
 {
-    private readonly NameSyntax _name;
-
-    public NameSyntaxIterator(NameSyntax name)
-        => _name = name ?? throw new ArgumentNullException(nameof(name));
+    private readonly NameSyntax _name = name ?? throw new ArgumentNullException(nameof(name));
 
     public IEnumerator<NameSyntax> GetEnumerator()
     {

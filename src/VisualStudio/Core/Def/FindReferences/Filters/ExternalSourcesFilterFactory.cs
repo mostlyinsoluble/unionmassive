@@ -15,14 +15,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.FindReferences.
 [TableManagerIdentifier("FindAllReferences*")]
 [Name(nameof(ExternalSourcesFilterFactory))]
 [Order(After = nameof(EntireSolutionWithoutMetadataFilterFactory))]
-internal sealed class ExternalSourcesFilterFactory : IScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ExternalSourcesFilterFactory() : IScopeFilterFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ExternalSourcesFilterFactory()
-    {
-    }
-
     public IErrorListFilterHandler CreateFilter(IWpfTableControl tableControl)
     {
         return ExternalSourcesFilterHandler.Instance;

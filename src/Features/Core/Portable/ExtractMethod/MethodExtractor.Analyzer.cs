@@ -318,9 +318,7 @@ internal abstract partial class AbstractExtractMethodService<
                 // Similarly, if we have a flow control variable, then make that one of the return values of the method
                 // so that the caller can see what the called method wants to do.
                 var outRefCount = numberOfOutParameters + numberOfRefParameters;
-                var createAsyncTuple = outRefCount > 0 &&
-                    this.SelectionResult.ContainsAwaitExpression() &&
-                    this.SyntaxFacts.SupportsTupleDeconstruction(this.SemanticDocument.Document.Project.ParseOptions!);
+                var createAsyncTuple = outRefCount > 0 && this.SelectionResult.ContainsAwaitExpression();
                 if (createAsyncTuple || hasFlowControlResult)
                 {
                     var result = new FixedSizeArrayBuilder<VariableInfo>(variableInfos.Length);

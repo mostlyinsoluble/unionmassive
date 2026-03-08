@@ -34,13 +34,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         Disabled = 2,
     }
 
-    internal class CSharpPragmaWarningStateMap : AbstractWarningStateMap<PragmaWarningState>
+    internal class CSharpPragmaWarningStateMap(SyntaxTree syntaxTree) : AbstractWarningStateMap<PragmaWarningState>(syntaxTree)
     {
-        public CSharpPragmaWarningStateMap(SyntaxTree syntaxTree) :
-            base(syntaxTree)
-        {
-        }
-
         protected override WarningStateMapEntry[] CreateWarningStateMapEntries(SyntaxTree syntaxTree)
         {
             // Accumulate all the pragma warning directives, in source code order

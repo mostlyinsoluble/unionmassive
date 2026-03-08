@@ -11,14 +11,9 @@ using Microsoft.Internal.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Options;
 
-internal sealed class FeatureFlagPersister
+internal sealed class FeatureFlagPersister(IVsFeatureFlags? featureFlags)
 {
-    private readonly IVsFeatureFlags? _featureFlags;
-
-    public FeatureFlagPersister(IVsFeatureFlags? featureFlags)
-    {
-        _featureFlags = featureFlags;
-    }
+    private readonly IVsFeatureFlags? _featureFlags = featureFlags;
 
     public bool TryFetch(OptionKey2 optionKey, string flagName, [NotNullWhen(true)] out object? value)
     {

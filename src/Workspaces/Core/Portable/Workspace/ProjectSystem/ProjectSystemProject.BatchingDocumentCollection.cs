@@ -27,9 +27,14 @@ internal sealed partial class ProjectSystemProject
     /// </summary>
     /// <remarks>This class should be free-threaded, and any synchronization is done via <see cref="ProjectSystemProject._gate"/>.
     /// This class is otherwise free to operate on private members of <see cref="_project"/> if needed.</remarks>
-    private sealed class BatchingDocumentCollection
+    private sealed class BatchingDocumentCollection(ProjectSystemProject project,
+        Func<Solution, DocumentId, bool> documentAlreadyInWorkspace,
+        Action<Workspace, DocumentInfo> documentAddAction,
+        Action<Workspace, DocumentId> documentRemoveAction,
+        Func<Solution, DocumentId, TextLoader, Solution> documentTextLoaderChangedAction,
+        WorkspaceChangeKind documentChangedWorkspaceKind)
     {
-        private readonly ProjectSystemProject _project;
+        private readonly ProjectSystemProject _project = project;
 
         /// <summary>
         /// The map of file paths to the underlying <see cref="DocumentId"/>. This document may exist in <see cref="_documentsAddedInBatch"/> or has been
@@ -63,11 +68,11 @@ internal sealed partial class ProjectSystemProject
         /// </summary>
         private ImmutableList<DocumentId>? _orderedDocumentsInBatch = null;
 
-        private readonly Func<Solution, DocumentId, bool> _documentAlreadyInWorkspace;
-        private readonly Action<Workspace, DocumentInfo> _documentAddAction;
-        private readonly Action<Workspace, DocumentId> _documentRemoveAction;
-        private readonly Func<Solution, DocumentId, TextLoader, Solution> _documentTextLoaderChangedAction;
-        private readonly WorkspaceChangeKind _documentChangedWorkspaceKind;
+        private readonly Func<Solution, DocumentId, bool> _documentAlreadyInWorkspace = documentAlreadyInWorkspace;
+        private readonly Action<Workspace, DocumentInfo> _documentAddAction = documentAddAction;
+        private readonly Action<Workspace, DocumentId> _documentRemoveAction = documentRemoveAction;
+        private readonly Func<Solution, DocumentId, TextLoader, Solution> _documentTextLoaderChangedAction = documentTextLoaderChangedAction;
+        private readonly WorkspaceChangeKind _documentChangedWorkspaceKind = documentChangedWorkspaceKind;
 
         /// <summary>
         /// An <see cref="AsyncBatchingWorkQueue"/> for processing updates to dynamic files. This is lazily created the first time we see
@@ -80,21 +85,6 @@ internal sealed partial class ProjectSystemProject
         /// an old version stuck in the workspace.
         /// </remarks>
         private AsyncBatchingWorkQueue<(string projectSystemFilePath, string workspaceFilePath)>? _dynamicFilesToRefresh;
-
-        public BatchingDocumentCollection(ProjectSystemProject project,
-            Func<Solution, DocumentId, bool> documentAlreadyInWorkspace,
-            Action<Workspace, DocumentInfo> documentAddAction,
-            Action<Workspace, DocumentId> documentRemoveAction,
-            Func<Solution, DocumentId, TextLoader, Solution> documentTextLoaderChangedAction,
-            WorkspaceChangeKind documentChangedWorkspaceKind)
-        {
-            _project = project;
-            _documentAlreadyInWorkspace = documentAlreadyInWorkspace;
-            _documentAddAction = documentAddAction;
-            _documentRemoveAction = documentRemoveAction;
-            _documentTextLoaderChangedAction = documentTextLoaderChangedAction;
-            _documentChangedWorkspaceKind = documentChangedWorkspaceKind;
-        }
 
         public DocumentId AddFile(string fullPath, SourceCodeKind sourceCodeKind, ImmutableArray<string> folders)
         {
@@ -653,16 +643,10 @@ internal sealed partial class ProjectSystemProject
                 .WithDocumentServiceProvider(fileInfo.DocumentServiceProvider);
         }
 
-        private sealed class SourceTextLoader : TextLoader
+        private sealed class SourceTextLoader(SourceTextContainer textContainer, string? filePath) : TextLoader
         {
-            private readonly SourceTextContainer _textContainer;
-            private readonly string? _filePath;
-
-            public SourceTextLoader(SourceTextContainer textContainer, string? filePath)
-            {
-                _textContainer = textContainer;
-                _filePath = filePath;
-            }
+            private readonly SourceTextContainer _textContainer = textContainer;
+            private readonly string? _filePath = filePath;
 
             public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
                 => TextAndVersion.Create(_textContainer.CurrentText, VersionStamp.Create(), _filePath);

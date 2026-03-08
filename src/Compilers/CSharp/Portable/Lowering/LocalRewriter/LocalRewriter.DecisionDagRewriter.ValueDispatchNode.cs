@@ -19,39 +19,33 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// <summary>
             /// A node in a tree representing the form of a generated decision tree for classifying an input value.
             /// </summary>
-            private abstract class ValueDispatchNode
+            private abstract class ValueDispatchNode(SyntaxNode syntax)
             {
                 protected virtual int Height => 1;
 #if DEBUG
                 protected virtual int Weight => 1;
 #endif
-                public readonly SyntaxNode Syntax;
-
-                public ValueDispatchNode(SyntaxNode syntax) => Syntax = syntax;
+                public readonly SyntaxNode Syntax = syntax;
 
                 /// <summary>
                 /// A node representing the dispatch by value (equality). This corresponds to a classical C switch
                 /// statement, except that it also handles values of type float, double, decimal, and string.
                 /// </summary>
-                internal sealed class SwitchDispatch : ValueDispatchNode
+                internal sealed class SwitchDispatch(SyntaxNode syntax, ImmutableArray<(ConstantValue value, LabelSymbol label)> dispatches, LabelSymbol otherwise) : ValueDispatchNode(syntax)
                 {
-                    public readonly ImmutableArray<(ConstantValue value, LabelSymbol label)> Cases;
-                    public readonly LabelSymbol Otherwise;
-                    public SwitchDispatch(SyntaxNode syntax, ImmutableArray<(ConstantValue value, LabelSymbol label)> dispatches, LabelSymbol otherwise) : base(syntax)
-                    {
-                        this.Cases = dispatches;
-                        this.Otherwise = otherwise;
-                    }
+                    public readonly ImmutableArray<(ConstantValue value, LabelSymbol label)> Cases = dispatches;
+                    public readonly LabelSymbol Otherwise = otherwise;
+
                     public override string ToString() => "[" + string.Join(",", Cases.Select(c => c.value)) + "]";
                 }
 
                 /// <summary>
                 /// A node representing a final destination that requires no further dispatch.
                 /// </summary>
-                internal sealed class LeafDispatchNode : ValueDispatchNode
+                internal sealed class LeafDispatchNode(SyntaxNode syntax, LabelSymbol Label) : ValueDispatchNode(syntax)
                 {
-                    public readonly LabelSymbol Label;
-                    public LeafDispatchNode(SyntaxNode syntax, LabelSymbol Label) : base(syntax) => this.Label = Label;
+                    public readonly LabelSymbol Label = Label;
+
                     public override string ToString() => "Leaf";
                 }
 

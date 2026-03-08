@@ -46,13 +46,6 @@ internal sealed class InvokeDelegateWithConditionalAccessAnalyzer()
         // look for the form "if (a != null)" or "if (null != a)"
         var ifStatement = (IfStatementSyntax)syntaxContext.Node;
 
-        // ?. is only available in C# 6.0 and above.  Don't offer this refactoring
-        // in projects targeting a lesser version.
-        if (ifStatement.SyntaxTree.Options.LanguageVersion() < LanguageVersion.CSharp6)
-        {
-            return;
-        }
-
         if (!ifStatement.Condition.IsKind(SyntaxKind.NotEqualsExpression))
         {
             return;

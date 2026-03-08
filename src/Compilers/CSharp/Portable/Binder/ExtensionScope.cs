@@ -11,28 +11,18 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// are two possible scopes: one for the namespace, and another for any using statements
     /// in the namespace. The namespace scope is searched before the using scope.
     /// </summary>
-    internal readonly struct ExtensionScope
+    internal readonly struct ExtensionScope(Binder binder)
     {
-        public readonly Binder Binder;
-
-        public ExtensionScope(Binder binder)
-        {
-            this.Binder = binder;
-        }
+        public readonly Binder Binder = binder;
     }
 
     /// <summary>
     /// An enumerable collection of extension scopes in search
     /// order, from the given Binder, out through containing Binders.
     /// </summary>
-    internal readonly struct ExtensionScopes
+    internal readonly struct ExtensionScopes(Binder binder)
     {
-        private readonly Binder _binder;
-
-        public ExtensionScopes(Binder binder)
-        {
-            _binder = binder;
-        }
+        private readonly Binder _binder = binder;
 
         public ExtensionScopeEnumerator GetEnumerator()
         {
@@ -43,16 +33,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// An enumerator over ExtensionScopes.
     /// </summary>
-    internal struct ExtensionScopeEnumerator
+    internal struct ExtensionScopeEnumerator(Binder binder)
     {
-        private readonly Binder _binder;
-        private ExtensionScope _current;
-
-        public ExtensionScopeEnumerator(Binder binder)
-        {
-            _binder = binder;
-            _current = new ExtensionScope();
-        }
+        private readonly Binder _binder = binder;
+        private ExtensionScope _current = new ExtensionScope();
 
         public ExtensionScope Current
         {

@@ -22,18 +22,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.CodeLens;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(CodeLensHandler)), Shared]
 [Method(LSP.Methods.TextDocumentCodeLensName)]
-internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.CodeLensParams, LSP.CodeLens[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeLensHandler(IGlobalOptionService globalOptionService) : ILspServiceDocumentRequestHandler<LSP.CodeLensParams, LSP.CodeLens[]?>
 {
     public const string RunTestsCommandIdentifier = "dotnet.test.run";
 
-    private readonly IGlobalOptionService _globalOptionService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeLensHandler(IGlobalOptionService globalOptionService)
-    {
-        _globalOptionService = globalOptionService;
-    }
+    private readonly IGlobalOptionService _globalOptionService = globalOptionService;
 
     public bool MutatesSolutionState => false;
 

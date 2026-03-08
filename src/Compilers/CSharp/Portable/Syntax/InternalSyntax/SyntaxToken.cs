@@ -41,22 +41,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         }
 
         internal SyntaxToken(SyntaxKind kind, int fullWidth)
-            : base(kind, fullWidth)
-        {
-            SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
-        }
+            : base(kind, fullWidth) => SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
 
         internal SyntaxToken(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics)
-            : base(kind, diagnostics, fullWidth)
-        {
-            SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
-        }
+            : base(kind, diagnostics, fullWidth) => SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
 
         internal SyntaxToken(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-            : base(kind, diagnostics, annotations, fullWidth)
-        {
-            SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
-        }
+            : base(kind, diagnostics, annotations, fullWidth) => SetFlags(NodeFlags.IsNotMissing); //note: cleared by subclasses representing missing tokens
 
         //====================
 

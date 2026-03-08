@@ -21,13 +21,10 @@ internal sealed class AnalyzerConfigDocumentState : TextDocumentState
         ITextAndVersionSource textAndVersionSource,
         LoadTextOptions loadTextOptions,
         AsyncLazy<AnalyzerConfig>? lazyAnalyzerConfig = null)
-        : base(solutionServices, documentServiceProvider, attributes, textAndVersionSource, loadTextOptions)
-    {
-        _lazyAnalyzerConfig = lazyAnalyzerConfig ?? AsyncLazy.Create(
+        : base(solutionServices, documentServiceProvider, attributes, textAndVersionSource, loadTextOptions) => _lazyAnalyzerConfig = lazyAnalyzerConfig ?? AsyncLazy.Create(
             asynchronousComputeFunction: static async (self, cancellationToken) => AnalyzerConfig.Parse(await self.GetTextAsync(cancellationToken).ConfigureAwait(false), self.FilePath),
             synchronousComputeFunction: static (self, cancellationToken) => AnalyzerConfig.Parse(self.GetTextSynchronously(cancellationToken), self.FilePath),
             arg: this);
-    }
 
     public AnalyzerConfigDocumentState(
         SolutionServices solutionServices,

@@ -10,22 +10,17 @@ using Microsoft.CodeAnalysis.LanguageService;
 
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
-internal sealed class CSharpFormatEngine : AbstractFormatEngine
+internal sealed class CSharpFormatEngine(
+    SyntaxNode node,
+    SyntaxFormattingOptions options,
+    ImmutableArray<AbstractFormattingRule> formattingRules,
+    SyntaxToken startToken,
+    SyntaxToken endToken) : AbstractFormatEngine(TreeData.Create(node),
+         options,
+         formattingRules,
+         startToken,
+         endToken)
 {
-    public CSharpFormatEngine(
-        SyntaxNode node,
-        SyntaxFormattingOptions options,
-        ImmutableArray<AbstractFormattingRule> formattingRules,
-        SyntaxToken startToken,
-        SyntaxToken endToken)
-        : base(TreeData.Create(node),
-             options,
-             formattingRules,
-             startToken,
-             endToken)
-    {
-    }
-
     internal override IHeaderFacts HeaderFacts => CSharpHeaderFacts.Instance;
 
     protected override AbstractTriviaDataFactory CreateTriviaFactory()

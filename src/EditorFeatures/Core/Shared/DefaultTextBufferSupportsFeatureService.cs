@@ -10,14 +10,10 @@ using Microsoft.VisualStudio.Text;
 namespace Microsoft.CodeAnalysis.Editor.Shared;
 
 [ExportWorkspaceService(typeof(ITextBufferSupportsFeatureService), ServiceLayer.Editor), Shared]
-internal sealed class DefaultTextBufferSupportsFeatureService : ITextBufferSupportsFeatureService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultTextBufferSupportsFeatureService() : ITextBufferSupportsFeatureService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultTextBufferSupportsFeatureService()
-    {
-    }
-
     public bool SupportsCodeFixes(ITextBuffer textBuffer)
         => true;
 

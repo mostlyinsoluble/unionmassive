@@ -113,7 +113,7 @@ namespace Microsoft.CodeAnalysis.Scripting
         /// </summary>
         public Script<TResult> ContinueWith<TResult>(string code, ScriptOptions options = null)
         {
-            options = options ?? InheritOptions(Options);
+            options ??= InheritOptions(Options);
             return new Script<TResult>(Compiler, Builder, SourceText.From(code ?? "", options.FileEncoding), options, GlobalsType, this);
         }
 
@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.Scripting
         {
             if (code == null)
                 throw new ArgumentNullException(nameof(code));
-            options = options ?? InheritOptions(Options);
+            options ??= InheritOptions(Options);
             return new Script<TResult>(Compiler, Builder, SourceText.From(code, options.FileEncoding), options, GlobalsType, this);
         }
 

@@ -155,10 +155,7 @@ internal abstract class AbstractSyncNamespacesService<TSyntaxKind, TNamespaceSyn
 
         private readonly ImmutableDictionary<Project, ImmutableArray<Diagnostic>> _diagnosticsByProject;
 
-        internal DiagnosticProvider(ImmutableDictionary<Project, ImmutableArray<Diagnostic>> diagnosticsByProject)
-        {
-            _diagnosticsByProject = diagnosticsByProject;
-        }
+        internal DiagnosticProvider(ImmutableDictionary<Project, ImmutableArray<Diagnostic>> diagnosticsByProject) => _diagnosticsByProject = diagnosticsByProject;
 
         public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {

@@ -11,16 +11,10 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
 {
-    internal abstract class TestAttributesVisitor : CSharpSymbolVisitor
+    internal abstract class TestAttributesVisitor(StringBuilder builder) : CSharpSymbolVisitor
     {
-        protected readonly StringBuilder _builder;
-        protected readonly HashSet<Symbol> _reported;
-
-        protected TestAttributesVisitor(StringBuilder builder)
-        {
-            _builder = builder;
-            _reported = new HashSet<Symbol>();
-        }
+        protected readonly StringBuilder _builder = builder;
+        protected readonly HashSet<Symbol> _reported = new HashSet<Symbol>();
 
         public override void DefaultVisit(Symbol symbol)
         {

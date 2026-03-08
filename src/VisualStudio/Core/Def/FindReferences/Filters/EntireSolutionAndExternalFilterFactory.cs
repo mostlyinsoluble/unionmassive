@@ -16,14 +16,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.FindReferences.
 [DefaultScope]
 [Name(nameof(EntireSolutionAndExternalFilterFactory))]
 [Order(Before = PredefinedScopeFilterNames.EntireSolutionScopeFilter)]
-internal sealed class EntireSolutionAndExternalFilterFactory : IScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EntireSolutionAndExternalFilterFactory() : IScopeFilterFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EntireSolutionAndExternalFilterFactory()
-    {
-    }
-
     public IErrorListFilterHandler CreateFilter(IWpfTableControl tableControl)
     {
         return EntireSolutionAndExternalFilterHandler.Instance;

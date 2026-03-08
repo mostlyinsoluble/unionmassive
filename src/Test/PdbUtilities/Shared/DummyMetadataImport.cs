@@ -15,18 +15,11 @@ using Microsoft.DiaSymReader.PortablePdb;
 
 namespace Roslyn.Test.PdbUtilities
 {
-    internal sealed class DummyMetadataImport : IMetadataImport, IDisposable
+    internal sealed class DummyMetadataImport(MetadataReader metadataReaderOpt, IDisposable metadataOwnerOpt) : IMetadataImport, IDisposable
     {
-        private readonly MetadataReader _metadataReaderOpt;
-        private readonly IDisposable _metadataOwnerOpt;
-        private readonly List<GCHandle> _pinnedBuffers;
-
-        public DummyMetadataImport(MetadataReader metadataReaderOpt, IDisposable metadataOwnerOpt)
-        {
-            _metadataReaderOpt = metadataReaderOpt;
-            _pinnedBuffers = [];
-            _metadataOwnerOpt = metadataOwnerOpt;
-        }
+        private readonly MetadataReader _metadataReaderOpt = metadataReaderOpt;
+        private readonly IDisposable _metadataOwnerOpt = metadataOwnerOpt;
+        private readonly List<GCHandle> _pinnedBuffers = [];
 
         public void Dispose()
         {

@@ -13,23 +13,17 @@ internal sealed partial class SolutionCompilationState
     /// Represents a change that needs to be made to a <see cref="Compilation"/>, <see cref="GeneratorDriver"/>, or both
     /// in response to some user edit.
     /// </summary>
-    private abstract partial class TranslationAction
+    private abstract partial class TranslationAction(ProjectState oldProjectState, ProjectState newProjectState)
     {
         /// <summary>
         /// The original state of the project prior to the user edit.
         /// </summary>
-        public readonly ProjectState OldProjectState;
+        public readonly ProjectState OldProjectState = oldProjectState;
 
         /// <summary>
         /// The state of the project after the user edit was made.
         /// </summary>
-        public readonly ProjectState NewProjectState;
-
-        protected TranslationAction(ProjectState oldProjectState, ProjectState newProjectState)
-        {
-            OldProjectState = oldProjectState;
-            NewProjectState = newProjectState;
-        }
+        public readonly ProjectState NewProjectState = newProjectState;
 
         public abstract Task<Compilation> TransformCompilationAsync(Compilation oldCompilation, CancellationToken cancellationToken);
 

@@ -8,14 +8,11 @@ using Xunit.Abstractions;
 
 namespace Roslyn.Test.Utilities
 {
-    public sealed class XunitTraceListener : TraceListener
+    public sealed class XunitTraceListener(ITestOutputHelper logger) : TraceListener
     {
-        private readonly ITestOutputHelper _logger;
+        private readonly ITestOutputHelper _logger = logger;
         private readonly StringBuilder _lineInProgress = new StringBuilder();
         private bool _disposed;
-
-        public XunitTraceListener(ITestOutputHelper logger)
-            => _logger = logger;
 
         public override bool IsThreadSafe
             => false;

@@ -52,10 +52,7 @@ namespace Microsoft.CodeAnalysis.Scripting
             debugInformationFormat: PdbHelpers.GetPlatformSpecificDebugInformationFormat(),
             pdbChecksumAlgorithm: default(HashAlgorithmName));
 
-        static ScriptBuilder()
-        {
-            s_globalAssemblyNamePrefix = "\u211B*" + Guid.NewGuid().ToString();
-        }
+        static ScriptBuilder() => s_globalAssemblyNamePrefix = "\u211B*" + Guid.NewGuid().ToString();
 
         public ScriptBuilder(InteractiveAssemblyLoader assemblyLoader)
         {

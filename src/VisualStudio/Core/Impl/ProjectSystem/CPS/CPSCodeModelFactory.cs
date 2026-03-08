@@ -12,14 +12,10 @@ using Microsoft.VisualStudio.LanguageServices.ProjectSystem;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem.CPS;
 
 [Export(typeof(ICodeModelFactory))]
-internal sealed partial class CPSCodeModelFactory : ICodeModelFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CPSCodeModelFactory() : ICodeModelFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CPSCodeModelFactory()
-    {
-    }
-
     public EnvDTE.CodeModel GetCodeModel(IWorkspaceProjectContext context, EnvDTE.Project project)
         => ((CPSProject)context).GetCodeModel(project);
 

@@ -334,25 +334,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             return new InvalidOperationException(CodeAnalysisResources.MissingTokenListItem);
         }
 
-        private abstract class BaseListEditor : CSharpSyntaxRewriter
+        private abstract class BaseListEditor(
+            TextSpan elementSpan,
+SyntaxReplacer.ListEditKind editKind,
+            bool visitTrivia,
+            bool visitIntoStructuredTrivia) : CSharpSyntaxRewriter
         {
-            private readonly TextSpan _elementSpan;
-            private readonly bool _visitTrivia;
-            private readonly bool _visitIntoStructuredTrivia;
+            private readonly TextSpan _elementSpan = elementSpan;
+            private readonly bool _visitTrivia = visitTrivia || visitIntoStructuredTrivia;
+            private readonly bool _visitIntoStructuredTrivia = visitIntoStructuredTrivia;
 
-            protected readonly ListEditKind editKind;
-
-            public BaseListEditor(
-                TextSpan elementSpan,
-                ListEditKind editKind,
-                bool visitTrivia,
-                bool visitIntoStructuredTrivia)
-            {
-                _elementSpan = elementSpan;
-                this.editKind = editKind;
-                _visitTrivia = visitTrivia || visitIntoStructuredTrivia;
-                _visitIntoStructuredTrivia = visitIntoStructuredTrivia;
-            }
+            protected readonly ListEditKind editKind = editKind;
 
             public override bool VisitIntoStructuredTrivia
             {
@@ -415,20 +407,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
         }
 
-        private class NodeListEditor : BaseListEditor
+        private class NodeListEditor(
+            SyntaxNode originalNode,
+            IEnumerable<SyntaxNode> replacementNodes,
+SyntaxReplacer.ListEditKind editKind) : BaseListEditor(originalNode.Span, editKind, false, originalNode.IsPartOfStructuredTrivia())
         {
-            private readonly SyntaxNode _originalNode;
-            private readonly IEnumerable<SyntaxNode> _newNodes;
-
-            public NodeListEditor(
-                SyntaxNode originalNode,
-                IEnumerable<SyntaxNode> replacementNodes,
-                ListEditKind editKind)
-                : base(originalNode.Span, editKind, false, originalNode.IsPartOfStructuredTrivia())
-            {
-                _originalNode = originalNode;
-                _newNodes = replacementNodes;
-            }
+            private readonly SyntaxNode _originalNode = originalNode;
+            private readonly IEnumerable<SyntaxNode> _newNodes = replacementNodes;
 
             [return: NotNullIfNotNull(nameof(node))]
             public override SyntaxNode? Visit(SyntaxNode? node)
@@ -490,20 +475,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
         }
 
-        private class TokenListEditor : BaseListEditor
+        private class TokenListEditor(
+            SyntaxToken originalToken,
+            IEnumerable<SyntaxToken> newTokens,
+SyntaxReplacer.ListEditKind editKind) : BaseListEditor(originalToken.Span, editKind, false, originalToken.IsPartOfStructuredTrivia())
         {
-            private readonly SyntaxToken _originalToken;
-            private readonly IEnumerable<SyntaxToken> _newTokens;
-
-            public TokenListEditor(
-                SyntaxToken originalToken,
-                IEnumerable<SyntaxToken> newTokens,
-                ListEditKind editKind)
-                : base(originalToken.Span, editKind, false, originalToken.IsPartOfStructuredTrivia())
-            {
-                _originalToken = originalToken;
-                _newTokens = newTokens;
-            }
+            private readonly SyntaxToken _originalToken = originalToken;
+            private readonly IEnumerable<SyntaxToken> _newTokens = newTokens;
 
             public override SyntaxToken VisitToken(SyntaxToken token)
             {
@@ -537,20 +515,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
         }
 
-        private class TriviaListEditor : BaseListEditor
+        private class TriviaListEditor(
+            SyntaxTrivia originalTrivia,
+            IEnumerable<SyntaxTrivia> newTrivia,
+SyntaxReplacer.ListEditKind editKind) : BaseListEditor(originalTrivia.Span, editKind, true, originalTrivia.IsPartOfStructuredTrivia())
         {
-            private readonly SyntaxTrivia _originalTrivia;
-            private readonly IEnumerable<SyntaxTrivia> _newTrivia;
-
-            public TriviaListEditor(
-                SyntaxTrivia originalTrivia,
-                IEnumerable<SyntaxTrivia> newTrivia,
-                ListEditKind editKind)
-                : base(originalTrivia.Span, editKind, true, originalTrivia.IsPartOfStructuredTrivia())
-            {
-                _originalTrivia = originalTrivia;
-                _newTrivia = newTrivia;
-            }
+            private readonly SyntaxTrivia _originalTrivia = originalTrivia;
+            private readonly IEnumerable<SyntaxTrivia> _newTrivia = newTrivia;
 
             public override SyntaxTriviaList VisitList(SyntaxTriviaList list)
             {

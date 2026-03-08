@@ -11,12 +11,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     /// <summary>
     /// Adds C# specific parts to the line directive map.
     /// </summary>
-    internal class CSharpLineDirectiveMap : LineDirectiveMap<DirectiveTriviaSyntax>
+    internal class CSharpLineDirectiveMap(SyntaxTree syntaxTree) : LineDirectiveMap<DirectiveTriviaSyntax>(syntaxTree)
     {
-        public CSharpLineDirectiveMap(SyntaxTree syntaxTree)
-            : base(syntaxTree)
-        {
-        }
 
         // Add all active #line directives under trivia into the list, in source code order.
         protected override bool ShouldAddDirective(DirectiveTriviaSyntax directive)

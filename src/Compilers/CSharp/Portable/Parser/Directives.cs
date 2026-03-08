@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     {
         private readonly DirectiveTriviaSyntax _node;
 
-        internal Directive(DirectiveTriviaSyntax node)
-        {
-            _node = node;
-        }
+        internal Directive(DirectiveTriviaSyntax node) => _node = node;
 
         public SyntaxKind Kind
         {

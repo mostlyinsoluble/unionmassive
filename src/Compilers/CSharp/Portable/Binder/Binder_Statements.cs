@@ -853,7 +853,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var localDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, diagnostics.AccumulatesDependencies);
             // if we are not given desired syntax, we use declarator
-            associatedSyntaxNode = associatedSyntaxNode ?? declarator;
+            associatedSyntaxNode ??= declarator;
 
             // Check for variable declaration errors.
             // Use the binder that owns the scope for the local because this (the current) binder

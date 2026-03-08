@@ -14,14 +14,10 @@ using Microsoft.VisualStudio.Text;
 namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client;
 
 [ExportWorkspaceService(typeof(ITextBufferSupportsFeatureService), [WorkspaceKind.CloudEnvironmentClientWorkspace]), Shared]
-internal sealed class CloudEnvironmentSupportsFeatureService : ITextBufferSupportsFeatureService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CloudEnvironmentSupportsFeatureService() : ITextBufferSupportsFeatureService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CloudEnvironmentSupportsFeatureService()
-    {
-    }
-
     public bool SupportsCodeFixes(ITextBuffer textBuffer) => false;
 
     public bool SupportsNavigationToAnyPosition(ITextBuffer textBuffer) => false;

@@ -28,23 +28,16 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// </summary>
 [ExportCSharpVisualBasicStatelessLspService(typeof(CodeActionResolveHandler)), Shared]
 [Method(LSP.Methods.CodeActionResolveName)]
-internal class CodeActionResolveHandler : ILspServiceDocumentRequestHandler<LSP.CodeAction, LSP.CodeAction>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class CodeActionResolveHandler(
+    ICodeFixService codeFixService,
+    ICodeRefactoringService codeRefactoringService,
+    IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<LSP.CodeAction, LSP.CodeAction>
 {
-    private readonly ICodeFixService _codeFixService;
-    private readonly ICodeRefactoringService _codeRefactoringService;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeActionResolveHandler(
-        ICodeFixService codeFixService,
-        ICodeRefactoringService codeRefactoringService,
-        IGlobalOptionService globalOptions)
-    {
-        _codeFixService = codeFixService;
-        _codeRefactoringService = codeRefactoringService;
-        _globalOptions = globalOptions;
-    }
+    private readonly ICodeFixService _codeFixService = codeFixService;
+    private readonly ICodeRefactoringService _codeRefactoringService = codeRefactoringService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

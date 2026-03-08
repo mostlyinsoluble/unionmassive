@@ -14,15 +14,11 @@ using Microsoft.VisualStudio.Core.Imaging;
 namespace Microsoft.CodeAnalysis.Editor.Tags;
 
 [ExportImageIdService(Name = Name)]
-internal sealed class DefaultImageIdService : IImageIdService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultImageIdService() : IImageIdService
 {
     public const string Name = nameof(DefaultImageIdService);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultImageIdService()
-    {
-    }
 
     public bool TryGetImageId(ImmutableArray<string> tags, out ImageId imageId)
     {

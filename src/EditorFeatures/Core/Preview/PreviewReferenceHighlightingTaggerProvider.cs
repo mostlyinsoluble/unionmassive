@@ -25,15 +25,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Preview;
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(TextViewRoles.PreviewRole)]
-internal sealed class PreviewReferenceHighlightingTaggerProvider
-    : AbstractPreviewTaggerProvider<NavigableHighlightTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewReferenceHighlightingTaggerProvider()
+        : AbstractPreviewTaggerProvider<NavigableHighlightTag>(PredefinedPreviewTaggerKeys.ReferenceHighlightingSpansKey, ReferenceHighlightTag.Instance)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewReferenceHighlightingTaggerProvider()
-        : base(PredefinedPreviewTaggerKeys.ReferenceHighlightingSpansKey, ReferenceHighlightTag.Instance)
-    {
-    }
 }
 
 [Export(typeof(ITaggerProvider))]
@@ -41,15 +37,11 @@ internal sealed class PreviewReferenceHighlightingTaggerProvider
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(TextViewRoles.PreviewRole)]
-internal sealed class PreviewWrittenReferenceHighlightingTaggerProvider
-    : AbstractPreviewTaggerProvider<NavigableHighlightTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewWrittenReferenceHighlightingTaggerProvider()
+        : AbstractPreviewTaggerProvider<NavigableHighlightTag>(PredefinedPreviewTaggerKeys.WrittenReferenceHighlightingSpansKey, WrittenReferenceHighlightTag.Instance)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewWrittenReferenceHighlightingTaggerProvider()
-        : base(PredefinedPreviewTaggerKeys.WrittenReferenceHighlightingSpansKey, WrittenReferenceHighlightTag.Instance)
-    {
-    }
 }
 
 [Export(typeof(ITaggerProvider))]
@@ -57,13 +49,9 @@ internal sealed class PreviewWrittenReferenceHighlightingTaggerProvider
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(TextViewRoles.PreviewRole)]
-internal sealed class PreviewDefinitionHighlightingTaggerProvider
-    : AbstractPreviewTaggerProvider<NavigableHighlightTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewDefinitionHighlightingTaggerProvider()
+        : AbstractPreviewTaggerProvider<NavigableHighlightTag>(PredefinedPreviewTaggerKeys.DefinitionHighlightingSpansKey, DefinitionHighlightTag.Instance)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewDefinitionHighlightingTaggerProvider()
-        : base(PredefinedPreviewTaggerKeys.DefinitionHighlightingSpansKey, DefinitionHighlightTag.Instance)
-    {
-    }
 }

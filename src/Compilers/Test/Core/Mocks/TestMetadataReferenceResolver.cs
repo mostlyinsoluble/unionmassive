@@ -12,21 +12,14 @@ using Roslyn.Utilities;
 
 namespace Roslyn.Test.Utilities
 {
-    internal class TestMetadataReferenceResolver : MetadataReferenceResolver
+    internal class TestMetadataReferenceResolver(
+        RelativePathResolver pathResolver = null,
+        Dictionary<string, PortableExecutableReference> assemblyNames = null,
+        Dictionary<string, PortableExecutableReference> files = null) : MetadataReferenceResolver
     {
-        private readonly RelativePathResolver _pathResolver;
-        private readonly Dictionary<string, PortableExecutableReference> _assemblyNames;
-        private readonly Dictionary<string, PortableExecutableReference> _files;
-
-        public TestMetadataReferenceResolver(
-            RelativePathResolver pathResolver = null,
-            Dictionary<string, PortableExecutableReference> assemblyNames = null,
-            Dictionary<string, PortableExecutableReference> files = null)
-        {
-            _pathResolver = pathResolver;
-            _assemblyNames = assemblyNames ?? new Dictionary<string, PortableExecutableReference>();
-            _files = files ?? new Dictionary<string, PortableExecutableReference>();
-        }
+        private readonly RelativePathResolver _pathResolver = pathResolver;
+        private readonly Dictionary<string, PortableExecutableReference> _assemblyNames = assemblyNames ?? new Dictionary<string, PortableExecutableReference>();
+        private readonly Dictionary<string, PortableExecutableReference> _files = files ?? new Dictionary<string, PortableExecutableReference>();
 
         public override ImmutableArray<PortableExecutableReference> ResolveReference(string reference, string baseFilePath, MetadataReferenceProperties properties)
         {

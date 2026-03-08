@@ -17,13 +17,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Common base for ordinary methods synthesized by compiler and added to the <see cref="NamedTypeSymbol.GetMembers()"/> result.
     /// </summary>
-    internal abstract class SynthesizedSourceOrdinaryMethodSymbol : SourceOrdinaryMethodSymbolBase
+    internal abstract class SynthesizedSourceOrdinaryMethodSymbol(SourceMemberContainerTypeSymbol containingType, string name, Location location, CSharpSyntaxNode syntax, (DeclarationModifiers declarationModifiers, SourceMemberMethodSymbol.Flags flags) modifiersAndFlags) : SourceOrdinaryMethodSymbolBase(containingType, name, location, syntax, isIterator: false, modifiersAndFlags)
     {
-        protected SynthesizedSourceOrdinaryMethodSymbol(SourceMemberContainerTypeSymbol containingType, string name, Location location, CSharpSyntaxNode syntax, (DeclarationModifiers declarationModifiers, Flags flags) modifiersAndFlags)
-            : base(containingType, name, location, syntax, isIterator: false, modifiersAndFlags)
-        {
-        }
-
         protected override void MethodChecks(BindingDiagnosticBag diagnostics)
         {
             Debug.Assert(Arity == 0);

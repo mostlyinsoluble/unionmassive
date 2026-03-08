@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private readonly CompilationUnitSyntax _node;
 
-            public DummySyntaxTree()
-            {
-                _node = this.CloneNodeAsRoot(SyntaxFactory.ParseCompilationUnit(string.Empty));
-            }
+            public DummySyntaxTree() => _node = this.CloneNodeAsRoot(SyntaxFactory.ParseCompilationUnit(string.Empty));
 
             public override string ToString()
             {

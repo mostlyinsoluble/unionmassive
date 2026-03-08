@@ -135,9 +135,7 @@ internal sealed partial class ScreenshotInProcess
         Over = 1,
     }
 
-    static ScreenshotInProcess()
-    {
-        DataCollectionService.RegisterCustomLogger(
+    static ScreenshotInProcess() => DataCollectionService.RegisterCustomLogger(
             static fullPath =>
             {
                 lock (s_frames)
@@ -206,7 +204,6 @@ internal sealed partial class ScreenshotInProcess
             },
             "",
             "apng");
-    }
 
     private static (TimeSpan elapsed, BitmapSource image, Size offset)[] DetectChangedRegions((TimeSpan elapsed, BitmapSource image)[] frames)
     {

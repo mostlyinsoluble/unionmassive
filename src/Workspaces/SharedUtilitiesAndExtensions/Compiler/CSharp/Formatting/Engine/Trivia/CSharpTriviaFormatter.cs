@@ -12,23 +12,18 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
-internal sealed partial class CSharpTriviaFormatter : AbstractTriviaFormatter
+internal sealed partial class CSharpTriviaFormatter(
+    FormattingContext context,
+    ChainedFormattingRules formattingRules,
+    SyntaxToken token1,
+    SyntaxToken token2,
+    string originalString,
+    int lineBreaks,
+    int spaces) : AbstractTriviaFormatter(context, formattingRules, token1, token2, originalString, lineBreaks, spaces)
 {
     private bool _succeeded = true;
 
     private SyntaxTrivia _newLine;
-
-    public CSharpTriviaFormatter(
-        FormattingContext context,
-        ChainedFormattingRules formattingRules,
-        SyntaxToken token1,
-        SyntaxToken token2,
-        string originalString,
-        int lineBreaks,
-        int spaces)
-        : base(context, formattingRules, token1, token2, originalString, lineBreaks, spaces)
-    {
-    }
 
     protected override bool Succeeded()
         => _succeeded;

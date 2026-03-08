@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             : base(containingSymbol: constructedFrom.ContainingSymbol,
                    map: new TypeMap(constructedFrom.ContainingType, ((MethodSymbol)constructedFrom.OriginalDefinition).TypeParameters, typeArgumentsWithAnnotations),
                    originalDefinition: (MethodSymbol)constructedFrom.OriginalDefinition,
-                   constructedFrom: constructedFrom)
-        {
-            _typeArgumentsWithAnnotations = typeArgumentsWithAnnotations;
-        }
+                   constructedFrom: constructedFrom) => _typeArgumentsWithAnnotations = typeArgumentsWithAnnotations;
 
         public override ImmutableArray<TypeWithAnnotations> TypeArgumentsWithAnnotations
         {

@@ -19,30 +19,23 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.Diagnostics;
 
 [Export(typeof(IDiagnosticSourceManager)), Shared]
-internal sealed class DiagnosticSourceManager : IDiagnosticSourceManager
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DiagnosticSourceManager([ImportMany] IEnumerable<IDiagnosticSourceProvider> sourceProviders) : IDiagnosticSourceManager
 {
     /// <summary>
     /// Document level <see cref="IDiagnosticSourceProvider"/> providers ordered by name.
     /// </summary>
-    private readonly ImmutableDictionary<string, IDiagnosticSourceProvider> _nameToDocumentProviderMap;
+    private readonly ImmutableDictionary<string, IDiagnosticSourceProvider> _nameToDocumentProviderMap = sourceProviders
+            .Where(p => p.IsDocument)
+            .ToImmutableDictionary(kvp => kvp.Name, kvp => kvp);
 
     /// <summary>
     /// Workspace level <see cref="IDiagnosticSourceProvider"/> providers ordered by name.
     /// </summary>
-    private readonly ImmutableDictionary<string, IDiagnosticSourceProvider> _nameToWorkspaceProviderMap;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DiagnosticSourceManager([ImportMany] IEnumerable<IDiagnosticSourceProvider> sourceProviders)
-    {
-        _nameToDocumentProviderMap = sourceProviders
-            .Where(p => p.IsDocument)
-            .ToImmutableDictionary(kvp => kvp.Name, kvp => kvp);
-
-        _nameToWorkspaceProviderMap = sourceProviders
+    private readonly ImmutableDictionary<string, IDiagnosticSourceProvider> _nameToWorkspaceProviderMap = sourceProviders
             .Where(p => !p.IsDocument)
             .ToImmutableDictionary(kvp => kvp.Name, kvp => kvp);
-    }
 
     public ImmutableArray<string> GetDocumentSourceProviderNames(ClientCapabilities clientCapabilities)
         => _nameToDocumentProviderMap.SelectAsArray(

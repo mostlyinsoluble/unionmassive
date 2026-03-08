@@ -11,32 +11,23 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Navigation;
 
-internal class InternalFSharpNavigableItem : INavigableItem
+internal class InternalFSharpNavigableItem(FSharpNavigableItem item) : INavigableItem
 {
-    private readonly INavigableItem.NavigableDocument _navigableDocument;
+    private readonly INavigableItem.NavigableDocument _navigableDocument = INavigableItem.NavigableDocument.FromDocument(item.Document);
 
-    public InternalFSharpNavigableItem(FSharpNavigableItem item)
-    {
-        Glyph = FSharpGlyphHelpers.ConvertTo(item.Glyph);
-        DisplayTaggedParts = item.DisplayTaggedParts;
-        Document = item.Document;
-        _navigableDocument = INavigableItem.NavigableDocument.FromDocument(item.Document);
-        SourceSpan = item.SourceSpan;
-    }
+    public Glyph Glyph { get; } = FSharpGlyphHelpers.ConvertTo(item.Glyph);
 
-    public Glyph Glyph { get; }
-
-    public ImmutableArray<TaggedText> DisplayTaggedParts { get; }
+    public ImmutableArray<TaggedText> DisplayTaggedParts { get; } = item.DisplayTaggedParts;
 
     public bool DisplayFileLocation => true;
 
     public bool IsImplicitlyDeclared => false;
 
-    public Document Document { get; }
+    public Document Document { get; } = item.Document;
 
     INavigableItem.NavigableDocument INavigableItem.Document => _navigableDocument;
 
-    public TextSpan SourceSpan { get; }
+    public TextSpan SourceSpan { get; } = item.SourceSpan;
 
     public bool IsStale => false;
 

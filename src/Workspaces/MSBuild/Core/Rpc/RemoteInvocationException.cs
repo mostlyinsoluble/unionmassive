@@ -6,9 +6,6 @@ using System;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class RemoteInvocationException : Exception
+internal sealed class RemoteInvocationException(string? message) : Exception(message)
 {
-    public RemoteInvocationException(string? message) : base(message)
-    {
-    }
 }

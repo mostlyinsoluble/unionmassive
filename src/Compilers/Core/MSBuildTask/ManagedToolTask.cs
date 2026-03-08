@@ -15,7 +15,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.BuildTasks
 {
-    public abstract class ManagedToolTask : ToolTask
+    public abstract class ManagedToolTask(ResourceManager resourceManager) : ToolTask(resourceManager)
     {
         private bool? _useAppHost;
         internal readonly PropertyDictionary _store = new PropertyDictionary();
@@ -82,11 +82,6 @@ namespace Microsoft.CodeAnalysis.BuildTasks
         }
 
         internal bool UseAppHost_TestOnly { set => _useAppHost = value; }
-
-        protected ManagedToolTask(ResourceManager resourceManager)
-            : base(resourceManager)
-        {
-        }
 
         /// <summary>
         /// Generate the arguments to pass directly to the buitin tool. These do not include

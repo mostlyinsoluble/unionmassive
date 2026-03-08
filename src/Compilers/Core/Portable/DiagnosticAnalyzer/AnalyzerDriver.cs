@@ -2432,10 +2432,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         /// <param name="severityFilter">Filtered diagnostic severities in the compilation, i.e. diagnostics with effective severity from this set should not be reported.</param>
         /// <param name="isComment">Delegate to identify if the given trivia is a comment.</param>
         internal AnalyzerDriver(ImmutableArray<DiagnosticAnalyzer> analyzers, Func<SyntaxNode, TLanguageKindEnum> getKind, AnalyzerManager analyzerManager, SeverityFilter severityFilter, Func<SyntaxTrivia, bool> isComment)
-            : base(analyzers, analyzerManager, severityFilter, isComment)
-        {
-            _getKind = getKind;
-        }
+            : base(analyzers, analyzerManager, severityFilter, isComment) => _getKind = getKind;
 
         private GroupedAnalyzerActions GetOrCreateCoreActions()
         {

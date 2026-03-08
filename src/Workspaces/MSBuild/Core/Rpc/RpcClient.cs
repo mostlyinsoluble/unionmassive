@@ -22,26 +22,20 @@ namespace Microsoft.CodeAnalysis.MSBuild;
 /// scenarios, we are limited to using only what is either in .NET or can be easily made buildable in Source Build. Thus existing solutions like StreamJsonRpc 
 /// are out. If at some point there is a standard RPC mechanism exposed in .NET or Source Build, we should delete this and use that instead.
 /// </remarks>
-internal sealed class RpcClient
+internal sealed class RpcClient(PipeStream stream)
 {
-    private readonly PipeStream _stream;
+    private readonly PipeStream _stream = stream;
 
     /// <summary>
     /// A semaphore taken to synchronize all writes to <see cref="_stream"/>.
     /// </summary>
     private readonly SemaphoreSlim _streamWritingSemaphore = new(initialCount: 1);
-    private readonly TextReader _receivingStreamReader;
+    private readonly TextReader _receivingStreamReader = new StreamReader(stream, JsonSettings.StreamEncoding);
 
     private readonly ConcurrentDictionary<int, (TaskCompletionSource<object?>, System.Type? expectedReturnType)> _outstandingRequests = [];
     private volatile int _nextRequestId = 0;
 
     private readonly CancellationTokenSource _shutdownTokenSource = new();
-
-    public RpcClient(PipeStream stream)
-    {
-        _stream = stream;
-        _receivingStreamReader = new StreamReader(stream, JsonSettings.StreamEncoding);
-    }
 
     public event EventHandler? Disconnected;
 

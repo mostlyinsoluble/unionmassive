@@ -12,19 +12,15 @@ using Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Completion;
 
-internal class FSharpFileSystemCompletionHelper
+internal class FSharpFileSystemCompletionHelper(
+    FSharpGlyph folderGlyph,
+    FSharpGlyph fileGlyph,
+    ImmutableArray<string> searchPaths,
+    string baseDirectoryOpt,
+    ImmutableArray<string> allowableExtensions,
+    CompletionItemRules itemRules)
 {
-    private readonly FileSystemCompletionHelper _fileSystemCompletionHelper;
-
-    public FSharpFileSystemCompletionHelper(
-        FSharpGlyph folderGlyph,
-        FSharpGlyph fileGlyph,
-        ImmutableArray<string> searchPaths,
-        string baseDirectoryOpt,
-        ImmutableArray<string> allowableExtensions,
-        CompletionItemRules itemRules)
-    {
-        _fileSystemCompletionHelper =
+    private readonly FileSystemCompletionHelper _fileSystemCompletionHelper =
             new FileSystemCompletionHelper(
                 FSharpGlyphHelpers.ConvertTo(folderGlyph),
                 FSharpGlyphHelpers.ConvertTo(fileGlyph),
@@ -32,7 +28,6 @@ internal class FSharpFileSystemCompletionHelper
                 baseDirectoryOpt,
                 allowableExtensions,
                 itemRules);
-    }
 
     public Task<ImmutableArray<CompletionItem>> GetItemsAsync(string directoryPath, CancellationToken cancellationToken)
     {

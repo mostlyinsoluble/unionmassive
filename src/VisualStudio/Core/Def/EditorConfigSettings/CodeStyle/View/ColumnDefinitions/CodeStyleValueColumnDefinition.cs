@@ -16,14 +16,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Value)]
-internal sealed class CodeStyleValueColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleValueColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleValueColumnDefinition()
-    {
-    }
-
     public override string Name => Value;
     public override string DisplayName => ServicesVSResources.Value;
     public override double MinWidth => 160;

@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
     {
         internal ICompilerServerLogger Logger { get; }
 
-        internal ExitingTraceListener(ICompilerServerLogger logger)
-        {
-            Logger = logger;
-        }
+        internal ExitingTraceListener(ICompilerServerLogger logger) => Logger = logger;
 
         public override void Write(string message)
         {

@@ -11,22 +11,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class CombineNode<TInput1, TInput2> : IIncrementalGeneratorNode<(TInput1, TInput2)>
+    internal sealed class CombineNode<TInput1, TInput2>(IIncrementalGeneratorNode<TInput1> input1, IIncrementalGeneratorNode<TInput2> input2, IEqualityComparer<(TInput1, TInput2)>? comparer = null, string? name = null) : IIncrementalGeneratorNode<(TInput1, TInput2)>
     {
         private static readonly string? s_tableType = typeof((TInput1, TInput2)).FullName;
 
-        private readonly IIncrementalGeneratorNode<TInput1> _input1;
-        private readonly IIncrementalGeneratorNode<TInput2> _input2;
-        private readonly IEqualityComparer<(TInput1, TInput2)>? _comparer;
-        private readonly string? _name;
-
-        public CombineNode(IIncrementalGeneratorNode<TInput1> input1, IIncrementalGeneratorNode<TInput2> input2, IEqualityComparer<(TInput1, TInput2)>? comparer = null, string? name = null)
-        {
-            _input1 = input1;
-            _input2 = input2;
-            _comparer = comparer;
-            _name = name;
-        }
+        private readonly IIncrementalGeneratorNode<TInput1> _input1 = input1;
+        private readonly IIncrementalGeneratorNode<TInput2> _input2 = input2;
+        private readonly IEqualityComparer<(TInput1, TInput2)>? _comparer = comparer;
+        private readonly string? _name = name;
 
         public NodeStateTable<(TInput1, TInput2)> UpdateStateTable(DriverStateTable.Builder graphState, NodeStateTable<(TInput1, TInput2)>? previousTable, CancellationToken cancellationToken)
         {

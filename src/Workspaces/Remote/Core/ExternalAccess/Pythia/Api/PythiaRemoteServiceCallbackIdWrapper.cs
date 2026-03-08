@@ -8,13 +8,10 @@ using Microsoft.CodeAnalysis.Remote;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 
 [DataContract]
-internal readonly struct PythiaRemoteServiceCallbackIdWrapper
+internal readonly struct PythiaRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
 {
     [DataMember(Order = 0)]
-    internal RemoteServiceCallbackId UnderlyingObject { get; }
-
-    public PythiaRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
-        => UnderlyingObject = underlyingObject;
+    internal RemoteServiceCallbackId UnderlyingObject { get; } = underlyingObject;
 
     public static implicit operator PythiaRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId id)
         => new(id);

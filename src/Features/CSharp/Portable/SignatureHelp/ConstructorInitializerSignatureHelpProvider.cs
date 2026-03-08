@@ -22,14 +22,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 
 [ExportSignatureHelpProvider("ConstructorInitializerSignatureHelpProvider", LanguageNames.CSharp), Shared]
-internal sealed partial class ConstructorInitializerSignatureHelpProvider : AbstractCSharpSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class ConstructorInitializerSignatureHelpProvider() : AbstractCSharpSignatureHelpProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ConstructorInitializerSignatureHelpProvider()
-    {
-    }
-
     public override ImmutableArray<char> TriggerCharacters => ['(', ','];
 
     public override ImmutableArray<char> RetriggerCharacters => [')'];

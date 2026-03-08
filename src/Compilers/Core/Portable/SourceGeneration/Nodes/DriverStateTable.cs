@@ -19,31 +19,19 @@ namespace Microsoft.CodeAnalysis
 
         internal static DriverStateTable Empty { get; } = new DriverStateTable(StateTableStore.Empty);
 
-        private DriverStateTable(StateTableStore tables)
-        {
-            _tables = tables;
-        }
+        private DriverStateTable(StateTableStore tables) => _tables = tables;
 
-        public sealed class Builder
+        public sealed class Builder(Compilation compilation, GeneratorDriverState driverState, SyntaxStore.Builder syntaxStore, CancellationToken cancellationToken = default)
         {
             private readonly StateTableStore.Builder _stateTableBuilder = new StateTableStore.Builder();
-            private readonly DriverStateTable _previousTable;
-            private readonly CancellationToken _cancellationToken;
+            private readonly DriverStateTable _previousTable = driverState.StateTable;
+            private readonly CancellationToken _cancellationToken = cancellationToken;
 
-            internal GeneratorDriverState DriverState { get; }
+            internal GeneratorDriverState DriverState { get; } = driverState;
 
-            public Compilation Compilation { get; }
+            public Compilation Compilation { get; } = compilation;
 
-            internal SyntaxStore.Builder SyntaxStore { get; }
-
-            public Builder(Compilation compilation, GeneratorDriverState driverState, SyntaxStore.Builder syntaxStore, CancellationToken cancellationToken = default)
-            {
-                Compilation = compilation;
-                DriverState = driverState;
-                _previousTable = driverState.StateTable;
-                _cancellationToken = cancellationToken;
-                SyntaxStore = syntaxStore;
-            }
+            internal SyntaxStore.Builder SyntaxStore { get; } = syntaxStore;
 
             public NodeStateTable<T> GetLatestStateTableForNode<T>(IIncrementalGeneratorNode<T> source)
             {

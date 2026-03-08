@@ -24771,16 +24771,10 @@ internal sealed partial class XmlCommentSyntax : XmlNodeSyntax
 internal abstract partial class DirectiveTriviaSyntax : StructuredTriviaSyntax
 {
     internal DirectiveTriviaSyntax(SyntaxKind kind, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations)
-      : base(kind, diagnostics, annotations)
-    {
-        SetFlags(NodeFlags.ContainsDirectives);
-    }
+      : base(kind, diagnostics, annotations) => SetFlags(NodeFlags.ContainsDirectives);
 
     internal DirectiveTriviaSyntax(SyntaxKind kind)
-      : base(kind)
-    {
-        SetFlags(NodeFlags.ContainsDirectives);
-    }
+      : base(kind) => SetFlags(NodeFlags.ContainsDirectives);
 
     public abstract SyntaxToken HashToken { get; }
 

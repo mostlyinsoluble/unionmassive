@@ -7,18 +7,11 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Navigation;
 
-internal readonly struct OmniSharpNavigableItem
+internal readonly struct OmniSharpNavigableItem(ImmutableArray<TaggedText> displayTaggedParts, Document document, TextSpan sourceSpan)
 {
-    public OmniSharpNavigableItem(ImmutableArray<TaggedText> displayTaggedParts, Document document, TextSpan sourceSpan)
-    {
-        DisplayTaggedParts = displayTaggedParts;
-        Document = document;
-        SourceSpan = sourceSpan;
-    }
+    public ImmutableArray<TaggedText> DisplayTaggedParts { get; } = displayTaggedParts;
 
-    public ImmutableArray<TaggedText> DisplayTaggedParts { get; }
+    public Document Document { get; } = document;
 
-    public Document Document { get; }
-
-    public TextSpan SourceSpan { get; }
+    public TextSpan SourceSpan { get; } = sourceSpan;
 }

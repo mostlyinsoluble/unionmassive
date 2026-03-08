@@ -18,15 +18,9 @@ internal sealed class ReferenceCountedDisposableCache<TKey, TValue> where TValue
     private readonly Dictionary<TKey, ReferenceCountedDisposable<Entry>.WeakReference> _cache;
     private readonly object _gate = new();
 
-    public ReferenceCountedDisposableCache()
-    {
-        _cache = [];
-    }
+    public ReferenceCountedDisposableCache() => _cache = [];
 
-    public ReferenceCountedDisposableCache(IEqualityComparer<TKey> comparer)
-    {
-        _cache = new(comparer);
-    }
+    public ReferenceCountedDisposableCache(IEqualityComparer<TKey> comparer) => _cache = new(comparer);
 
     public IReferenceCountedDisposable<ICacheEntry<TKey, TValue>> GetOrCreate<TArg>(TKey key, Func<TKey, TArg, TValue> valueCreator, TArg arg)
     {

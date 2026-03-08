@@ -19,14 +19,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.Formatting;
 
 [ExportNewDocumentFormattingProvider(LanguageNames.CSharp), Shared]
-internal sealed class CSharpAccessibilityModifiersNewDocumentFormattingProvider : INewDocumentFormattingProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpAccessibilityModifiersNewDocumentFormattingProvider() : INewDocumentFormattingProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpAccessibilityModifiersNewDocumentFormattingProvider()
-    {
-    }
-
     public async Task<Document> FormatNewDocumentAsync(Document document, Document? hintDocument, CodeCleanupOptions options, CancellationToken cancellationToken)
     {
         var accessibilityPreferences = options.FormattingOptions.AccessibilityModifiersRequired;

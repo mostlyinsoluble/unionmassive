@@ -17,10 +17,7 @@ namespace Xunit.OutOfProcess
     internal class TestInvoker_OutOfProc : OutOfProcComponent
     {
         internal TestInvoker_OutOfProc(VisualStudioInstance visualStudioInstance)
-            : base(visualStudioInstance)
-        {
-            TestInvokerInProc = CreateInProcComponent<TestInvoker_InProc>(visualStudioInstance);
-        }
+            : base(visualStudioInstance) => TestInvokerInProc = CreateInProcComponent<TestInvoker_InProc>(visualStudioInstance);
 
         internal TestInvoker_InProc TestInvokerInProc
         {
@@ -32,14 +29,9 @@ namespace Xunit.OutOfProcess
             return TestInvokerInProc.CreateTestAssemblyRunner(testAssembly, testCases, diagnosticMessageSink, executionMessageSink, executionOptions);
         }
 
-        private class TestOutputHelperWrapper : MarshalByRefObject, ITestOutputHelper
+        private class TestOutputHelperWrapper(ITestOutputHelper testOutputHelper) : MarshalByRefObject, ITestOutputHelper
         {
-            private readonly ITestOutputHelper _testOutputHelper;
-
-            public TestOutputHelperWrapper(ITestOutputHelper testOutputHelper)
-            {
-                _testOutputHelper = testOutputHelper;
-            }
+            private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
             public void WriteLine(string message)
             {

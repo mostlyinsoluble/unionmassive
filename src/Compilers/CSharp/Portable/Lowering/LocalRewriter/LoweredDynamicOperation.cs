@@ -18,22 +18,13 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// Most callers just call <see cref="ToExpression"/> to get the combo but some (object and array initializers) 
     /// hoist all call-site initialization code and emit multiple invocations of the same site.
     /// </summary>
-    internal readonly struct LoweredDynamicOperation
+    internal readonly struct LoweredDynamicOperation(SyntheticBoundNodeFactory? factory, BoundExpression? siteInitialization, BoundExpression siteInvocation, TypeSymbol resultType, ImmutableArray<LocalSymbol> temps)
     {
-        private readonly SyntheticBoundNodeFactory? _factory;
-        private readonly TypeSymbol _resultType;
-        private readonly ImmutableArray<LocalSymbol> _temps;
-        public readonly BoundExpression? SiteInitialization;
-        public readonly BoundExpression SiteInvocation;
-
-        public LoweredDynamicOperation(SyntheticBoundNodeFactory? factory, BoundExpression? siteInitialization, BoundExpression siteInvocation, TypeSymbol resultType, ImmutableArray<LocalSymbol> temps)
-        {
-            _factory = factory;
-            _resultType = resultType;
-            _temps = temps;
-            this.SiteInitialization = siteInitialization;
-            this.SiteInvocation = siteInvocation;
-        }
+        private readonly SyntheticBoundNodeFactory? _factory = factory;
+        private readonly TypeSymbol _resultType = resultType;
+        private readonly ImmutableArray<LocalSymbol> _temps = temps;
+        public readonly BoundExpression? SiteInitialization = siteInitialization;
+        public readonly BoundExpression SiteInvocation = siteInvocation;
 
         public static LoweredDynamicOperation Bad(
             BoundExpression? loweredReceiver,

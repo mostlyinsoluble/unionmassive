@@ -14,8 +14,5 @@ internal sealed class BraceHighlightTag : TextMarkerTag
     public bool NavigateToStart { get; }
 
     private BraceHighlightTag(bool navigateToStart)
-        : base(ClassificationTypeDefinitions.BraceMatchingName)
-    {
-        this.NavigateToStart = navigateToStart;
-    }
+        : base(ClassificationTypeDefinitions.BraceMatchingName) => this.NavigateToStart = navigateToStart;
 }

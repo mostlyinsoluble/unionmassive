@@ -11,10 +11,7 @@ namespace Microsoft.Cci
     {
         private readonly MetadataWriter _metadataWriter;
 
-        internal TypeSpecComparer(MetadataWriter metadataWriter)
-        {
-            _metadataWriter = metadataWriter;
-        }
+        internal TypeSpecComparer(MetadataWriter metadataWriter) => _metadataWriter = metadataWriter;
 
         public bool Equals(ITypeReference? x, ITypeReference? y)
         {

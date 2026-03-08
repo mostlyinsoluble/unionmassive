@@ -15,10 +15,7 @@ internal readonly struct AspNetCoreVirtualCharSequence
 {
     private readonly VirtualCharSequence _virtualCharSequence;
 
-    internal AspNetCoreVirtualCharSequence(VirtualCharSequence virtualCharSequence)
-    {
-        _virtualCharSequence = virtualCharSequence;
-    }
+    internal AspNetCoreVirtualCharSequence(VirtualCharSequence virtualCharSequence) => _virtualCharSequence = virtualCharSequence;
 
     /// <inheritdoc cref="VirtualCharSequence.Empty"/>
     public static readonly AspNetCoreVirtualCharSequence Empty = new(VirtualCharSequence.Empty);
@@ -60,14 +57,9 @@ internal readonly struct AspNetCoreVirtualCharSequence
         => new(_virtualCharSequence.GetEnumerator());
 
     /// <inheritdoc cref="VirtualCharSequence.Enumerator"/>
-    public struct Enumerator : IEnumerator<AspNetCoreVirtualChar>
+    public struct Enumerator(VirtualCharSequence.Enumerator enumerator) : IEnumerator<AspNetCoreVirtualChar>
     {
-        private VirtualCharSequence.Enumerator _enumerator;
-
-        public Enumerator(VirtualCharSequence.Enumerator enumerator)
-        {
-            _enumerator = enumerator;
-        }
+        private VirtualCharSequence.Enumerator _enumerator = enumerator;
 
         public bool MoveNext()
             => _enumerator.MoveNext();

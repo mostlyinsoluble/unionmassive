@@ -142,10 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class PointerTypeSymbolAdapter
     {
-        internal PointerTypeSymbolAdapter(PointerTypeSymbol underlyingPointerTypeSymbol)
-        {
-            AdaptedPointerTypeSymbol = underlyingPointerTypeSymbol;
-        }
+        internal PointerTypeSymbolAdapter(PointerTypeSymbol underlyingPointerTypeSymbol) => AdaptedPointerTypeSymbol = underlyingPointerTypeSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedPointerTypeSymbol;
         internal PointerTypeSymbol AdaptedPointerTypeSymbol { get; }

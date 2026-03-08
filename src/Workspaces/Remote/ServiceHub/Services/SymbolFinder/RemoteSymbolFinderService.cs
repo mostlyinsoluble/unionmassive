@@ -15,7 +15,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteSymbolFinderService : BrokeredServiceBase, IRemoteSymbolFinderService
+internal sealed class RemoteSymbolFinderService(in BrokeredServiceBase.ServiceConstructionArguments arguments, RemoteCallback<IRemoteSymbolFinderService.ICallback> callback) : BrokeredServiceBase(arguments), IRemoteSymbolFinderService
 {
     internal sealed class Factory : FactoryBase<IRemoteSymbolFinderService, IRemoteSymbolFinderService.ICallback>
     {
@@ -23,13 +23,7 @@ internal sealed class RemoteSymbolFinderService : BrokeredServiceBase, IRemoteSy
             => new RemoteSymbolFinderService(arguments, callback);
     }
 
-    private readonly RemoteCallback<IRemoteSymbolFinderService.ICallback> _callback;
-
-    public RemoteSymbolFinderService(in ServiceConstructionArguments arguments, RemoteCallback<IRemoteSymbolFinderService.ICallback> callback)
-        : base(arguments)
-    {
-        _callback = callback;
-    }
+    private readonly RemoteCallback<IRemoteSymbolFinderService.ICallback> _callback = callback;
 
     public ValueTask FindReferencesAsync(
         Checksum solutionChecksum,

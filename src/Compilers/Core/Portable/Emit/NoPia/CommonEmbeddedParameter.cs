@@ -36,17 +36,11 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         TEmbeddedParameter,
         TEmbeddedTypeParameter>
     {
-        internal abstract class CommonEmbeddedParameter : Cci.IEmbeddedDefinition, Cci.IParameterDefinition
+        internal abstract class CommonEmbeddedParameter(EmbeddedTypesManager<TPEModuleBuilder, TModuleCompilationState, TEmbeddedTypesManager, TSyntaxNode, TAttributeData, TSymbol, TAssemblySymbol, TNamedTypeSymbol, TFieldSymbol, TMethodSymbol, TEventSymbol, TPropertySymbol, TParameterSymbol, TTypeParameterSymbol, TEmbeddedType, TEmbeddedField, TEmbeddedMethod, TEmbeddedEvent, TEmbeddedProperty, TEmbeddedParameter, TEmbeddedTypeParameter>.CommonEmbeddedMember containingPropertyOrMethod, TParameterSymbol underlyingParameter) : Cci.IEmbeddedDefinition, Cci.IParameterDefinition
         {
-            public readonly CommonEmbeddedMember ContainingPropertyOrMethod;
-            public readonly TParameterSymbol UnderlyingParameter;
+            public readonly CommonEmbeddedMember ContainingPropertyOrMethod = containingPropertyOrMethod;
+            public readonly TParameterSymbol UnderlyingParameter = underlyingParameter;
             private ImmutableArray<TAttributeData> _lazyAttributes;
-
-            protected CommonEmbeddedParameter(CommonEmbeddedMember containingPropertyOrMethod, TParameterSymbol underlyingParameter)
-            {
-                this.ContainingPropertyOrMethod = containingPropertyOrMethod;
-                this.UnderlyingParameter = underlyingParameter;
-            }
 
             public bool IsEncDeleted
                 => false;

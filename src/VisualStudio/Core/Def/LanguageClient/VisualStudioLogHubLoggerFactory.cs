@@ -19,7 +19,10 @@ using StreamJsonRpc;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.LanguageClient;
 
 [Export(typeof(ILspServiceLoggerFactory))]
-internal sealed class VisualStudioLogHubLoggerFactory : ILspServiceLoggerFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioLogHubLoggerFactory(
+    IVsService<SVsBrokeredServiceContainer, IBrokeredServiceContainer> brokeredServiceContainer) : ILspServiceLoggerFactory
 {
     /// <summary>
     /// A unique, always increasing, ID we use to identify this server in our loghub logs.  Needed so that if our
@@ -27,15 +30,7 @@ internal sealed class VisualStudioLogHubLoggerFactory : ILspServiceLoggerFactory
     /// </summary>
     private static int s_logHubSessionId;
 
-    private readonly IVsService<IBrokeredServiceContainer> _brokeredServiceContainer;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioLogHubLoggerFactory(
-        IVsService<SVsBrokeredServiceContainer, IBrokeredServiceContainer> brokeredServiceContainer)
-    {
-        _brokeredServiceContainer = brokeredServiceContainer;
-    }
+    private readonly IVsService<IBrokeredServiceContainer> _brokeredServiceContainer = brokeredServiceContainer;
 
     public async Task<AbstractLspLogger> CreateLoggerAsync(string serverTypeName, JsonRpc jsonRpc, CancellationToken cancellationToken)
     {

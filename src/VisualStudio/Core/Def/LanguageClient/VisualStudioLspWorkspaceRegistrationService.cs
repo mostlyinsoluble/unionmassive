@@ -9,11 +9,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.LanguageServer;
 
 [Export(typeof(LspWorkspaceRegistrationService)), Shared]
-internal sealed class VisualStudioLspWorkspaceRegistrationService : LspWorkspaceRegistrationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioLspWorkspaceRegistrationService() : LspWorkspaceRegistrationService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioLspWorkspaceRegistrationService()
-    {
-    }
 }

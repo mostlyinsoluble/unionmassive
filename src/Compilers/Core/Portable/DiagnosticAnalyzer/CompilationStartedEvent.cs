@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         public ImmutableArray<AdditionalText> AdditionalFiles { get; }
 
         private CompilationStartedEvent(Compilation compilation, ImmutableArray<AdditionalText> additionalFiles)
-            : base(compilation)
-        {
-            AdditionalFiles = additionalFiles;
-        }
+            : base(compilation) => AdditionalFiles = additionalFiles;
 
         public CompilationStartedEvent(Compilation compilation)
             : this(compilation, ImmutableArray<AdditionalText>.Empty)

@@ -13,43 +13,22 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ExtractClass;
 
-internal sealed class ExtractClassViewModel
+internal sealed class ExtractClassViewModel(
+    IUIThreadOperationExecutor uiThreadOperationExecutor,
+    INotificationService notificationService,
+    INamedTypeSymbol selectedType,
+    ImmutableArray<MemberSymbolViewModel> memberViewModels,
+    ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> memberToDependentsMap,
+    string defaultTypeName,
+    string defaultNamespace,
+    string languageName,
+    string typeParameterSuffix,
+    ImmutableArray<string> conflictingNames,
+    ISyntaxFactsService syntaxFactsService,
+    bool canAddDocument)
 {
-    private readonly INotificationService _notificationService;
-    private readonly INamedTypeSymbol _selectedType;
-
-    public ExtractClassViewModel(
-        IUIThreadOperationExecutor uiThreadOperationExecutor,
-        INotificationService notificationService,
-        INamedTypeSymbol selectedType,
-        ImmutableArray<MemberSymbolViewModel> memberViewModels,
-        ImmutableDictionary<ISymbol, Task<ImmutableArray<ISymbol>>> memberToDependentsMap,
-        string defaultTypeName,
-        string defaultNamespace,
-        string languageName,
-        string typeParameterSuffix,
-        ImmutableArray<string> conflictingNames,
-        ISyntaxFactsService syntaxFactsService,
-        bool canAddDocument)
-    {
-        _notificationService = notificationService;
-        _selectedType = selectedType;
-
-        MemberSelectionViewModel = new MemberSelectionViewModel(
-            uiThreadOperationExecutor,
-            memberViewModels,
-            memberToDependentsMap,
-            destinationTypeKind: TypeKind.Class);
-
-        DestinationViewModel = new NewTypeDestinationSelectionViewModel(
-            defaultTypeName,
-            languageName,
-            defaultNamespace,
-            typeParameterSuffix,
-            conflictingNames,
-            syntaxFactsService,
-            canAddDocument);
-    }
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly INamedTypeSymbol _selectedType = selectedType;
 
     internal bool TrySubmit()
     {
@@ -65,8 +44,19 @@ internal sealed class ExtractClassViewModel
     private void SendFailureNotification(string message)
         => _notificationService.SendNotification(message, severity: NotificationSeverity.Information);
 
-    public MemberSelectionViewModel MemberSelectionViewModel { get; }
-    public NewTypeDestinationSelectionViewModel DestinationViewModel { get; }
+    public MemberSelectionViewModel MemberSelectionViewModel { get; } = new MemberSelectionViewModel(
+            uiThreadOperationExecutor,
+            memberViewModels,
+            memberToDependentsMap,
+            destinationTypeKind: TypeKind.Class);
+    public NewTypeDestinationSelectionViewModel DestinationViewModel { get; } = new NewTypeDestinationSelectionViewModel(
+            defaultTypeName,
+            languageName,
+            defaultNamespace,
+            typeParameterSuffix,
+            conflictingNames,
+            syntaxFactsService,
+            canAddDocument);
     public string Title => _selectedType.IsRecord
         ? ServicesVSResources.Extract_Base_Record
         : ServicesVSResources.Extract_Base_Class;

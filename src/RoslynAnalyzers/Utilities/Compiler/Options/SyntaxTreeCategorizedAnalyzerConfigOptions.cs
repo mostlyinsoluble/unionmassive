@@ -21,10 +21,7 @@ namespace Analyzer.Utilities
 
         public static readonly SyntaxTreeCategorizedAnalyzerConfigOptions Empty = new(analyzerConfigOptions: null);
 
-        private SyntaxTreeCategorizedAnalyzerConfigOptions(AnalyzerConfigOptions? analyzerConfigOptions)
-        {
-            _analyzerConfigOptions = analyzerConfigOptions;
-        }
+        private SyntaxTreeCategorizedAnalyzerConfigOptions(AnalyzerConfigOptions? analyzerConfigOptions) => _analyzerConfigOptions = analyzerConfigOptions;
 
         public static SyntaxTreeCategorizedAnalyzerConfigOptions Create(AnalyzerConfigOptions? analyzerConfigOptions)
         {

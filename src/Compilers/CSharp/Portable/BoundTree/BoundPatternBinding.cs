@@ -9,15 +9,11 @@ using System.Diagnostics;
 namespace Microsoft.CodeAnalysis.CSharp
 {
     [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
-    internal readonly struct BoundPatternBinding
+    internal readonly struct BoundPatternBinding(BoundExpression variableAccess, BoundDagTemp tempContainingValue)
     {
-        public readonly BoundExpression VariableAccess;
-        public readonly BoundDagTemp TempContainingValue;
-        public BoundPatternBinding(BoundExpression variableAccess, BoundDagTemp tempContainingValue)
-        {
-            this.VariableAccess = variableAccess;
-            this.TempContainingValue = tempContainingValue;
-        }
+        public readonly BoundExpression VariableAccess = variableAccess;
+        public readonly BoundDagTemp TempContainingValue = tempContainingValue;
+
         public override string ToString()
         {
             return GetDebuggerDisplay();

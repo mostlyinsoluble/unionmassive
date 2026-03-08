@@ -6,11 +6,7 @@ using Microsoft.CodeAnalysis.EmbeddedLanguages.Common;
 
 namespace Microsoft.CodeAnalysis.EmbeddedLanguages.RegularExpressions;
 
-internal abstract class RegexNode : EmbeddedSyntaxNode<RegexKind, RegexNode>
+internal abstract class RegexNode(RegexKind kind) : EmbeddedSyntaxNode<RegexKind, RegexNode>(kind)
 {
-    protected RegexNode(RegexKind kind) : base(kind)
-    {
-    }
-
     public abstract void Accept(IRegexNodeVisitor visitor);
 }

@@ -1248,14 +1248,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        internal sealed class WellKnownMembersSignatureComparer : SpecialMembersSignatureComparer
+        internal sealed class WellKnownMembersSignatureComparer(CSharpCompilation compilation) : SpecialMembersSignatureComparer
         {
-            private readonly CSharpCompilation _compilation;
-
-            public WellKnownMembersSignatureComparer(CSharpCompilation compilation)
-            {
-                _compilation = compilation;
-            }
+            private readonly CSharpCompilation _compilation = compilation;
 
             protected override bool MatchTypeToTypeId(TypeSymbol type, int typeId)
             {

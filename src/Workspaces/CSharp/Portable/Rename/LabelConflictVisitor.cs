@@ -11,12 +11,9 @@ using Microsoft.CodeAnalysis.Rename.ConflictEngine;
 
 namespace Microsoft.CodeAnalysis.CSharp.Rename;
 
-internal sealed class LabelConflictVisitor : CSharpSyntaxVisitor
+internal sealed class LabelConflictVisitor(SyntaxToken tokenBeingRenamed) : CSharpSyntaxVisitor
 {
-    private readonly ConflictingIdentifierTracker _tracker;
-
-    public LabelConflictVisitor(SyntaxToken tokenBeingRenamed)
-        => _tracker = new ConflictingIdentifierTracker(tokenBeingRenamed, StringComparer.Ordinal);
+    private readonly ConflictingIdentifierTracker _tracker = new ConflictingIdentifierTracker(tokenBeingRenamed, StringComparer.Ordinal);
 
     public override void DefaultVisit(SyntaxNode node)
     {

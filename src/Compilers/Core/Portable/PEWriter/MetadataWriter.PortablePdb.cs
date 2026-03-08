@@ -30,14 +30,9 @@ namespace Microsoft.Cci
         /// We consider scopes with the same parent and the same imports the same.
         /// Internal for testing.
         /// </summary>
-        internal sealed class ImportScopeEqualityComparer : IEqualityComparer<IImportScope>
+        internal sealed class ImportScopeEqualityComparer(EmitContext context) : IEqualityComparer<IImportScope>
         {
-            private readonly EmitContext _context;
-
-            public ImportScopeEqualityComparer(EmitContext context)
-            {
-                _context = context;
-            }
+            private readonly EmitContext _context = context;
 
             public bool Equals(IImportScope x, IImportScope y)
             {

@@ -14,41 +14,29 @@ namespace Microsoft.VisualStudio.LanguageServices.LiveShare;
 
 [ExportLspRequestHandler(LiveShareConstants.RoslynContractName, RoslynMethods.ProjectsName)]
 [Obsolete("Used for backwards compatibility with old liveshare clients.")]
-internal sealed class RoslynProjectsHandler : ProjectsHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RoslynProjectsHandler() : ProjectsHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RoslynProjectsHandler()
-    {
-    }
 }
 
 [ExportLspRequestHandler(LiveShareConstants.CSharpContractName, RoslynMethods.ProjectsName)]
-internal sealed class CSharpProjectsHandler : ProjectsHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpProjectsHandler() : ProjectsHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpProjectsHandler()
-    {
-    }
 }
 
 [ExportLspRequestHandler(LiveShareConstants.VisualBasicContractName, RoslynMethods.ProjectsName)]
-internal sealed class VisualBasicProjectsHandler : ProjectsHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualBasicProjectsHandler() : ProjectsHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualBasicProjectsHandler()
-    {
-    }
 }
 
 [ExportLspRequestHandler(LiveShareConstants.TypeScriptContractName, RoslynMethods.ProjectsName)]
-internal sealed class TypeScriptProjectsHandler : ProjectsHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TypeScriptProjectsHandler() : ProjectsHandler
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TypeScriptProjectsHandler()
-    {
-    }
 }

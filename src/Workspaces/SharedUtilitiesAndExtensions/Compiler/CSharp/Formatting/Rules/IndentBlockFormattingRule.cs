@@ -26,10 +26,7 @@ internal sealed class IndentBlockFormattingRule : BaseFormattingRule
     {
     }
 
-    private IndentBlockFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private IndentBlockFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

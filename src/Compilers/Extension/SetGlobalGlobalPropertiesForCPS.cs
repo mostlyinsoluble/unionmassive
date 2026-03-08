@@ -16,15 +16,10 @@ namespace Roslyn.Compilers.Extension
 {
     [ExportBuildGlobalPropertiesProvider]
     [AppliesTo("(" + ProjectCapabilities.CSharp + " | " + ProjectCapabilities.VB + ")" + " & " + ProjectCapabilities.LanguageService)]
-    public class SetGlobalGlobalPropertiesForCPS : StaticGlobalPropertiesProviderBase
+    [method: ImportingConstructor]
+    [method: Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
+    public class SetGlobalGlobalPropertiesForCPS(IProjectService projectService) : StaticGlobalPropertiesProviderBase(projectService.Services)
     {
-        [ImportingConstructor]
-        [Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
-        public SetGlobalGlobalPropertiesForCPS(IProjectService projectService)
-            : base(projectService.Services)
-        {
-        }
-
         public override Task<IImmutableDictionary<string, string>> GetGlobalPropertiesAsync(CancellationToken cancellationToken)
         {
             // Currently the SolutionExists context will always occur before CPS calls this class

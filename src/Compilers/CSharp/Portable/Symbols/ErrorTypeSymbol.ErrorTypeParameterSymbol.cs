@@ -10,18 +10,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     internal partial class ErrorTypeSymbol
     {
-        protected sealed class ErrorTypeParameterSymbol : TypeParameterSymbol
+        protected sealed class ErrorTypeParameterSymbol(ErrorTypeSymbol container, string name, int ordinal) : TypeParameterSymbol
         {
-            private readonly ErrorTypeSymbol _container;
-            private readonly string _name;
-            private readonly int _ordinal;
-
-            public ErrorTypeParameterSymbol(ErrorTypeSymbol container, string name, int ordinal)
-            {
-                _container = container;
-                _name = name;
-                _ordinal = ordinal;
-            }
+            private readonly ErrorTypeSymbol _container = container;
+            private readonly string _name = name;
+            private readonly int _ordinal = ordinal;
 
             public override string Name
             {

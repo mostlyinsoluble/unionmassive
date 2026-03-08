@@ -13,7 +13,14 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.CodeActions;
 /// and RunCodeActionsHandler. The class provides enough information for each handler to identify the code
 /// action that it is dealing with. The information is passed along via the Data property in LSP.VSCodeAction. 
 /// </summary>
-internal sealed class CodeActionResolveData
+internal sealed class CodeActionResolveData(
+    string uniqueIdentifier,
+    ImmutableArray<string> customTags,
+    LSP.Range range,
+    LSP.TextDocumentIdentifier textDocument,
+    string[] codeActionPath,
+    string[]? fixAllFlavors,
+    ImmutableArray<LSP.CodeAction>? nestedCodeActions)
 {
     /// <summary>
     /// The unique identifier of a code action. No two code actions should have the same unique identifier.
@@ -23,37 +30,19 @@ internal sealed class CodeActionResolveData
     /// name of top level code action + '|' + name of nested code action + '|' + name of nested nested code action + etc.
     /// e.g. 'Suppress or Configure issues|Suppress IDEXXXX|in Source'
     /// </remarks>
-    public string UniqueIdentifier { get; }
+    public string UniqueIdentifier { get; } = uniqueIdentifier;
 
-    public ImmutableArray<string> CustomTags { get; }
+    public ImmutableArray<string> CustomTags { get; } = customTags;
 
-    public LSP.Range Range { get; }
+    public LSP.Range Range { get; } = range;
 
-    public LSP.TextDocumentIdentifier TextDocument { get; }
+    public LSP.TextDocumentIdentifier TextDocument { get; } = textDocument;
 
-    public string[] CodeActionPath { get; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string[]? FixAllFlavors { get; }
+    public string[] CodeActionPath { get; } = codeActionPath;
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public ImmutableArray<LSP.CodeAction>? NestedCodeActions { get; }
+    public string[]? FixAllFlavors { get; } = fixAllFlavors;
 
-    public CodeActionResolveData(
-        string uniqueIdentifier,
-        ImmutableArray<string> customTags,
-        LSP.Range range,
-        LSP.TextDocumentIdentifier textDocument,
-        string[] codeActionPath,
-        string[]? fixAllFlavors,
-        ImmutableArray<LSP.CodeAction>? nestedCodeActions)
-    {
-        UniqueIdentifier = uniqueIdentifier;
-        CustomTags = customTags;
-        Range = range;
-        TextDocument = textDocument;
-        CodeActionPath = codeActionPath;
-        FixAllFlavors = fixAllFlavors;
-        NestedCodeActions = nestedCodeActions;
-    }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ImmutableArray<LSP.CodeAction>? NestedCodeActions { get; } = nestedCodeActions;
 }

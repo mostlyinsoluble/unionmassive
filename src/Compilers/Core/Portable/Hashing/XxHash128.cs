@@ -40,10 +40,7 @@ namespace System.IO.Hashing
         }
 
         /// <summary>Initializes a new instance of the <see cref="XxHash128"/> class using the specified seed.</summary>
-        public XxHash128(long seed) : base(HashLengthInBytes)
-        {
-            Initialize(ref _state, (ulong)seed);
-        }
+        public XxHash128(long seed) : base(HashLengthInBytes) => Initialize(ref _state, (ulong)seed);
 
         /// <summary>Computes the XXH128 hash of the provided <paramref name="source"/> data.</summary>
         /// <param name="source">The data to hash.</param>

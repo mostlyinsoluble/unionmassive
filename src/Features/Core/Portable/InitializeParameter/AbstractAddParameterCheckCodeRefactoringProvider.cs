@@ -893,15 +893,7 @@ internal abstract class AbstractAddParameterCheckCodeRefactoringProvider<
         // in languages that have a throw-expression, and only if the user has set the
         // preference that they like throw-expressions.
 
-        if (blockStatement == null)
-            return null;
-
-        var syntaxTree = await document.GetRequiredSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
-        if (!syntaxFacts.SupportsThrowExpression(syntaxTree.Options))
-            return null;
-
-        if (!PrefersThrowExpression(options))
+        if (blockStatement == null || !PrefersThrowExpression(options))
             return null;
 
         // Look through all the top level statements in the block to see if we can

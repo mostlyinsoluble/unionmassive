@@ -20,15 +20,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private PooledDictionary<TKey, TValue> _coreAnalysisData;
 #pragma warning restore
 
-        public DictionaryAnalysisData()
-        {
-            _coreAnalysisData = PooledDictionary<TKey, TValue>.GetInstance();
-        }
+        public DictionaryAnalysisData() => _coreAnalysisData = PooledDictionary<TKey, TValue>.GetInstance();
 
-        public DictionaryAnalysisData(IDictionary<TKey, TValue> initializer)
-        {
-            _coreAnalysisData = PooledDictionary<TKey, TValue>.GetInstance(initializer);
-        }
+        public DictionaryAnalysisData(IDictionary<TKey, TValue> initializer) => _coreAnalysisData = PooledDictionary<TKey, TValue>.GetInstance(initializer);
 
         public ImmutableDictionary<TKey, TValue> ToImmutableDictionary()
         {

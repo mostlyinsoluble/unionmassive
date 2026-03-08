@@ -11,17 +11,12 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteDocumentHighlightsService : BrokeredServiceBase, IRemoteDocumentHighlightsService
+internal sealed class RemoteDocumentHighlightsService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteDocumentHighlightsService
 {
     internal sealed class Factory : FactoryBase<IRemoteDocumentHighlightsService>
     {
         protected override IRemoteDocumentHighlightsService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteDocumentHighlightsService(arguments);
-    }
-
-    public RemoteDocumentHighlightsService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<SerializableDocumentHighlights>> GetDocumentHighlightsAsync(

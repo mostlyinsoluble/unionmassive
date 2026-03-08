@@ -13,18 +13,11 @@ namespace Microsoft.CodeAnalysis.CodeGen
     /// <summary>
     /// An expression that creates an array instance in metadata. Only for use in custom attributes.
     /// </summary>
-    internal sealed class MetadataCreateArray : Cci.IMetadataExpression
+    internal sealed class MetadataCreateArray(Cci.IArrayTypeReference arrayType, Cci.ITypeReference elementType, ImmutableArray<Cci.IMetadataExpression> initializers) : Cci.IMetadataExpression
     {
-        public Cci.IArrayTypeReference ArrayType { get; }
-        public Cci.ITypeReference ElementType { get; }
-        public ImmutableArray<Cci.IMetadataExpression> Elements { get; }
-
-        public MetadataCreateArray(Cci.IArrayTypeReference arrayType, Cci.ITypeReference elementType, ImmutableArray<Cci.IMetadataExpression> initializers)
-        {
-            ArrayType = arrayType;
-            ElementType = elementType;
-            Elements = initializers;
-        }
+        public Cci.IArrayTypeReference ArrayType { get; } = arrayType;
+        public Cci.ITypeReference ElementType { get; } = elementType;
+        public ImmutableArray<Cci.IMetadataExpression> Elements { get; } = initializers;
 
         Cci.ITypeReference Cci.IMetadataExpression.Type => ArrayType;
         void Cci.IMetadataExpression.Dispatch(Cci.MetadataVisitor visitor) => visitor.Visit(this);

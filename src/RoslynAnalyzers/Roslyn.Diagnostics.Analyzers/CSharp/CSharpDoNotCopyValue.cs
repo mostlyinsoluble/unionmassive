@@ -23,13 +23,8 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
         protected override NonCopyableSymbolWalker CreateSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
             => new CSharpNonCopyableSymbolWalker(context, cache);
 
-        private sealed class CSharpNonCopyableWalker : NonCopyableWalker
+        private sealed class CSharpNonCopyableWalker(OperationBlockAnalysisContext context, AbstractDoNotCopyValue.NonCopyableTypesCache cache) : NonCopyableWalker(context, cache)
         {
-            public CSharpNonCopyableWalker(OperationBlockAnalysisContext context, NonCopyableTypesCache cache)
-                : base(context, cache)
-            {
-            }
-
             protected override bool CheckForEachGetEnumerator(IForEachLoopOperation operation, [DisallowNull] ref IConversionOperation? conversion, [DisallowNull] ref IOperation? instance)
             {
                 if (operation.Syntax is CommonForEachStatementSyntax syntax
@@ -53,12 +48,8 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             }
         }
 
-        private sealed class CSharpNonCopyableSymbolWalker : NonCopyableSymbolWalker
+        private sealed class CSharpNonCopyableSymbolWalker(SymbolAnalysisContext context, AbstractDoNotCopyValue.NonCopyableTypesCache cache) : NonCopyableSymbolWalker(context, cache)
         {
-            public CSharpNonCopyableSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
-                : base(context, cache)
-            {
-            }
         }
     }
 }

@@ -20,27 +20,18 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 
-internal sealed class PeekableItemSource : IPeekableItemSource
+internal sealed class PeekableItemSource(
+    ITextBuffer textBuffer,
+    PeekableItemFactory peekableItemFactory,
+    IPeekResultFactory peekResultFactory,
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor uiThreadOperationExecutor) : IPeekableItemSource
 {
-    private readonly ITextBuffer _textBuffer;
-    private readonly PeekableItemFactory _peekableItemFactory;
-    private readonly IPeekResultFactory _peekResultFactory;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
-
-    public PeekableItemSource(
-        ITextBuffer textBuffer,
-        PeekableItemFactory peekableItemFactory,
-        IPeekResultFactory peekResultFactory,
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor uiThreadOperationExecutor)
-    {
-        _textBuffer = textBuffer;
-        _peekableItemFactory = peekableItemFactory;
-        _peekResultFactory = peekResultFactory;
-        _threadingContext = threadingContext;
-        _uiThreadOperationExecutor = uiThreadOperationExecutor;
-    }
+    private readonly ITextBuffer _textBuffer = textBuffer;
+    private readonly PeekableItemFactory _peekableItemFactory = peekableItemFactory;
+    private readonly IPeekResultFactory _peekResultFactory = peekResultFactory;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor = uiThreadOperationExecutor;
 
     public void AugmentPeekSession(IPeekSession session, IList<IPeekableItem> peekableItems)
     {

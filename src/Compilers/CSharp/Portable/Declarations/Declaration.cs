@@ -39,14 +39,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// declaration.  The whole program, consisting of the set of all declarations in all of the
     /// source files, is represented by a tree of merged declarations.
     /// </summary>
-    internal abstract class Declaration
+    internal abstract class Declaration(string name)
     {
-        protected readonly string name;
-
-        protected Declaration(string name)
-        {
-            this.name = name;
-        }
+        protected readonly string name = name;
 
         public string Name
         {

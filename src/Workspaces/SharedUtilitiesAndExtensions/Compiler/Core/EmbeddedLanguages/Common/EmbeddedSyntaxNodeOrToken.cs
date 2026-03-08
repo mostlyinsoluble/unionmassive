@@ -16,10 +16,7 @@ internal readonly struct EmbeddedSyntaxNodeOrToken<TSyntaxKind, TSyntaxNode>
 
     public readonly TSyntaxNode? Node;
 
-    private EmbeddedSyntaxNodeOrToken(TSyntaxNode? node) : this()
-    {
-        Node = node;
-    }
+    private EmbeddedSyntaxNodeOrToken(TSyntaxNode? node) : this() => Node = node;
 
     private EmbeddedSyntaxNodeOrToken(EmbeddedSyntaxToken<TSyntaxKind> token) : this()
     {

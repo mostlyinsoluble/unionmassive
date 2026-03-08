@@ -24,10 +24,7 @@ namespace Microsoft.CodeAnalysis.Scripting
         public ImmutableArray<string> SearchPaths => _resolver.PathResolver.SearchPaths;
         public string? BaseDirectory => _resolver.PathResolver.BaseDirectory;
 
-        internal ScriptMetadataResolver(RuntimeMetadataReferenceResolver resolver)
-        {
-            _resolver = resolver;
-        }
+        internal ScriptMetadataResolver(RuntimeMetadataReferenceResolver resolver) => _resolver = resolver;
 
         public ScriptMetadataResolver WithSearchPaths(params string[] searchPaths)
             => WithSearchPaths(searchPaths.AsImmutableOrEmpty());

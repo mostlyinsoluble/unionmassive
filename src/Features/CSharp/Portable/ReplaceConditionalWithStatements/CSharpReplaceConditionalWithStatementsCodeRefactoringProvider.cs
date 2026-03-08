@@ -15,7 +15,9 @@ using Microsoft.CodeAnalysis.ReplaceConditionalWithStatements;
 namespace Microsoft.CodeAnalysis.CSharp.ReplaceConditionalWithStatements;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ReplaceConditionalWithStatements), Shared]
-internal sealed class CSharpReplaceConditionalWithStatementsCodeRefactoringProvider :
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpReplaceConditionalWithStatementsCodeRefactoringProvider() :
     AbstractReplaceConditionalWithStatementsCodeRefactoringProvider<
         ExpressionSyntax,
         ConditionalExpressionSyntax,
@@ -27,12 +29,6 @@ internal sealed class CSharpReplaceConditionalWithStatementsCodeRefactoringProvi
         VariableDeclaratorSyntax,
         EqualsValueClauseSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpReplaceConditionalWithStatementsCodeRefactoringProvider()
-    {
-    }
-
     protected override bool CanRewriteLocalDeclarationStatement(LocalDeclarationStatementSyntax localDeclarationStatement)
     {
         // A using local decl must have an initializer, so we can't rewrite this to no longer have one.

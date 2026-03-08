@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis
                 return new FixedLocalizableString(fixedResource);
             }
 
-            private FixedLocalizableString(string fixedResource)
-            {
-                _fixedString = fixedResource;
-            }
+            private FixedLocalizableString(string fixedResource) => _fixedString = fixedResource;
 
             protected override string GetText(IFormatProvider? formatProvider)
             {

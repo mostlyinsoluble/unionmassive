@@ -17,14 +17,10 @@ using Microsoft.CodeAnalysis.ProjectManagement;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.GenerateType;
 
 [ExportWorkspaceServiceFactory(typeof(IGenerateTypeOptionsService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioGenerateTypeOptionsServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioGenerateTypeOptionsServiceFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioGenerateTypeOptionsServiceFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new VisualStudioGenerateTypeOptionsService();
 

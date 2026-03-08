@@ -11,12 +11,9 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.VsNavInfo;
 
-internal sealed class NavInfoFactory
+internal sealed class NavInfoFactory(AbstractLibraryService libraryService)
 {
-    internal AbstractLibraryService LibraryService { get; }
-
-    public NavInfoFactory(AbstractLibraryService libraryService)
-        => LibraryService = libraryService;
+    internal AbstractLibraryService LibraryService { get; } = libraryService;
 
     public IVsNavInfo CreateForProject(Project project)
         => new NavInfo(this, libraryName: GetLibraryName(project));

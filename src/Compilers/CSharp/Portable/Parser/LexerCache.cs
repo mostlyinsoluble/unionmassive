@@ -44,10 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private const int LeadingTriviaCacheInitialCapacity = 128;
         private const int TrailingTriviaCacheInitialCapacity = 16;
 
-        private LexerCache()
-        {
-            _identBuffer = new char[32];
-        }
+        private LexerCache() => _identBuffer = new char[32];
 
         public static LexerCache GetInstance()
         {

@@ -86,22 +86,14 @@ internal sealed partial class UnusedReferencesTableProvider
             }
         }
 
-        internal sealed class UnusedReferencesEntry : ITableEntry
+        internal sealed class UnusedReferencesEntry(string solutionName, string projectName, string language, ReferenceUpdate referenceUpdate) : ITableEntry
         {
-            public string SolutionName { get; }
-            public string ProjectName { get; }
-            public string Language { get; }
-            public ReferenceUpdate ReferenceUpdate { get; }
+            public string SolutionName { get; } = solutionName;
+            public string ProjectName { get; } = projectName;
+            public string Language { get; } = language;
+            public ReferenceUpdate ReferenceUpdate { get; } = referenceUpdate;
 
             public object Identity => ReferenceUpdate;
-
-            public UnusedReferencesEntry(string solutionName, string projectName, string language, ReferenceUpdate referenceUpdate)
-            {
-                SolutionName = solutionName;
-                ProjectName = projectName;
-                Language = language;
-                ReferenceUpdate = referenceUpdate;
-            }
 
             public bool TryGetValue(string keyName, out object? content)
             {

@@ -17,14 +17,11 @@ using Roslyn.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem.CPS;
 
 [Export(typeof(ITempPECompiler))]
-internal sealed class TempPECompiler : ITempPECompiler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TempPECompiler(VisualStudioWorkspace workspace) : ITempPECompiler
 {
-    private readonly VisualStudioWorkspace _workspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TempPECompiler(VisualStudioWorkspace workspace)
-        => _workspace = workspace;
+    private readonly VisualStudioWorkspace _workspace = workspace;
 
     public async Task<bool> CompileAsync(IWorkspaceProjectContext context, string outputFileName, ISet<string> filesToInclude, CancellationToken cancellationToken)
     {

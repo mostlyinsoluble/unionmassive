@@ -167,10 +167,7 @@ internal abstract class AbstractTypeImportCompletionProvider<AliasDeclarationTyp
         public int ReferenceCount { get; set; }
         public bool CacheMiss { get; set; }
 
-        public TelemetryCounter()
-        {
-            _elapsedTime = SharedStopwatch.StartNew();
-        }
+        public TelemetryCounter() => _elapsedTime = SharedStopwatch.StartNew();
 
         public void Report()
         {

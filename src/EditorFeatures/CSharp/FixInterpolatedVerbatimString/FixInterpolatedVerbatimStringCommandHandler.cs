@@ -24,14 +24,10 @@ namespace Microsoft.CodeAnalysis.Editor.CSharp.FixInterpolatedVerbatimString;
 [Export(typeof(ICommandHandler))]
 [ContentType(ContentTypeNames.CSharpContentType)]
 [Name(nameof(FixInterpolatedVerbatimStringCommandHandler))]
-internal sealed class FixInterpolatedVerbatimStringCommandHandler : IChainedCommandHandler<TypeCharCommandArgs>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FixInterpolatedVerbatimStringCommandHandler() : IChainedCommandHandler<TypeCharCommandArgs>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FixInterpolatedVerbatimStringCommandHandler()
-    {
-    }
-
     public string DisplayName => CSharpEditorResources.Fix_interpolated_verbatim_string;
 
     public void ExecuteCommand(TypeCharCommandArgs args, Action nextCommandHandler, CommandExecutionContext executionContext)

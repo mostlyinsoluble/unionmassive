@@ -8,16 +8,10 @@ using System.Threading.Tasks;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class RemoteProjectFile
+internal sealed class RemoteProjectFile(RpcClient client, int remoteProjectFileTargetObject)
 {
-    private readonly RpcClient _client;
-    private readonly int _remoteProjectFileTargetObject;
-
-    public RemoteProjectFile(RpcClient client, int remoteProjectFileTargetObject)
-    {
-        _client = client;
-        _remoteProjectFileTargetObject = remoteProjectFileTargetObject;
-    }
+    private readonly RpcClient _client = client;
+    private readonly int _remoteProjectFileTargetObject = remoteProjectFileTargetObject;
 
     public Task<ImmutableArray<DiagnosticLogItem>> GetDiagnosticLogItemsAsync(CancellationToken cancellationToken)
         => _client.InvokeAsync<ImmutableArray<DiagnosticLogItem>>(_remoteProjectFileTargetObject, nameof(IProjectFile.GetDiagnosticLogItems), parameters: [], cancellationToken);

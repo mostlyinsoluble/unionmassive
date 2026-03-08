@@ -13,10 +13,7 @@ internal readonly struct AspNetCoreVirtualChar : IEquatable<AspNetCoreVirtualCha
 {
     internal readonly VirtualChar VirtualChar;
 
-    internal AspNetCoreVirtualChar(VirtualChar virtualChar)
-    {
-        VirtualChar = virtualChar;
-    }
+    internal AspNetCoreVirtualChar(VirtualChar virtualChar) => VirtualChar = virtualChar;
 
     /// <summary>
     /// Returns the Unicode scalar value as an integer.

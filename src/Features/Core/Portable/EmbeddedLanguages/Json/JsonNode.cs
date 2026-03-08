@@ -6,11 +6,7 @@ using Microsoft.CodeAnalysis.EmbeddedLanguages.Common;
 
 namespace Microsoft.CodeAnalysis.Features.EmbeddedLanguages.Json;
 
-internal abstract class JsonNode : EmbeddedSyntaxNode<JsonKind, JsonNode>
+internal abstract class JsonNode(JsonKind kind) : EmbeddedSyntaxNode<JsonKind, JsonNode>(kind)
 {
-    protected JsonNode(JsonKind kind) : base(kind)
-    {
-    }
-
     public abstract void Accept(IJsonNodeVisitor visitor);
 }

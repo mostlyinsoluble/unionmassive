@@ -17,17 +17,11 @@ using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace Roslyn.Test.Utilities
 {
-    internal readonly struct TestableCompilerFile
+    internal readonly struct TestableCompilerFile(string filePath, TestableFile testableFile)
     {
-        public string FilePath { get; }
-        public TestableFile TestableFile { get; }
+        public string FilePath { get; } = filePath;
+        public TestableFile TestableFile { get; } = testableFile;
         public List<byte> Contents => TestableFile.Contents;
-
-        public TestableCompilerFile(string filePath, TestableFile testableFile)
-        {
-            FilePath = filePath;
-            TestableFile = testableFile;
-        }
     }
 
     internal enum BasicRuntimeOption

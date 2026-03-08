@@ -9,10 +9,7 @@ namespace Microsoft.CodeAnalysis.Extensions;
 /// </summary>
 public sealed class ExtensionMessageContext
 {
-    internal ExtensionMessageContext(Solution solution)
-    {
-        Solution = solution;
-    }
+    internal ExtensionMessageContext(Solution solution) => Solution = solution;
 
     /// <summary>
     /// Gets the current solution state.

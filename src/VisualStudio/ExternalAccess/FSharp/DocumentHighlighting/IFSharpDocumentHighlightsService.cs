@@ -31,16 +31,10 @@ internal readonly struct FSharpHighlightSpan
     }
 }
 
-internal readonly struct FSharpDocumentHighlights
+internal readonly struct FSharpDocumentHighlights(Document document, ImmutableArray<FSharpHighlightSpan> highlightSpans)
 {
-    public Document Document { get; }
-    public ImmutableArray<FSharpHighlightSpan> HighlightSpans { get; }
-
-    public FSharpDocumentHighlights(Document document, ImmutableArray<FSharpHighlightSpan> highlightSpans)
-    {
-        this.Document = document;
-        this.HighlightSpans = highlightSpans;
-    }
+    public Document Document { get; } = document;
+    public ImmutableArray<FSharpHighlightSpan> HighlightSpans { get; } = highlightSpans;
 }
 
 /// <summary>

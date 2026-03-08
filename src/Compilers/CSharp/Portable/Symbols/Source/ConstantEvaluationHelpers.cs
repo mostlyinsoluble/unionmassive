@@ -18,16 +18,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal static class ConstantEvaluationHelpers
     {
         [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
-        internal readonly struct FieldInfo
+        internal readonly struct FieldInfo(SourceFieldSymbolWithSyntaxReference field, bool startsCycle)
         {
-            public readonly SourceFieldSymbolWithSyntaxReference Field;
-            public readonly bool StartsCycle;
-
-            public FieldInfo(SourceFieldSymbolWithSyntaxReference field, bool startsCycle)
-            {
-                this.Field = field;
-                this.StartsCycle = startsCycle;
-            }
+            public readonly SourceFieldSymbolWithSyntaxReference Field = field;
+            public readonly bool StartsCycle = startsCycle;
 
             private string GetDebuggerDisplay()
             {

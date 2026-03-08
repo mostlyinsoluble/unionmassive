@@ -8,29 +8,20 @@ using Microsoft.CodeAnalysis.ExternalAccess.FSharp.Navigation;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.NavigateTo;
 
-internal class FSharpNavigateToSearchResult
+internal class FSharpNavigateToSearchResult(
+    string additionalInformation,
+    string kind,
+    FSharpNavigateToMatchKind matchKind,
+    string name,
+    FSharpNavigableItem navigateItem)
 {
-    public FSharpNavigateToSearchResult(
-        string additionalInformation,
-        string kind,
-        FSharpNavigateToMatchKind matchKind,
-        string name,
-        FSharpNavigableItem navigateItem)
-    {
-        AdditionalInformation = additionalInformation;
-        Kind = kind;
-        Name = name;
-        MatchKind = matchKind;
-        NavigableItem = navigateItem;
-    }
+    public string AdditionalInformation { get; } = additionalInformation;
 
-    public string AdditionalInformation { get; }
+    public string Kind { get; } = kind;
 
-    public string Kind { get; }
+    public FSharpNavigateToMatchKind MatchKind { get; } = matchKind;
 
-    public FSharpNavigateToMatchKind MatchKind { get; }
+    public string Name { get; } = name;
 
-    public string Name { get; }
-
-    public FSharpNavigableItem NavigableItem { get; }
+    public FSharpNavigableItem NavigableItem { get; } = navigateItem;
 }

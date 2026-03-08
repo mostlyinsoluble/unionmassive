@@ -18,19 +18,13 @@ namespace Microsoft.VisualStudio.LanguageServices.CSharp.ProjectSystemShim;
 
 internal partial class CSharpProjectShim
 {
-    private sealed class OptionsProcessor : AbstractLegacyProjectSystemProjectOptionsProcessor
+    private sealed class OptionsProcessor(ProjectSystemProject projectSystemProject, SolutionServices workspaceServices) : AbstractLegacyProjectSystemProjectOptionsProcessor(projectSystemProject, workspaceServices)
     {
-        private readonly ProjectSystemProject _projectSystemProject;
+        private readonly ProjectSystemProject _projectSystemProject = projectSystemProject;
 
         private readonly object[] _options = new object[(int)CompilerOptions.LARGEST_OPTION_ID];
         private string? _mainTypeName;
         private OutputKind _outputKind;
-
-        public OptionsProcessor(ProjectSystemProject projectSystemProject, SolutionServices workspaceServices)
-            : base(projectSystemProject, workspaceServices)
-        {
-            _projectSystemProject = projectSystemProject;
-        }
 
         public object this[CompilerOptions compilerOption]
         {

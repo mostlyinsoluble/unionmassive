@@ -25,14 +25,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProviderMef1("ReplCommandCompletionProvider", LanguageNames.CSharp)]
 [TextViewRole(PredefinedInteractiveTextViewRoles.InteractiveTextViewRole)]
 [Order(Before = PredefinedCompletionProviderNames.Keyword)]
-internal sealed class CSharpInteractiveWindowCommandCompletionProvider : AbstractInteractiveWindowCommandCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpInteractiveWindowCommandCompletionProvider() : AbstractInteractiveWindowCommandCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpInteractiveWindowCommandCompletionProvider()
-    {
-    }
-
     internal override string Language
         => LanguageNames.CSharp;
 

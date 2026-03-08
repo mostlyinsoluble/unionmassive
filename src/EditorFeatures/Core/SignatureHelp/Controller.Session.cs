@@ -13,10 +13,7 @@ internal sealed partial class Controller
     internal sealed partial class Session : Session<Controller, Model, ISignatureHelpPresenterSession>
     {
         public Session(Controller controller, ISignatureHelpPresenterSession presenterSession)
-            : base(controller, new ModelComputation<Model>(controller.ThreadingContext, controller), presenterSession)
-        {
-            this.PresenterSession.ItemSelected += OnPresenterSessionItemSelected;
-        }
+            : base(controller, new ModelComputation<Model>(controller.ThreadingContext, controller), presenterSession) => this.PresenterSession.ItemSelected += OnPresenterSessionItemSelected;
 
         public override void Stop()
         {

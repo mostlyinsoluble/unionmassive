@@ -137,10 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             public VisitResult(TypeWithState rValueType, TypeWithAnnotations lValueType, Optional<LocalState> stateForLambda)
-                : this(rValueType, lValueType)
-            {
-                StateForLambda = stateForLambda;
-            }
+                : this(rValueType, lValueType) => StateForLambda = stateForLambda;
 
             public VisitResult(TypeSymbol? type, NullableAnnotation annotation, NullableFlowState state)
             {
@@ -154,10 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// we need to keep track of the visit results for those parts.
             /// </summary>
             public VisitResult(TypeWithState rValueType, TypeWithAnnotations lValueType, VisitResult[] nestedVisitResults)
-                : this(rValueType, lValueType)
-            {
-                NestedVisitResults = nestedVisitResults;
-            }
+                : this(rValueType, lValueType) => NestedVisitResults = nestedVisitResults;
 
             internal VisitResult WithLValueType(TypeWithAnnotations lvalueType)
             {
@@ -7149,18 +7143,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 || method.OriginalDefinition.Equals(compilation.GetWellKnownTypeMember(WellKnownMember.System_Threading_Interlocked__CompareExchange_T), SymbolEqualityComparer.ConsiderEverything.CompareKind);
         }
 
-        private readonly struct CompareExchangeInfo
+        private readonly struct CompareExchangeInfo(ImmutableArray<BoundExpression> arguments, ImmutableArray<NullableWalker.VisitResult> results, ImmutableArray<int> argsToParamsOpt)
         {
-            public readonly ImmutableArray<BoundExpression> Arguments;
-            public readonly ImmutableArray<VisitResult> Results;
-            public readonly ImmutableArray<int> ArgsToParamsOpt;
-
-            public CompareExchangeInfo(ImmutableArray<BoundExpression> arguments, ImmutableArray<VisitResult> results, ImmutableArray<int> argsToParamsOpt)
-            {
-                Arguments = arguments;
-                Results = results;
-                ArgsToParamsOpt = argsToParamsOpt;
-            }
+            public readonly ImmutableArray<BoundExpression> Arguments = arguments;
+            public readonly ImmutableArray<VisitResult> Results = results;
+            public readonly ImmutableArray<int> ArgsToParamsOpt = argsToParamsOpt;
 
             public bool IsDefault => Arguments.IsDefault || Results.IsDefault;
         }
@@ -8623,10 +8610,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             private readonly NullableWalker _walker;
 
-            internal MethodInferenceExtensions(NullableWalker walker)
-            {
-                _walker = walker;
-            }
+            internal MethodInferenceExtensions(NullableWalker walker) => _walker = walker;
 
             internal override TypeWithAnnotations GetTypeWithAnnotations(BoundExpression expr)
             {
@@ -13394,10 +13378,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 internal LocalState Value;
 
-                internal Boxed(LocalState value)
-                {
-                    Value = value;
-                }
+                internal Boxed(LocalState value) => Value = value;
             }
 
             internal readonly int Id;
@@ -13793,20 +13774,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        internal sealed class LocalFunctionState : AbstractLocalFunctionState
+        internal sealed class LocalFunctionState(NullableWalker.LocalState unreachableState) : AbstractLocalFunctionState(stateFromBottom: unreachableState.Clone(), stateFromTop: unreachableState.Clone())
         {
             /// <summary>
             /// Defines the starting state used in the local function body to
             /// produce diagnostics and determine types.
             /// </summary>
-            public LocalState StartingState;
-
-            public LocalFunctionState(LocalState unreachableState)
-                // Note: these states are not used in nullable analysis.
-                : base(stateFromBottom: unreachableState.Clone(), stateFromTop: unreachableState.Clone())
-            {
-                StartingState = unreachableState;
-            }
+            public LocalState StartingState = unreachableState;
         }
 
         protected override LocalFunctionState CreateLocalFunctionState(LocalFunctionSymbol symbol)

@@ -12,14 +12,10 @@ namespace Microsoft.CodeAnalysis.Host;
 
 [ExportWorkspaceService(typeof(ITaskSchedulerProvider), ServiceLayer.Default)]
 [Shared]
-internal sealed class TaskSchedulerProvider : ITaskSchedulerProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TaskSchedulerProvider() : ITaskSchedulerProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TaskSchedulerProvider()
-    {
-    }
-
     public TaskScheduler CurrentContextScheduler
         => (SynchronizationContext.Current != null) ? TaskScheduler.FromCurrentSynchronizationContext() : TaskScheduler.Default;
 }

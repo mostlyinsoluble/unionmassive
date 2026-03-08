@@ -49,10 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _lazyDelegateType = Uninitialized;
         }
 
-        internal FunctionTypeSymbol(NamedTypeSymbol delegateType)
-        {
-            _lazyDelegateType = delegateType;
-        }
+        internal FunctionTypeSymbol(NamedTypeSymbol delegateType) => _lazyDelegateType = delegateType;
 
         internal void SetExpression(BoundExpression expression)
         {

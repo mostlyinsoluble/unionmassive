@@ -15,16 +15,10 @@ using Xunit;
 
 namespace Roslyn.Test.Utilities
 {
-    internal sealed class MethodDebugInfoBytes
+    internal sealed class MethodDebugInfoBytes(ImmutableArray<byte> bytes, ISymUnmanagedMethod method)
     {
-        public readonly ImmutableArray<byte> Bytes;
-        public readonly ISymUnmanagedMethod Method;
-
-        public MethodDebugInfoBytes(ImmutableArray<byte> bytes, ISymUnmanagedMethod method)
-        {
-            this.Bytes = bytes;
-            this.Method = method;
-        }
+        public readonly ImmutableArray<byte> Bytes = bytes;
+        public readonly ISymUnmanagedMethod Method = method;
 
         /// <remarks>
         /// This is a helper class for creating mostly-correct <see cref="MethodDebugInfoBytes"/> objects (e.g. circular forwards, extra records, etc).

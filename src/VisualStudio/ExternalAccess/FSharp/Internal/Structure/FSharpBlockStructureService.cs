@@ -16,16 +16,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Structure;
 
 [Shared]
 [ExportLanguageService(typeof(BlockStructureService), LanguageNames.FSharp)]
-internal class FSharpBlockStructureService : BlockStructureService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpBlockStructureService(IFSharpBlockStructureService service) : BlockStructureService
 {
-    private readonly IFSharpBlockStructureService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpBlockStructureService(IFSharpBlockStructureService service)
-    {
-        _service = service;
-    }
+    private readonly IFSharpBlockStructureService _service = service;
 
     public override string Language => LanguageNames.FSharp;
 

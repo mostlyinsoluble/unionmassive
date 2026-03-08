@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private readonly PooledDictionary<BasicBlock, TAnalysisData?> _info;
 #pragma warning restore
 
-        public DataFlowAnalysisResultBuilder()
-        {
-            _info = PooledDictionary<BasicBlock, TAnalysisData?>.GetInstance();
-        }
+        public DataFlowAnalysisResultBuilder() => _info = PooledDictionary<BasicBlock, TAnalysisData?>.GetInstance();
 
         public TAnalysisData? this[BasicBlock block] => _info[block];
         public TAnalysisData? EntryBlockOutputData { get; set; }

@@ -11,19 +11,13 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.NewLines.MultipleBlankLines;
 
-internal abstract class AbstractMultipleBlankLinesDiagnosticAnalyzer : AbstractBuiltInCodeStyleDiagnosticAnalyzer
-{
-    private readonly ISyntaxFacts _syntaxFacts;
-
-    protected AbstractMultipleBlankLinesDiagnosticAnalyzer(ISyntaxFacts syntaxFacts)
-        : base(IDEDiagnosticIds.MultipleBlankLinesDiagnosticId,
-               EnforceOnBuildValues.MultipleBlankLines,
-               CodeStyleOptions2.AllowMultipleBlankLines,
-               new LocalizableResourceString(
+internal abstract class AbstractMultipleBlankLinesDiagnosticAnalyzer(ISyntaxFacts syntaxFacts) : AbstractBuiltInCodeStyleDiagnosticAnalyzer(IDEDiagnosticIds.MultipleBlankLinesDiagnosticId,
+           EnforceOnBuildValues.MultipleBlankLines,
+           CodeStyleOptions2.AllowMultipleBlankLines,
+           new LocalizableResourceString(
                    nameof(AnalyzersResources.Avoid_multiple_blank_lines), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
-    {
-        _syntaxFacts = syntaxFacts;
-    }
+{
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
 
     public override DiagnosticAnalyzerCategory GetAnalyzerCategory()
         => DiagnosticAnalyzerCategory.SyntaxTreeWithoutSemanticsAnalysis;

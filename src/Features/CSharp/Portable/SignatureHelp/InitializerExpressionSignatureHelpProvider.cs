@@ -19,14 +19,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 
 [ExportSignatureHelpProvider(nameof(InitializerExpressionSignatureHelpProvider), LanguageNames.CSharp), Shared]
-internal sealed partial class InitializerExpressionSignatureHelpProvider : AbstractOrdinaryMethodSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class InitializerExpressionSignatureHelpProvider() : AbstractOrdinaryMethodSignatureHelpProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InitializerExpressionSignatureHelpProvider()
-    {
-    }
-
     public override ImmutableArray<char> TriggerCharacters => ['{', ','];
 
     public override ImmutableArray<char> RetriggerCharacters => ['}'];

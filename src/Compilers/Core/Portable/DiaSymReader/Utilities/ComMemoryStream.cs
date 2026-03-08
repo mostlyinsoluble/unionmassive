@@ -20,22 +20,17 @@ namespace Microsoft.DiaSymReader
     /// 2. Read and Write are optimized to avoid copying (see <see cref="IUnsafeComStream"/>)
     /// 3. Allocates in chunks instead of a contiguous buffer to avoid re-alloc and copy costs when growing.
     /// </summary>
-    internal sealed unsafe class ComMemoryStream : IUnsafeComStream
+    internal sealed unsafe class ComMemoryStream(int chunkSize = 32768) : IUnsafeComStream
     {
         // internal for testing
         internal const int STREAM_SEEK_SET = 0;
         internal const int STREAM_SEEK_CUR = 1;
         internal const int STREAM_SEEK_END = 2;
 
-        private readonly int _chunkSize;
+        private readonly int _chunkSize = chunkSize;
         private readonly List<byte[]> _chunks = new List<byte[]>();
         private int _position;
         private int _length;
-
-        public ComMemoryStream(int chunkSize = 32768)
-        {
-            _chunkSize = chunkSize;
-        }
 
         public void CopyTo(Stream stream)
         {

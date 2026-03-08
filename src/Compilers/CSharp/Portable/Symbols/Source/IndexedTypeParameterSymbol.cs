@@ -30,10 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private readonly int _index;
 
-        private IndexedTypeParameterSymbol(int index)
-        {
-            _index = index;
-        }
+        private IndexedTypeParameterSymbol(int index) => _index = index;
 
         public override TypeParameterKind TypeParameterKind
         {

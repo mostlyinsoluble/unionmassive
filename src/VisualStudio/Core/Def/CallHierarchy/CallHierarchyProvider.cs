@@ -25,30 +25,21 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy;
 
 [Export(typeof(CallHierarchyProvider))]
-internal sealed partial class CallHierarchyProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CallHierarchyProvider(
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    IGlyphService glyphService,
+    Lazy<IStreamingFindUsagesPresenter> streamingPresenter)
 {
-    public readonly IAsynchronousOperationListener AsyncListener;
-    public readonly IUIThreadOperationExecutor ThreadOperationExecutor;
-    private readonly Lazy<IStreamingFindUsagesPresenter> _streamingPresenter;
+    public readonly IAsynchronousOperationListener AsyncListener = listenerProvider.GetListener(FeatureAttribute.CallHierarchy);
+    public readonly IUIThreadOperationExecutor ThreadOperationExecutor = threadOperationExecutor;
+    private readonly Lazy<IStreamingFindUsagesPresenter> _streamingPresenter = streamingPresenter;
 
-    public IThreadingContext ThreadingContext { get; }
-    public IGlyphService GlyphService { get; }
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CallHierarchyProvider(
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        IGlyphService glyphService,
-        Lazy<IStreamingFindUsagesPresenter> streamingPresenter)
-    {
-        AsyncListener = listenerProvider.GetListener(FeatureAttribute.CallHierarchy);
-        ThreadingContext = threadingContext;
-        ThreadOperationExecutor = threadOperationExecutor;
-        GlyphService = glyphService;
-        _streamingPresenter = streamingPresenter;
-    }
+    public IThreadingContext ThreadingContext { get; } = threadingContext;
+    public IGlyphService GlyphService { get; } = glyphService;
 
     public async Task<CallHierarchyItem?> CreateItemAsync(
         ISymbol symbol, Project project, ImmutableArray<Location> callsites, CancellationToken cancellationToken)

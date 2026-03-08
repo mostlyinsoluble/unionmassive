@@ -14,20 +14,12 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace Microsoft.VisualStudio.LanguageServices.StackTraceExplorer;
 
-internal sealed class StackTraceExplorerRootViewModel : ViewModelBase
+internal sealed class StackTraceExplorerRootViewModel(IThreadingContext threadingContext, VisualStudioWorkspace workspace, IClassificationFormatMap formatMap, ClassificationTypeMap typeMap) : ViewModelBase
 {
-    private readonly VisualStudioWorkspace _workspace;
-    private readonly IClassificationFormatMap _formatMap;
-    private readonly ClassificationTypeMap _typeMap;
-    private readonly IThreadingContext _threadingContext;
-
-    public StackTraceExplorerRootViewModel(IThreadingContext threadingContext, VisualStudioWorkspace workspace, IClassificationFormatMap formatMap, ClassificationTypeMap typeMap)
-    {
-        _threadingContext = threadingContext;
-        _workspace = workspace;
-        _formatMap = formatMap;
-        _typeMap = typeMap;
-    }
+    private readonly VisualStudioWorkspace _workspace = workspace;
+    private readonly IClassificationFormatMap _formatMap = formatMap;
+    private readonly ClassificationTypeMap _typeMap = typeMap;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public ObservableCollection<StackTraceExplorerTab> Tabs { get; } = [];
     public StackTraceExplorerTab? SelectedTab

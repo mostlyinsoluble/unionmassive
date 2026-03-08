@@ -229,16 +229,10 @@ internal sealed class WorkspaceProject : IWorkspaceProject
         }
     }
 
-    private sealed class WorkspaceProjectBatch : IWorkspaceProjectBatch
+    private sealed class WorkspaceProjectBatch(IAsyncDisposable batch, ILogger logger) : IWorkspaceProjectBatch
     {
-        private IAsyncDisposable? _batch;
-        private readonly ILogger _logger;
-
-        public WorkspaceProjectBatch(IAsyncDisposable batch, ILogger logger)
-        {
-            _batch = batch;
-            _logger = logger;
-        }
+        private IAsyncDisposable? _batch = batch;
+        private readonly ILogger _logger = logger;
 
         public async Task ApplyAsync(CancellationToken cancellationToken)
         {

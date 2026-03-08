@@ -8,21 +8,13 @@ using Microsoft.VisualStudio.Language.CallHierarchy;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy;
 
-internal sealed class FieldInitializerItem : ICallHierarchyNameItem
+internal sealed class FieldInitializerItem(string name, string sortText, ImageSource displayGlyph, IEnumerable<CallHierarchyDetail> details) : ICallHierarchyNameItem
 {
-    public FieldInitializerItem(string name, string sortText, ImageSource displayGlyph, IEnumerable<CallHierarchyDetail> details)
-    {
-        Name = name;
-        SortText = sortText;
-        DisplayGlyph = displayGlyph;
-        Details = details;
-    }
+    public IEnumerable<ICallHierarchyItemDetails> Details { get; } = details;
 
-    public IEnumerable<ICallHierarchyItemDetails> Details { get; }
+    public ImageSource DisplayGlyph { get; } = displayGlyph;
 
-    public ImageSource DisplayGlyph { get; }
+    public string Name { get; } = name;
 
-    public string Name { get; }
-
-    public string SortText { get; }
+    public string SortText { get; } = sortText;
 }

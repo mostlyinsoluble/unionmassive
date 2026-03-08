@@ -6,14 +6,9 @@ using System;
 
 namespace Microsoft.CodeAnalysis.Emit
 {
-    internal readonly struct SynthesizedDelegateKey : IEquatable<SynthesizedDelegateKey>
+    internal readonly struct SynthesizedDelegateKey(string name) : IEquatable<SynthesizedDelegateKey>
     {
-        public readonly string Name;
-
-        public SynthesizedDelegateKey(string name)
-        {
-            Name = name;
-        }
+        public readonly string Name = name;
 
         public override bool Equals(object? obj)
             => obj is SynthesizedDelegateKey other && Equals(other);

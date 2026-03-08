@@ -67,10 +67,7 @@ namespace Microsoft.CodeAnalysis
         {
             private Enumerator _e;
 
-            internal EnumeratorImpl(in SeparatedSyntaxList<TNode> list)
-            {
-                _e = new Enumerator(in list);
-            }
+            internal EnumeratorImpl(in SeparatedSyntaxList<TNode> list) => _e = new Enumerator(in list);
 
             public TNode Current
             {

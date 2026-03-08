@@ -19,14 +19,8 @@ internal sealed partial class ConvertSwitchStatementToExpressionDiagnosticAnalyz
 {
     private sealed class Analyzer : CSharpSyntaxVisitor<SyntaxKind>
     {
-        private readonly bool _supportsOrPatterns;
 
         private ExpressionSyntax? _assignmentTargetOpt;
-
-        private Analyzer(bool supportsOrPatterns)
-        {
-            _supportsOrPatterns = supportsOrPatterns;
-        }
 
         public static (SyntaxKind nodeToGenerate, VariableDeclaratorSyntax? declaratorToRemoveOpt) Analyze(
             SwitchStatementSyntax node,

@@ -13,24 +13,18 @@ using Xunit.Sdk;
 
 namespace Roslyn.Test.Utilities;
 
-public sealed class WpfTestCaseRunner : XunitTestCaseRunner
+public sealed class WpfTestCaseRunner(
+    WpfTestSharedData sharedData,
+    IXunitTestCase testCase,
+    string displayName,
+    string skipReason,
+    object[] constructorArguments,
+    object[] testMethodArguments,
+    IMessageBus messageBus,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource) : XunitTestCaseRunner(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus, aggregator, cancellationTokenSource)
 {
-    public WpfTestSharedData SharedData { get; }
-
-    public WpfTestCaseRunner(
-        WpfTestSharedData sharedData,
-        IXunitTestCase testCase,
-        string displayName,
-        string skipReason,
-        object[] constructorArguments,
-        object[] testMethodArguments,
-        IMessageBus messageBus,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
-        : base(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus, aggregator, cancellationTokenSource)
-    {
-        SharedData = sharedData;
-    }
+    public WpfTestSharedData SharedData { get; } = sharedData;
 
     protected override XunitTestRunner CreateTestRunner(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {

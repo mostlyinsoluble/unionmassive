@@ -70,16 +70,10 @@ internal sealed class VisualStudioMefHostServices : HostServices, IMefHostExport
         return (IEnumerable<Lazy<TExtension>>)exports;
     }
 
-    private readonly struct ExportKey : IEquatable<ExportKey>
+    private readonly struct ExportKey(string extensionTypeName, string metadataTypeName) : IEquatable<ExportKey>
     {
-        internal readonly string ExtensionTypeName;
-        internal readonly string MetadataTypeName;
-
-        public ExportKey(string extensionTypeName, string metadataTypeName)
-        {
-            ExtensionTypeName = extensionTypeName;
-            MetadataTypeName = metadataTypeName;
-        }
+        internal readonly string ExtensionTypeName = extensionTypeName;
+        internal readonly string MetadataTypeName = metadataTypeName;
 
         public bool Equals(ExportKey other)
             => string.Compare(ExtensionTypeName, other.ExtensionTypeName, StringComparison.OrdinalIgnoreCase) == 0 &&

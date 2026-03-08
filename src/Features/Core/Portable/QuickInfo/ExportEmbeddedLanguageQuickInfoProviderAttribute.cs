@@ -6,11 +6,7 @@ using Microsoft.CodeAnalysis.EmbeddedLanguages;
 
 namespace Microsoft.CodeAnalysis.QuickInfo;
 
-internal sealed class ExportEmbeddedLanguageQuickInfoProviderAttribute
-    : ExportEmbeddedLanguageFeatureServiceAttribute
+internal sealed class ExportEmbeddedLanguageQuickInfoProviderAttribute(string name, string[] languages, params string[] identifiers)
+        : ExportEmbeddedLanguageFeatureServiceAttribute(typeof(IEmbeddedLanguageQuickInfoProvider), name, languages, identifiers)
 {
-    public ExportEmbeddedLanguageQuickInfoProviderAttribute(string name, string[] languages, params string[] identifiers)
-        : base(typeof(IEmbeddedLanguageQuickInfoProvider), name, languages, identifiers)
-    {
-    }
 }

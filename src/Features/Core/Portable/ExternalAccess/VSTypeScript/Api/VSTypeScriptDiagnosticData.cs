@@ -14,10 +14,7 @@ internal readonly struct VSTypeScriptDiagnosticData
 {
     private readonly DiagnosticData _data;
 
-    internal VSTypeScriptDiagnosticData(DiagnosticData data)
-    {
-        _data = data;
-    }
+    internal VSTypeScriptDiagnosticData(DiagnosticData data) => _data = data;
 
     public DiagnosticSeverity Severity
         => _data.Severity;

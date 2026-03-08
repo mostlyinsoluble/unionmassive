@@ -47,11 +47,9 @@ internal partial class MoveToNamespaceDialog : DialogWindow
         }
     }
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(MoveToNamespaceDialog dialog)
     {
-        private readonly MoveToNamespaceDialog _dialog;
-        public TestAccessor(MoveToNamespaceDialog dialog)
-            => _dialog = dialog;
+        private readonly MoveToNamespaceDialog _dialog = dialog;
 
         public Button OKButton => _dialog.OKButton;
         public Button CancelButton => _dialog.CancelButton;

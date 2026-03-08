@@ -53,12 +53,6 @@ public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
             this.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
         }
 
-        /// <summary>
-        /// Gets or sets the language version to use for the test. The default value is
-        /// <see cref="LanguageVersion.CSharp8"/>.
-        /// </summary>
-        public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.CSharp8;
-
         /// <inheritdoc cref="SharedVerifierState.Options"/>
         internal OptionsCollection Options => _sharedState.Options;
 

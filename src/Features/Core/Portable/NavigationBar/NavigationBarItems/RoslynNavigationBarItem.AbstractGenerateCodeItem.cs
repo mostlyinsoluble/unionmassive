@@ -8,15 +8,9 @@ namespace Microsoft.CodeAnalysis.NavigationBar;
 
 internal abstract partial class RoslynNavigationBarItem
 {
-    public abstract class AbstractGenerateCodeItem : RoslynNavigationBarItem, IEquatable<AbstractGenerateCodeItem>
+    public abstract class AbstractGenerateCodeItem(RoslynNavigationBarItemKind kind, string text, Glyph glyph, SymbolKey destinationTypeSymbolKey) : RoslynNavigationBarItem(kind, text, glyph, bolded: false, grayed: false, indent: 0, childItems: default), IEquatable<AbstractGenerateCodeItem>
     {
-        public readonly SymbolKey DestinationTypeSymbolKey;
-
-        protected AbstractGenerateCodeItem(RoslynNavigationBarItemKind kind, string text, Glyph glyph, SymbolKey destinationTypeSymbolKey)
-            : base(kind, text, glyph, bolded: false, grayed: false, indent: 0, childItems: default)
-        {
-            DestinationTypeSymbolKey = destinationTypeSymbolKey;
-        }
+        public readonly SymbolKey DestinationTypeSymbolKey = destinationTypeSymbolKey;
 
         public abstract override bool Equals(object? obj);
         public abstract override int GetHashCode();

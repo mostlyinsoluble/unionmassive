@@ -128,13 +128,12 @@ internal abstract partial class AbstractImplementInterfaceService<TTypeDeclarati
             this, document, info, options, configuration);
 
         var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
-        var supportsImplementingLessAccessibleMember = syntaxFacts.SupportsImplicitImplementationOfNonPublicInterfaceMembers(document.Project.ParseOptions!);
         var implementedMembers = generator.GenerateMembers(
             compilation,
             interfaceMember,
             conflictingMember: null,
             memberName: interfaceMember.Name,
-            generateInvisibly: generator.ShouldGenerateInvisibleMember(document.Project.ParseOptions!, interfaceMember, interfaceMember.Name, supportsImplementingLessAccessibleMember),
+            generateInvisibly: generator.ShouldGenerateInvisibleMember(document.Project.ParseOptions!, interfaceMember, interfaceMember.Name, true),
             generateAbstractly: configuration.Abstractly,
             addNew: false,
             interfaceMember.RequiresUnsafeModifier() && !syntaxFacts.IsUnsafeContext(info.ContextNode),
@@ -175,7 +174,6 @@ internal abstract partial class AbstractImplementInterfaceService<TTypeDeclarati
     {
         var compilation = await document.Project.GetRequiredCompilationAsync(cancellationToken).ConfigureAwait(false);
         var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
-        var supportsImplicitImplementationOfNonPublicInterfaceMembers = syntaxFacts.SupportsImplicitImplementationOfNonPublicInterfaceMembers(document.Project.ParseOptions!);
         if (state.MembersWithoutExplicitOrImplicitImplementationWhichCanBeImplicitlyImplemented.Length > 0)
         {
             var totalMemberCount = 0;
@@ -187,7 +185,7 @@ internal abstract partial class AbstractImplementInterfaceService<TTypeDeclarati
                 {
                     totalMemberCount++;
 
-                    if (ContainsTypeLessAccessibleThan(member, state.ClassOrStructType, supportsImplicitImplementationOfNonPublicInterfaceMembers))
+                    if (ContainsTypeLessAccessibleThan(member, state.ClassOrStructType, true))
                         inaccessibleMemberCount++;
                 }
             }

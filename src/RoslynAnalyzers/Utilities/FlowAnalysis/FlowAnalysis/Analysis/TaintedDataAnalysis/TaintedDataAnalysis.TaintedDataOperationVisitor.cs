@@ -24,22 +24,15 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
     internal partial class TaintedDataAnalysis
     {
-        private sealed class TaintedDataOperationVisitor : AnalysisEntityDataFlowOperationVisitor<TaintedDataAnalysisData, TaintedDataAnalysisContext, TaintedDataAnalysisResult, TaintedDataAbstractValue>
+        private sealed class TaintedDataOperationVisitor(TaintedDataAnalysis.TaintedDataAnalysisDomain taintedDataAnalysisDomain, TaintedDataAnalysisContext analysisContext) : AnalysisEntityDataFlowOperationVisitor<TaintedDataAnalysisData, TaintedDataAnalysisContext, TaintedDataAnalysisResult, TaintedDataAbstractValue>(analysisContext)
         {
-            private readonly TaintedDataAnalysisDomain _taintedDataAnalysisDomain;
+            private readonly TaintedDataAnalysisDomain _taintedDataAnalysisDomain = taintedDataAnalysisDomain;
 
             /// <summary>
             /// Mapping of a tainted data sinks to their originating sources.
             /// </summary>
             /// <remarks>Keys are <see cref="SymbolAccess"/> sinks where the tainted data entered, values are <see cref="SymbolAccess"/>s where the tainted data originated from.</remarks>
-            private Dictionary<SymbolAccess, (ImmutableHashSet<SinkKind>.Builder SinkKinds, ImmutableHashSet<SymbolAccess>.Builder SourceOrigins)> TaintedSourcesBySink { get; }
-
-            public TaintedDataOperationVisitor(TaintedDataAnalysisDomain taintedDataAnalysisDomain, TaintedDataAnalysisContext analysisContext)
-                : base(analysisContext)
-            {
-                _taintedDataAnalysisDomain = taintedDataAnalysisDomain;
-                this.TaintedSourcesBySink = [];
-            }
+            private Dictionary<SymbolAccess, (ImmutableHashSet<SinkKind>.Builder SinkKinds, ImmutableHashSet<SymbolAccess>.Builder SourceOrigins)> TaintedSourcesBySink { get; } = [];
 
             public ImmutableArray<TaintedDataSourceSink> GetTaintedDataSourceSinkEntries()
             {

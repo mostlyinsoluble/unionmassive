@@ -132,11 +132,6 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
 
                 seenIndexAssignment = this.SyntaxFacts.IsElementAccessInitializer(firstInit);
                 seenInvocation = !seenIndexAssignment;
-
-                // An indexer can't be used with a collection expression (except for dictionary expressions).  So fail
-                // out immediately if we see that.
-                if (_analyzeForCollectionExpression && seenIndexAssignment && !this.SyntaxFacts.SupportsKeyValuePairElement(_objectCreationExpression.SyntaxTree.Options))
-                    return false;
             }
         }
 

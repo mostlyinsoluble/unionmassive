@@ -44,10 +44,7 @@ internal sealed class RemoteExportProviderBuilder : ExportProviderBuilder
         string cacheDirectory,
         string catalogPrefix,
         TraceSource traceLogger)
-        : base(assemblyPaths, resolver, cacheDirectory, catalogPrefix)
-    {
-        _traceLogger = traceLogger;
-    }
+        : base(assemblyPaths, resolver, cacheDirectory, catalogPrefix) => _traceLogger = traceLogger;
 
     public static async Task<string?> InitializeAsync(string localSettingsDirectory, TraceSource traceLogger, CancellationToken cancellationToken)
     {

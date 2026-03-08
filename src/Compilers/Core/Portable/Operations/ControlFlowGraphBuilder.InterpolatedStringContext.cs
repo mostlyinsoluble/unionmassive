@@ -12,34 +12,19 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
 {
     internal partial class ControlFlowGraphBuilder
     {
-        private class InterpolatedStringHandlerArgumentsContext
+        private class InterpolatedStringHandlerArgumentsContext(ImmutableArray<IInterpolatedStringHandlerCreationOperation> applicableCreationOperations, int startingStackDepth, bool hasReceiver)
         {
-            public readonly ImmutableArray<IInterpolatedStringHandlerCreationOperation> ApplicableCreationOperations;
-            public readonly int StartingStackDepth;
-            public readonly bool HasReceiver;
-
-            public InterpolatedStringHandlerArgumentsContext(ImmutableArray<IInterpolatedStringHandlerCreationOperation> applicableCreationOperations, int startingStackDepth, bool hasReceiver)
-            {
-                ApplicableCreationOperations = applicableCreationOperations;
-                HasReceiver = hasReceiver;
-                StartingStackDepth = startingStackDepth;
-            }
+            public readonly ImmutableArray<IInterpolatedStringHandlerCreationOperation> ApplicableCreationOperations = applicableCreationOperations;
+            public readonly int StartingStackDepth = startingStackDepth;
+            public readonly bool HasReceiver = hasReceiver;
         }
 
-        private class InterpolatedStringHandlerCreationContext
+        private class InterpolatedStringHandlerCreationContext(IInterpolatedStringHandlerCreationOperation applicableCreationOperation, int maximumStackDepth, int handlerPlaceholder, int outParameterPlaceholder)
         {
-            public readonly IInterpolatedStringHandlerCreationOperation ApplicableCreationOperation;
-            public readonly int MaximumStackDepth;
-            public readonly int HandlerPlaceholder;
-            public readonly int OutPlaceholder;
-
-            public InterpolatedStringHandlerCreationContext(IInterpolatedStringHandlerCreationOperation applicableCreationOperation, int maximumStackDepth, int handlerPlaceholder, int outParameterPlaceholder)
-            {
-                ApplicableCreationOperation = applicableCreationOperation;
-                MaximumStackDepth = maximumStackDepth;
-                OutPlaceholder = outParameterPlaceholder;
-                HandlerPlaceholder = handlerPlaceholder;
-            }
+            public readonly IInterpolatedStringHandlerCreationOperation ApplicableCreationOperation = applicableCreationOperation;
+            public readonly int MaximumStackDepth = maximumStackDepth;
+            public readonly int HandlerPlaceholder = handlerPlaceholder;
+            public readonly int OutPlaceholder = outParameterPlaceholder;
         }
 
         [Conditional("DEBUG")]

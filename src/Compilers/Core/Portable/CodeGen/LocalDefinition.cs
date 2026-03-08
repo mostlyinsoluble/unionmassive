@@ -10,76 +10,63 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CodeGen
 {
+    /// <summary>
+    /// Creates a new LocalDefinition.
+    /// </summary>
+    /// <param name="symbolOpt">Local symbol, used by edit and continue only, null otherwise.</param>
+    /// <param name="nameOpt">Name associated with the slot.</param>
+    /// <param name="type">Type associated with the slot.</param>
+    /// <param name="slot">Slot position in the signature.</param>
+    /// <param name="synthesizedKind">Local kind.</param>
+    /// <param name="id">Local id.</param>
+    /// <param name="pdbAttributes">Value to emit in the attributes field in the PDB.</param>
+    /// <param name="constraints">Specifies whether slot type should have pinned modifier and whether slot should have byref constraint.</param>
+    /// <param name="dynamicTransformFlags">The synthesized dynamic attributes of the local.</param>
+    /// <param name="tupleElementNames">Tuple element names of the local.</param>
     [DebuggerDisplay("{GetDebuggerDisplay(),nq}")]
-    internal sealed class LocalDefinition : Cci.ILocalDefinition
+    internal sealed class LocalDefinition(
+        ILocalSymbolInternal? symbolOpt,
+        string? nameOpt,
+        Cci.ITypeReference type,
+        int slot,
+        SynthesizedLocalKind synthesizedKind,
+        LocalDebugId id,
+        LocalVariableAttributes pdbAttributes,
+        LocalSlotConstraints constraints,
+        ImmutableArray<bool> dynamicTransformFlags,
+        ImmutableArray<string> tupleElementNames) : Cci.ILocalDefinition
     {
         //TODO: locals are really just typed slots. They do not have names.
         // name only matters for pdb generation where it is a scope-specific mapping to a slot.
         // it may be better if local does not have a name as will restrict reuse of locals when we do it.
 
         //Local symbol, currently used by edit and continue and for the location.
-        private readonly ILocalSymbolInternal? _symbolOpt;
+        private readonly ILocalSymbolInternal? _symbolOpt = symbolOpt;
 
-        private readonly string? _nameOpt;
+        private readonly string? _nameOpt = nameOpt;
 
         //data type associated with the local signature slot.
-        private readonly Cci.ITypeReference _type;
+        private readonly Cci.ITypeReference _type = type;
 
         // specifies whether local slot has a byref constraint and whether
         // the type of the local has the "pinned modifier" (7.1.2).
         // CLI spec Part I, paragraph 8.6.1.3:
         //   The byref constraint states that the content of the corresponding location is a managed pointer. A managed
         //   pointer can point to a local variable, parameter, field of a compound type, or element of an array.
-        private readonly LocalSlotConstraints _constraints;
+        private readonly LocalSlotConstraints _constraints = constraints;
 
         //ordinal position of the slot in the local signature.
-        private readonly int _slot;
+        private readonly int _slot = slot;
 
-        private readonly LocalSlotDebugInfo _slotInfo;
+        private readonly LocalSlotDebugInfo _slotInfo = new LocalSlotDebugInfo(synthesizedKind, id);
 
         /// <see cref="Cci.ILocalDefinition.PdbAttributes"/>.
-        private readonly LocalVariableAttributes _pdbAttributes;
+        private readonly LocalVariableAttributes _pdbAttributes = pdbAttributes;
 
         //Gives the synthesized dynamic attributes of the local definition
-        private readonly ImmutableArray<bool> _dynamicTransformFlags;
+        private readonly ImmutableArray<bool> _dynamicTransformFlags = dynamicTransformFlags.NullToEmpty();
 
-        private readonly ImmutableArray<string> _tupleElementNames;
-
-        /// <summary>
-        /// Creates a new LocalDefinition.
-        /// </summary>
-        /// <param name="symbolOpt">Local symbol, used by edit and continue only, null otherwise.</param>
-        /// <param name="nameOpt">Name associated with the slot.</param>
-        /// <param name="type">Type associated with the slot.</param>
-        /// <param name="slot">Slot position in the signature.</param>
-        /// <param name="synthesizedKind">Local kind.</param>
-        /// <param name="id">Local id.</param>
-        /// <param name="pdbAttributes">Value to emit in the attributes field in the PDB.</param>
-        /// <param name="constraints">Specifies whether slot type should have pinned modifier and whether slot should have byref constraint.</param>
-        /// <param name="dynamicTransformFlags">The synthesized dynamic attributes of the local.</param>
-        /// <param name="tupleElementNames">Tuple element names of the local.</param>
-        public LocalDefinition(
-            ILocalSymbolInternal? symbolOpt,
-            string? nameOpt,
-            Cci.ITypeReference type,
-            int slot,
-            SynthesizedLocalKind synthesizedKind,
-            LocalDebugId id,
-            LocalVariableAttributes pdbAttributes,
-            LocalSlotConstraints constraints,
-            ImmutableArray<bool> dynamicTransformFlags,
-            ImmutableArray<string> tupleElementNames)
-        {
-            _symbolOpt = symbolOpt;
-            _nameOpt = nameOpt;
-            _type = type;
-            _slot = slot;
-            _slotInfo = new LocalSlotDebugInfo(synthesizedKind, id);
-            _pdbAttributes = pdbAttributes;
-            _dynamicTransformFlags = dynamicTransformFlags.NullToEmpty();
-            _tupleElementNames = tupleElementNames.NullToEmpty();
-            _constraints = constraints;
-        }
+        private readonly ImmutableArray<string> _tupleElementNames = tupleElementNames.NullToEmpty();
 
         internal string GetDebuggerDisplay()
             => $"{_slot}: {_nameOpt ?? "<unnamed>"} ({_type})";

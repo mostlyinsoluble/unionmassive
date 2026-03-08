@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespac
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Description)]
-internal sealed class WhitespaceDescriptionColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WhitespaceDescriptionColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WhitespaceDescriptionColumnDefinition()
-    {
-    }
-
     public override string Name => Description;
     public override string DisplayName => ServicesVSResources.Description;
     public override bool IsFilterable => false;

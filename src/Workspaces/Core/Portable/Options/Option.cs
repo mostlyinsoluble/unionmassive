@@ -53,11 +53,9 @@ public class Option<T> : IPublicOption
                defaultValue,
                [.. PublicContract.RequireNonNullItems(storageLocations, nameof(storageLocations))],
                storageMapping: null,
-               isEditorConfigOption: false)
-    {
+               isEditorConfigOption: false) =>
         // should not be used internally to create options
         Debug.Assert(storageLocations.All(l => l is not IEditorConfigValueSerializer));
-    }
 
     internal Option(
         string feature,

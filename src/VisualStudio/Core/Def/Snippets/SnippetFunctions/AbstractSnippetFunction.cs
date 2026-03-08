@@ -12,19 +12,12 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Snippets;
 
-internal abstract partial class AbstractSnippetFunction : IVsExpansionFunction
+internal abstract partial class AbstractSnippetFunction(SnippetExpansionClient snippetExpansionClient, ITextBuffer subjectBuffer, IThreadingContext threadingContext) : IVsExpansionFunction
 {
-    private readonly ITextBuffer _subjectBuffer;
-    private readonly IThreadingContext _threadingContext;
+    private readonly ITextBuffer _subjectBuffer = subjectBuffer;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
-    protected readonly SnippetExpansionClient snippetExpansionClient;
-
-    public AbstractSnippetFunction(SnippetExpansionClient snippetExpansionClient, ITextBuffer subjectBuffer, IThreadingContext threadingContext)
-    {
-        this.snippetExpansionClient = snippetExpansionClient;
-        _subjectBuffer = subjectBuffer;
-        _threadingContext = threadingContext;
-    }
+    protected readonly SnippetExpansionClient snippetExpansionClient = snippetExpansionClient;
 
     protected Document? GetDocument(CancellationToken cancellationToken)
         => _subjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges()?.WithFrozenPartialSemantics(cancellationToken);

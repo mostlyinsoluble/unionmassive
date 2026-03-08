@@ -17,15 +17,9 @@ namespace Roslyn.Test.Utilities.CoreClr
             new SimpleAssemblyLoadContext(name, probingPath);
     }
 
-    public sealed class SimpleAssemblyLoadContext : AssemblyLoadContext
+    public sealed class SimpleAssemblyLoadContext(string name, string? probingPath = null) : AssemblyLoadContext(name, isCollectible: false)
     {
-        private readonly string _probingPath;
-
-        public SimpleAssemblyLoadContext(string name, string? probingPath = null)
-            : base(name, isCollectible: false)
-        {
-            _probingPath = probingPath ?? Path.GetDirectoryName(typeof(SimpleAssemblyLoadContext).Assembly.Location)!;
-        }
+        private readonly string _probingPath = probingPath ?? Path.GetDirectoryName(typeof(SimpleAssemblyLoadContext).Assembly.Location)!;
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {

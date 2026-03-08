@@ -7,15 +7,10 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Syntax
 {
-    internal class SyntaxListBuilder
+    internal class SyntaxListBuilder(int size)
     {
-        private ArrayElement<GreenNode?>[] _nodes;
+        private ArrayElement<GreenNode?>[] _nodes = new ArrayElement<GreenNode?>[size];
         public int Count { get; private set; }
-
-        public SyntaxListBuilder(int size)
-        {
-            _nodes = new ArrayElement<GreenNode?>[size];
-        }
 
         public void Clear()
         {

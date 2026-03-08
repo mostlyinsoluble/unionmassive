@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
     {
         private readonly ArrayBuilder<Symbol> _builder;
 
-        private UsesIsNullableVisitor(ArrayBuilder<Symbol> builder)
-        {
-            _builder = builder;
-        }
+        private UsesIsNullableVisitor(ArrayBuilder<Symbol> builder) => _builder = builder;
 
         internal static void GetUses(ArrayBuilder<Symbol> builder, Symbol symbol)
         {
@@ -199,7 +196,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
                     {
                         return false;
                     }
-                    inProgress = inProgress ?? ConsList<TypeParameterSymbol>.Empty;
+                    inProgress ??= ConsList<TypeParameterSymbol>.Empty;
                     inProgress = inProgress.Prepend(typeParameter);
                     return UsesIsNullable(typeParameter.ConstraintTypesNoUseSiteDiagnostics, inProgress) ||
                         typeParameter.ReferenceTypeConstraintIsNullable == true;

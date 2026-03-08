@@ -57,15 +57,12 @@ internal sealed partial class RemoteSemanticClassificationService : BrokeredServ
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public RemoteSemanticClassificationService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
-        _workQueue = new AsyncBatchingWorkQueue<(Document, ClassificationType, ClassificationOptions)>(
+        : base(arguments) => _workQueue = new AsyncBatchingWorkQueue<(Document, ClassificationType, ClassificationOptions)>(
             DelayTimeSpan.NonFocus,
             CacheClassificationsAsync,
             EqualityComparer<(Document, ClassificationType, ClassificationOptions)>.Default,
             AsynchronousOperationListenerProvider.NullListener,
             _cancellationTokenSource.Token);
-    }
 
     public override void Dispose()
     {

@@ -9,14 +9,9 @@ namespace Microsoft.CodeAnalysis.CodeGeneration;
 /// <summary>
 /// Context and preferences.
 /// </summary>
-internal abstract class CodeGenerationContextInfo
+internal abstract class CodeGenerationContextInfo(CodeGenerationContext context)
 {
-    public readonly CodeGenerationContext Context;
-
-    protected CodeGenerationContextInfo(CodeGenerationContext context)
-    {
-        Context = context;
-    }
+    public readonly CodeGenerationContext Context = context;
 
     public CodeGenerationContextInfo WithContext(CodeGenerationContext value)
         => WithContextImpl(value);

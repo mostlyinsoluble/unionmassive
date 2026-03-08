@@ -61,7 +61,6 @@
   </Folder>
   <Folder Name="/Analyzers/Utilities/">
     <Project Path="src/RoslynAnalyzers/Microsoft.CodeAnalysis.AnalyzerUtilities/Microsoft.CodeAnalysis.AnalyzerUtilities.csproj" />
-    <Project Path="src/RoslynAnalyzers/Test.Utilities/Test.Utilities.csproj" />
     <Project Path="src/RoslynAnalyzers/TestReferenceAssembly/TestReferenceAssembly.csproj" />
     <Project Path="src/RoslynAnalyzers/Utilities/Compiler.CSharp/Analyzer.CSharp.Utilities.shproj" />
     <Project Path="src/RoslynAnalyzers/Utilities/Compiler/Analyzer.Utilities.shproj" />

@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.EmbeddedLanguages.VirtualChars;
 
 [ExportLanguageServiceFactory(typeof(IVirtualCharLanguageService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpVirtualCharLanguageServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVirtualCharLanguageServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVirtualCharLanguageServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
         => CSharpVirtualCharLanguageService.Instance;
 

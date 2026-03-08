@@ -8,15 +8,10 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Syntax
 {
-    internal class SyntaxTriviaListBuilder
+    internal class SyntaxTriviaListBuilder(int size)
     {
-        private SyntaxTrivia[] _nodes;
+        private SyntaxTrivia[] _nodes = new SyntaxTrivia[size];
         private int _count;
-
-        public SyntaxTriviaListBuilder(int size)
-        {
-            _nodes = new SyntaxTrivia[size];
-        }
 
         public static SyntaxTriviaListBuilder Create()
         {

@@ -24,16 +24,10 @@ namespace Microsoft.CodeAnalysis
             {
             }
 
-            public readonly struct Value
+            public readonly struct Value(ImmutableArray<byte> publicKeyToken, AssemblyVersion version)
             {
-                public readonly ImmutableArray<byte> PublicKeyToken;
-                public readonly AssemblyVersion Version;
-
-                public Value(ImmutableArray<byte> publicKeyToken, AssemblyVersion version)
-                {
-                    this.PublicKeyToken = publicKeyToken;
-                    this.Version = version;
-                }
+                public readonly ImmutableArray<byte> PublicKeyToken = publicKeyToken;
+                public readonly AssemblyVersion Version = version;
             }
 
             public void Add(
@@ -51,16 +45,10 @@ namespace Microsoft.CodeAnalysis
             {
             }
 
-            public readonly struct Key : IEquatable<Key>
+            public readonly struct Key(string name, ImmutableArray<byte> publicKeyToken) : IEquatable<Key>
             {
-                public readonly string Name;
-                public readonly ImmutableArray<byte> PublicKeyToken;
-
-                public Key(string name, ImmutableArray<byte> publicKeyToken)
-                {
-                    this.Name = name;
-                    this.PublicKeyToken = publicKeyToken;
-                }
+                public readonly string Name = name;
+                public readonly ImmutableArray<byte> PublicKeyToken = publicKeyToken;
 
                 public bool Equals(Key other)
                 {
@@ -79,30 +67,20 @@ namespace Microsoft.CodeAnalysis
                 }
             }
 
-            public readonly struct Value
+            public readonly struct Value(
+                AssemblyVersion versionLow,
+                AssemblyVersion versionHigh,
+                string newName,
+                ImmutableArray<byte> newPublicKeyToken,
+                AssemblyVersion newVersion,
+                bool isPortable)
             {
-                public readonly AssemblyVersion VersionLow;
-                public readonly AssemblyVersion VersionHigh;
-                public readonly string NewName;
-                public readonly ImmutableArray<byte> NewPublicKeyToken;
-                public readonly AssemblyVersion NewVersion;
-                public readonly bool IsPortable;
-
-                public Value(
-                    AssemblyVersion versionLow,
-                    AssemblyVersion versionHigh,
-                    string newName,
-                    ImmutableArray<byte> newPublicKeyToken,
-                    AssemblyVersion newVersion,
-                    bool isPortable)
-                {
-                    VersionLow = versionLow;
-                    VersionHigh = versionHigh;
-                    NewName = newName;
-                    NewPublicKeyToken = newPublicKeyToken;
-                    NewVersion = newVersion;
-                    IsPortable = isPortable;
-                }
+                public readonly AssemblyVersion VersionLow = versionLow;
+                public readonly AssemblyVersion VersionHigh = versionHigh;
+                public readonly string NewName = newName;
+                public readonly ImmutableArray<byte> NewPublicKeyToken = newPublicKeyToken;
+                public readonly AssemblyVersion NewVersion = newVersion;
+                public readonly bool IsPortable = isPortable;
             }
 
             public void Add(

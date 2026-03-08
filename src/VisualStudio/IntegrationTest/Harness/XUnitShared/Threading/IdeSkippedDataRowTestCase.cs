@@ -19,10 +19,7 @@ namespace Xunit.Threading
         }
 
         public IdeSkippedDataRowTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, TestMethodDisplayOptions defaultMethodDisplayOptions, ITestMethod testMethod, VisualStudioInstanceKey visualStudioInstanceKey, string skipReason, object?[]? testMethodArguments = null)
-            : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, skipReason, testMethodArguments)
-        {
-            VisualStudioInstanceKey = visualStudioInstanceKey;
-        }
+            : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, skipReason, testMethodArguments) => VisualStudioInstanceKey = visualStudioInstanceKey;
 
         public VisualStudioInstanceKey VisualStudioInstanceKey
         {

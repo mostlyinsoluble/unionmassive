@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed partial class SynthesizedStringSwitchHashMethod : SynthesizedGlobalMethodSymbol
     {
         internal SynthesizedStringSwitchHashMethod(SynthesizedPrivateImplementationDetailsType privateImplType, TypeSymbol returnType, TypeSymbol paramType)
-            : base(privateImplType, returnType, PrivateImplementationDetails.SynthesizedStringHashFunctionName)
-        {
-            this.SetParameters(ImmutableArray.Create<ParameterSymbol>(SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(paramType), 0, RefKind.None, "s")));
-        }
+            : base(privateImplType, returnType, PrivateImplementationDetails.SynthesizedStringHashFunctionName) => this.SetParameters(ImmutableArray.Create<ParameterSymbol>(SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(paramType), 0, RefKind.None, "s")));
     }
 
     internal sealed partial class SynthesizedSpanSwitchHashMethod : SynthesizedGlobalMethodSymbol

@@ -26,10 +26,7 @@ internal sealed class NamingStyleSettingsProvider : SettingsProviderBase<NamingS
         NamingStyleSettingsUpdater settingsUpdater,
         Workspace workspace,
         IGlobalOptionService globalOptions)
-        : base(threadingContext, fileName, settingsUpdater, workspace, globalOptions)
-    {
-        Update();
-    }
+        : base(threadingContext, fileName, settingsUpdater, workspace, globalOptions) => Update();
 
     protected override async Task UpdateOptionsAsync(
         TieredAnalyzerConfigOptions options, ImmutableArray<Project> projectsInScope, CancellationToken cancellationToken)

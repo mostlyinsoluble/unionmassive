@@ -22,24 +22,14 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
     {
         #region Tracking
 
-        public class Entry
+        public class Entry(string abstractMemberName, string callerName, SyntaxNode node, ISymbol symbol)
         {
-            public readonly string AbstractMemberName;
-            public readonly string CallerName;
-            public readonly TLanguageKindEnum SyntaxKind;
-            public readonly SymbolKind? SymbolKind;
-            public readonly MethodKind? MethodKind;
-            public readonly bool ReturnsVoid;
-
-            public Entry(string abstractMemberName, string callerName, SyntaxNode node, ISymbol symbol)
-            {
-                AbstractMemberName = abstractMemberName;
-                CallerName = callerName;
-                SyntaxKind = node == null ? default : (TLanguageKindEnum)(object)(ushort)node.RawKind;
-                SymbolKind = symbol == null ? (SymbolKind?)null : symbol.Kind;
-                MethodKind = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).MethodKind : (MethodKind?)null;
-                ReturnsVoid = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).ReturnsVoid : false;
-            }
+            public readonly string AbstractMemberName = abstractMemberName;
+            public readonly string CallerName = callerName;
+            public readonly TLanguageKindEnum SyntaxKind = node == null ? default : (TLanguageKindEnum)(object)(ushort)node.RawKind;
+            public readonly SymbolKind? SymbolKind = symbol == null ? (SymbolKind?)null : symbol.Kind;
+            public readonly MethodKind? MethodKind = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).MethodKind : (MethodKind?)null;
+            public readonly bool ReturnsVoid = symbol is IMethodSymbol ? ((IMethodSymbol)symbol).ReturnsVoid : false;
 
             public override string ToString()
             {
@@ -160,7 +150,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
         private void AssertSequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, Func<IEnumerable<T>, IOrderedEnumerable<T>> sorter = null)
         {
-            sorter = sorter ?? new Func<IEnumerable<T>, IOrderedEnumerable<T>>(items => items.OrderBy(i => i));
+            sorter ??= new Func<IEnumerable<T>, IOrderedEnumerable<T>>(items => items.OrderBy(i => i));
             expected = sorter(expected);
             actual = sorter(actual);
             Assert.True(expected.SequenceEqual(actual),

@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#pragma warning disable format, IDE0011, IDE1006, IDE2001
+
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -109,9 +111,9 @@ internal class CSharpSyntaxFacts : AbstractSyntaxFacts, ISyntaxFacts
                 return true;
             }
             else if (lineDirective.Line.Kind() == SyntaxKind.NumericLiteralToken &&
-                lineDirective.Line.Value is int)
+                lineDirective.Line.Value is int line)
             {
-                info = new ExternalSourceInfo((int)lineDirective.Line.Value, false);
+                info = new ExternalSourceInfo(line, false);
                 return true;
             }
         }

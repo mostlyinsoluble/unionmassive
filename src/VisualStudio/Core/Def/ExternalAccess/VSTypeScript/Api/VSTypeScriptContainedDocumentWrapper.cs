@@ -11,12 +11,9 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.ExternalAccess.VSTypeScript.Api;
 
-internal readonly struct VSTypeScriptContainedDocumentWrapper
+internal readonly struct VSTypeScriptContainedDocumentWrapper(ContainedDocument underlyingObject)
 {
-    private readonly ContainedDocument _underlyingObject;
-
-    public VSTypeScriptContainedDocumentWrapper(ContainedDocument underlyingObject)
-        => _underlyingObject = underlyingObject;
+    private readonly ContainedDocument _underlyingObject = underlyingObject;
 
     public bool IsDefault => _underlyingObject == null;
 

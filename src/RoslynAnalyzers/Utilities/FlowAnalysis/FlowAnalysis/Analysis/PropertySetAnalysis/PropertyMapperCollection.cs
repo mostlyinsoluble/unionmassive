@@ -72,10 +72,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         {
         }
 
-        private PropertyMapperCollection()
-        {
-            throw new NotSupportedException();
-        }
+        private PropertyMapperCollection() => throw new NotSupportedException();
 
         private ImmutableDictionary<string, (int Index, PropertyMapper PropertyMapper)> PropertyMappersWithIndex { get; }
 

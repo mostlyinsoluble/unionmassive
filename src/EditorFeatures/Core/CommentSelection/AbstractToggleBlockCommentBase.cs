@@ -36,10 +36,7 @@ internal abstract class AbstractToggleBlockCommentBase :
         IEditorOperationsFactoryService editorOperationsFactoryService,
         ITextStructureNavigatorSelectorService navigatorSelectorService,
         EditorOptionsService editorOptionsService)
-        : base(undoHistoryRegistry, editorOperationsFactoryService, editorOptionsService)
-    {
-        _navigatorSelectorService = navigatorSelectorService;
-    }
+        : base(undoHistoryRegistry, editorOperationsFactoryService, editorOptionsService) => _navigatorSelectorService = navigatorSelectorService;
 
     /// <summary>
     /// Retrieves data about the commented spans near the selection.

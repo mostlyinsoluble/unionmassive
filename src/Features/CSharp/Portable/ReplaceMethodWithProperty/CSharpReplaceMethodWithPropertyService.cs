@@ -25,14 +25,10 @@ using static CSharpSyntaxTokens;
 using static SyntaxFactory;
 
 [ExportLanguageService(typeof(IReplaceMethodWithPropertyService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMethodWithPropertyService<MethodDeclarationSyntax>, IReplaceMethodWithPropertyService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpReplaceMethodWithPropertyService() : AbstractReplaceMethodWithPropertyService<MethodDeclarationSyntax>, IReplaceMethodWithPropertyService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpReplaceMethodWithPropertyService()
-    {
-    }
-
     public void RemoveSetMethod(SyntaxEditor editor, SyntaxNode setMethodDeclaration)
         => editor.RemoveNode(setMethodDeclaration);
 
@@ -46,26 +42,21 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
         CancellationToken cancellationToken)
     {
         if (getAndSetMethods.GetMethodDeclaration is not MethodDeclarationSyntax getMethodDeclaration)
-        {
             return;
-        }
 
-        var languageVersion = parseOptions.LanguageVersion();
         var newProperty = ConvertMethodsToProperty(
-            (CSharpCodeGenerationOptions)options, languageVersion,
+            (CSharpCodeGenerationOptions)options,
             semanticModel, editor.Generator,
             getAndSetMethods, propertyName, nameChanged, cancellationToken);
 
         editor.ReplaceNode(getMethodDeclaration, newProperty);
     }
 
-    public static SyntaxNode ConvertMethodsToProperty(
-        CSharpCodeGenerationOptions options, LanguageVersion languageVersion,
+    public static SyntaxNode ConvertMethodsToProperty(CSharpCodeGenerationOptions options,
         SemanticModel semanticModel, SyntaxGenerator generator, GetAndSetMethods getAndSetMethods,
         string propertyName, bool nameChanged, CancellationToken cancellationToken)
     {
-        var propertyDeclaration = ConvertMethodsToPropertyWorker(
-            options, languageVersion, semanticModel,
+        var propertyDeclaration = ConvertMethodsToPropertyWorker(options, semanticModel,
             generator, getAndSetMethods, propertyName, nameChanged, cancellationToken);
 
         var expressionBodyPreference = options.PreferExpressionBodiedProperties.Value;
@@ -81,7 +72,7 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
                 }
                 else if (getAccessor.Body != null &&
                          getAccessor.Body.TryConvertToArrowExpressionBody(
-                             propertyDeclaration.Kind(), languageVersion, expressionBodyPreference, cancellationToken,
+                             propertyDeclaration.Kind(), expressionBodyPreference, cancellationToken,
                              out var arrowExpression, out var semicolonToken))
                 {
                     return propertyDeclaration.WithExpressionBody(arrowExpression)
@@ -112,8 +103,7 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
         return propertyDeclaration;
     }
 
-    public static PropertyDeclarationSyntax ConvertMethodsToPropertyWorker(
-        CSharpCodeGenerationOptions options, LanguageVersion languageVersion,
+    public static PropertyDeclarationSyntax ConvertMethodsToPropertyWorker(CSharpCodeGenerationOptions options,
         SemanticModel semanticModel, SyntaxGenerator generator, GetAndSetMethods getAndSetMethods,
         string propertyName, bool nameChanged, CancellationToken cancellationToken)
     {
@@ -163,7 +153,7 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
     }
 
     private static AccessorDeclarationSyntax CreateGetAccessor(
-        GetAndSetMethods getAndSetMethods, CSharpCodeGenerationOptions options, LanguageVersion languageVersion, CancellationToken cancellationToken)
+        GetAndSetMethods getAndSetMethods, CSharpCodeGenerationOptions options, CancellationToken cancellationToken)
     {
         var accessorDeclaration = CreateGetAccessorWorker(getAndSetMethods);
 
@@ -171,15 +161,14 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
             options, languageVersion, accessorDeclaration, cancellationToken);
     }
 
-    private static AccessorDeclarationSyntax UseExpressionOrBlockBodyIfDesired(
-        CSharpCodeGenerationOptions options, LanguageVersion languageVersion,
+    private static AccessorDeclarationSyntax UseExpressionOrBlockBodyIfDesired(CSharpCodeGenerationOptions options,
         AccessorDeclarationSyntax accessorDeclaration, CancellationToken cancellationToken)
     {
         var expressionBodyPreference = options.PreferExpressionBodiedAccessors.Value;
         if (accessorDeclaration?.Body != null && expressionBodyPreference != ExpressionBodyPreference.Never)
         {
             if (accessorDeclaration.Body.TryConvertToArrowExpressionBody(
-                    accessorDeclaration.Kind(), languageVersion, expressionBodyPreference, cancellationToken,
+                    accessorDeclaration.Kind(), expressionBodyPreference, cancellationToken,
                     out var arrowExpression, out var semicolonToken))
             {
                 return accessorDeclaration.WithBody(null)
@@ -233,10 +222,10 @@ internal sealed class CSharpReplaceMethodWithPropertyService : AbstractReplaceMe
 
     private static AccessorDeclarationSyntax CreateSetAccessor(
         SemanticModel semanticModel, SyntaxGenerator generator, GetAndSetMethods getAndSetMethods,
-        CSharpCodeGenerationOptions options, LanguageVersion languageVersion, CancellationToken cancellationToken)
+        CSharpCodeGenerationOptions options, CancellationToken cancellationToken)
     {
         var accessorDeclaration = CreateSetAccessorWorker(semanticModel, generator, getAndSetMethods);
-        return UseExpressionOrBlockBodyIfDesired(options, languageVersion, accessorDeclaration, cancellationToken);
+        return UseExpressionOrBlockBodyIfDesired(options, accessorDeclaration, cancellationToken);
     }
 
     private static AccessorDeclarationSyntax CreateSetAccessorWorker(

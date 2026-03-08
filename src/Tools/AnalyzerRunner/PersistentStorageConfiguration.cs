@@ -13,14 +13,10 @@ namespace AnalyzerRunner
 {
     [ExportWorkspaceService(typeof(IPersistentStorageConfiguration), ServiceLayer.Host)]
     [Shared]
-    internal sealed class PersistentStorageConfiguration : IPersistentStorageConfiguration
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class PersistentStorageConfiguration() : IPersistentStorageConfiguration
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public PersistentStorageConfiguration()
-        {
-        }
-
         public bool ThrowOnFailure => true;
 
         public string? TryGetStorageLocation(SolutionKey _)

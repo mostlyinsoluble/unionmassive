@@ -10,30 +10,17 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser.Lists;
 
-internal abstract class SymbolListItem : ObjectListItem
+internal abstract class SymbolListItem(ProjectId projectId, ISymbol symbol, string displayText, string fullNameText, string searchText, bool isHidden) : ObjectListItem(projectId, symbol.GetGlyph().GetStandardGlyphGroup(), symbol.GetGlyph().GetStandardGlyphItem(), isHidden)
 {
-    private readonly SymbolKey _symbolKey;
-    private readonly string _displayText;
-    private readonly string _fullNameText;
-    private readonly string _searchText;
+    private readonly SymbolKey _symbolKey = symbol.GetSymbolKey();
+    private readonly string _displayText = displayText;
+    private readonly string _fullNameText = fullNameText;
+    private readonly string _searchText = searchText;
 
-    private readonly bool _supportsGoToDefinition;
-    private readonly bool _supportsFindAllReferences;
+    private readonly bool _supportsGoToDefinition = symbol.Kind != SymbolKind.Namespace;
+    private readonly bool _supportsFindAllReferences = symbol.Kind != SymbolKind.Namespace;
 
-    protected SymbolListItem(ProjectId projectId, ISymbol symbol, string displayText, string fullNameText, string searchText, bool isHidden)
-        : base(projectId, symbol.GetGlyph().GetStandardGlyphGroup(), symbol.GetGlyph().GetStandardGlyphItem(), isHidden)
-    {
-        _symbolKey = symbol.GetSymbolKey();
-        Accessibility = symbol.DeclaredAccessibility;
-        _displayText = displayText;
-        _fullNameText = fullNameText;
-        _searchText = searchText;
-
-        _supportsGoToDefinition = symbol.Kind != SymbolKind.Namespace;
-        _supportsFindAllReferences = symbol.Kind != SymbolKind.Namespace;
-    }
-
-    public Accessibility Accessibility { get; }
+    public Accessibility Accessibility { get; } = symbol.DeclaredAccessibility;
 
     public override string DisplayText
     {

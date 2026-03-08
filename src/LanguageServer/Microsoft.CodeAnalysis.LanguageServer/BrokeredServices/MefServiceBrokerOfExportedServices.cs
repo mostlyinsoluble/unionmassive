@@ -10,15 +10,11 @@ using Microsoft.VisualStudio.Utilities.ServiceBroker;
 namespace Microsoft.CodeAnalysis.LanguageServer.BrokeredServices;
 
 [Export, Shared]
-internal sealed class MefServiceBrokerOfExportedServices : ServiceBrokerOfExportedServices
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MefServiceBrokerOfExportedServices() : ServiceBrokerOfExportedServices
 {
     private Task<GlobalBrokeredServiceContainer>? _containerTask;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MefServiceBrokerOfExportedServices()
-    {
-    }
 
     public void SetContainer(GlobalBrokeredServiceContainer container)
     {

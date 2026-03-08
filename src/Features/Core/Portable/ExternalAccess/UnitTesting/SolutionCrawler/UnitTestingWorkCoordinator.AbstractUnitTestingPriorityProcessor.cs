@@ -18,26 +18,18 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService
     {
         private sealed partial class UnitTestingIncrementalAnalyzerProcessor
         {
-            private abstract class AbstractUnitTestingPriorityProcessor : UnitTestingGlobalOperationAwareIdleProcessor
+            private abstract class AbstractUnitTestingPriorityProcessor(
+                IAsynchronousOperationListener listener,
+UnitTestingWorkCoordinator.UnitTestingIncrementalAnalyzerProcessor processor,
+                Lazy<ImmutableArray<IUnitTestingIncrementalAnalyzer>> lazyAnalyzers,
+                IGlobalOperationNotificationService? globalOperationNotificationService,
+                TimeSpan backOffTimeSpan,
+                CancellationToken shutdownToken) : UnitTestingGlobalOperationAwareIdleProcessor(listener, globalOperationNotificationService, backOffTimeSpan, shutdownToken)
             {
-                protected readonly UnitTestingIncrementalAnalyzerProcessor Processor;
+                protected readonly UnitTestingIncrementalAnalyzerProcessor Processor = processor;
 
                 private readonly object _gate = new();
-                private Lazy<ImmutableArray<IUnitTestingIncrementalAnalyzer>> _lazyAnalyzers;
-
-                public AbstractUnitTestingPriorityProcessor(
-                    IAsynchronousOperationListener listener,
-                    UnitTestingIncrementalAnalyzerProcessor processor,
-                    Lazy<ImmutableArray<IUnitTestingIncrementalAnalyzer>> lazyAnalyzers,
-                    IGlobalOperationNotificationService? globalOperationNotificationService,
-                    TimeSpan backOffTimeSpan,
-                    CancellationToken shutdownToken)
-                    : base(listener, globalOperationNotificationService, backOffTimeSpan, shutdownToken)
-                {
-                    _lazyAnalyzers = lazyAnalyzers;
-
-                    Processor = processor;
-                }
+                private Lazy<ImmutableArray<IUnitTestingIncrementalAnalyzer>> _lazyAnalyzers = lazyAnalyzers;
 
                 public ImmutableArray<IUnitTestingIncrementalAnalyzer> Analyzers
                 {

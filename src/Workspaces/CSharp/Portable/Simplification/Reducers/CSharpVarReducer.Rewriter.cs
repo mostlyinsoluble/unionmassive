@@ -13,13 +13,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
 internal sealed partial class CSharpVarReducer
 {
-    private sealed class Rewriter : AbstractReductionRewriter
+    private sealed class Rewriter(ObjectPool<AbstractReducer.IReductionRewriter> pool) : AbstractReductionRewriter(pool)
     {
-        public Rewriter(ObjectPool<IReductionRewriter> pool)
-            : base(pool)
-        {
-        }
-
         private SyntaxNode ProcessTypeSyntax(TypeSyntax typeSyntax)
         {
             this.CancellationToken.ThrowIfCancellationRequested();

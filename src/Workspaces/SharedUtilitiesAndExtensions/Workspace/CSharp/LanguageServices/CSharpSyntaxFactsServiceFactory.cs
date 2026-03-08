@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.LanguageService;
 namespace Microsoft.CodeAnalysis.CSharp;
 
 [ExportLanguageServiceFactory(typeof(ISyntaxFactsService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpSyntaxFactsServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CSharpSyntaxFactsServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSyntaxFactsServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
         => CSharpSyntaxFactsService.Instance;
 }

@@ -14,30 +14,19 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 
-internal sealed class DefinitionPeekableItem : PeekableItem
+internal sealed class DefinitionPeekableItem(
+    Workspace workspace, ProjectId projectId, SymbolKey symbolKey,
+    IPeekResultFactory peekResultFactory,
+    IMetadataAsSourceFileService metadataAsSourceService,
+    IGlobalOptionService globalOptions,
+    IThreadingContext threadingContext) : PeekableItem(peekResultFactory)
 {
-    private readonly Workspace _workspace;
-    private readonly ProjectId _projectId;
-    private readonly SymbolKey _symbolKey;
-    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService;
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly IThreadingContext _threadingContext;
-
-    public DefinitionPeekableItem(
-        Workspace workspace, ProjectId projectId, SymbolKey symbolKey,
-        IPeekResultFactory peekResultFactory,
-        IMetadataAsSourceFileService metadataAsSourceService,
-        IGlobalOptionService globalOptions,
-        IThreadingContext threadingContext)
-        : base(peekResultFactory)
-    {
-        _workspace = workspace;
-        _projectId = projectId;
-        _symbolKey = symbolKey;
-        _metadataAsSourceFileService = metadataAsSourceService;
-        _globalOptions = globalOptions;
-        _threadingContext = threadingContext;
-    }
+    private readonly Workspace _workspace = workspace;
+    private readonly ProjectId _projectId = projectId;
+    private readonly SymbolKey _symbolKey = symbolKey;
+    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService = metadataAsSourceService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public override IEnumerable<IPeekRelationship> Relationships
         => [PredefinedPeekRelationships.Definitions];
@@ -45,12 +34,9 @@ internal sealed class DefinitionPeekableItem : PeekableItem
     public override IPeekResultSource GetOrCreateResultSource(string relationshipName)
         => new ResultSource(this);
 
-    private sealed class ResultSource : IPeekResultSource
+    private sealed class ResultSource(DefinitionPeekableItem peekableItem) : IPeekResultSource
     {
-        private readonly DefinitionPeekableItem _peekableItem;
-
-        public ResultSource(DefinitionPeekableItem peekableItem)
-            => _peekableItem = peekableItem;
+        private readonly DefinitionPeekableItem _peekableItem = peekableItem;
 
         public void FindResults(string relationshipName, IPeekResultCollection resultCollection, CancellationToken cancellationToken, IFindPeekResultsCallback callback)
         {

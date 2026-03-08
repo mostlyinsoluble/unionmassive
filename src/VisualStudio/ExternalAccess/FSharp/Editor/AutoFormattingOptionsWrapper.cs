@@ -6,16 +6,10 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor;
 
-internal readonly struct AutoFormattingOptionsWrapper
+internal readonly struct AutoFormattingOptionsWrapper(AutoFormattingOptions underlyingObject, FormattingOptions2.IndentStyle indentStyle)
 {
-    internal readonly AutoFormattingOptions UnderlyingObject;
-    private readonly FormattingOptions2.IndentStyle _indentStyle;
-
-    public AutoFormattingOptionsWrapper(AutoFormattingOptions underlyingObject, FormattingOptions2.IndentStyle indentStyle)
-    {
-        UnderlyingObject = underlyingObject;
-        _indentStyle = indentStyle;
-    }
+    internal readonly AutoFormattingOptions UnderlyingObject = underlyingObject;
+    private readonly FormattingOptions2.IndentStyle _indentStyle = indentStyle;
 
     public FormattingOptions.IndentStyle IndentStyle
         => (FormattingOptions.IndentStyle)_indentStyle;

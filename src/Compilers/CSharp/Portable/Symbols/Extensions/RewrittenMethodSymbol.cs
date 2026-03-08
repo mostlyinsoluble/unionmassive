@@ -128,15 +128,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 => throw ExceptionUtilities.Unreachable();
         }
 
-        protected abstract class RewrittenMethodParameterSymbolBase : RewrittenParameterSymbol
+        protected abstract class RewrittenMethodParameterSymbolBase(RewrittenMethodSymbol containingMethod, ParameterSymbol originalParameter) : RewrittenParameterSymbol(originalParameter)
         {
-            protected readonly RewrittenMethodSymbol _containingMethod;
-
-            protected RewrittenMethodParameterSymbolBase(RewrittenMethodSymbol containingMethod, ParameterSymbol originalParameter) :
-                base(originalParameter)
-            {
-                _containingMethod = containingMethod;
-            }
+            protected readonly RewrittenMethodSymbol _containingMethod = containingMethod;
 
             public sealed override Symbol ContainingSymbol
             {

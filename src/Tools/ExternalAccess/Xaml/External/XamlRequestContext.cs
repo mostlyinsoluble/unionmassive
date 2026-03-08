@@ -15,10 +15,7 @@ internal struct XamlRequestContext
     public static XamlRequestContext FromRequestContext(RequestContext context)
         => new(context);
 
-    private XamlRequestContext(RequestContext context)
-    {
-        _context = context;
-    }
+    private XamlRequestContext(RequestContext context) => _context = context;
 
     public readonly LSP.ClientCapabilities ClientCapabilities => _context.GetRequiredClientCapabilities();
 

@@ -14,10 +14,8 @@ internal sealed partial class AnalyzerSettingsViewModel : SettingsViewModelBase<
     AnalyzerSettingsViewModel.SettingsSnapshotFactory,
     AnalyzerSettingsViewModel.SettingsEntriesSnapshot>
 {
-    internal sealed class SettingsSnapshotFactory : SettingsSnapshotFactoryBase<AnalyzerSetting, SettingsEntriesSnapshot>
+    internal sealed class SettingsSnapshotFactory(ISettingsProvider<AnalyzerSetting> data) : SettingsSnapshotFactoryBase<AnalyzerSetting, SettingsEntriesSnapshot>(data)
     {
-        public SettingsSnapshotFactory(ISettingsProvider<AnalyzerSetting> data) : base(data) { }
-
         protected override SettingsEntriesSnapshot CreateSnapshot(ImmutableArray<AnalyzerSetting> data, int currentVersionNumber)
             => new(data, currentVersionNumber);
     }

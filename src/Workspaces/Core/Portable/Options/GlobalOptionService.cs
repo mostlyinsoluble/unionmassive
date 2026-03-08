@@ -238,10 +238,7 @@ internal sealed class GlobalOptionService(
     {
         private readonly GlobalOptionService _instance;
 
-        internal TestAccessor(GlobalOptionService instance)
-        {
-            _instance = instance;
-        }
+        internal TestAccessor(GlobalOptionService instance) => _instance = instance;
 
         public void ClearCachedValues()
         {

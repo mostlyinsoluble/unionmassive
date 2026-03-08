@@ -15,10 +15,13 @@ internal abstract partial class AbstractSuppressionCodeFixProvider : IConfigurat
     /// <summary>
     /// Base type for remove suppression code actions.
     /// </summary>
-    internal abstract partial class RemoveSuppressionCodeAction : AbstractSuppressionCodeAction
+    internal abstract partial class RemoveSuppressionCodeAction(
+        Diagnostic diagnostic,
+        AbstractSuppressionCodeFixProvider fixer,
+        bool forFixMultipleContext = false) : AbstractSuppressionCodeAction(fixer, title: string.Format(FeaturesResources.Remove_Suppression_0, diagnostic.Id))
     {
-        private readonly Diagnostic _diagnostic;
-        private readonly bool _forFixMultipleContext;
+        private readonly Diagnostic _diagnostic = diagnostic;
+        private readonly bool _forFixMultipleContext = forFixMultipleContext;
 
         public static async Task<RemoveSuppressionCodeAction> CreateAsync(
             SuppressionTargetInfo suppressionTargetInfo,
@@ -43,16 +46,6 @@ internal abstract partial class AbstractSuppressionCodeFixProvider : IConfigurat
             {
                 return null;
             }
-        }
-
-        protected RemoveSuppressionCodeAction(
-            Diagnostic diagnostic,
-            AbstractSuppressionCodeFixProvider fixer,
-            bool forFixMultipleContext = false)
-            : base(fixer, title: string.Format(FeaturesResources.Remove_Suppression_0, diagnostic.Id))
-        {
-            _diagnostic = diagnostic;
-            _forFixMultipleContext = forFixMultipleContext;
         }
 
         public abstract RemoveSuppressionCodeAction CloneForFixMultipleContext();

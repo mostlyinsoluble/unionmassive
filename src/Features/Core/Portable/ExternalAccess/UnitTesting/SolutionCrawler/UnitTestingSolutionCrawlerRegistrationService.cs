@@ -248,10 +248,7 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService : IU
     {
         private readonly UnitTestingSolutionCrawlerRegistrationService _solutionCrawlerRegistrationService;
 
-        internal TestAccessor(UnitTestingSolutionCrawlerRegistrationService solutionCrawlerRegistrationService)
-        {
-            _solutionCrawlerRegistrationService = solutionCrawlerRegistrationService;
-        }
+        internal TestAccessor(UnitTestingSolutionCrawlerRegistrationService solutionCrawlerRegistrationService) => _solutionCrawlerRegistrationService = solutionCrawlerRegistrationService;
 
         internal ref ImmutableDictionary<string, ImmutableArray<Lazy<IUnitTestingIncrementalAnalyzerProvider, UnitTestingIncrementalAnalyzerProviderMetadata>>> AnalyzerProviders
             => ref _solutionCrawlerRegistrationService._analyzerProviders;

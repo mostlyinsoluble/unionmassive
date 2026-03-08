@@ -20,15 +20,10 @@ namespace Microsoft.CodeAnalysis.Wrapping;
 /// scoped as closely as possible to where the user is, as well as preventing overloading of the
 /// lightbulb with too many actions.
 /// </summary>
-internal abstract class AbstractWrappingCodeRefactoringProvider : CodeRefactoringProvider
+internal abstract class AbstractWrappingCodeRefactoringProvider(
+    ImmutableArray<ISyntaxWrapper> wrappers) : CodeRefactoringProvider
 {
-    private readonly ImmutableArray<ISyntaxWrapper> _wrappers;
-
-    protected AbstractWrappingCodeRefactoringProvider(
-        ImmutableArray<ISyntaxWrapper> wrappers)
-    {
-        _wrappers = wrappers;
-    }
+    private readonly ImmutableArray<ISyntaxWrapper> _wrappers = wrappers;
 
     protected abstract SyntaxWrappingOptions GetWrappingOptions(IOptionsReader options);
 

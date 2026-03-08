@@ -482,10 +482,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundTypeExpression
     {
         public BoundTypeExpression(SyntaxNode syntax, AliasSymbol? aliasOpt, BoundTypeExpression? boundContainingTypeOpt, ImmutableArray<BoundExpression> boundDimensionsOpt, TypeWithAnnotations typeWithAnnotations, bool hasErrors = false)
-            : this(syntax, aliasOpt, boundContainingTypeOpt, boundDimensionsOpt, typeWithAnnotations, typeWithAnnotations.Type, hasErrors)
-        {
-            Debug.Assert(typeWithAnnotations.Type is not null, "Field 'type' cannot be null");
-        }
+            : this(syntax, aliasOpt, boundContainingTypeOpt, boundDimensionsOpt, typeWithAnnotations, typeWithAnnotations.Type, hasErrors) => Debug.Assert(typeWithAnnotations.Type is not null, "Field 'type' cannot be null");
 
         public BoundTypeExpression(SyntaxNode syntax, AliasSymbol? aliasOpt, BoundTypeExpression? boundContainingTypeOpt, TypeWithAnnotations typeWithAnnotations, bool hasErrors = false)
             : this(syntax, aliasOpt, boundContainingTypeOpt, ImmutableArray<BoundExpression>.Empty, typeWithAnnotations, hasErrors)
@@ -538,10 +535,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundBadExpression
     {
         public BoundBadExpression(SyntaxNode syntax, LookupResultKind resultKind, ImmutableArray<Symbol?> symbols, ImmutableArray<BoundExpression> childBoundNodes, TypeSymbol type)
-            : this(syntax, resultKind, symbols, childBoundNodes, type, true)
-        {
-            Debug.Assert(type is not null);
-        }
+            : this(syntax, resultKind, symbols, childBoundNodes, type, true) => Debug.Assert(type is not null);
     }
 
     internal partial class BoundStatementList

@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -51,10 +51,7 @@ internal sealed partial class BloomFilter
     }
 
     public BloomFilter(double falsePositiveProbability, bool isCaseSensitive, HashSet<string> values)
-        : this(values.Count, falsePositiveProbability, isCaseSensitive)
-    {
-        AddRange(values);
-    }
+        : this(values.Count, falsePositiveProbability, isCaseSensitive) => AddRange(values);
 
     public BloomFilter(
         double falsePositiveProbability,

@@ -9,12 +9,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 
-internal sealed class CodeModelEventQueue
+internal sealed class CodeModelEventQueue(Queue<CodeModelEvent> eventQueue)
 {
-    private readonly Queue<CodeModelEvent> _eventQueue;
-
-    public CodeModelEventQueue(Queue<CodeModelEvent> eventQueue)
-        => _eventQueue = eventQueue;
+    private readonly Queue<CodeModelEvent> _eventQueue = eventQueue;
 
     private void EnqueueEvent(CodeModelEvent @event)
     {

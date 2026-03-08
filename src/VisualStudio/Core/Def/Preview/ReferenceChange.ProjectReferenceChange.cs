@@ -8,17 +8,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
 internal abstract partial class ReferenceChange : AbstractChange
 {
-    private sealed class ProjectReferenceChange : ReferenceChange
+    private sealed class ProjectReferenceChange(ProjectReference reference, string projectReferenceName, ProjectId projectId, string projectName, bool isAdded, PreviewEngine engine) : ReferenceChange(projectId, projectName, isAdded, engine)
     {
-        private readonly ProjectReference _reference;
-        private readonly string _projectReferenceName;
-
-        public ProjectReferenceChange(ProjectReference reference, string projectReferenceName, ProjectId projectId, string projectName, bool isAdded, PreviewEngine engine)
-            : base(projectId, projectName, isAdded, engine)
-        {
-            _reference = reference;
-            _projectReferenceName = projectReferenceName;
-        }
+        private readonly ProjectReference _reference = reference;
+        private readonly string _projectReferenceName = projectReferenceName;
 
         internal override Solution AddToSolution(Solution solution)
             => solution.AddProjectReference(this.ProjectId, _reference);

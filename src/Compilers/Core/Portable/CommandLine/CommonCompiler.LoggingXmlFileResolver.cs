@@ -6,15 +6,9 @@ namespace Microsoft.CodeAnalysis
 {
     internal abstract partial class CommonCompiler
     {
-        internal sealed class LoggingXmlFileResolver : XmlFileResolver
+        internal sealed class LoggingXmlFileResolver(string? baseDirectory, TouchedFileLogger? logger) : XmlFileResolver(baseDirectory)
         {
-            private readonly TouchedFileLogger? _logger;
-
-            public LoggingXmlFileResolver(string? baseDirectory, TouchedFileLogger? logger)
-                : base(baseDirectory)
-            {
-                _logger = logger;
-            }
+            private readonly TouchedFileLogger? _logger = logger;
 
             protected override bool FileExists(string? fullPath)
             {

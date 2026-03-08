@@ -16,12 +16,8 @@ namespace Microsoft.CodeAnalysis.CSharp.QuickInfo;
 [ExportQuickInfoProvider(QuickInfoProviderNames.EmbeddedLanguages, LanguageNames.CSharp)]
 [ExtensionOrder(Before = QuickInfoProviderNames.Semantic)]
 [Shared]
-internal sealed class CSharpEmbeddedLanguageQuickInfoProvider : AbstractEmbeddedLanguageQuickInfoProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpEmbeddedLanguageQuickInfoProvider([ImportMany] IEnumerable<Lazy<IEmbeddedLanguageQuickInfoProvider, EmbeddedLanguageMetadata>> services) : AbstractEmbeddedLanguageQuickInfoProvider(LanguageNames.CSharp, CSharpEmbeddedLanguagesProvider.Info, CSharpSyntaxKinds.Instance, services)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpEmbeddedLanguageQuickInfoProvider([ImportMany] IEnumerable<Lazy<IEmbeddedLanguageQuickInfoProvider, EmbeddedLanguageMetadata>> services)
-        : base(LanguageNames.CSharp, CSharpEmbeddedLanguagesProvider.Info, CSharpSyntaxKinds.Instance, services)
-    {
-    }
 }

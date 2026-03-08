@@ -9,13 +9,8 @@ using Microsoft.CodeAnalysis.Tags;
 
 namespace Microsoft.CodeAnalysis.Completion;
 
-internal abstract partial class CommonCompletionService : CompletionService
+internal abstract partial class CommonCompletionService(SolutionServices services, IAsynchronousOperationListenerProvider listenerProvider) : CompletionService(services, listenerProvider)
 {
-    protected CommonCompletionService(SolutionServices services, IAsynchronousOperationListenerProvider listenerProvider)
-        : base(services, listenerProvider)
-    {
-    }
-
     protected override CompletionItem GetBetterItem(CompletionItem item, CompletionItem existingItem)
     {
         // We've constructed the export order of completion providers so 

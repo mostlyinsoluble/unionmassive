@@ -13,14 +13,10 @@ using Microsoft.CodeAnalysis.Rename;
 namespace Microsoft.CodeAnalysis.CSharp.Rename;
 
 [ExportLanguageService(typeof(IRenameIssuesService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpRenameIssuesService : IRenameIssuesService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpRenameIssuesService() : IRenameIssuesService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpRenameIssuesService()
-    {
-    }
-
     public bool CheckLanguageSpecificIssues(
         SemanticModel semanticModel, ISymbol symbol, SyntaxToken triggerToken, [NotNullWhen(true)] out string? langError)
     {

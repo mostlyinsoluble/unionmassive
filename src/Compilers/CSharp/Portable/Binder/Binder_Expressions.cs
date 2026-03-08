@@ -4518,29 +4518,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(node != null);
 
-                SyntaxNode equalsValueClause = node.Parent;
-
-                if (!equalsValueClause.IsKind(SyntaxKind.EqualsValueClause))
-                {
-                    return false;
-                }
-
-                SyntaxNode variableDeclarator = equalsValueClause.Parent;
-
-                if (!variableDeclarator.IsKind(SyntaxKind.VariableDeclarator))
-                {
-                    return false;
-                }
-
-                SyntaxNode variableDeclaration = variableDeclarator.Parent;
-                if (!variableDeclaration.IsKind(SyntaxKind.VariableDeclaration))
-                {
-                    return false;
-                }
-
-                return
-                    variableDeclaration.Parent.IsKind(SyntaxKind.LocalDeclarationStatement) ||
-                    variableDeclaration.Parent.IsKind(SyntaxKind.ForStatement);
+                return node.ParentIsKind(SyntaxKind.EqualsValueClause)
+                    ?.ParentIsKind(SyntaxKind.VariableDeclarator)
+                    ?.ParentIsKind(SyntaxKind.VariableDeclaration) is SyntaxNode varDeclParent
+                    && (varDeclParent.IsKind(SyntaxKind.LocalDeclarationStatement) ||
+                    varDeclParent.IsKind(SyntaxKind.ForStatement));
             }
         }
 

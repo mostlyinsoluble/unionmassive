@@ -50,21 +50,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _tempAllocator.Free();
             }
 
-            public sealed class DagTempAllocator
+            public sealed class DagTempAllocator(SyntheticBoundNodeFactory factory, SyntaxNode node, bool generateSequencePoints)
             {
-                private readonly SyntheticBoundNodeFactory _factory;
+                private readonly SyntheticBoundNodeFactory _factory = factory;
                 private readonly PooledDictionary<BoundDagTemp, BoundExpression> _map = PooledDictionary<BoundDagTemp, BoundExpression>.GetInstance();
                 private readonly ArrayBuilder<LocalSymbol> _temps = ArrayBuilder<LocalSymbol>.GetInstance();
-                private readonly SyntaxNode _node;
+                private readonly SyntaxNode _node = node;
 
-                private readonly bool _generateSequencePoints;
-
-                public DagTempAllocator(SyntheticBoundNodeFactory factory, SyntaxNode node, bool generateSequencePoints)
-                {
-                    _factory = factory;
-                    _node = node;
-                    _generateSequencePoints = generateSequencePoints;
-                }
+                private readonly bool _generateSequencePoints = generateSequencePoints;
 
                 public void Free()
                 {

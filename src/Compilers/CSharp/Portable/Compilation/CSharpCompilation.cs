@@ -1547,7 +1547,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (referenceManager.AliasesOfReferencedAssemblies[i].Contains(aliasName))
                 {
-                    builder = builder ?? ArrayBuilder<NamespaceSymbol>.GetInstance();
+                    builder ??= ArrayBuilder<NamespaceSymbol>.GetInstance();
                     builder.Add(referenceManager.ReferencedAssemblies[i].GlobalNamespace);
                 }
             }
@@ -2315,18 +2315,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal override bool IsUnreferencedAssemblyIdentityDiagnosticCode(int code)
             => code == (int)ErrorCode.ERR_NoTypeDef;
 
-        internal class EntryPoint
+        internal class EntryPoint(MethodSymbol? methodSymbol, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
         {
-            public readonly MethodSymbol? MethodSymbol;
-            public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics;
+            public readonly MethodSymbol? MethodSymbol = methodSymbol;
+            public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics = diagnostics;
 
             public static readonly EntryPoint None = new EntryPoint(null, ReadOnlyBindingDiagnostic<AssemblySymbol>.Empty);
-
-            public EntryPoint(MethodSymbol? methodSymbol, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
-            {
-                this.MethodSymbol = methodSymbol;
-                this.Diagnostics = diagnostics;
-            }
         }
 
         internal bool MightContainNoPiaLocalTypes()
@@ -2840,18 +2834,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             _lazyImportInfos.TryUpdate(new ImportInfo(syntax.SyntaxTree, syntax.Kind(), syntax.Span), dependencies, default);
         }
 
-        private readonly struct ImportInfo : IEquatable<ImportInfo>
+        private readonly struct ImportInfo(SyntaxTree tree, SyntaxKind kind, TextSpan span) : IEquatable<ImportInfo>
         {
-            public readonly SyntaxTree Tree;
-            public readonly SyntaxKind Kind;
-            public readonly TextSpan Span;
-
-            public ImportInfo(SyntaxTree tree, SyntaxKind kind, TextSpan span)
-            {
-                this.Tree = tree;
-                this.Kind = kind;
-                this.Span = span;
-            }
+            public readonly SyntaxTree Tree = tree;
+            public readonly SyntaxKind Kind = kind;
+            public readonly TextSpan Span = span;
 
             public override bool Equals(object? obj)
             {
@@ -3636,19 +3623,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 otherDeletedMembers);
         }
 
-        private class DuplicateFilePathsVisitor : CSharpSymbolVisitor
+        private class DuplicateFilePathsVisitor(DiagnosticBag diagnostics) : CSharpSymbolVisitor
         {
             // note: the default HashSet<string> uses an ordinal comparison
             private readonly PooledHashSet<string> _duplicatePaths = PooledHashSet<string>.GetInstance();
 
-            private readonly DiagnosticBag _diagnostics;
+            private readonly DiagnosticBag _diagnostics = diagnostics;
 
             private bool _hasDuplicateFilePaths;
-
-            public DuplicateFilePathsVisitor(DiagnosticBag diagnostics)
-            {
-                _diagnostics = diagnostics;
-            }
 
             public bool CheckDuplicateFilePathsAndFree(ImmutableArray<SyntaxTree> syntaxTrees, NamespaceSymbol globalNamespace)
             {
@@ -4902,28 +4884,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private abstract class AbstractSymbolSearcher
+        private abstract class AbstractSymbolSearcher(
+            CSharpCompilation compilation, SymbolFilter filter, CancellationToken cancellationToken)
         {
-            private readonly PooledDictionary<Declaration, NamespaceOrTypeSymbol> _cache;
-            private readonly CSharpCompilation _compilation;
-            private readonly bool _includeNamespace;
-            private readonly bool _includeType;
-            private readonly bool _includeMember;
-            private readonly CancellationToken _cancellationToken;
-
-            protected AbstractSymbolSearcher(
-                CSharpCompilation compilation, SymbolFilter filter, CancellationToken cancellationToken)
-            {
-                _cache = PooledDictionary<Declaration, NamespaceOrTypeSymbol>.GetInstance();
-
-                _compilation = compilation;
-
-                _includeNamespace = (filter & SymbolFilter.Namespace) == SymbolFilter.Namespace;
-                _includeType = (filter & SymbolFilter.Type) == SymbolFilter.Type;
-                _includeMember = (filter & SymbolFilter.Member) == SymbolFilter.Member;
-
-                _cancellationToken = cancellationToken;
-            }
+            private readonly PooledDictionary<Declaration, NamespaceOrTypeSymbol> _cache = PooledDictionary<Declaration, NamespaceOrTypeSymbol>.GetInstance();
+            private readonly CSharpCompilation _compilation = compilation;
+            private readonly bool _includeNamespace = (filter & SymbolFilter.Namespace) == SymbolFilter.Namespace;
+            private readonly bool _includeType = (filter & SymbolFilter.Type) == SymbolFilter.Type;
+            private readonly bool _includeMember = (filter & SymbolFilter.Member) == SymbolFilter.Member;
+            private readonly CancellationToken _cancellationToken = cancellationToken;
 
             protected abstract bool Matches(string name);
             protected abstract bool ShouldCheckTypeForMembers(MergedTypeDeclaration current);
@@ -5091,16 +5060,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private class PredicateSymbolSearcher : AbstractSymbolSearcher
+        private class PredicateSymbolSearcher(
+            CSharpCompilation compilation, SymbolFilter filter, Func<string, bool> predicate, CancellationToken cancellationToken) : AbstractSymbolSearcher(compilation, filter, cancellationToken)
         {
-            private readonly Func<string, bool> _predicate;
-
-            public PredicateSymbolSearcher(
-                CSharpCompilation compilation, SymbolFilter filter, Func<string, bool> predicate, CancellationToken cancellationToken)
-                : base(compilation, filter, cancellationToken)
-            {
-                _predicate = predicate;
-            }
+            private readonly Func<string, bool> _predicate = predicate;
 
             protected override bool ShouldCheckTypeForMembers(MergedTypeDeclaration current)
             {
@@ -5114,16 +5077,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 => _predicate(name);
         }
 
-        private class NameSymbolSearcher : AbstractSymbolSearcher
+        private class NameSymbolSearcher(
+            CSharpCompilation compilation, SymbolFilter filter, string name, CancellationToken cancellationToken) : AbstractSymbolSearcher(compilation, filter, cancellationToken)
         {
-            private readonly string _name;
-
-            public NameSymbolSearcher(
-                CSharpCompilation compilation, SymbolFilter filter, string name, CancellationToken cancellationToken)
-                : base(compilation, filter, cancellationToken)
-            {
-                _name = name;
-            }
+            private readonly string _name = name;
 
             protected override bool ShouldCheckTypeForMembers(MergedTypeDeclaration current)
             {

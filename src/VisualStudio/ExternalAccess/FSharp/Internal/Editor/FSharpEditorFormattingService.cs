@@ -20,18 +20,12 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor;
 
 [Shared]
 [ExportLanguageService(typeof(IFormattingInteractionService), LanguageNames.FSharp)]
-internal class FSharpEditorFormattingService : IFormattingInteractionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpEditorFormattingService(IFSharpEditorFormattingService service, IGlobalOptionService globalOptions) : IFormattingInteractionService
 {
-    private readonly IFSharpEditorFormattingService _service;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpEditorFormattingService(IFSharpEditorFormattingService service, IGlobalOptionService globalOptions)
-    {
-        _service = service;
-        _globalOptions = globalOptions;
-    }
+    private readonly IFSharpEditorFormattingService _service = service;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool SupportsFormatDocument => _service.SupportsFormatDocument;
 

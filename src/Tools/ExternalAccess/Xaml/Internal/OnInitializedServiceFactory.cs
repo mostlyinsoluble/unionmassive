@@ -13,22 +13,16 @@ using LSP = Roslyn.LanguageServer.Protocol;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
 [ExportCSharpVisualBasicLspServiceFactory(typeof(OnInitializedService)), Shared]
-internal sealed class OnInitializedServiceFactory : ILspServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(StringConstants.ImportingConstructorMessage, error: true)]
+internal sealed class OnInitializedServiceFactory(
+    [Import(AllowDefault = true)] IInitializationService? initializationService,
+    [Import(AllowDefault = true)] IOnInitializedService? onInitializedService) : ILspServiceFactory
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-    private readonly IInitializationService? _initializationService;
+    private readonly IInitializationService? _initializationService = initializationService;
 #pragma warning restore CS0618 // Type or member is obsolete
-    private readonly IOnInitializedService? _onInitializedService;
-
-    [ImportingConstructor]
-    [Obsolete(StringConstants.ImportingConstructorMessage, error: true)]
-    public OnInitializedServiceFactory(
-        [Import(AllowDefault = true)] IInitializationService? initializationService,
-        [Import(AllowDefault = true)] IOnInitializedService? onInitializedService)
-    {
-        _initializationService = initializationService;
-        _onInitializedService = onInitializedService;
-    }
+    private readonly IOnInitializedService? _onInitializedService = onInitializedService;
 
     public ILspService CreateILspService(LspServices lspServices, WellKnownLspServerKinds serverKind)
     {
@@ -67,14 +61,9 @@ internal sealed class OnInitializedServiceFactory : ILspServiceFactory
             }
         }
 
-        private class ClientRequestManager : IClientRequestManager
+        private class ClientRequestManager(IClientLanguageServerManager clientLanguageServerManager) : IClientRequestManager
         {
-            private readonly IClientLanguageServerManager _clientLanguageServerManager;
-
-            public ClientRequestManager(IClientLanguageServerManager clientLanguageServerManager)
-            {
-                _clientLanguageServerManager = clientLanguageServerManager;
-            }
+            private readonly IClientLanguageServerManager _clientLanguageServerManager = clientLanguageServerManager;
 
             public Task<TResponse> SendRequestAsync<TParams, TResponse>(string methodName, TParams @params, CancellationToken cancellationToken)
                 => _clientLanguageServerManager.SendRequestAsync<TParams, TResponse>(methodName, @params, cancellationToken);

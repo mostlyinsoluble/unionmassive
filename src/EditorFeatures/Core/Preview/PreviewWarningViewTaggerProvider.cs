@@ -20,13 +20,9 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Preview;
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(TextViewRoles.PreviewRole)]
-internal sealed class PreviewWarningTaggerProvider
-    : AbstractPreviewTaggerProvider<PreviewWarningTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewWarningTaggerProvider()
+        : AbstractPreviewTaggerProvider<PreviewWarningTag>(PredefinedPreviewTaggerKeys.WarningSpansKey, PreviewWarningTag.Instance)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewWarningTaggerProvider()
-        : base(PredefinedPreviewTaggerKeys.WarningSpansKey, PreviewWarningTag.Instance)
-    {
-    }
 }

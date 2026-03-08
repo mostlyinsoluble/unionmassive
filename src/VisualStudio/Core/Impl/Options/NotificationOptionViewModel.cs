@@ -12,18 +12,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options;
 /// <summary>
 /// Represents a view model for <see cref="NotificationOption"/>
 /// </summary>
-internal sealed class NotificationOptionViewModel
+internal sealed class NotificationOptionViewModel(NotificationOption2 notification, ImageMoniker moniker)
 {
-    public NotificationOptionViewModel(NotificationOption2 notification, ImageMoniker moniker)
-    {
-        Notification = notification;
-        Name = notification.Severity.GetDisplayString();
-        Moniker = moniker;
-    }
+    public ImageMoniker Moniker { get; } = moniker;
 
-    public ImageMoniker Moniker { get; }
+    public string Name { get; } = notification.Severity.GetDisplayString();
 
-    public string Name { get; }
-
-    public NotificationOption2 Notification { get; }
+    public NotificationOption2 Notification { get; } = notification;
 }

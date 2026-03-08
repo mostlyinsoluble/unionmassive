@@ -18,32 +18,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
     {
         public static readonly CSharpParseOptions Regular = new CSharpParseOptions(kind: SourceCodeKind.Regular, documentationMode: DocumentationMode.Parse);
         public static readonly CSharpParseOptions Script = Regular.WithKind(SourceCodeKind.Script);
-        public static readonly CSharpParseOptions Regular1 = Regular.WithLanguageVersion(LanguageVersion.CSharp1);
-        public static readonly CSharpParseOptions Regular2 = Regular.WithLanguageVersion(LanguageVersion.CSharp2);
-        public static readonly CSharpParseOptions Regular3 = Regular.WithLanguageVersion(LanguageVersion.CSharp3);
-        public static readonly CSharpParseOptions Regular4 = Regular.WithLanguageVersion(LanguageVersion.CSharp4);
-        public static readonly CSharpParseOptions Regular5 = Regular.WithLanguageVersion(LanguageVersion.CSharp5);
-        public static readonly CSharpParseOptions Regular6 = Regular.WithLanguageVersion(LanguageVersion.CSharp6);
-        public static readonly CSharpParseOptions Regular7 = Regular.WithLanguageVersion(LanguageVersion.CSharp7);
-        public static readonly CSharpParseOptions Regular7_1 = Regular.WithLanguageVersion(LanguageVersion.CSharp7_1);
-        public static readonly CSharpParseOptions Regular7_2 = Regular.WithLanguageVersion(LanguageVersion.CSharp7_2);
-        public static readonly CSharpParseOptions Regular7_3 = Regular.WithLanguageVersion(LanguageVersion.CSharp7_3);
-        public static readonly CSharpParseOptions RegularDefault = Regular.WithLanguageVersion(LanguageVersion.Default);
-
-        /// <summary>
-        /// Usages of <see cref="TestOptions.RegularNext"/> and <see cref="LanguageVersionFacts.CSharpNext"/>
-        /// will be replaced with TestOptions.RegularN and LanguageVersion.CSharpN when language version N is introduced.
-        /// </summary>
-        public static readonly CSharpParseOptions RegularNext = Regular.WithLanguageVersion(LanguageVersion.Preview);
-
-        public static readonly CSharpParseOptions RegularPreview = Regular.WithLanguageVersion(LanguageVersion.Preview);
-        public static readonly CSharpParseOptions Regular8 = Regular.WithLanguageVersion(LanguageVersion.CSharp8);
-        public static readonly CSharpParseOptions Regular9 = Regular.WithLanguageVersion(LanguageVersion.CSharp9);
-        public static readonly CSharpParseOptions Regular10 = Regular.WithLanguageVersion(LanguageVersion.CSharp10);
-        public static readonly CSharpParseOptions Regular11 = Regular.WithLanguageVersion(LanguageVersion.CSharp11);
-        public static readonly CSharpParseOptions Regular12 = Regular.WithLanguageVersion(LanguageVersion.CSharp12);
-        public static readonly CSharpParseOptions Regular13 = Regular.WithLanguageVersion(LanguageVersion.CSharp13);
-        public static readonly CSharpParseOptions Regular14 = Regular.WithLanguageVersion(LanguageVersion.CSharp14);
         public static readonly CSharpParseOptions RegularWithDocumentationComments = Regular.WithDocumentationMode(DocumentationMode.Diagnose);
         public static readonly CSharpParseOptions RegularPreviewWithDocumentationComments = RegularPreview.WithDocumentationMode(DocumentationMode.Diagnose);
         public static readonly CSharpParseOptions RegularWithLegacyStrongName = Regular.WithFeature(Feature.UseLegacyStrongNameProvider);

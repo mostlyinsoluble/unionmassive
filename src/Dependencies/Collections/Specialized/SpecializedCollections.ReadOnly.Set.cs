@@ -13,14 +13,9 @@ namespace Microsoft.CodeAnalysis.Collections
     {
         private partial class ReadOnly
         {
-            internal class Set<TUnderlying, T> : Collection<TUnderlying, T>, ISet<T>, IReadOnlySet<T>
+            internal class Set<TUnderlying, T>(TUnderlying underlying) : Collection<TUnderlying, T>(underlying), ISet<T>, IReadOnlySet<T>
                 where TUnderlying : ISet<T>
             {
-                public Set(TUnderlying underlying)
-                    : base(underlying)
-                {
-                }
-
                 public new bool Add(T item)
                 {
                     throw new NotSupportedException();

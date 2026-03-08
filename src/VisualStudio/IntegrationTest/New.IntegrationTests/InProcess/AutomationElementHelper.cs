@@ -61,14 +61,9 @@ public static class AutomationElementHelper
         return element;
     }
 
-    private sealed class AutomationEventHandler : IUIAutomationEventHandler
+    private sealed class AutomationEventHandler(Action<IUIAutomationElement, int> action) : IUIAutomationEventHandler
     {
-        private readonly Action<IUIAutomationElement, int> _action;
-
-        public AutomationEventHandler(Action<IUIAutomationElement, int> action)
-        {
-            _action = action ?? throw new ArgumentNullException(nameof(action));
-        }
+        private readonly Action<IUIAutomationElement, int> _action = action ?? throw new ArgumentNullException(nameof(action));
 
         public void HandleAutomationEvent(IUIAutomationElement sender, int eventId)
             => _action(sender, eventId);

@@ -12,14 +12,11 @@ using Microsoft.CodeAnalysis.Navigation;
 namespace Microsoft.CodeAnalysis.Interactive;
 
 [ExportWorkspaceServiceFactory(typeof(IDocumentNavigationService), [WorkspaceKind.Interactive]), Shared]
-internal sealed class InteractiveDocumentNavigationServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InteractiveDocumentNavigationServiceFactory(IThreadingContext threadingContext) : IWorkspaceServiceFactory
 {
-    private readonly IDocumentNavigationService _singleton;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InteractiveDocumentNavigationServiceFactory(IThreadingContext threadingContext)
-        => _singleton = new InteractiveDocumentNavigationService(threadingContext);
+    private readonly IDocumentNavigationService _singleton = new InteractiveDocumentNavigationService(threadingContext);
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => _singleton;

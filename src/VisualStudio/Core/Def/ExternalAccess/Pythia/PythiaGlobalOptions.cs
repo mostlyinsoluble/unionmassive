@@ -10,16 +10,11 @@ using Microsoft.CodeAnalysis.Options;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 
 [Export(typeof(PythiaGlobalOptions)), Shared]
-internal sealed class PythiaGlobalOptions
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PythiaGlobalOptions(IGlobalOptionService globalOptions)
 {
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PythiaGlobalOptions(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool ShowDebugInfo
     {

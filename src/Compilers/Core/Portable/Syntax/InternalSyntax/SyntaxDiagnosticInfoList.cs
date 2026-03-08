@@ -12,10 +12,7 @@ namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
     {
         private readonly GreenNode _node;
 
-        internal SyntaxDiagnosticInfoList(GreenNode node)
-        {
-            _node = node;
-        }
+        internal SyntaxDiagnosticInfoList(GreenNode node) => _node = node;
 
         public Enumerator GetEnumerator()
         {

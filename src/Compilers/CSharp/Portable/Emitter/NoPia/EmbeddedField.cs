@@ -16,13 +16,8 @@ using FieldSymbolAdapter = Microsoft.CodeAnalysis.CSharp.Symbols.FieldSymbol;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 {
-    internal sealed class EmbeddedField : EmbeddedTypesManager.CommonEmbeddedField
+    internal sealed class EmbeddedField(EmbeddedType containingType, FieldSymbolAdapter underlyingField) : EmbeddedTypesManager.CommonEmbeddedField(containingType, underlyingField)
     {
-        public EmbeddedField(EmbeddedType containingType, FieldSymbolAdapter underlyingField) :
-            base(containingType, underlyingField)
-        {
-        }
-
         internal override EmbeddedTypesManager TypeManager
         {
             get

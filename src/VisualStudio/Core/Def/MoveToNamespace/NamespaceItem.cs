@@ -4,16 +4,10 @@
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.MoveToNamespace;
 
-internal sealed class NamespaceItem
+internal sealed class NamespaceItem(bool isFromHistory, string @namespace)
 {
-    public string Namespace { get; }
-    public bool IsFromHistory { get; }
-
-    public NamespaceItem(bool isFromHistory, string @namespace)
-    {
-        IsFromHistory = isFromHistory;
-        Namespace = @namespace;
-    }
+    public string Namespace { get; } = @namespace;
+    public bool IsFromHistory { get; } = isFromHistory;
 
     public override string ToString() => Namespace;
 }

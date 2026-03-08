@@ -12,14 +12,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Completion;
 
-internal sealed class FSharpInternalCommonCompletionProvider : CommonCompletionProvider
+internal sealed class FSharpInternalCommonCompletionProvider(FSharpCommonCompletionProviderBase provider) : CommonCompletionProvider
 {
-    private readonly FSharpCommonCompletionProviderBase _provider;
-
-    public FSharpInternalCommonCompletionProvider(FSharpCommonCompletionProviderBase provider)
-    {
-        _provider = provider;
-    }
+    private readonly FSharpCommonCompletionProviderBase _provider = provider;
 
     internal override string Language => LanguageNames.FSharp;
 

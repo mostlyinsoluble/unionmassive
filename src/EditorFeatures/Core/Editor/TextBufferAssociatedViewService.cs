@@ -23,7 +23,9 @@ namespace Microsoft.CodeAnalysis.Editor;
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(PredefinedTextViewRoles.Interactive)]
 [Export(typeof(ITextBufferAssociatedViewService))]
-internal sealed class TextBufferAssociatedViewService : ITextViewConnectionListener, ITextBufferAssociatedViewService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TextBufferAssociatedViewService() : ITextViewConnectionListener, ITextBufferAssociatedViewService
 {
 #if DEBUG
     private static readonly HashSet<ITextView> s_registeredViews = [];
@@ -31,12 +33,6 @@ internal sealed class TextBufferAssociatedViewService : ITextViewConnectionListe
 
     private static readonly object s_gate = new();
     private static readonly ConditionalWeakTable<ITextBuffer, HashSet<ITextView>> s_map = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TextBufferAssociatedViewService()
-    {
-    }
 
     public event EventHandler<SubjectBuffersConnectedEventArgs> SubjectBuffersConnected;
     public event EventHandler<SubjectBuffersConnectedEventArgs> SubjectBuffersDisconnected;

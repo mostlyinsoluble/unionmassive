@@ -1930,12 +1930,9 @@ REPARSE:
             internal readonly ConsList<FieldSymbol> Fields;
 
             internal DisplayClassInstanceAndFields(DisplayClassInstance instance)
-                : this(instance, ConsList<FieldSymbol>.Empty)
-            {
-                Debug.Assert(IsDisplayClassType(instance.Type) ||
+                : this(instance, ConsList<FieldSymbol>.Empty) => Debug.Assert(IsDisplayClassType(instance.Type) ||
                     GeneratedNameParser.GetKind(instance.Type.Name) == GeneratedNameKind.AnonymousType ||
                     instance.Type.GetMembers().OfType<FieldSymbol>().Any(static f => GeneratedNameParser.TryParsePrimaryConstructorParameterFieldName(f.Name, out _)));
-            }
 
             private DisplayClassInstanceAndFields(DisplayClassInstance instance, ConsList<FieldSymbol> fields)
             {

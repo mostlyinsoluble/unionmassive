@@ -49,16 +49,10 @@ internal sealed class FSharpSmartIndentProvider : ISmartIndentProvider
     public ISmartIndent? CreateSmartIndent(ITextView textView)
         => _globalOptions.GetOption(SmartIndenterOptionsStorage.SmartIndenter) ? new SmartIndent(textView, this) : null;
 
-    private sealed class SmartIndent : ISmartIndent
+    private sealed class SmartIndent(ITextView textView, FSharpSmartIndentProvider provider) : ISmartIndent
     {
-        private readonly ITextView _textView;
-        private readonly FSharpSmartIndentProvider _provider;
-
-        public SmartIndent(ITextView textView, FSharpSmartIndentProvider provider)
-        {
-            _textView = textView;
-            _provider = provider;
-        }
+        private readonly ITextView _textView = textView;
+        private readonly FSharpSmartIndentProvider _provider = provider;
 
         public void Dispose()
         {

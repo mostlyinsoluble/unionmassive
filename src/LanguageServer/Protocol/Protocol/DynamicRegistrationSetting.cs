@@ -22,10 +22,7 @@ internal class DynamicRegistrationSetting : IDynamicRegistrationSetting
     /// Initializes a new instance of the <see cref="DynamicRegistrationSetting"/> class.
     /// </summary>
     /// <param name="value">Value indicating whether the setting can be dynamically registered.</param>
-    public DynamicRegistrationSetting(bool value)
-    {
-        this.DynamicRegistration = value;
-    }
+    public DynamicRegistrationSetting(bool value) => this.DynamicRegistration = value;
 
     /// <summary>
     /// Gets or sets a value indicating whether setting can be dynamically registered.

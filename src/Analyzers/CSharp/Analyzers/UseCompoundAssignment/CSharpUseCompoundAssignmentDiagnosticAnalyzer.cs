@@ -19,8 +19,7 @@ internal sealed class CSharpUseCompoundAssignmentDiagnosticAnalyzer()
         => SyntaxKind.SimpleAssignmentExpression;
 
     protected override bool IsSupported(SyntaxKind assignmentKind, ParseOptions options)
-        => assignmentKind != SyntaxKind.CoalesceExpression ||
-           options.LanguageVersion() >= LanguageVersion.CSharp8;
+        => true;
 
     protected override int TryGetIncrementOrDecrement(SyntaxKind opKind, object constantValue)
     {

@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                    hasParamsModifier: false,
                    isParams: false,
                    isExtensionMethodThis: false,
-                   scope: ScopedKind.None)
-        {
-            Debug.Assert(accessor.Locations.Length <= 1);
-        }
+                   scope: ScopedKind.None) => Debug.Assert(accessor.Locations.Length <= 1);
 
         internal override FlowAnalysisAnnotations FlowAnalysisAnnotations
         {
@@ -104,10 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class SynthesizedPropertyAccessorValueParameterSymbol : SynthesizedAccessorValueParameterSymbol
     {
         public SynthesizedPropertyAccessorValueParameterSymbol(SourcePropertyAccessorSymbol accessor, int ordinal)
-            : base(accessor, ordinal)
-        {
-            Debug.Assert(accessor.Locations.Length <= 1);
-        }
+            : base(accessor, ordinal) => Debug.Assert(accessor.Locations.Length <= 1);
 
         public override TypeWithAnnotations TypeWithAnnotations => ((PropertySymbol)((SourcePropertyAccessorSymbol)ContainingSymbol).AssociatedSymbol).TypeWithAnnotations;
     }
@@ -117,10 +111,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private SingleInitNullable<TypeWithAnnotations> _lazyParameterType;
 
         public SynthesizedEventAccessorValueParameterSymbol(SourceEventAccessorSymbol accessor, int ordinal)
-            : base(accessor, ordinal)
-        {
-            Debug.Assert(accessor.Locations.Length <= 1);
-        }
+            : base(accessor, ordinal) => Debug.Assert(accessor.Locations.Length <= 1);
 
         public override TypeWithAnnotations TypeWithAnnotations
         {

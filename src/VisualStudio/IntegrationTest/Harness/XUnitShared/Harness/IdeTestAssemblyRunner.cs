@@ -17,7 +17,7 @@ namespace Xunit.Harness
     using Xunit.Sdk;
     using Xunit.Threading;
 
-    internal class IdeTestAssemblyRunner : XunitTestAssemblyRunner
+    internal class IdeTestAssemblyRunner(ITestAssembly testAssembly, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions) : XunitTestAssemblyRunner(testAssembly, testCases, diagnosticMessageSink, executionMessageSink, executionOptions)
     {
         /// <summary>
         /// A long timeout used to avoid hangs in tests, where a test failure manifests as an operation never occurring.
@@ -25,11 +25,6 @@ namespace Xunit.Harness
         private static readonly TimeSpan HangMitigatingTimeout = TimeSpan.FromMinutes(1);
 
         private HashSet<VisualStudioInstanceKey>? _ideInstancesInTests;
-
-        public IdeTestAssemblyRunner(ITestAssembly testAssembly, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
-            : base(testAssembly, testCases, diagnosticMessageSink, executionMessageSink, executionOptions)
-        {
-        }
 
         protected override async Task AfterTestAssemblyStartingAsync()
         {
@@ -360,23 +355,14 @@ namespace Xunit.Harness
             return VisualStudioInstanceKey.Unspecified;
         }
 
-        private class IpcMessageSink : MarshalByRefObject, IMessageSink
+        private class IpcMessageSink(IMessageSink messageSink, IReadOnlyDictionary<string, ITestCase> knownTestCasesByUniqueId, bool finalAttempt, HashSet<string> completedTestCaseIds, CancellationToken cancellationToken) : MarshalByRefObject, IMessageSink
         {
-            private readonly IMessageSink _messageSink;
-            private readonly IReadOnlyDictionary<string, ITestCase> _knownTestCasesByUniqueId;
-            private readonly CancellationToken _cancellationToken;
+            private readonly IMessageSink _messageSink = messageSink;
+            private readonly IReadOnlyDictionary<string, ITestCase> _knownTestCasesByUniqueId = knownTestCasesByUniqueId;
+            private readonly CancellationToken _cancellationToken = cancellationToken;
 
-            private readonly bool _finalAttempt;
-            private readonly HashSet<string> _completedTestCaseIds;
-
-            public IpcMessageSink(IMessageSink messageSink, IReadOnlyDictionary<string, ITestCase> knownTestCasesByUniqueId, bool finalAttempt, HashSet<string> completedTestCaseIds, CancellationToken cancellationToken)
-            {
-                _messageSink = messageSink;
-                _knownTestCasesByUniqueId = knownTestCasesByUniqueId;
-                _finalAttempt = finalAttempt;
-                _completedTestCaseIds = completedTestCaseIds;
-                _cancellationToken = cancellationToken;
-            }
+            private readonly bool _finalAttempt = finalAttempt;
+            private readonly HashSet<string> _completedTestCaseIds = completedTestCaseIds;
 
             public string? CurrentTestCase
             {
@@ -470,14 +456,9 @@ namespace Xunit.Harness
             }
         }
 
-        private class IpcMessageBus : MarshalByRefObject, IMessageBus
+        private class IpcMessageBus(IMessageBus messageBus) : MarshalByRefObject, IMessageBus
         {
-            private readonly IMessageBus _messageBus;
-
-            public IpcMessageBus(IMessageBus messageBus)
-            {
-                _messageBus = messageBus;
-            }
+            private readonly IMessageBus _messageBus = messageBus;
 
             public void Dispose() => _messageBus.Dispose();
 
@@ -513,14 +494,9 @@ namespace Xunit.Harness
             }
         }
 
-        private class IpcTestFrameworkExecutionOptions : LongLivedMarshalByRefObject, ITestFrameworkExecutionOptions
+        private class IpcTestFrameworkExecutionOptions(ITestFrameworkExecutionOptions executionOptions) : LongLivedMarshalByRefObject, ITestFrameworkExecutionOptions
         {
-            private readonly ITestFrameworkExecutionOptions _executionOptions;
-
-            public IpcTestFrameworkExecutionOptions(ITestFrameworkExecutionOptions executionOptions)
-            {
-                _executionOptions = executionOptions;
-            }
+            private readonly ITestFrameworkExecutionOptions _executionOptions = executionOptions;
 
             public TValue GetValue<TValue>(string name)
             {
@@ -533,14 +509,9 @@ namespace Xunit.Harness
             }
         }
 
-        private class IpcAssemblyInfo : LongLivedMarshalByRefObject, IAssemblyInfo
+        private class IpcAssemblyInfo(IAssemblyInfo assemblyInfo) : LongLivedMarshalByRefObject, IAssemblyInfo
         {
-            private readonly IAssemblyInfo _assemblyInfo;
-
-            public IpcAssemblyInfo(IAssemblyInfo assemblyInfo)
-            {
-                _assemblyInfo = assemblyInfo;
-            }
+            private readonly IAssemblyInfo _assemblyInfo = assemblyInfo;
 
             public string AssemblyPath => _assemblyInfo.AssemblyPath;
 
@@ -565,14 +536,9 @@ namespace Xunit.Harness
         /// <summary>
         /// A collection orderer wrapper that ensures <see cref="IdeInstanceTestCase"/> runs after other test cases.
         /// </summary>
-        private sealed class TestCollectionOrdererWrapper : ITestCollectionOrderer
+        private sealed class TestCollectionOrdererWrapper(ITestCollectionOrderer underlying) : ITestCollectionOrderer
         {
-            public TestCollectionOrdererWrapper(ITestCollectionOrderer underlying)
-            {
-                Underlying = underlying;
-            }
-
-            public ITestCollectionOrderer Underlying { get; }
+            public ITestCollectionOrderer Underlying { get; } = underlying;
 
             public IEnumerable<ITestCollection> OrderTestCollections(IEnumerable<ITestCollection> testCollections)
             {

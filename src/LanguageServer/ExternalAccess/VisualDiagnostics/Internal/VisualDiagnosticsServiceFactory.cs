@@ -41,17 +41,12 @@ internal sealed class VisualDiagnosticsServiceFactory(
         _OnInitializedService.Value.OnServiceBrokerInitialized(serviceBroker);
     }
 
-    private class OnInitializedService : ILspService, IOnInitialized, IOnServiceBrokerInitialized, IDisposable
+    private class OnInitializedService(LspWorkspaceRegistrationService lspWorkspaceRegistrationService) : ILspService, IOnInitialized, IOnServiceBrokerInitialized, IDisposable
     {
-        private readonly LspWorkspaceRegistrationService _lspWorkspaceRegistrationService;
+        private readonly LspWorkspaceRegistrationService _lspWorkspaceRegistrationService = lspWorkspaceRegistrationService;
         private IVisualDiagnosticsLanguageService? _visualDiagnosticsLanguageService;
         private CancellationToken _cancellationToken;
         private static readonly TaskCompletionSource<bool> _taskCompletionSource = new();
-
-        public OnInitializedService(LspWorkspaceRegistrationService lspWorkspaceRegistrationService)
-        {
-            _lspWorkspaceRegistrationService = lspWorkspaceRegistrationService;
-        }
 
         public void Dispose()
         {

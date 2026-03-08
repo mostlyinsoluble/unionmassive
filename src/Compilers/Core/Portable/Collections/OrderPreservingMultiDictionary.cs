@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.Collections
 
         private readonly ObjectPool<OrderPreservingMultiDictionary<K, V>>? _pool;
 
-        private OrderPreservingMultiDictionary(ObjectPool<OrderPreservingMultiDictionary<K, V>> pool)
-        {
-            _pool = pool;
-        }
+        private OrderPreservingMultiDictionary(ObjectPool<OrderPreservingMultiDictionary<K, V>> pool) => _pool = pool;
 
         public void Free()
         {
@@ -188,15 +185,9 @@ namespace Microsoft.CodeAnalysis.Collections
             /// </summary>
             private readonly object _value;
 
-            internal ValueSet(V value)
-            {
-                _value = value;
-            }
+            internal ValueSet(V value) => _value = value;
 
-            internal ValueSet(ArrayBuilder<V> values)
-            {
-                _value = values;
-            }
+            internal ValueSet(ArrayBuilder<V> values) => _value = values;
 
             internal void Free()
             {

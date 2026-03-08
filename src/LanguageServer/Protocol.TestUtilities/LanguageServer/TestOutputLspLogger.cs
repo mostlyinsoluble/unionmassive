@@ -9,13 +9,9 @@ using Xunit.Abstractions;
 
 namespace Roslyn.Test.Utilities;
 
-internal sealed class TestOutputLspLogger : AbstractLspLogger, ILspService
+internal sealed class TestOutputLspLogger(ITestOutputHelper testOutputHelper) : AbstractLspLogger, ILspService
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-    public TestOutputLspLogger(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
+    private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
     public override IDisposable? CreateContext(string context) => null;
     public override IDisposable? CreateLanguageContext(string? context) => null;

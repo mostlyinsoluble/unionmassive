@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.Editor.UnitTests;
 // Meantime a workaround is to export dummy IObscuringTipManager.
 // Do not delete: this one is still used in Editor and implicitly required for EventHookupCommandHandlerTests in Roslyn.
 [Export(typeof(IObscuringTipManager))]
-internal sealed class TestObscuringTipManager : IObscuringTipManager
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestObscuringTipManager() : IObscuringTipManager
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestObscuringTipManager()
-    {
-    }
-
     public void PushTip(ITextView view, IObscuringTip tip)
     {
     }

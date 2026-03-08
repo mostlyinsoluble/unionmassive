@@ -11,16 +11,10 @@ using MSB = Microsoft.Build;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal abstract class CommandLineArgumentReader
+internal abstract class CommandLineArgumentReader(MSB.Execution.ProjectInstance project)
 {
-    protected readonly MSB.Execution.ProjectInstance Project;
-    private readonly ImmutableArray<string>.Builder _builder;
-
-    protected CommandLineArgumentReader(MSB.Execution.ProjectInstance project)
-    {
-        Project = project;
-        _builder = ImmutableArray.CreateBuilder<string>();
-    }
+    protected readonly MSB.Execution.ProjectInstance Project = project;
+    private readonly ImmutableArray<string>.Builder _builder = ImmutableArray.CreateBuilder<string>();
 
     protected abstract void ReadCore();
 

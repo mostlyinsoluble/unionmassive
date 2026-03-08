@@ -14,22 +14,14 @@ namespace Microsoft.CodeAnalysis.Telemetry;
 /// Provides a mechanism to log telemetry information containing the execution time between
 /// creation and disposal of this object.
 /// </summary>
-internal sealed class TimedTelemetryLogBlock : IDisposable
+internal sealed class TimedTelemetryLogBlock(KeyValueLogMessage logMessage, int minThresholdMs, ITelemetryLog telemetryLog) : IDisposable
 {
-    private readonly KeyValueLogMessage _logMessage;
-    private readonly int _minThresholdMs;
+    private readonly KeyValueLogMessage _logMessage = logMessage;
+    private readonly int _minThresholdMs = minThresholdMs;
 #pragma warning disable IDE0052 // Remove unread private members - Not used in debug builds
-    private readonly ITelemetryLog _telemetryLog;
+    private readonly ITelemetryLog _telemetryLog = telemetryLog;
 #pragma warning restore IDE0052 // Remove unread private members
-    private readonly SharedStopwatch _stopwatch;
-
-    public TimedTelemetryLogBlock(KeyValueLogMessage logMessage, int minThresholdMs, ITelemetryLog telemetryLog)
-    {
-        _logMessage = logMessage;
-        _minThresholdMs = minThresholdMs;
-        _telemetryLog = telemetryLog;
-        _stopwatch = SharedStopwatch.StartNew();
-    }
+    private readonly SharedStopwatch _stopwatch = SharedStopwatch.StartNew();
 
     public void Dispose()
     {

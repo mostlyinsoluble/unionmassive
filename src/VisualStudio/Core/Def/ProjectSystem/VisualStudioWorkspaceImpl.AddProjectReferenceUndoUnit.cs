@@ -10,18 +10,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class AddProjectReferenceUndoUnit : AbstractAddRemoveUndoUnit
+    private sealed class AddProjectReferenceUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        ProjectId fromProjectId,
+        ProjectId toProjectId) : AbstractAddRemoveUndoUnit(workspace, fromProjectId)
     {
-        private readonly ProjectId _toProjectId;
-
-        public AddProjectReferenceUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            ProjectId fromProjectId,
-            ProjectId toProjectId)
-            : base(workspace, fromProjectId)
-        {
-            _toProjectId = toProjectId;
-        }
+        private readonly ProjectId _toProjectId = toProjectId;
 
         public override void Do(IOleUndoManager pUndoManager)
         {

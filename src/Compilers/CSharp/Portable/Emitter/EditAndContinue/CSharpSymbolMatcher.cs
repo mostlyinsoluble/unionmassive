@@ -28,30 +28,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             SourceAssemblySymbol otherAssembly,
             SynthesizedTypeMaps otherSynthesizedTypes,
             IReadOnlyDictionary<ISymbolInternal, ImmutableArray<ISymbolInternal>> otherSynthesizedMembers,
-            IReadOnlyDictionary<ISymbolInternal, ImmutableArray<ISymbolInternal>> otherDeletedMembers)
-        {
-            _visitor = new Visitor(
+            IReadOnlyDictionary<ISymbolInternal, ImmutableArray<ISymbolInternal>> otherDeletedMembers) => _visitor = new Visitor(
                 sourceAssembly,
                 otherAssembly,
                 otherSynthesizedTypes,
                 otherSynthesizedMembers,
                 otherDeletedMembers,
                 new DeepTranslator(otherAssembly.GetSpecialType(SpecialType.System_Object)));
-        }
 
         public CSharpSymbolMatcher(
             SourceAssemblySymbol sourceAssembly,
             PEAssemblySymbol otherAssembly,
-            SynthesizedTypeMaps otherSynthesizedTypes)
-        {
-            _visitor = new Visitor(
+            SynthesizedTypeMaps otherSynthesizedTypes) => _visitor = new Visitor(
                 sourceAssembly,
                 otherAssembly,
                 otherSynthesizedTypes,
                 otherSynthesizedMembers: SpecializedCollections.EmptyReadOnlyDictionary<ISymbolInternal, ImmutableArray<ISymbolInternal>>(),
                 otherDeletedMembers: SpecializedCollections.EmptyReadOnlyDictionary<ISymbolInternal, ImmutableArray<ISymbolInternal>>(),
                 deepTranslator: null);
-        }
 
         public override Cci.IDefinition? MapDefinition(Cci.IDefinition definition)
         {
@@ -836,16 +830,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             }
         }
 
-        internal sealed class DeepTranslator : CSharpSymbolVisitor<Symbol>
+        internal sealed class DeepTranslator(NamedTypeSymbol systemObject) : CSharpSymbolVisitor<Symbol>
         {
-            private readonly ConcurrentDictionary<Symbol, Symbol> _matches;
-            private readonly NamedTypeSymbol _systemObject;
-
-            public DeepTranslator(NamedTypeSymbol systemObject)
-            {
-                _matches = new ConcurrentDictionary<Symbol, Symbol>(ReferenceEqualityComparer.Instance);
-                _systemObject = systemObject;
-            }
+            private readonly ConcurrentDictionary<Symbol, Symbol> _matches = new ConcurrentDictionary<Symbol, Symbol>(ReferenceEqualityComparer.Instance);
+            private readonly NamedTypeSymbol _systemObject = systemObject;
 
             public override Symbol DefaultVisit(Symbol symbol)
             {

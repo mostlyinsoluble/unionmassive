@@ -12,15 +12,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class SimpleLocalScopeBinder : LocalScopeBinder
+    internal sealed class SimpleLocalScopeBinder(ImmutableArray<LocalSymbol> locals, Binder next) : LocalScopeBinder(next)
     {
-        private readonly ImmutableArray<LocalSymbol> _locals;
-
-        public SimpleLocalScopeBinder(ImmutableArray<LocalSymbol> locals, Binder next) :
-            base(next)
-        {
-            _locals = locals;
-        }
+        private readonly ImmutableArray<LocalSymbol> _locals = locals;
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {

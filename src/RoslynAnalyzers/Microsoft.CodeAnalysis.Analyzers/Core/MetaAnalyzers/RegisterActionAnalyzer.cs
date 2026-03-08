@@ -167,13 +167,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             INamedTypeSymbol operationBlockStartAnalysisContext,
             INamedTypeSymbol symbolKind);
 
-        protected abstract class RegisterActionCodeBlockAnalyzer
+        protected abstract class RegisterActionCodeBlockAnalyzer(
+            INamedTypeSymbol analysisContext,
+            INamedTypeSymbol compilationStartAnalysisContext,
+            INamedTypeSymbol codeBlockStartAnalysisContext,
+            INamedTypeSymbol operationBlockStartAnalysisContext,
+            INamedTypeSymbol symbolKind)
         {
-            private readonly INamedTypeSymbol _analysisContext;
-            private readonly INamedTypeSymbol _compilationStartAnalysisContext;
-            private readonly INamedTypeSymbol _codeBlockStartAnalysisContext;
-            private readonly INamedTypeSymbol _operationBlockStartAnalysisContext;
-            private readonly INamedTypeSymbol _symbolKind;
+            private readonly INamedTypeSymbol _analysisContext = analysisContext;
+            private readonly INamedTypeSymbol _compilationStartAnalysisContext = compilationStartAnalysisContext;
+            private readonly INamedTypeSymbol _codeBlockStartAnalysisContext = codeBlockStartAnalysisContext;
+            private readonly INamedTypeSymbol _operationBlockStartAnalysisContext = operationBlockStartAnalysisContext;
+            private readonly INamedTypeSymbol _symbolKind = symbolKind;
 
             private static readonly ImmutableHashSet<string> s_supportedSymbolKinds =
                 ImmutableHashSet.Create(
@@ -196,36 +201,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             /// <summary>
             /// Map from declared analysis context type parameters to invocations of Register methods on them.
             /// </summary>
-            private Dictionary<IParameterSymbol, List<NodeAndSymbol>>? _nestedActionsMap;
+            private Dictionary<IParameterSymbol, List<NodeAndSymbol>>? _nestedActionsMap = null;
 
             /// <summary>
             /// Set of declared start analysis context parameters that need to be analyzed for <see cref="StartActionWithNoRegisteredActionsRule"/> and <see cref="StartActionWithOnlyEndActionRule"/>.
             /// </summary>
-            private HashSet<IParameterSymbol>? _declaredStartAnalysisContextParams;
+            private HashSet<IParameterSymbol>? _declaredStartAnalysisContextParams = null;
 
             /// <summary>
             /// Set of declared start analysis context parameters that need to be skipped for <see cref="StartActionWithNoRegisteredActionsRule"/> and <see cref="StartActionWithOnlyEndActionRule"/>.
             /// This is to avoid false positives where context types are passed as arguments to a different invocation, and hence the registration responsibility is not on the current method.
             /// </summary>
-            private HashSet<IParameterSymbol>? _startAnalysisContextParamsToSkip;
-
-            protected RegisterActionCodeBlockAnalyzer(
-                INamedTypeSymbol analysisContext,
-                INamedTypeSymbol compilationStartAnalysisContext,
-                INamedTypeSymbol codeBlockStartAnalysisContext,
-                INamedTypeSymbol operationBlockStartAnalysisContext,
-                INamedTypeSymbol symbolKind)
-            {
-                _analysisContext = analysisContext;
-                _compilationStartAnalysisContext = compilationStartAnalysisContext;
-                _codeBlockStartAnalysisContext = codeBlockStartAnalysisContext;
-                _operationBlockStartAnalysisContext = operationBlockStartAnalysisContext;
-                _symbolKind = symbolKind;
-
-                _nestedActionsMap = null;
-                _declaredStartAnalysisContextParams = null;
-                _startAnalysisContextParamsToSkip = null;
-            }
+            private HashSet<IParameterSymbol>? _startAnalysisContextParamsToSkip = null;
 
             protected abstract IEnumerable<SyntaxNode>? GetArgumentExpressions(TInvocationExpressionSyntax invocation);
             protected abstract SyntaxNode GetArgumentExpression(TArgumentSyntax argument);

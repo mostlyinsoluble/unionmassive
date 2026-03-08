@@ -22,8 +22,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.StringIndentation;
 [Export(typeof(IWpfTextViewCreationListener))]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [TextViewRole(PredefinedTextViewRoles.Document)]
-internal sealed class StringIndentationAdornmentManagerProvider :
-    AbstractAdornmentManagerProvider<StringIndentationTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class StringIndentationAdornmentManagerProvider(
+    IThreadingContext threadingContext,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListenerProvider listenerProvider) :
+    AbstractAdornmentManagerProvider<StringIndentationTag>(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
 {
     private const string LayerName = "RoslynStringIndentation";
 
@@ -34,19 +40,9 @@ internal sealed class StringIndentationAdornmentManagerProvider :
 #pragma warning disable 0169
 #pragma warning disable IDE0051 // Remove unused private members
     private readonly AdornmentLayerDefinition? _stringIndentationLayer;
+
 #pragma warning restore IDE0051 // Remove unused private members
 #pragma warning restore 0169
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public StringIndentationAdornmentManagerProvider(
-        IThreadingContext threadingContext,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListenerProvider listenerProvider)
-        : base(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
-    {
-    }
 
     protected override string FeatureAttributeName => FeatureAttribute.StringIndentation;
     protected override string AdornmentLayerName => LayerName;

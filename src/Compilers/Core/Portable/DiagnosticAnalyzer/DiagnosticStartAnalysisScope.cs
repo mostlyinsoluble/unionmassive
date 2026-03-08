@@ -17,15 +17,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// <summary>
     /// Scope for setting up analyzers for an entire session, automatically associating actions with analyzers.
     /// </summary>
-    internal sealed class AnalyzerAnalysisContext : AnalysisContext
+    internal sealed class AnalyzerAnalysisContext(HostSessionStartAnalysisScope scope, SeverityFilter severityFilter) : AnalysisContext
     {
-        private readonly HostSessionStartAnalysisScope _scope;
-
-        public AnalyzerAnalysisContext(HostSessionStartAnalysisScope scope, SeverityFilter severityFilter)
-        {
-            _scope = scope;
-            MinimumReportedSeverity = severityFilter.GetMinimumUnfilteredSeverity();
-        }
+        private readonly HostSessionStartAnalysisScope _scope = scope;
 
         public override void RegisterCompilationStartAction(Action<CompilationStartAnalysisContext> action)
         {
@@ -115,28 +109,21 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             _scope.ConfigureGeneratedCodeAnalysis(mode);
         }
 
-        public override DiagnosticSeverity MinimumReportedSeverity { get; }
+        public override DiagnosticSeverity MinimumReportedSeverity { get; } = severityFilter.GetMinimumUnfilteredSeverity();
     }
 
     /// <summary>
     /// Scope for setting up analyzers for a compilation, automatically associating actions with analyzers.
     /// </summary>
-    internal sealed class AnalyzerCompilationStartAnalysisContext : CompilationStartAnalysisContext
+    internal sealed class AnalyzerCompilationStartAnalysisContext(
+        HostCompilationStartAnalysisScope scope,
+        Compilation compilation,
+        AnalyzerOptions options,
+        CompilationAnalysisValueProviderFactory compilationAnalysisValueProviderFactory,
+        CancellationToken cancellationToken) : CompilationStartAnalysisContext(compilation, options, cancellationToken)
     {
-        private readonly HostCompilationStartAnalysisScope _scope;
-        private readonly CompilationAnalysisValueProviderFactory _compilationAnalysisValueProviderFactory;
-
-        public AnalyzerCompilationStartAnalysisContext(
-            HostCompilationStartAnalysisScope scope,
-            Compilation compilation,
-            AnalyzerOptions options,
-            CompilationAnalysisValueProviderFactory compilationAnalysisValueProviderFactory,
-            CancellationToken cancellationToken)
-            : base(compilation, options, cancellationToken)
-        {
-            _scope = scope;
-            _compilationAnalysisValueProviderFactory = compilationAnalysisValueProviderFactory;
-        }
+        private readonly HostCompilationStartAnalysisScope _scope = scope;
+        private readonly CompilationAnalysisValueProviderFactory _compilationAnalysisValueProviderFactory = compilationAnalysisValueProviderFactory;
 
         public override void RegisterCompilationEndAction(Action<CompilationAnalysisContext> action)
         {
@@ -238,10 +225,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                                                        SyntaxTree? filterTree,
                                                        TextSpan? filterSpan,
                                                        CancellationToken cancellationToken)
-            : base(owningSymbol, compilation, options, isGeneratedCode, filterTree, filterSpan, cancellationToken)
-        {
-            _scope = scope;
-        }
+            : base(owningSymbol, compilation, options, isGeneratedCode, filterTree, filterSpan, cancellationToken) => _scope = scope;
 
         public override void RegisterSymbolEndAction(Action<SymbolAnalysisContext> action)
         {
@@ -307,10 +291,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                                                        TextSpan? filterSpan,
                                                        bool isGeneratedCode,
                                                        CancellationToken cancellationToken)
-            : base(codeBlock, owningSymbol, semanticModel, options, filterSpan, isGeneratedCode, cancellationToken)
-        {
-            _scope = scope;
-        }
+            : base(codeBlock, owningSymbol, semanticModel, options, filterSpan, isGeneratedCode, cancellationToken) => _scope = scope;
 
         public override void RegisterCodeBlockEndAction(Action<CodeBlockAnalysisContext> action)
         {
@@ -343,10 +324,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                                                             TextSpan? filterSpan,
                                                             bool isGeneratedCode,
                                                             CancellationToken cancellationToken)
-            : base(operationBlocks, owningSymbol, compilation, options, getControlFlowGraph, filterTree, filterSpan, isGeneratedCode, cancellationToken)
-        {
-            _scope = scope;
-        }
+            : base(operationBlocks, owningSymbol, compilation, options, getControlFlowGraph, filterTree, filterSpan, isGeneratedCode, cancellationToken) => _scope = scope;
 
         public override void RegisterOperationBlockEndAction(Action<OperationBlockAnalysisContext> action)
         {
@@ -401,15 +379,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// <summary>
     /// Scope for setting up analyzers for a compilation, capable of retrieving the actions.
     /// </summary>
-    internal sealed class HostCompilationStartAnalysisScope : HostAnalysisScope
+    internal sealed class HostCompilationStartAnalysisScope(HostSessionStartAnalysisScope sessionScope) : HostAnalysisScope(sessionScope.Analyzer)
     {
-        private readonly HostSessionStartAnalysisScope _sessionScope;
-
-        public HostCompilationStartAnalysisScope(HostSessionStartAnalysisScope sessionScope)
-            : base(sessionScope.Analyzer)
-        {
-            _sessionScope = sessionScope;
-        }
+        private readonly HostSessionStartAnalysisScope _sessionScope = sessionScope;
 
         public override AnalyzerActions GetAnalyzerActions()
         {

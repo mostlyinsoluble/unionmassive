@@ -29,22 +29,13 @@ namespace Microsoft.CodeAnalysis
         public string? Kind { get; }
         public string? Data { get; }
 
-        public SyntaxAnnotation()
-        {
-            _id = System.Threading.Interlocked.Increment(ref s_nextId);
-        }
+        public SyntaxAnnotation() => _id = System.Threading.Interlocked.Increment(ref s_nextId);
 
         public SyntaxAnnotation(string? kind)
-            : this()
-        {
-            this.Kind = kind;
-        }
+            : this() => this.Kind = kind;
 
         public SyntaxAnnotation(string? kind, string? data)
-            : this(kind)
-        {
-            this.Data = data;
-        }
+            : this(kind) => this.Data = data;
 
         private string GetDebuggerDisplay()
         {

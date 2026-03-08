@@ -12,14 +12,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly ImmutableArray<ParameterSymbol> _parameters;
 
         internal SynthesizedHotReloadExceptionConstructorSymbol(NamedTypeSymbol containingType, TypeSymbol stringType, TypeSymbol intType) :
-            base(containingType)
-        {
-            _parameters =
+            base(containingType) => _parameters =
             [
                 SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(stringType), ordinal: 0, RefKind.None),
                 SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(intType), ordinal: 1, RefKind.None)
             ];
-        }
 
         public override ImmutableArray<ParameterSymbol> Parameters => _parameters;
 

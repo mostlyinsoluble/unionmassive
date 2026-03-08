@@ -9,49 +9,37 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Describes anonymous type field in terms of its name, type and other attributes
     /// </summary>
-    internal readonly struct AnonymousTypeField
+    internal readonly struct AnonymousTypeField(
+        string name,
+        Location location,
+        TypeWithAnnotations typeWithAnnotations,
+        RefKind refKind,
+        ScopedKind scope,
+        ConstantValue? defaultValue = null,
+        bool isParams = false,
+        bool hasUnscopedRefAttribute = false)
     {
         /// <summary>Anonymous type field name, not nothing and not empty</summary>
-        public readonly string Name;
+        public readonly string Name = name;
 
         /// <summary>Anonymous type field location</summary>
-        public readonly Location Location;
+        public readonly Location Location = location;
 
         /// <summary>Anonymous type field type with annotations</summary>
-        public readonly TypeWithAnnotations TypeWithAnnotations;
+        public readonly TypeWithAnnotations TypeWithAnnotations = typeWithAnnotations;
 
-        public readonly RefKind RefKind;
+        public readonly RefKind RefKind = refKind;
 
-        public readonly ScopedKind Scope;
+        public readonly ScopedKind Scope = scope;
 
-        public readonly ConstantValue? DefaultValue;
+        public readonly ConstantValue? DefaultValue = defaultValue;
 
-        public readonly bool IsParams;
+        public readonly bool IsParams = isParams;
 
-        public readonly bool HasUnscopedRefAttribute;
+        public readonly bool HasUnscopedRefAttribute = hasUnscopedRefAttribute;
 
         /// <summary>Anonymous type field type</summary>
         public TypeSymbol Type => TypeWithAnnotations.Type;
-
-        public AnonymousTypeField(
-            string name,
-            Location location,
-            TypeWithAnnotations typeWithAnnotations,
-            RefKind refKind,
-            ScopedKind scope,
-            ConstantValue? defaultValue = null,
-            bool isParams = false,
-            bool hasUnscopedRefAttribute = false)
-        {
-            this.Name = name;
-            this.Location = location;
-            this.TypeWithAnnotations = typeWithAnnotations;
-            this.RefKind = refKind;
-            this.Scope = scope;
-            this.DefaultValue = defaultValue;
-            this.IsParams = isParams;
-            this.HasUnscopedRefAttribute = hasUnscopedRefAttribute;
-        }
 
         public AnonymousTypeField WithType(TypeWithAnnotations type)
         {

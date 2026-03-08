@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
 
         private readonly StringBuilder _builder;
 
-        private ScopedRefAttributesVisitor(StringBuilder builder)
-        {
-            _builder = builder;
-        }
+        private ScopedRefAttributesVisitor(StringBuilder builder) => _builder = builder;
 
         public override void DefaultVisit(Symbol symbol)
         {

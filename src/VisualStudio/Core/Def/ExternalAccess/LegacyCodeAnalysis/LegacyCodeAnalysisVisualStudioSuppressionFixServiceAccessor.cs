@@ -16,21 +16,15 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.LegacyCodeAnalysis;
 
 [Export(typeof(ILegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor))]
 [Shared]
-internal sealed class LegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor
-    : ILegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor(
+    VisualStudioWorkspace workspace,
+    IVisualStudioSuppressionFixService implementation)
+        : ILegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor
 {
-    private readonly VisualStudioWorkspace _workspace;
-    private readonly IVisualStudioSuppressionFixService _implementation;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LegacyCodeAnalysisVisualStudioSuppressionFixServiceAccessor(
-        VisualStudioWorkspace workspace,
-        IVisualStudioSuppressionFixService implementation)
-    {
-        _workspace = workspace;
-        _implementation = implementation;
-    }
+    private readonly VisualStudioWorkspace _workspace = workspace;
+    private readonly IVisualStudioSuppressionFixService _implementation = implementation;
 
     public bool AddSuppressions(IVsHierarchy? projectHierarchy)
     {

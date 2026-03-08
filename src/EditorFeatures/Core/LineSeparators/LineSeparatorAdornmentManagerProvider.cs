@@ -22,8 +22,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.LineSeparators;
 [Export(typeof(IWpfTextViewCreationListener))]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [TextViewRole(PredefinedTextViewRoles.Document)]
-internal sealed class LineSeparatorAdornmentManagerProvider :
-    AbstractAdornmentManagerProvider<LineSeparatorTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LineSeparatorAdornmentManagerProvider(
+    IThreadingContext threadingContext,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListenerProvider listenerProvider) :
+    AbstractAdornmentManagerProvider<LineSeparatorTag>(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
 {
     private const string LayerName = "RoslynLineSeparator";
 
@@ -34,19 +40,9 @@ internal sealed class LineSeparatorAdornmentManagerProvider :
 #pragma warning disable 0169
 #pragma warning disable IDE0051 // Remove unused private members
     private readonly AdornmentLayerDefinition? _lineSeparatorLayer;
+
 #pragma warning restore IDE0051 // Remove unused private members
 #pragma warning restore 0169
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LineSeparatorAdornmentManagerProvider(
-        IThreadingContext threadingContext,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListenerProvider listenerProvider)
-        : base(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
-    {
-    }
 
     protected override string FeatureAttributeName => FeatureAttribute.LineSeparators;
     protected override string AdornmentLayerName => LayerName;

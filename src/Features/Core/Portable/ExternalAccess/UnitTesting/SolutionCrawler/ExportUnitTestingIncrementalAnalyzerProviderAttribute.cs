@@ -9,15 +9,8 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.SolutionCrawler;
 
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class)]
-internal sealed class ExportUnitTestingIncrementalAnalyzerProviderAttribute : ExportAttribute
+internal sealed class ExportUnitTestingIncrementalAnalyzerProviderAttribute(string name, string[] workspaceKinds) : ExportAttribute(typeof(IUnitTestingIncrementalAnalyzerProvider))
 {
-    public string Name { get; }
-    public string[] WorkspaceKinds { get; }
-
-    public ExportUnitTestingIncrementalAnalyzerProviderAttribute(string name, string[] workspaceKinds)
-        : base(typeof(IUnitTestingIncrementalAnalyzerProvider))
-    {
-        this.WorkspaceKinds = workspaceKinds;
-        this.Name = name ?? throw new ArgumentNullException(nameof(name));
-    }
+    public string Name { get; } = name ?? throw new ArgumentNullException(nameof(name));
+    public string[] WorkspaceKinds { get; } = workspaceKinds;
 }

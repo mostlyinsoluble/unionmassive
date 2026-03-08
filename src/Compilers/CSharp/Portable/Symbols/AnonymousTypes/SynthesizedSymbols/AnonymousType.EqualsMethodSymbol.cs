@@ -19,11 +19,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             private readonly ImmutableArray<ParameterSymbol> _parameters;
 
             internal AnonymousTypeEqualsMethodSymbol(NamedTypeSymbol container)
-                : base(container, WellKnownMemberNames.ObjectEquals)
-            {
-                _parameters = ImmutableArray.Create<ParameterSymbol>(
+                : base(container, WellKnownMemberNames.ObjectEquals) => _parameters = ImmutableArray.Create<ParameterSymbol>(
                     SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(this.Manager.System_Object), 0, RefKind.None, "value"));
-            }
 
             public override MethodKind MethodKind
             {

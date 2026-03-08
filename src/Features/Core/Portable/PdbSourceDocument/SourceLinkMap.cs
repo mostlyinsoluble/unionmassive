@@ -23,10 +23,7 @@ internal readonly struct SourceLinkMap
 {
     private readonly ReadOnlyCollection<Entry> _entries;
 
-    private SourceLinkMap(ReadOnlyCollection<Entry> mappings)
-    {
-        _entries = mappings;
-    }
+    private SourceLinkMap(ReadOnlyCollection<Entry> mappings) => _entries = mappings;
 
     public readonly struct Entry(FilePathPattern filePath, UriPattern uri)
     {

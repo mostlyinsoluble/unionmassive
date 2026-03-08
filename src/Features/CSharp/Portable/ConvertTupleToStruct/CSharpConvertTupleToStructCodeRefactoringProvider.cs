@@ -13,7 +13,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertTupleToStruct;
 [ExtensionOrder(Before = PredefinedCodeRefactoringProviderNames.IntroduceVariable)]
 [ExportLanguageService(typeof(IConvertTupleToStructCodeRefactoringProvider), LanguageNames.CSharp)]
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertTupleToStruct), Shared]
-internal sealed class CSharpConvertTupleToStructCodeRefactoringProvider :
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpConvertTupleToStructCodeRefactoringProvider() :
     AbstractConvertTupleToStructCodeRefactoringProvider<
         ExpressionSyntax,
         NameSyntax,
@@ -26,12 +28,6 @@ internal sealed class CSharpConvertTupleToStructCodeRefactoringProvider :
         TypeDeclarationSyntax,
         BaseNamespaceDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpConvertTupleToStructCodeRefactoringProvider()
-    {
-    }
-
     protected override ArgumentSyntax GetArgumentWithChangedName(ArgumentSyntax argument, string name)
         => argument.WithNameColon(ChangeName(argument.NameColon, name));
 

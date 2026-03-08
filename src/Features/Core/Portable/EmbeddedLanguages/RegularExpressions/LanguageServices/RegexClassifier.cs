@@ -27,15 +27,11 @@ using RegexTrivia = EmbeddedSyntaxTrivia<RegexKind>;
     PredefinedEmbeddedLanguageNames.Regex,
     [LanguageNames.CSharp, LanguageNames.VisualBasic],
     supportsUnannotatedAPIs: true, "Regex", "Regexp"), Shared]
-internal sealed class RegexClassifier : IEmbeddedLanguageClassifier
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RegexClassifier() : IEmbeddedLanguageClassifier
 {
     private static readonly ObjectPool<Visitor> s_visitorPool = SharedPools.Default<Visitor>();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RegexClassifier()
-    {
-    }
 
     public void RegisterClassifications(EmbeddedLanguageClassificationContext context)
     {

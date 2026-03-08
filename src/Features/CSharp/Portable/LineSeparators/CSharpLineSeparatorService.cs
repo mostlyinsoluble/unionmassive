@@ -18,13 +18,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.LineSeparators;
 
 [ExportLanguageService(typeof(ILineSeparatorService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpLineSeparatorService : ILineSeparatorService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpLineSeparatorService() : ILineSeparatorService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpLineSeparatorService()
-    {
-    }
 
     /// <summary>
     /// Given a tree returns line separator spans.

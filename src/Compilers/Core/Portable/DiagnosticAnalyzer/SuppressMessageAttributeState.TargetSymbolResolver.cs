@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         private const string s_suppressionPrefix = "~";
 
         [StructLayout(LayoutKind.Auto)]
-        private struct TargetSymbolResolver
+        private struct TargetSymbolResolver(Compilation compilation, SuppressMessageAttributeState.TargetScope scope, string fullyQualifiedName)
         {
             private static readonly char[] s_nameDelimiters = { ':', '.', '+', '(', ')', '<', '>', '[', ']', '{', '}', ',', '&', '*', '`' };
             private static readonly string[] s_callingConventionStrings =
@@ -34,18 +34,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
             private static readonly ParameterInfo[] s_noParameters = Array.Empty<ParameterInfo>();
 
-            private readonly Compilation _compilation;
-            private readonly TargetScope _scope;
-            private readonly string _name;
-            private int _index;
-
-            public TargetSymbolResolver(Compilation compilation, TargetScope scope, string fullyQualifiedName)
-            {
-                _compilation = compilation;
-                _scope = scope;
-                _name = fullyQualifiedName;
-                _index = 0;
-            }
+            private readonly Compilation _compilation = compilation;
+            private readonly TargetScope _scope = scope;
+            private readonly string _name = fullyQualifiedName;
+            private int _index = 0;
 
             private static string RemovePrefix(string id, string prefix)
             {
@@ -893,16 +885,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             }
 
             [StructLayout(LayoutKind.Auto)]
-            private readonly struct ParameterInfo
+            private readonly struct ParameterInfo(TargetSymbolResolver.TypeInfo type, bool isRefOrOut)
             {
-                public readonly TypeInfo Type;
-                public readonly bool IsRefOrOut;
-
-                public ParameterInfo(TypeInfo type, bool isRefOrOut)
-                {
-                    this.Type = type;
-                    this.IsRefOrOut = isRefOrOut;
-                }
+                public readonly TypeInfo Type = type;
+                public readonly bool IsRefOrOut = isRefOrOut;
             }
         }
     }

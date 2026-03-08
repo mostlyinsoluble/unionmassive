@@ -16,33 +16,23 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 /// <summary>
 /// The root type that is held by a project to provide CodeModel support.
 /// </summary>
-internal sealed class ProjectCodeModel : IProjectCodeModel
+internal sealed class ProjectCodeModel(
+    IThreadingContext threadingContext,
+    ProjectId projectId,
+    ICodeModelInstanceFactory codeModelInstanceFactory,
+    VisualStudioWorkspace visualStudioWorkspace,
+    IServiceProvider serviceProvider,
+    ProjectCodeModelFactory projectCodeModelFactory) : IProjectCodeModel
 {
     private readonly NonReentrantLock _guard = new();
-    private readonly IThreadingContext _threadingContext;
-    private readonly ProjectId _projectId;
-    private readonly ICodeModelInstanceFactory _codeModelInstanceFactory;
-    private readonly VisualStudioWorkspace _visualStudioWorkspace;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ProjectCodeModelFactory _projectCodeModelFactory;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ProjectId _projectId = projectId;
+    private readonly ICodeModelInstanceFactory _codeModelInstanceFactory = codeModelInstanceFactory;
+    private readonly VisualStudioWorkspace _visualStudioWorkspace = visualStudioWorkspace;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly ProjectCodeModelFactory _projectCodeModelFactory = projectCodeModelFactory;
 
     private CodeModelProjectCache _codeModelCache;
-
-    public ProjectCodeModel(
-        IThreadingContext threadingContext,
-        ProjectId projectId,
-        ICodeModelInstanceFactory codeModelInstanceFactory,
-        VisualStudioWorkspace visualStudioWorkspace,
-        IServiceProvider serviceProvider,
-        ProjectCodeModelFactory projectCodeModelFactory)
-    {
-        _threadingContext = threadingContext;
-        _projectId = projectId;
-        _codeModelInstanceFactory = codeModelInstanceFactory;
-        _visualStudioWorkspace = visualStudioWorkspace;
-        _serviceProvider = serviceProvider;
-        _projectCodeModelFactory = projectCodeModelFactory;
-    }
 
     public void OnProjectClosed()
     {

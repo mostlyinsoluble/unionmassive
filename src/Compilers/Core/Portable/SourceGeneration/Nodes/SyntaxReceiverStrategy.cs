@@ -11,21 +11,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class SyntaxReceiverStrategy<T> : ISyntaxSelectionStrategy<T>
+    internal sealed class SyntaxReceiverStrategy<T>(
+        SyntaxContextReceiverCreator receiverCreator,
+        Action<IIncrementalGeneratorOutputNode> registerOutput,
+        ISyntaxHelper syntaxHelper) : ISyntaxSelectionStrategy<T>
     {
-        private readonly SyntaxContextReceiverCreator _receiverCreator;
-        private readonly Action<IIncrementalGeneratorOutputNode> _registerOutput;
-        private readonly ISyntaxHelper _syntaxHelper;
-
-        public SyntaxReceiverStrategy(
-            SyntaxContextReceiverCreator receiverCreator,
-            Action<IIncrementalGeneratorOutputNode> registerOutput,
-            ISyntaxHelper syntaxHelper)
-        {
-            _receiverCreator = receiverCreator;
-            _registerOutput = registerOutput;
-            _syntaxHelper = syntaxHelper;
-        }
+        private readonly SyntaxContextReceiverCreator _receiverCreator = receiverCreator;
+        private readonly Action<IIncrementalGeneratorOutputNode> _registerOutput = registerOutput;
+        private readonly ISyntaxHelper _syntaxHelper = syntaxHelper;
 
         public ISyntaxInputBuilder GetBuilder(StateTableStore table, object key, bool trackIncrementalSteps, string? name, IEqualityComparer<T> comparer) => new Builder(this, key, table, trackIncrementalSteps);
 

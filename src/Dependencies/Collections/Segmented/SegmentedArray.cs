@@ -424,54 +424,33 @@ namespace Microsoft.CodeAnalysis.Collections
         private static UnalignedSegmentEnumerable<T> GetSegmentsUnaligned<T>(SegmentedArray<T> first, int firstOffset, SegmentedArray<T> second, int secondOffset, int length)
             => new(first, firstOffset, second, secondOffset, length);
 
-        private readonly struct AlignedSegmentEnumerable<T>
+        private readonly struct AlignedSegmentEnumerable<T>(SegmentedArray<T> first, int firstOffset, SegmentedArray<T> second, int secondOffset, int length)
         {
-            private readonly SegmentedArray<T> _first;
-            private readonly int _firstOffset;
-            private readonly SegmentedArray<T> _second;
-            private readonly int _secondOffset;
-            private readonly int _length;
+            private readonly SegmentedArray<T> _first = first;
+            private readonly int _firstOffset = firstOffset;
+            private readonly SegmentedArray<T> _second = second;
+            private readonly int _secondOffset = secondOffset;
+            private readonly int _length = length;
 
             public AlignedSegmentEnumerable(SegmentedArray<T> first, SegmentedArray<T> second, int length)
                 : this(first, 0, second, 0, length)
             {
             }
 
-            public AlignedSegmentEnumerable(SegmentedArray<T> first, int firstOffset, SegmentedArray<T> second, int secondOffset, int length)
-            {
-                _first = first;
-                _firstOffset = firstOffset;
-                _second = second;
-                _secondOffset = secondOffset;
-                _length = length;
-            }
-
             public AlignedSegmentEnumerator<T> GetEnumerator()
                 => new(SegmentedCollectionsMarshal.AsSegments(_first), _firstOffset, SegmentedCollectionsMarshal.AsSegments(_second), _secondOffset, _length);
         }
 
-        private struct AlignedSegmentEnumerator<T>
+        private struct AlignedSegmentEnumerator<T>(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
         {
-            private readonly T[][] _firstSegments;
-            private readonly int _firstOffset;
-            private readonly T[][] _secondSegments;
-            private readonly int _secondOffset;
-            private readonly int _length;
+            private readonly T[][] _firstSegments = firstSegments;
+            private readonly int _firstOffset = firstOffset;
+            private readonly T[][] _secondSegments = secondSegments;
+            private readonly int _secondOffset = secondOffset;
+            private readonly int _length = length;
 
-            private int _completed;
-            private (Memory<T> first, Memory<T> second) _current;
-
-            public AlignedSegmentEnumerator(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
-            {
-                _firstSegments = firstSegments;
-                _firstOffset = firstOffset;
-                _secondSegments = secondSegments;
-                _secondOffset = secondOffset;
-                _length = length;
-
-                _completed = 0;
-                _current = (Memory<T>.Empty, Memory<T>.Empty);
-            }
+            private int _completed = 0;
+            private (Memory<T> first, Memory<T> second) _current = (Memory<T>.Empty, Memory<T>.Empty);
 
             public readonly (Memory<T> first, Memory<T> second) Current => _current;
 
@@ -510,26 +489,17 @@ namespace Microsoft.CodeAnalysis.Collections
             }
         }
 
-        private readonly struct UnalignedSegmentEnumerable<T>
+        private readonly struct UnalignedSegmentEnumerable<T>(SegmentedArray<T> first, int firstOffset, SegmentedArray<T> second, int secondOffset, int length)
         {
-            private readonly SegmentedArray<T> _first;
-            private readonly int _firstOffset;
-            private readonly SegmentedArray<T> _second;
-            private readonly int _secondOffset;
-            private readonly int _length;
+            private readonly SegmentedArray<T> _first = first;
+            private readonly int _firstOffset = firstOffset;
+            private readonly SegmentedArray<T> _second = second;
+            private readonly int _secondOffset = secondOffset;
+            private readonly int _length = length;
 
             public UnalignedSegmentEnumerable(SegmentedArray<T> first, SegmentedArray<T> second, int length)
                 : this(first, 0, second, 0, length)
             {
-            }
-
-            public UnalignedSegmentEnumerable(SegmentedArray<T> first, int firstOffset, SegmentedArray<T> second, int secondOffset, int length)
-            {
-                _first = first;
-                _firstOffset = firstOffset;
-                _second = second;
-                _secondOffset = secondOffset;
-                _length = length;
             }
 
             public UnalignedSegmentEnumerator<T> GetEnumerator()
@@ -538,14 +508,9 @@ namespace Microsoft.CodeAnalysis.Collections
             public ReverseEnumerable Reverse()
                 => new(this);
 
-            public readonly struct ReverseEnumerable
+            public readonly struct ReverseEnumerable(SegmentedArray.UnalignedSegmentEnumerable<T> enumerable)
             {
-                private readonly UnalignedSegmentEnumerable<T> _enumerable;
-
-                public ReverseEnumerable(UnalignedSegmentEnumerable<T> enumerable)
-                {
-                    _enumerable = enumerable;
-                }
+                private readonly UnalignedSegmentEnumerable<T> _enumerable = enumerable;
 
                 public UnalignedSegmentEnumerator<T>.Reverse GetEnumerator()
                 => new(SegmentedCollectionsMarshal.AsSegments(_enumerable._first), _enumerable._firstOffset, SegmentedCollectionsMarshal.AsSegments(_enumerable._second), _enumerable._secondOffset, _enumerable._length);
@@ -555,28 +520,16 @@ namespace Microsoft.CodeAnalysis.Collections
             }
         }
 
-        private struct UnalignedSegmentEnumerator<T>
+        private struct UnalignedSegmentEnumerator<T>(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
         {
-            private readonly T[][] _firstSegments;
-            private readonly int _firstOffset;
-            private readonly T[][] _secondSegments;
-            private readonly int _secondOffset;
-            private readonly int _length;
+            private readonly T[][] _firstSegments = firstSegments;
+            private readonly int _firstOffset = firstOffset;
+            private readonly T[][] _secondSegments = secondSegments;
+            private readonly int _secondOffset = secondOffset;
+            private readonly int _length = length;
 
-            private int _completed;
-            private (Memory<T> first, Memory<T> second) _current;
-
-            public UnalignedSegmentEnumerator(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
-            {
-                _firstSegments = firstSegments;
-                _firstOffset = firstOffset;
-                _secondSegments = secondSegments;
-                _secondOffset = secondOffset;
-                _length = length;
-
-                _completed = 0;
-                _current = (Memory<T>.Empty, Memory<T>.Empty);
-            }
+            private int _completed = 0;
+            private (Memory<T> first, Memory<T> second) _current = (Memory<T>.Empty, Memory<T>.Empty);
 
             public readonly (Memory<T> first, Memory<T> second) Current => _current;
 
@@ -603,28 +556,16 @@ namespace Microsoft.CodeAnalysis.Collections
                 return true;
             }
 
-            public struct Reverse
+            public struct Reverse(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
             {
-                private readonly T[][] _firstSegments;
-                private readonly int _firstOffset;
-                private readonly T[][] _secondSegments;
-                private readonly int _secondOffset;
-                private readonly int _length;
+                private readonly T[][] _firstSegments = firstSegments;
+                private readonly int _firstOffset = firstOffset;
+                private readonly T[][] _secondSegments = secondSegments;
+                private readonly int _secondOffset = secondOffset;
+                private readonly int _length = length;
 
-                private int _completed;
-                private (Memory<T> first, Memory<T> second) _current;
-
-                public Reverse(T[][] firstSegments, int firstOffset, T[][] secondSegments, int secondOffset, int length)
-                {
-                    _firstSegments = firstSegments;
-                    _firstOffset = firstOffset;
-                    _secondSegments = secondSegments;
-                    _secondOffset = secondOffset;
-                    _length = length;
-
-                    _completed = 0;
-                    _current = (Memory<T>.Empty, Memory<T>.Empty);
-                }
+                private int _completed = 0;
+                private (Memory<T> first, Memory<T> second) _current = (Memory<T>.Empty, Memory<T>.Empty);
 
                 public readonly (Memory<T> first, Memory<T> second) Current => _current;
 
@@ -682,14 +623,9 @@ namespace Microsoft.CodeAnalysis.Collections
             public ReverseEnumerable Reverse()
                 => new(this);
 
-            public readonly struct ReverseEnumerable
+            public readonly struct ReverseEnumerable(SegmentedArray.SegmentEnumerable<T> enumerable)
             {
-                private readonly SegmentEnumerable<T> _enumerable;
-
-                public ReverseEnumerable(SegmentEnumerable<T> enumerable)
-                {
-                    _enumerable = enumerable;
-                }
+                private readonly SegmentEnumerable<T> _enumerable = enumerable;
 
                 public SegmentEnumerator<T>.Reverse GetEnumerator()
                     => new(SegmentedCollectionsMarshal.AsSegments(_enumerable._array), _enumerable._offset, _enumerable._length);
@@ -699,24 +635,14 @@ namespace Microsoft.CodeAnalysis.Collections
             }
         }
 
-        private struct SegmentEnumerator<T>
+        private struct SegmentEnumerator<T>(T[][] segments, int offset, int length)
         {
-            private readonly T[][] _segments;
-            private readonly int _offset;
-            private readonly int _length;
+            private readonly T[][] _segments = segments;
+            private readonly int _offset = offset;
+            private readonly int _length = length;
 
-            private int _completed;
-            private Memory<T> _current;
-
-            public SegmentEnumerator(T[][] segments, int offset, int length)
-            {
-                _segments = segments;
-                _offset = offset;
-                _length = length;
-
-                _completed = 0;
-                _current = Memory<T>.Empty;
-            }
+            private int _completed = 0;
+            private Memory<T> _current = Memory<T>.Empty;
 
             public readonly Memory<T> Current => _current;
 
@@ -748,24 +674,14 @@ namespace Microsoft.CodeAnalysis.Collections
                 }
             }
 
-            public struct Reverse
+            public struct Reverse(T[][] segments, int offset, int length)
             {
-                private readonly T[][] _segments;
-                private readonly int _offset;
-                private readonly int _length;
+                private readonly T[][] _segments = segments;
+                private readonly int _offset = offset;
+                private readonly int _length = length;
 
-                private int _completed;
-                private Memory<T> _current;
-
-                public Reverse(T[][] segments, int offset, int length)
-                {
-                    _segments = segments;
-                    _offset = offset;
-                    _length = length;
-
-                    _completed = 0;
-                    _current = Memory<T>.Empty;
-                }
+                private int _completed = 0;
+                private Memory<T> _current = Memory<T>.Empty;
 
                 public readonly Memory<T> Current => _current;
 

@@ -16,14 +16,9 @@ namespace Microsoft.CodeAnalysis
     /// Allows us to treat both generator types as ISourceGenerator externally and not change the public API.
     /// Inside the driver we unwrap and use the actual generator instance.
     /// </remarks>
-    internal sealed class IncrementalGeneratorWrapper : ISourceGenerator
+    internal sealed class IncrementalGeneratorWrapper(IIncrementalGenerator generator) : ISourceGenerator
     {
-        internal IIncrementalGenerator Generator { get; }
-
-        public IncrementalGeneratorWrapper(IIncrementalGenerator generator)
-        {
-            this.Generator = generator;
-        }
+        internal IIncrementalGenerator Generator { get; } = generator;
 
         // never used. Just for back compat with loading mechanism
         void ISourceGenerator.Execute(GeneratorExecutionContext context) => throw ExceptionUtilities.Unreachable();

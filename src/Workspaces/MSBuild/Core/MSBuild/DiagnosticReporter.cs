@@ -9,16 +9,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class DiagnosticReporter
+internal sealed class DiagnosticReporter(Workspace workspace)
 {
-    internal ImmutableList<WorkspaceDiagnostic> Diagnostics;
-    private readonly Workspace _workspace;
-
-    public DiagnosticReporter(Workspace workspace)
-    {
-        _workspace = workspace;
-        Diagnostics = [];
-    }
+    internal ImmutableList<WorkspaceDiagnostic> Diagnostics = [];
+    private readonly Workspace _workspace = workspace;
 
     public void Report(DiagnosticReportingMode mode, string message, Func<string, Exception>? createException = null)
     {

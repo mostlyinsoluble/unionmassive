@@ -48,10 +48,7 @@ namespace Microsoft.CodeAnalysis.Collections
         // of zero. Upon adding the first element to the list the capacity is
         // increased to DefaultCapacity, and then increased in multiples of two
         // as required.
-        public SegmentedList()
-        {
-            _items = s_emptyArray;
-        }
+        public SegmentedList() => _items = s_emptyArray;
 
         // Constructs a SegmentedList with a given initial capacity. The list is
         // initially empty, but will have room for the given number of elements

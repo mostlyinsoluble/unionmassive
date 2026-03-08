@@ -8,16 +8,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.LanguageServer;
 
-internal sealed class SourceTextLoader : TextLoader
+internal sealed class SourceTextLoader(SourceText sourceText, string fileUri) : TextLoader
 {
-    private readonly SourceText _sourceText;
-    private readonly string _fileUri;
-
-    public SourceTextLoader(SourceText sourceText, string fileUri)
-    {
-        _sourceText = sourceText;
-        _fileUri = fileUri;
-    }
+    private readonly SourceText _sourceText = sourceText;
+    private readonly string _fileUri = fileUri;
 
     internal override string? FilePath
         => _fileUri;

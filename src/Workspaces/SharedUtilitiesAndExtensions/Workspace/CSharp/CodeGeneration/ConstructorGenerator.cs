@@ -74,7 +74,7 @@ internal static class ConstructorGenerator
         if (declaration.ExpressionBody == null)
         {
             if (declaration.Body?.TryConvertToArrowExpressionBody(
-                declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedConstructors.Value, cancellationToken,
+                declaration.Kind(), info.Options.PreferExpressionBodiedConstructors.Value, cancellationToken,
                 out var expressionBody, out var semicolonToken) == true)
             {
                 return declaration.WithBody(null)

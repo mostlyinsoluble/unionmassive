@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel;
 
 internal sealed partial class CodeModelProjectCache
 {
-    private readonly struct CacheEntry
+    private readonly struct CacheEntry(ComHandle<EnvDTE80.FileCodeModel2, FileCodeModel> handle)
     {
         // NOTE: The logic here is a little bit tricky.  We can't just keep a WeakReference to
         // something like a ComHandle, since it's not something that our clients keep alive.
@@ -28,10 +28,7 @@ internal sealed partial class CodeModelProjectCache
         //
         // NOTE: This is _NOT_ AddRef'd.  We use it just to store the integer value of the
         // IUnknown for comparison purposes.
-        private readonly WeakComHandle<EnvDTE80.FileCodeModel2, FileCodeModel> _fileCodeModelWeakComHandle;
-
-        public CacheEntry(ComHandle<EnvDTE80.FileCodeModel2, FileCodeModel> handle)
-            => _fileCodeModelWeakComHandle = new WeakComHandle<EnvDTE80.FileCodeModel2, FileCodeModel>(handle);
+        private readonly WeakComHandle<EnvDTE80.FileCodeModel2, FileCodeModel> _fileCodeModelWeakComHandle = new WeakComHandle<EnvDTE80.FileCodeModel2, FileCodeModel>(handle);
 
         public EnvDTE80.FileCodeModel2 FileCodeModelRcw
         {

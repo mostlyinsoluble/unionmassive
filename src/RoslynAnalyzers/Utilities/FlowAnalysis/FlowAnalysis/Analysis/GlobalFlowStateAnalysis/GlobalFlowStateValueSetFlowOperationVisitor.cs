@@ -15,14 +15,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// <summary>
     /// Operation visitor to flow the GlobalFlowState values across a given statement in a basic block.
     /// </summary>
-    internal abstract class GlobalFlowStateValueSetFlowOperationVisitor
-        : GlobalFlowStateDataFlowOperationVisitor<GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateAnalysisValueSet>
+    internal abstract class GlobalFlowStateValueSetFlowOperationVisitor(GlobalFlowStateAnalysisContext analysisContext, bool hasPredicatedGlobalState)
+                : GlobalFlowStateDataFlowOperationVisitor<GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateAnalysisValueSet>(analysisContext, hasPredicatedGlobalState)
     {
-        protected GlobalFlowStateValueSetFlowOperationVisitor(GlobalFlowStateAnalysisContext analysisContext, bool hasPredicatedGlobalState)
-            : base(analysisContext, hasPredicatedGlobalState)
-        {
-        }
-
         public sealed override (GlobalFlowStateAnalysisData output, bool isFeasibleBranch) FlowBranch(BasicBlock fromBlock, BranchWithInfo branch, GlobalFlowStateAnalysisData input)
         {
             var result = base.FlowBranch(fromBlock, branch, input);

@@ -171,17 +171,10 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        internal sealed class DirectoryLoadContext : AssemblyLoadContext
+        internal sealed class DirectoryLoadContext(string directory, AnalyzerAssemblyLoader loader) : AssemblyLoadContext(isCollectible: false)
         {
-            internal string Directory { get; }
-            private readonly AnalyzerAssemblyLoader _loader;
-
-            public DirectoryLoadContext(string directory, AnalyzerAssemblyLoader loader)
-                : base(isCollectible: false)
-            {
-                Directory = directory;
-                _loader = loader;
-            }
+            internal string Directory { get; } = directory;
+            private readonly AnalyzerAssemblyLoader _loader = loader;
 
             protected override Assembly? Load(AssemblyName assemblyName)
             {

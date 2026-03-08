@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
 
         public object Value { get; }
 
-        private CSharpTestSource(object value)
-        {
-            Value = value;
-        }
+        private CSharpTestSource(object value) => Value = value;
 
         public static SyntaxTree Parse(
             string text,

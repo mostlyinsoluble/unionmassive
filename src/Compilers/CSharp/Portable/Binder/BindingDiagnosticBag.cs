@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         private BindingDiagnosticBag(ObjectPool<BindingDiagnosticBag> pool, DiagnosticBag? diagnosticBag, ICollection<AssemblySymbol>? dependenciesBag)
-            : base(diagnosticBag, dependenciesBag)
-        {
-            _pool = pool;
-        }
+            : base(diagnosticBag, dependenciesBag) => _pool = pool;
 
         internal static BindingDiagnosticBag GetInstance()
         {

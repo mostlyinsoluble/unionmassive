@@ -13,34 +13,27 @@ namespace Xunit.Threading
     using Xunit.Harness;
     using Xunit.Sdk;
 
-    public sealed class IdeTheoryTestCaseRunner : XunitTheoryTestCaseRunner
+    public sealed class IdeTheoryTestCaseRunner(
+        WpfTestSharedData sharedData,
+        VisualStudioInstanceKey visualStudioInstanceKey,
+        IXunitTestCase testCase,
+        string displayName,
+        string skipReason,
+        object[] constructorArguments,
+        IMessageSink diagnosticMessageSink,
+        IMessageBus messageBus,
+        ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource) : XunitTheoryTestCaseRunner(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource)
     {
-        public IdeTheoryTestCaseRunner(
-            WpfTestSharedData sharedData,
-            VisualStudioInstanceKey visualStudioInstanceKey,
-            IXunitTestCase testCase,
-            string displayName,
-            string skipReason,
-            object[] constructorArguments,
-            IMessageSink diagnosticMessageSink,
-            IMessageBus messageBus,
-            ExceptionAggregator aggregator,
-            CancellationTokenSource cancellationTokenSource)
-            : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource)
-        {
-            SharedData = sharedData;
-            VisualStudioInstanceKey = visualStudioInstanceKey;
-        }
-
         public WpfTestSharedData SharedData
         {
             get;
-        }
+        } = sharedData;
 
         public VisualStudioInstanceKey VisualStudioInstanceKey
         {
             get;
-        }
+        } = visualStudioInstanceKey;
 
         protected override XunitTestRunner CreateTestRunner(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
         {

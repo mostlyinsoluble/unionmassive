@@ -12,16 +12,11 @@ using Microsoft.CodeAnalysis.SolutionCrawler;
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp;
 
 [Export(typeof(FSharpGlobalOptions)), Shared]
-internal sealed class FSharpGlobalOptions
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FSharpGlobalOptions(IGlobalOptionService globalOptions)
 {
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpGlobalOptions(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool BlockForCompletionItems
     {

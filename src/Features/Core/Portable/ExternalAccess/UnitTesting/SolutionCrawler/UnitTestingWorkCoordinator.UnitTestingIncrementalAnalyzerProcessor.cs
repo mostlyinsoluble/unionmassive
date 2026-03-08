@@ -261,10 +261,7 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService
             {
                 private readonly UnitTestingIncrementalAnalyzerProcessor _incrementalAnalyzerProcessor;
 
-                internal TestAccessor(UnitTestingIncrementalAnalyzerProcessor incrementalAnalyzerProcessor)
-                {
-                    _incrementalAnalyzerProcessor = incrementalAnalyzerProcessor;
-                }
+                internal TestAccessor(UnitTestingIncrementalAnalyzerProcessor incrementalAnalyzerProcessor) => _incrementalAnalyzerProcessor = incrementalAnalyzerProcessor;
 
                 internal void WaitUntilCompletion(ImmutableArray<IUnitTestingIncrementalAnalyzer> analyzers, List<UnitTestingWorkItem> items)
                 {

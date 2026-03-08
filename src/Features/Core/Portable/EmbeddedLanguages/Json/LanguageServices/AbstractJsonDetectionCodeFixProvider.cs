@@ -17,15 +17,10 @@ namespace Microsoft.CodeAnalysis.Features.EmbeddedLanguages.Json.LanguageService
 /// <summary>
 /// Code fix impl for embedded json strings.
 /// </summary>
-internal abstract class AbstractJsonDetectionCodeFixProvider : SyntaxEditorBasedCodeFixProvider
+internal abstract class AbstractJsonDetectionCodeFixProvider(
+    EmbeddedLanguageInfo info) : SyntaxEditorBasedCodeFixProvider
 {
-    private readonly EmbeddedLanguageInfo _info;
-
-    protected AbstractJsonDetectionCodeFixProvider(
-        EmbeddedLanguageInfo info)
-    {
-        _info = info;
-    }
+    private readonly EmbeddedLanguageInfo _info = info;
 
     protected abstract void AddComment(SyntaxEditor editor, SyntaxToken stringLiteral, string commentContents);
 

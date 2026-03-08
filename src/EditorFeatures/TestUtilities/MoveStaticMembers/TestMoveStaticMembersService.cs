@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.Test.Utilities.MoveStaticMembers;
 [ExportWorkspaceService(typeof(IMoveStaticMembersOptionsService))]
 [Shared]
 [PartNotDiscoverable]
-internal sealed class TestMoveStaticMembersService : IMoveStaticMembersOptionsService
+[method: ImportingConstructor]
+[method: System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestMoveStaticMembersService() : IMoveStaticMembersOptionsService
 {
-    [ImportingConstructor]
-    [System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestMoveStaticMembersService()
-    {
-    }
-
     public string? DestinationName { get; set; }
 
     public ImmutableArray<string> SelectedMembers { get; set; }

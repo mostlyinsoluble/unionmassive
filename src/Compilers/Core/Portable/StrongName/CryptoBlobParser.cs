@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis
             Sha512Hash = 14,
         }
 
-        private struct AlgorithmId
+        private struct AlgorithmId(uint flags)
         {
             // From wincrypt.h
             private const int AlgorithmClassOffset = 13;
@@ -46,7 +46,7 @@ namespace Microsoft.CodeAnalysis
             private const int AlgorithmSubIdOffset = 0;
             private const int AlgorithmSubIdMask = 0x1ff;
 
-            private readonly uint _flags;
+            private readonly uint _flags = flags;
 
             public const int RsaSign = 0x00002400;
             public const int Sha = 0x00008004;
@@ -64,11 +64,6 @@ namespace Microsoft.CodeAnalysis
             public AlgorithmSubId SubId
             {
                 get { return (AlgorithmSubId)((_flags >> AlgorithmSubIdOffset) & AlgorithmSubIdMask); }
-            }
-
-            public AlgorithmId(uint flags)
-            {
-                _flags = flags;
             }
         }
 

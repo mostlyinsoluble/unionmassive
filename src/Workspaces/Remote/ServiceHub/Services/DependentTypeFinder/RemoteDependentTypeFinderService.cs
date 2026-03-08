@@ -11,17 +11,12 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteDependentTypeFinderService : BrokeredServiceBase, IRemoteDependentTypeFinderService
+internal sealed class RemoteDependentTypeFinderService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteDependentTypeFinderService
 {
     internal sealed class Factory : FactoryBase<IRemoteDependentTypeFinderService>
     {
         protected override IRemoteDependentTypeFinderService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteDependentTypeFinderService(arguments);
-    }
-
-    public RemoteDependentTypeFinderService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<SerializableSymbolAndProjectId>> FindTypesAsync(

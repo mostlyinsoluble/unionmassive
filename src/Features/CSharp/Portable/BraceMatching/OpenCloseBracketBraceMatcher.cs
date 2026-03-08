@@ -10,12 +10,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.BraceMatching;
 
 [ExportBraceMatcher(LanguageNames.CSharp), Shared]
-internal sealed class OpenCloseBracketBraceMatcher : AbstractCSharpBraceMatcher
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OpenCloseBracketBraceMatcher() : AbstractCSharpBraceMatcher(SyntaxKind.OpenBracketToken, SyntaxKind.CloseBracketToken)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OpenCloseBracketBraceMatcher()
-        : base(SyntaxKind.OpenBracketToken, SyntaxKind.CloseBracketToken)
-    {
-    }
 }

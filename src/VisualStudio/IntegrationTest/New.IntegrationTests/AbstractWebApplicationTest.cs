@@ -7,18 +7,13 @@ using Roslyn.VisualStudio.IntegrationTests;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests;
 
-public abstract class AbstractWebApplicationTest : AbstractEditorTest
+public abstract class AbstractWebApplicationTest(string solutionName) : AbstractEditorTest(solutionName,
+          projectTemplate: WellKnownProjectTemplates.Blazor,
+          templateGroupId: GroupIds.Server)
 {
     protected static class GroupIds
     {
         public const string Server = "Microsoft.Web.Blazor.Server";
         public const string Wasm = "Microsoft.Web.Blazor.Wasm";
-    }
-
-    protected AbstractWebApplicationTest(string solutionName)
-        : base(solutionName,
-              projectTemplate: WellKnownProjectTemplates.Blazor,
-              templateGroupId: GroupIds.Server)
-    {
     }
 }

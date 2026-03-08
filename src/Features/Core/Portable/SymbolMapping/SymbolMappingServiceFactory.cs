@@ -13,14 +13,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.SymbolMapping;
 
 [ExportWorkspaceService(typeof(ISymbolMappingService), ServiceLayer.Default), Shared]
-internal sealed class DefaultSymbolMappingService : ISymbolMappingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultSymbolMappingService() : ISymbolMappingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultSymbolMappingService()
-    {
-    }
-
     public async Task<SymbolMappingResult> MapSymbolAsync(Document document, SymbolKey symbolId, CancellationToken cancellationToken)
     {
         var compilation = await document.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);

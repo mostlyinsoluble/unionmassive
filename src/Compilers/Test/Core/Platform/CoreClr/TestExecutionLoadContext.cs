@@ -22,15 +22,9 @@ using Roslyn.Utilities;
 
 namespace Roslyn.Test.Utilities.CoreClr
 {
-    internal sealed class TestExecutionLoadContext : AssemblyLoadContext
+    internal sealed class TestExecutionLoadContext(ImmutableArray<ModuleData> dependencies) : AssemblyLoadContext(isCollectible: true)
     {
-        private readonly ImmutableDictionary<string, ModuleData> _dependencies;
-
-        public TestExecutionLoadContext(ImmutableArray<ModuleData> dependencies)
-            : base(isCollectible: true)
-        {
-            _dependencies = dependencies.ToImmutableDictionary(d => d.FullName, StringComparer.Ordinal);
-        }
+        private readonly ImmutableDictionary<string, ModuleData> _dependencies = dependencies.ToImmutableDictionary(d => d.FullName, StringComparer.Ordinal);
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {

@@ -13,18 +13,11 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// Binder for one of the arms of a switch expression. For example, in the one-armed switch expression
     /// "e switch { p when c => v }", this could be the binder for the arm "p when c => v".
     /// </summary>
-    internal sealed class SwitchExpressionArmBinder : Binder
+    internal sealed class SwitchExpressionArmBinder(SwitchExpressionArmSyntax arm, ExpressionVariableBinder armScopeBinder, SwitchExpressionBinder switchExpressionBinder) : Binder(armScopeBinder)
     {
-        private readonly SwitchExpressionArmSyntax _arm;
-        private readonly ExpressionVariableBinder _armScopeBinder;
-        private readonly SwitchExpressionBinder _switchExpressionBinder;
-
-        public SwitchExpressionArmBinder(SwitchExpressionArmSyntax arm, ExpressionVariableBinder armScopeBinder, SwitchExpressionBinder switchExpressionBinder) : base(armScopeBinder)
-        {
-            this._arm = arm;
-            this._armScopeBinder = armScopeBinder;
-            this._switchExpressionBinder = switchExpressionBinder;
-        }
+        private readonly SwitchExpressionArmSyntax _arm = arm;
+        private readonly ExpressionVariableBinder _armScopeBinder = armScopeBinder;
+        private readonly SwitchExpressionBinder _switchExpressionBinder = switchExpressionBinder;
 
         internal BoundSwitchExpressionArm BindSwitchExpressionArm(SwitchExpressionArmSyntax node, BindingDiagnosticBag diagnostics)
         {

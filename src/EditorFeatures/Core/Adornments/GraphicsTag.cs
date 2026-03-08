@@ -9,11 +9,8 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Adornments;
 
-internal abstract class GraphicsTag : BrushTag
+internal abstract class GraphicsTag(IEditorFormatMap editorFormatMap) : BrushTag(editorFormatMap)
 {
-    protected GraphicsTag(IEditorFormatMap editorFormatMap) : base(editorFormatMap)
-    {
-    }
 
     /// <summary>
     /// This method allows corresponding adornment manager to ask for a graphical glyph.

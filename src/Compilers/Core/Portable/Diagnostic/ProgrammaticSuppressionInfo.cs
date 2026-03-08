@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     {
         public ImmutableArray<Suppression> Suppressions { get; }
 
-        internal ProgrammaticSuppressionInfo(ImmutableArray<Suppression> suppressions)
-        {
-            Suppressions = suppressions;
-        }
+        internal ProgrammaticSuppressionInfo(ImmutableArray<Suppression> suppressions) => Suppressions = suppressions;
 
         public bool Equals(ProgrammaticSuppressionInfo? other)
         {

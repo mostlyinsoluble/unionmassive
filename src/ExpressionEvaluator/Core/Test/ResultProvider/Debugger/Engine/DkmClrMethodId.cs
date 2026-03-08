@@ -13,7 +13,7 @@ using System;
 
 namespace Microsoft.VisualStudio.Debugger.Clr
 {
-    public readonly struct DkmClrMethodId : IComparable<DkmClrMethodId>, IEquatable<DkmClrMethodId>
+    public readonly struct DkmClrMethodId(int Token, uint Version) : IComparable<DkmClrMethodId>, IEquatable<DkmClrMethodId>
     {
         public int CompareTo(DkmClrMethodId other)
         {
@@ -78,14 +78,8 @@ namespace Microsoft.VisualStudio.Debugger.Clr
             return Token ^ ((int)Version);
         }
 
-        public readonly int Token;
+        public readonly int Token = Token;
 
-        public readonly uint Version;
-
-        public DkmClrMethodId(int Token, uint Version)
-        {
-            this.Token = Token;
-            this.Version = Version;
-        }
+        public readonly uint Version = Version;
     }
 }

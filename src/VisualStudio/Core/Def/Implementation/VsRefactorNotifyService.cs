@@ -21,16 +21,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 using Workspace = Microsoft.CodeAnalysis.Workspace;
 
 [Export(typeof(IRefactorNotifyService))]
-internal sealed class VsRefactorNotifyService : IRefactorNotifyService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VsRefactorNotifyService(IThreadingContext threadingContext) : IRefactorNotifyService
 {
-    private readonly IThreadingContext _threadingContext;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VsRefactorNotifyService(IThreadingContext threadingContext)
-    {
-        _threadingContext = threadingContext;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public bool TryOnBeforeGlobalSymbolRenamed(Workspace workspace, IEnumerable<DocumentId> changedDocumentIDs, ISymbol symbol, string newName, bool throwOnFailure)
     {

@@ -23,31 +23,23 @@ using LanguageServiceGuids = Microsoft.VisualStudio.LanguageServices.Guids;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.Interactive;
 
 [Export(typeof(CSharpVsInteractiveWindowProvider))]
-internal sealed class CSharpVsInteractiveWindowProvider : VsInteractiveWindowProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVsInteractiveWindowProvider(
+    IThreadingContext threadingContext,
+    SVsServiceProvider serviceProvider,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    IVsInteractiveWindowFactory interactiveWindowFactory,
+    IViewClassifierAggregatorService classifierAggregator,
+    IContentTypeRegistryService contentTypeRegistry,
+    IInteractiveWindowCommandsFactory commandsFactory,
+    [ImportMany] IInteractiveWindowCommand[] commands,
+    ITextDocumentFactoryService textDocumentFactoryService,
+    VisualStudioWorkspace workspace) : VsInteractiveWindowProvider(serviceProvider, interactiveWindowFactory, classifierAggregator, contentTypeRegistry, commandsFactory, commands, workspace)
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IAsynchronousOperationListener _listener;
-    private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVsInteractiveWindowProvider(
-        IThreadingContext threadingContext,
-        SVsServiceProvider serviceProvider,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        IVsInteractiveWindowFactory interactiveWindowFactory,
-        IViewClassifierAggregatorService classifierAggregator,
-        IContentTypeRegistryService contentTypeRegistry,
-        IInteractiveWindowCommandsFactory commandsFactory,
-        [ImportMany] IInteractiveWindowCommand[] commands,
-        ITextDocumentFactoryService textDocumentFactoryService,
-        VisualStudioWorkspace workspace)
-        : base(serviceProvider, interactiveWindowFactory, classifierAggregator, contentTypeRegistry, commandsFactory, commands, workspace)
-    {
-        _threadingContext = threadingContext;
-        _listener = listenerProvider.GetListener(FeatureAttribute.InteractiveEvaluator);
-        _textDocumentFactoryService = textDocumentFactoryService;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IAsynchronousOperationListener _listener = listenerProvider.GetListener(FeatureAttribute.InteractiveEvaluator);
+    private readonly ITextDocumentFactoryService _textDocumentFactoryService = textDocumentFactoryService;
 
     protected override Guid LanguageServiceGuid => LanguageServiceGuids.CSharpLanguageServiceId;
 

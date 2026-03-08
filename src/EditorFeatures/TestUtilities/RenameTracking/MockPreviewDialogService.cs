@@ -13,7 +13,9 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.RenameTracking;
 
 [ExportWorkspaceService(typeof(IPreviewDialogService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-internal sealed class MockPreviewDialogService : IPreviewDialogService, IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MockPreviewDialogService() : IPreviewDialogService, IWorkspaceServiceFactory
 {
     public bool ReturnsNull;
     public bool Called;
@@ -23,12 +25,6 @@ internal sealed class MockPreviewDialogService : IPreviewDialogService, IWorkspa
     public string TopLevelName;
     public Glyph TopLevelGlyph;
     public bool ShowCheckBoxes;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MockPreviewDialogService()
-    {
-    }
 
     public Solution PreviewChanges(string title, string helpString, string description, string topLevelName, Glyph topLevelGlyph, Solution newSolution, Solution oldSolution, bool showCheckBoxes = true)
     {

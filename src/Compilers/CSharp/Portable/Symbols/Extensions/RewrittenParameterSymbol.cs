@@ -6,13 +6,8 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal abstract class RewrittenParameterSymbol : WrappedParameterSymbol
+    internal abstract class RewrittenParameterSymbol(ParameterSymbol originalParameter) : WrappedParameterSymbol(originalParameter)
     {
-        public RewrittenParameterSymbol(ParameterSymbol originalParameter) :
-            base(originalParameter)
-        {
-        }
-
         internal sealed override bool IsCallerLineNumber => _underlyingParameter.IsCallerLineNumber;
 
         internal sealed override bool IsCallerFilePath => _underlyingParameter.IsCallerFilePath;

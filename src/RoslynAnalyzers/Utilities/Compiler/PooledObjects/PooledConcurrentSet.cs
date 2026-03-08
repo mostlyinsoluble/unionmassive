@@ -22,10 +22,7 @@ namespace Analyzer.Utilities.PooledObjects
     {
         private readonly PooledConcurrentDictionary<T, byte> _dictionary;
 
-        private PooledConcurrentSet(PooledConcurrentDictionary<T, byte> dictionary)
-        {
-            _dictionary = dictionary;
-        }
+        private PooledConcurrentSet(PooledConcurrentDictionary<T, byte> dictionary) => _dictionary = dictionary;
 
         public void Dispose() => Free(CancellationToken.None);
         public void Free(CancellationToken cancellationToken) => _dictionary.Free(cancellationToken);
@@ -144,10 +141,7 @@ namespace Analyzer.Utilities.PooledObjects
         {
             private readonly IEnumerator<KeyValuePair<T, byte>> _kvpEnumerator;
 
-            internal KeyEnumerator(IEnumerable<KeyValuePair<T, byte>> data)
-            {
-                _kvpEnumerator = data.GetEnumerator();
-            }
+            internal KeyEnumerator(IEnumerable<KeyValuePair<T, byte>> data) => _kvpEnumerator = data.GetEnumerator();
 
             public T Current => _kvpEnumerator.Current.Key;
 

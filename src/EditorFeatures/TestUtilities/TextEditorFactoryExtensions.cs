@@ -39,12 +39,9 @@ internal static class TextEditorFactoryExtensions
     }
 }
 
-public class DisposableTextView : IDisposable
+public class DisposableTextView(IWpfTextView textView) : IDisposable
 {
-    public DisposableTextView(IWpfTextView textView)
-        => this.TextView = textView;
-
-    public IWpfTextView TextView { get; }
+    public IWpfTextView TextView { get; } = textView;
 
     public void Dispose()
         => TextView.Close();

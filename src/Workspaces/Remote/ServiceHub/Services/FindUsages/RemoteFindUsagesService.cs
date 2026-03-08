@@ -72,17 +72,11 @@ internal sealed class RemoteFindUsagesService(in BrokeredServiceBase.ServiceCons
         }, cancellationToken);
     }
 
-    private sealed class RemoteFindUsageContext : IFindUsagesContext, IStreamingProgressTracker
+    private sealed class RemoteFindUsageContext(RemoteCallback<IRemoteFindUsagesService.ICallback> callback, RemoteServiceCallbackId callbackId) : IFindUsagesContext, IStreamingProgressTracker
     {
-        private readonly RemoteCallback<IRemoteFindUsagesService.ICallback> _callback;
-        private readonly RemoteServiceCallbackId _callbackId;
+        private readonly RemoteCallback<IRemoteFindUsagesService.ICallback> _callback = callback;
+        private readonly RemoteServiceCallbackId _callbackId = callbackId;
         private readonly Dictionary<DefinitionItem, int> _definitionItemToId = [];
-
-        public RemoteFindUsageContext(RemoteCallback<IRemoteFindUsagesService.ICallback> callback, RemoteServiceCallbackId callbackId)
-        {
-            _callback = callback;
-            _callbackId = callbackId;
-        }
 
         #region IStreamingProgressTracker
 

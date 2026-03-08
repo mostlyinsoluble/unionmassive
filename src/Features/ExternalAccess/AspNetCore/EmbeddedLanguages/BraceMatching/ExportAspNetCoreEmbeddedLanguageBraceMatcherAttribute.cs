@@ -12,23 +12,16 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.AspNetCore.EmbeddedLanguages;
 /// </summary>
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-internal sealed class ExportAspNetCoreEmbeddedLanguageBraceMatcherAttribute : ExportAttribute
+internal sealed class ExportAspNetCoreEmbeddedLanguageBraceMatcherAttribute(
+    string name, string language) : ExportAttribute(typeof(IAspNetCoreEmbeddedLanguageBraceMatcher))
 {
     /// <summary>
     /// Name of the brace matcher.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name ?? throw new ArgumentNullException(nameof(name));
 
     /// <summary>
     /// Name of the containing language hosting the embedded language.  e.g. C# or VB.
     /// </summary>
-    public string Language { get; }
-
-    public ExportAspNetCoreEmbeddedLanguageBraceMatcherAttribute(
-        string name, string language)
-        : base(typeof(IAspNetCoreEmbeddedLanguageBraceMatcher))
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Language = language ?? throw new ArgumentNullException(nameof(language));
-    }
+    public string Language { get; } = language ?? throw new ArgumentNullException(nameof(language));
 }

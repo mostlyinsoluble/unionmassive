@@ -718,16 +718,10 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        private readonly struct ChangeRangeWithText
+        private readonly struct ChangeRangeWithText(TextChangeRange range, string? newText)
         {
-            public readonly TextChangeRange Range;
-            public readonly string? NewText;
-
-            public ChangeRangeWithText(TextChangeRange range, string? newText)
-            {
-                this.Range = range;
-                this.NewText = newText;
-            }
+            public readonly TextChangeRange Range = range;
+            public readonly string? NewText = newText;
         }
 
         private List<ChangeRangeWithText> ReduceChanges(List<ChangeRecord> changeRecords)
@@ -797,7 +791,7 @@ namespace Microsoft.CodeAnalysis
             }
 
             // don't double count the chars we matched at the start of the strings
-            maxChars = maxChars - commonLeadingCount;
+            maxChars -= commonLeadingCount;
 
             commonTrailingCount = 0;
             for (; commonTrailingCount < maxChars; commonTrailingCount++)

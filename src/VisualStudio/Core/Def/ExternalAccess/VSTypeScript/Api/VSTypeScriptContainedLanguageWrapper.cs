@@ -41,9 +41,7 @@ internal readonly struct VSTypeScriptContainedLanguageWrapper
         IVsTextBufferCoordinator bufferCoordinator,
         IComponentModel componentModel,
         VSTypeScriptVisualStudioProjectWrapper project,
-        Guid languageServiceGuid)
-    {
-        _underlyingObject = new ContainedLanguage(
+        Guid languageServiceGuid) => _underlyingObject = new ContainedLanguage(
             bufferCoordinator,
             componentModel,
             componentModel.GetService<VisualStudioWorkspace>(),
@@ -51,7 +49,6 @@ internal readonly struct VSTypeScriptContainedLanguageWrapper
             project.Project,
             languageServiceGuid,
             vbHelperFormattingRule: null);
-    }
 
     public VSTypeScriptContainedLanguageWrapper(
         IVsTextBufferCoordinator bufferCoordinator,

@@ -12,20 +12,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     /// The name of a local or argument and the name of
     /// the corresponding method to access that object.
     /// </summary>
-    internal abstract class LocalAndMethod
+    internal abstract class LocalAndMethod(string localName, string localDisplayName, string methodName, DkmClrCompilationResultFlags flags)
     {
-        public readonly string LocalName;
-        public readonly string LocalDisplayName;
-        public readonly string MethodName;
-        public readonly DkmClrCompilationResultFlags Flags;
-
-        public LocalAndMethod(string localName, string localDisplayName, string methodName, DkmClrCompilationResultFlags flags)
-        {
-            this.LocalName = localName;
-            this.LocalDisplayName = localDisplayName;
-            this.MethodName = methodName;
-            this.Flags = flags;
-        }
+        public readonly string LocalName = localName;
+        public readonly string LocalDisplayName = localDisplayName;
+        public readonly string MethodName = methodName;
+        public readonly DkmClrCompilationResultFlags Flags = flags;
 
         public abstract Guid GetCustomTypeInfo(out ReadOnlyCollection<byte>? payload);
     }

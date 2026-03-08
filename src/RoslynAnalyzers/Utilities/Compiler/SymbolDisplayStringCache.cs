@@ -34,10 +34,7 @@ namespace Analyzer.Utilities
         /// Privately constructs.
         /// </summary>
         /// <param name="format">SymbolDisplayFormat to use, or null for the default.</param>
-        private SymbolDisplayStringCache(SymbolDisplayFormat? format = null)
-        {
-            this.Format = Object.ReferenceEquals(format, NullSymbolDisplayFormat) ? null : format;
-        }
+        private SymbolDisplayStringCache(SymbolDisplayFormat? format = null) => this.Format = Object.ReferenceEquals(format, NullSymbolDisplayFormat) ? null : format;
 
         /// <summary>
         /// Gets the symbol display string cache for the compilation.

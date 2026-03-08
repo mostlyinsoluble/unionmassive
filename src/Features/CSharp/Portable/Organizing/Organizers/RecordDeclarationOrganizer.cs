@@ -12,14 +12,10 @@ using Microsoft.CodeAnalysis.Organizing.Organizers;
 namespace Microsoft.CodeAnalysis.CSharp.Organizing.Organizers;
 
 [ExportSyntaxNodeOrganizer(LanguageNames.CSharp), Shared]
-internal sealed class RecordDeclarationOrganizer : AbstractSyntaxNodeOrganizer<RecordDeclarationSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RecordDeclarationOrganizer() : AbstractSyntaxNodeOrganizer<RecordDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RecordDeclarationOrganizer()
-    {
-    }
-
     protected override RecordDeclarationSyntax Organize(
         RecordDeclarationSyntax syntax,
         CancellationToken cancellationToken)

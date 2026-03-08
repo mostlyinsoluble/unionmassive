@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class SubstitutedTypeParameterSymbol : SubstitutedTypeParameterSymbolBase
     {
         internal SubstitutedTypeParameterSymbol(Symbol newContainer, TypeMap map, TypeParameterSymbol substitutedFrom, int ordinal)
-            : base(newContainer, map, substitutedFrom, ordinal)
-        {
-            Debug.Assert(ContainingSymbol.OriginalDefinition == _underlyingTypeParameter.ContainingSymbol.OriginalDefinition);
-        }
+            : base(newContainer, map, substitutedFrom, ordinal) => Debug.Assert(ContainingSymbol.OriginalDefinition == _underlyingTypeParameter.ContainingSymbol.OriginalDefinition);
 
         internal override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {

@@ -10,13 +10,8 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests.CSharp;
 
-public abstract class CSharpSquigglesCommon : AbstractEditorTest
+public abstract class CSharpSquigglesCommon(string projectTemplate) : AbstractEditorTest(nameof(CSharpSquigglesCommon), projectTemplate)
 {
-    protected CSharpSquigglesCommon(string projectTemplate)
-        : base(nameof(CSharpSquigglesCommon), projectTemplate)
-    {
-    }
-
     protected abstract bool SupportsGlobalUsings { get; }
 
     protected override string LanguageName => LanguageNames.CSharp;

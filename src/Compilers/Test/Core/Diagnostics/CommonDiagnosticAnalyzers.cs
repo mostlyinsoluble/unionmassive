@@ -570,15 +570,9 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public class CodeBlockActionAnalyzer : DiagnosticAnalyzer
+        public class CodeBlockActionAnalyzer(bool onlyStatelessAction = false) : DiagnosticAnalyzer
         {
-            private readonly bool _onlyStatelessAction;
-
-            public CodeBlockActionAnalyzer(bool onlyStatelessAction = false)
-            {
-                _onlyStatelessAction = onlyStatelessAction;
-            }
-
+            private readonly bool _onlyStatelessAction = onlyStatelessAction;
             public static readonly DiagnosticDescriptor CodeBlockTopLevelRule = new DiagnosticDescriptor(
                 "CodeBlockTopLevelRuleId",
                 "CodeBlockTopLevelRuleTitle",
@@ -879,9 +873,9 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class AnalyzerWithInvalidDiagnosticSpan : DiagnosticAnalyzer
+        public sealed class AnalyzerWithInvalidDiagnosticSpan(TextSpan badSpan) : DiagnosticAnalyzer
         {
-            private readonly TextSpan _badSpan;
+            private readonly TextSpan _badSpan = badSpan;
 
             public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
                 "ID",
@@ -891,7 +885,6 @@ namespace Microsoft.CodeAnalysis
                 defaultSeverity: DiagnosticSeverity.Warning,
                 isEnabledByDefault: true);
 
-            public AnalyzerWithInvalidDiagnosticSpan(TextSpan badSpan) => _badSpan = badSpan;
             public Exception ThrownException { get; set; }
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
             public override void Initialize(AnalysisContext context)
@@ -913,11 +906,11 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class AnalyzerWithInvalidDiagnosticLocation : DiagnosticAnalyzer
+        public sealed class AnalyzerWithInvalidDiagnosticLocation(SyntaxTree treeInAnotherCompilation, AnalyzerWithInvalidDiagnosticLocation.ActionKind actionKind, bool testInvalidAdditionalLocation) : DiagnosticAnalyzer
         {
-            private readonly Location _invalidLocation;
-            private readonly ActionKind _actionKind;
-            private readonly bool _testInvalidAdditionalLocation;
+            private readonly Location _invalidLocation = treeInAnotherCompilation.GetRoot().GetLocation();
+            private readonly ActionKind _actionKind = actionKind;
+            private readonly bool _testInvalidAdditionalLocation = testInvalidAdditionalLocation;
 
             public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
                 "ID",
@@ -936,13 +929,6 @@ namespace Microsoft.CodeAnalysis
                 Compilation,
                 CompilationEnd,
                 SyntaxTree
-            }
-
-            public AnalyzerWithInvalidDiagnosticLocation(SyntaxTree treeInAnotherCompilation, ActionKind actionKind, bool testInvalidAdditionalLocation)
-            {
-                _invalidLocation = treeInAnotherCompilation.GetRoot().GetLocation();
-                _actionKind = actionKind;
-                _testInvalidAdditionalLocation = testInvalidAdditionalLocation;
             }
 
             private void ReportDiagnostic(Action<Diagnostic> addDiagnostic, ActionKind actionKindBeingRun)
@@ -1084,20 +1070,15 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public class SemanticModelAnalyzerWithId : DiagnosticAnalyzer
+        public class SemanticModelAnalyzerWithId(string diagnosticId) : DiagnosticAnalyzer
         {
-            public SemanticModelAnalyzerWithId(string diagnosticId)
-            {
-                Descriptor = new DiagnosticDescriptor(
+            public DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
                     diagnosticId,
                     "Description1",
                     string.Empty,
                     "Analysis",
                     DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
-            }
-
-            public DiagnosticDescriptor Descriptor { get; }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
 
@@ -1223,11 +1204,11 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class OperationAnalyzer : DiagnosticAnalyzer
+        public sealed class OperationAnalyzer(OperationAnalyzer.ActionKind actionKind, bool verifyGetControlFlowGraph = false) : DiagnosticAnalyzer
         {
-            private readonly ActionKind _actionKind;
-            private readonly bool _verifyGetControlFlowGraph;
-            private readonly ConcurrentDictionary<IOperation, (ControlFlowGraph Graph, ISymbol AssociatedSymbol)> _controlFlowGraphMapOpt;
+            private readonly ActionKind _actionKind = actionKind;
+            private readonly bool _verifyGetControlFlowGraph = verifyGetControlFlowGraph;
+            private readonly ConcurrentDictionary<IOperation, (ControlFlowGraph Graph, ISymbol AssociatedSymbol)> _controlFlowGraphMapOpt = verifyGetControlFlowGraph ? new ConcurrentDictionary<IOperation, (ControlFlowGraph, ISymbol)>() : null;
 
             public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
                 "ID",
@@ -1243,13 +1224,6 @@ namespace Microsoft.CodeAnalysis
                 OperationInOperationBlockStart,
                 OperationBlock,
                 OperationBlockEnd
-            }
-
-            public OperationAnalyzer(ActionKind actionKind, bool verifyGetControlFlowGraph = false)
-            {
-                _actionKind = actionKind;
-                _verifyGetControlFlowGraph = verifyGetControlFlowGraph;
-                _controlFlowGraphMapOpt = verifyGetControlFlowGraph ? new ConcurrentDictionary<IOperation, (ControlFlowGraph, ISymbol)>() : null;
             }
 
             public ImmutableArray<(ControlFlowGraph Graph, ISymbol AssociatedSymbol)> GetControlFlowGraphs()
@@ -1397,9 +1371,9 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class FieldReferenceOperationAnalyzer : DiagnosticAnalyzer
+        public sealed class FieldReferenceOperationAnalyzer(bool doOperationBlockAnalysis) : DiagnosticAnalyzer
         {
-            private readonly bool _doOperationBlockAnalysis;
+            private readonly bool _doOperationBlockAnalysis = doOperationBlockAnalysis;
             public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
                 "ID",
                 "Title",
@@ -1407,11 +1381,6 @@ namespace Microsoft.CodeAnalysis
                 "Category",
                 defaultSeverity: DiagnosticSeverity.Warning,
                 isEnabledByDefault: true);
-
-            public FieldReferenceOperationAnalyzer(bool doOperationBlockAnalysis)
-            {
-                _doOperationBlockAnalysis = doOperationBlockAnalysis;
-            }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
             public override void Initialize(AnalysisContext context)
@@ -1469,11 +1438,11 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        public abstract class AbstractGeneratedCodeAnalyzer<TSyntaxKind> : DiagnosticAnalyzer
+        public abstract class AbstractGeneratedCodeAnalyzer<TSyntaxKind>(GeneratedCodeAnalysisFlags? generatedCodeAnalysisFlagsOpt, bool testIsGeneratedCodeInCallbacks) : DiagnosticAnalyzer
             where TSyntaxKind : struct
         {
-            private readonly GeneratedCodeAnalysisFlags? _generatedCodeAnalysisFlagsOpt;
-            private readonly bool _testIsGeneratedCodeInCallbacks;
+            private readonly GeneratedCodeAnalysisFlags? _generatedCodeAnalysisFlagsOpt = generatedCodeAnalysisFlagsOpt;
+            private readonly bool _testIsGeneratedCodeInCallbacks = testIsGeneratedCodeInCallbacks;
 
             public static readonly DiagnosticDescriptor Warning = new DiagnosticDescriptor(
                 "GeneratedCodeAnalyzerWarning",
@@ -1506,12 +1475,6 @@ namespace Microsoft.CodeAnalysis
                 "Category",
                 DiagnosticSeverity.Warning,
                 true);
-
-            protected AbstractGeneratedCodeAnalyzer(GeneratedCodeAnalysisFlags? generatedCodeAnalysisFlagsOpt, bool testIsGeneratedCodeInCallbacks)
-            {
-                _generatedCodeAnalysisFlagsOpt = generatedCodeAnalysisFlagsOpt;
-                _testIsGeneratedCodeInCallbacks = testIsGeneratedCodeInCallbacks;
-            }
 
             protected abstract TSyntaxKind ClassDeclarationSyntaxKind { get; }
 
@@ -1866,23 +1829,14 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public class SymbolStartAnalyzer : DiagnosticAnalyzer
+        public class SymbolStartAnalyzer(bool topLevelAction, SymbolKind symbolKind, OperationKind? operationKindOpt = null, int? analyzerId = null) : DiagnosticAnalyzer
         {
-            private readonly SymbolKind _symbolKind;
-            private readonly bool _topLevelAction;
-            private readonly OperationKind? _operationKind;
-            private readonly string _analyzerId;
+            private readonly SymbolKind _symbolKind = symbolKind;
+            private readonly bool _topLevelAction = topLevelAction;
+            private readonly OperationKind? _operationKind = operationKindOpt;
+            private readonly string _analyzerId = $"Analyzer{(analyzerId.HasValue ? analyzerId.Value : 1)}";
 
-            public SymbolStartAnalyzer(bool topLevelAction, SymbolKind symbolKind, OperationKind? operationKindOpt = null, int? analyzerId = null)
-            {
-                _topLevelAction = topLevelAction;
-                _symbolKind = symbolKind;
-                _operationKind = operationKindOpt;
-                _analyzerId = $"Analyzer{(analyzerId.HasValue ? analyzerId.Value : 1)}";
-                SymbolsStarted = new ConcurrentSet<ISymbol>();
-            }
-
-            internal ConcurrentSet<ISymbol> SymbolsStarted { get; }
+            internal ConcurrentSet<ISymbol> SymbolsStarted { get; } = new ConcurrentSet<ISymbol>();
 
             public static readonly DiagnosticDescriptor SymbolStartTopLevelRule = new DiagnosticDescriptor(
                 "SymbolStartTopLevelRuleId",
@@ -2154,16 +2108,12 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressorForId : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressorForId(string suppressedDiagnosticId, string suppressionId = null) : DiagnosticSuppressor
         {
-            public SuppressionDescriptor SuppressionDescriptor { get; }
-            public DiagnosticSuppressorForId(string suppressedDiagnosticId, string suppressionId = null)
-            {
-                SuppressionDescriptor = new SuppressionDescriptor(
+            public SuppressionDescriptor SuppressionDescriptor { get; } = new SuppressionDescriptor(
                     id: suppressionId ?? "SPR0001",
                     suppressedDiagnosticId: suppressedDiagnosticId,
                     justification: $"Suppress {suppressedDiagnosticId}");
-            }
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(SuppressionDescriptor);
@@ -2215,17 +2165,13 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressorForId_ThrowsOperationCancelledException : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressorForId_ThrowsOperationCancelledException(string suppressedDiagnosticId) : DiagnosticSuppressor
         {
             public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
-            public SuppressionDescriptor SuppressionDescriptor { get; }
-            public DiagnosticSuppressorForId_ThrowsOperationCancelledException(string suppressedDiagnosticId)
-            {
-                SuppressionDescriptor = new SuppressionDescriptor(
+            public SuppressionDescriptor SuppressionDescriptor { get; } = new SuppressionDescriptor(
                     id: "SPR0001",
                     suppressedDiagnosticId: suppressedDiagnosticId,
                     justification: $"Suppress {suppressedDiagnosticId}");
-            }
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(SuppressionDescriptor);
@@ -2238,14 +2184,9 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressorThrowsExceptionFromSupportedSuppressions : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressorThrowsExceptionFromSupportedSuppressions(NotImplementedException exception) : DiagnosticSuppressor
         {
-            private readonly NotImplementedException _exception;
-
-            public DiagnosticSuppressorThrowsExceptionFromSupportedSuppressions(NotImplementedException exception)
-            {
-                _exception = exception;
-            }
+            private readonly NotImplementedException _exception = exception;
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => throw _exception;
@@ -2256,19 +2197,13 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressorThrowsExceptionFromReportedSuppressions : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressorThrowsExceptionFromReportedSuppressions(string suppressedDiagnosticId, NotImplementedException exception) : DiagnosticSuppressor
         {
-            private readonly SuppressionDescriptor _descriptor;
-            private readonly NotImplementedException _exception;
-
-            public DiagnosticSuppressorThrowsExceptionFromReportedSuppressions(string suppressedDiagnosticId, NotImplementedException exception)
-            {
-                _descriptor = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _descriptor = new SuppressionDescriptor(
                     "SPR0001",
                     suppressedDiagnosticId,
                     $"Suppress {suppressedDiagnosticId}");
-                _exception = exception;
-            }
+            private readonly NotImplementedException _exception = exception;
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(_descriptor);
@@ -2280,23 +2215,16 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressor_UnsupportedSuppressionReported : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressor_UnsupportedSuppressionReported(string suppressedDiagnosticId, string supportedSuppressionId, string unsupportedSuppressionId) : DiagnosticSuppressor
         {
-            private readonly SuppressionDescriptor _supportedDescriptor;
-            private readonly SuppressionDescriptor _unsupportedDescriptor;
-
-            public DiagnosticSuppressor_UnsupportedSuppressionReported(string suppressedDiagnosticId, string supportedSuppressionId, string unsupportedSuppressionId)
-            {
-                _supportedDescriptor = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _supportedDescriptor = new SuppressionDescriptor(
                     supportedSuppressionId,
                     suppressedDiagnosticId,
                     $"Suppress {suppressedDiagnosticId}");
-
-                _unsupportedDescriptor = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _unsupportedDescriptor = new SuppressionDescriptor(
                     unsupportedSuppressionId,
                     suppressedDiagnosticId,
                     $"Suppress {suppressedDiagnosticId}");
-            }
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(_supportedDescriptor);
@@ -2312,23 +2240,16 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressor_InvalidDiagnosticSuppressionReported : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressor_InvalidDiagnosticSuppressionReported(string suppressedDiagnosticId, string unsupportedSuppressedDiagnosticId) : DiagnosticSuppressor
         {
-            private readonly SuppressionDescriptor _supportedDescriptor;
-            private readonly SuppressionDescriptor _unsupportedDescriptor;
-
-            public DiagnosticSuppressor_InvalidDiagnosticSuppressionReported(string suppressedDiagnosticId, string unsupportedSuppressedDiagnosticId)
-            {
-                _supportedDescriptor = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _supportedDescriptor = new SuppressionDescriptor(
                     "SPR0001",
                     suppressedDiagnosticId,
                     $"Suppress {suppressedDiagnosticId}");
-
-                _unsupportedDescriptor = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _unsupportedDescriptor = new SuppressionDescriptor(
                     "SPR0002",
                     unsupportedSuppressedDiagnosticId,
                     $"Suppress {unsupportedSuppressedDiagnosticId}");
-            }
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(_supportedDescriptor);
@@ -2344,23 +2265,16 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class DiagnosticSuppressor_NonReportedDiagnosticCannotBeSuppressed : DiagnosticSuppressor
+        public sealed class DiagnosticSuppressor_NonReportedDiagnosticCannotBeSuppressed(string reportedDiagnosticId, string nonReportedDiagnosticId) : DiagnosticSuppressor
         {
-            private readonly SuppressionDescriptor _descriptor1, _descriptor2;
-            private readonly string _nonReportedDiagnosticId;
-
-            public DiagnosticSuppressor_NonReportedDiagnosticCannotBeSuppressed(string reportedDiagnosticId, string nonReportedDiagnosticId)
-            {
-                _descriptor1 = new SuppressionDescriptor(
+            private readonly SuppressionDescriptor _descriptor1 = new SuppressionDescriptor(
                     "SPR0001",
                     reportedDiagnosticId,
-                    $"Suppress {reportedDiagnosticId}");
-                _descriptor2 = new SuppressionDescriptor(
+                    $"Suppress {reportedDiagnosticId}"), _descriptor2 = new SuppressionDescriptor(
                     "SPR0002",
                     nonReportedDiagnosticId,
                     $"Suppress {nonReportedDiagnosticId}");
-                _nonReportedDiagnosticId = nonReportedDiagnosticId;
-            }
+            private readonly string _nonReportedDiagnosticId = nonReportedDiagnosticId;
 
             public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions
                 => ImmutableArray.Create(_descriptor1, _descriptor2);
@@ -2464,20 +2378,15 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public sealed class AnalyzerWithNoLocationDiagnostics : DiagnosticAnalyzer
+        public sealed class AnalyzerWithNoLocationDiagnostics(bool isEnabledByDefault) : DiagnosticAnalyzer
         {
-            public AnalyzerWithNoLocationDiagnostics(bool isEnabledByDefault)
-            {
-                Descriptor = new DiagnosticDescriptor(
+            public DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
                     "ID0001",
                     "Title1",
                     "Message1",
                     "Category1",
                     defaultSeverity: DiagnosticSeverity.Warning,
                     isEnabledByDefault);
-            }
-
-            public DiagnosticDescriptor Descriptor { get; }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
             public override void Initialize(AnalysisContext context)
@@ -2575,22 +2484,17 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public sealed class FieldAnalyzer : DiagnosticAnalyzer
+        public sealed class FieldAnalyzer(string diagnosticId, bool syntaxTreeAction) : DiagnosticAnalyzer
         {
-            private readonly bool _syntaxTreeAction;
-            public FieldAnalyzer(string diagnosticId, bool syntaxTreeAction)
-            {
-                _syntaxTreeAction = syntaxTreeAction;
-                Descriptor = new DiagnosticDescriptor(
+            private readonly bool _syntaxTreeAction = syntaxTreeAction;
+
+            public DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
                     diagnosticId,
                     "Title",
                     "Message",
                     "Category",
                     defaultSeverity: DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
-            }
-
-            public DiagnosticDescriptor Descriptor { get; }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
 
@@ -2617,26 +2521,18 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-        public class AdditionalFileAnalyzer : DiagnosticAnalyzer
+        public class AdditionalFileAnalyzer(bool registerFromInitialize, TextSpan diagnosticSpan, string id = "ID0001") : DiagnosticAnalyzer
         {
-            private readonly bool _registerFromInitialize;
-            private readonly TextSpan _diagnosticSpan;
+            private readonly bool _registerFromInitialize = registerFromInitialize;
+            private readonly TextSpan _diagnosticSpan = diagnosticSpan;
 
-            public AdditionalFileAnalyzer(bool registerFromInitialize, TextSpan diagnosticSpan, string id = "ID0001")
-            {
-                _registerFromInitialize = registerFromInitialize;
-                _diagnosticSpan = diagnosticSpan;
-
-                Descriptor = new DiagnosticDescriptor(
+            public DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
                     id,
                     "Title1",
                     "Message1",
                     "Category1",
                     defaultSeverity: DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
-            }
-
-            public DiagnosticDescriptor Descriptor { get; }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
             public override void Initialize(AnalysisContext context)
@@ -2703,10 +2599,10 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public sealed class LocalNonLocalDiagnosticsAnalyzer : DiagnosticAnalyzer
+        public sealed class LocalNonLocalDiagnosticsAnalyzer(LocalNonLocalDiagnosticsAnalyzer.ActionKind actionKind) : DiagnosticAnalyzer
         {
             private static readonly DiagnosticDescriptor s_descriptor = new("ID0001", "Title", "{0}", "Category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
-            private readonly ActionKind _actionKind;
+            private readonly ActionKind _actionKind = actionKind;
 
             public enum ActionKind
             {
@@ -2720,11 +2616,6 @@ namespace Microsoft.CodeAnalysis
                 SyntaxNodeAction,
                 CodeBlockAction,
                 CodeBlockStartEndAction
-            }
-
-            public LocalNonLocalDiagnosticsAnalyzer(ActionKind actionKind)
-            {
-                _actionKind = actionKind;
             }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
@@ -2858,22 +2749,17 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public sealed class VariableDeclarationAnalyzer : DiagnosticAnalyzer
+        public sealed class VariableDeclarationAnalyzer(string diagnosticId, bool testSyntaxNodeAction) : DiagnosticAnalyzer
         {
-            private readonly bool _testSyntaxNodeAction;
-            public VariableDeclarationAnalyzer(string diagnosticId, bool testSyntaxNodeAction)
-            {
-                _testSyntaxNodeAction = testSyntaxNodeAction;
-                Descriptor = new DiagnosticDescriptor(
+            private readonly bool _testSyntaxNodeAction = testSyntaxNodeAction;
+
+            public DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
                     diagnosticId,
                     "Title",
                     "Message",
                     "Category",
                     defaultSeverity: DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
-            }
-
-            public DiagnosticDescriptor Descriptor { get; }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
 
@@ -2904,23 +2790,17 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        internal sealed class CancellationTestAnalyzer : DiagnosticAnalyzer
+        internal sealed class CancellationTestAnalyzer(CommonDiagnosticAnalyzers.AnalyzerRegisterActionKind actionKind) : DiagnosticAnalyzer
         {
             public const string DiagnosticId = "DiagnosticId";
             private readonly DiagnosticDescriptor s_descriptor =
                 new DiagnosticDescriptor(DiagnosticId, "test", "test", "test", DiagnosticSeverity.Warning, isEnabledByDefault: true);
 
-            private readonly AnalyzerRegisterActionKind _actionKind;
+            private readonly AnalyzerRegisterActionKind _actionKind = actionKind;
             private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-            public CancellationTestAnalyzer(AnalyzerRegisterActionKind actionKind)
-            {
-                _actionKind = actionKind;
-                CanceledCompilations = new ConcurrentSet<Compilation>();
-            }
-
             public CancellationToken CancellationToken => _cancellationTokenSource.Token;
-            public ConcurrentSet<Compilation> CanceledCompilations { get; }
+            public ConcurrentSet<Compilation> CanceledCompilations { get; } = new ConcurrentSet<Compilation>();
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
 
@@ -2973,14 +2853,14 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public sealed class AllActionsAnalyzer : DiagnosticAnalyzer
+        public sealed class AllActionsAnalyzer(bool testSyntaxTreeAction, bool testSemanticModelAction, bool testSymbolStartAction, bool testBlockActions) : DiagnosticAnalyzer
         {
             private static readonly DiagnosticDescriptor s_descriptor = new("ID0001", "Title", "Message", "Category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
 
-            private readonly bool _testSyntaxTreeAction;
-            private readonly bool _testSemanticModelAction;
-            private readonly bool _testSymbolStartAction;
-            private readonly bool _testBlockActions;
+            private readonly bool _testSyntaxTreeAction = testSyntaxTreeAction;
+            private readonly bool _testSemanticModelAction = testSemanticModelAction;
+            private readonly bool _testSymbolStartAction = testSymbolStartAction;
+            private readonly bool _testBlockActions = testBlockActions;
 
             public readonly List<SyntaxTree> AnalyzedTrees = new();
             public readonly List<SemanticModel> AnalyzedSemanticModels = new();
@@ -2997,14 +2877,6 @@ namespace Microsoft.CodeAnalysis
             public readonly List<SyntaxNode> AnalyzedSyntaxNodesInsideCodeBlock = new();
             public readonly List<ISymbol> AnalyzedCodeBlockStartSymbols = new();
             public readonly List<ISymbol> AnalyzedCodeBlockEndSymbols = new();
-
-            public AllActionsAnalyzer(bool testSyntaxTreeAction, bool testSemanticModelAction, bool testSymbolStartAction, bool testBlockActions)
-            {
-                _testSyntaxTreeAction = testSyntaxTreeAction;
-                _testSemanticModelAction = testSemanticModelAction;
-                _testSymbolStartAction = testSymbolStartAction;
-                _testBlockActions = testBlockActions;
-            }
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_descriptor);
 
@@ -3060,7 +2932,7 @@ namespace Microsoft.CodeAnalysis
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public sealed class FilterSpanTestAnalyzer : DiagnosticAnalyzer
+        public sealed class FilterSpanTestAnalyzer(FilterSpanTestAnalyzer.AnalysisKind analysisKind) : DiagnosticAnalyzer
         {
             public enum AnalysisKind
             {
@@ -3085,12 +2957,7 @@ namespace Microsoft.CodeAnalysis
                     defaultSeverity: DiagnosticSeverity.Warning,
                     isEnabledByDefault: true);
 
-            private readonly AnalysisKind _analysisKind;
-
-            public FilterSpanTestAnalyzer(AnalysisKind analysisKind)
-            {
-                _analysisKind = analysisKind;
-            }
+            private readonly AnalysisKind _analysisKind = analysisKind;
 
             public TextSpan? CallbackFilterSpan { get; private set; }
             public SyntaxTree CallbackFilterTree { get; private set; }

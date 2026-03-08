@@ -17,15 +17,9 @@ internal sealed class ClassifiedTextElement
 
     public IEnumerable<ClassifiedTextRun> Runs { get; }
 
-    public ClassifiedTextElement(params ClassifiedTextRun[] runs)
-    {
-        Runs = runs?.ToImmutableList() ?? throw new ArgumentNullException("runs");
-    }
+    public ClassifiedTextElement(params ClassifiedTextRun[] runs) => Runs = runs?.ToImmutableList() ?? throw new ArgumentNullException("runs");
 
-    public ClassifiedTextElement(IEnumerable<ClassifiedTextRun> runs)
-    {
-        Runs = runs?.ToImmutableList() ?? throw new ArgumentNullException("runs");
-    }
+    public ClassifiedTextElement(IEnumerable<ClassifiedTextRun> runs) => Runs = runs?.ToImmutableList() ?? throw new ArgumentNullException("runs");
 
     public static ClassifiedTextElement CreateHyperlink(string text, string tooltip, Action navigationAction)
     {

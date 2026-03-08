@@ -16,14 +16,10 @@ using static SyntaxFactory;
 [ExportArgumentProvider(nameof(OutVariableArgumentProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(ContextVariableArgumentProvider))]
 [Shared]
-internal sealed class OutVariableArgumentProvider : ArgumentProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OutVariableArgumentProvider() : ArgumentProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OutVariableArgumentProvider()
-    {
-    }
-
     public override Task ProvideArgumentAsync(ArgumentContext context)
     {
         if (context.PreviousValue is not null)

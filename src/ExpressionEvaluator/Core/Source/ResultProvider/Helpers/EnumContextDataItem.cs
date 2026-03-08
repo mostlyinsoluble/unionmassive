@@ -9,13 +9,8 @@ using Microsoft.VisualStudio.Debugger.Evaluation;
 
 namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 {
-    internal sealed class EnumContextDataItem : DkmDataItem
+    internal sealed class EnumContextDataItem(DkmEvaluationResult result) : DkmDataItem
     {
-        public readonly DkmEvaluationResult Result;
-
-        public EnumContextDataItem(DkmEvaluationResult result)
-        {
-            this.Result = result;
-        }
+        public readonly DkmEvaluationResult Result = result;
     }
 }

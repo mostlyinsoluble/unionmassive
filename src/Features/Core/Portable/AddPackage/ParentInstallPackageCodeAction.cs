@@ -38,30 +38,25 @@ internal readonly struct InstallPackageData(string? packageSource, string packag
 /// the lightbulb.  It will have children to 'Install Latest', 
 /// 'Install Version 'X' ..., and 'Install with package manager'.
 /// </summary>
-internal sealed class ParentInstallPackageCodeAction : CodeAction.CodeActionWithNestedActions
+/// <remarks>
+/// Even though we have child actions, we mark ourselves as explicitly non-inlinable.
+/// We want to the experience of having the top level item the user has to see and
+/// navigate through, and we don't want our child items confusingly being added to the
+/// top level light-bulb where it's not clear what effect they would have if invoked.
+/// </remarks>
+internal sealed class ParentInstallPackageCodeAction(
+    Document document,
+    InstallPackageData fixData,
+    IPackageInstallerService installerService) : CodeAction.CodeActionWithNestedActions(string.Format(FeaturesResources.Install_package_0, fixData.PackageName),
+           CreateNestedActions(document, fixData, installerService),
+           isInlinable: false,
+           priority: CodeActionPriority.Low)
 {
     /// <summary>
     /// This code action only works by installing a package.  As such, it requires a non document change (and is
     /// thus restricted in which hosts it can run).
     /// </summary>
     public override ImmutableArray<string> Tags => RequiresNonDocumentChangeTags;
-
-    /// <summary>
-    /// Even though we have child actions, we mark ourselves as explicitly non-inlinable.
-    /// We want to the experience of having the top level item the user has to see and
-    /// navigate through, and we don't want our child items confusingly being added to the
-    /// top level light-bulb where it's not clear what effect they would have if invoked.
-    /// </summary>
-    public ParentInstallPackageCodeAction(
-        Document document,
-        InstallPackageData fixData,
-        IPackageInstallerService installerService)
-        : base(string.Format(FeaturesResources.Install_package_0, fixData.PackageName),
-               CreateNestedActions(document, fixData, installerService),
-               isInlinable: false,
-               priority: CodeActionPriority.Low) // Adding a nuget reference is lower priority than other fixes..
-    {
-    }
 
     public static CodeAction? TryCreateCodeAction(
         Document document,

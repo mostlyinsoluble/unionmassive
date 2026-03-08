@@ -36,26 +36,20 @@ namespace Microsoft.VisualStudio.LanguageServices.CodeLens;
 [Priority(200)]
 [OptionUserModifiable(userModifiable: false)]
 [DetailsTemplateName("references")]
-internal sealed class ReferenceCodeLensProvider : IAsyncCodeLensDataPointProvider, IDisposable
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ReferenceCodeLensProvider(Lazy<ICodeLensCallbackService> codeLensCallbackService) : IAsyncCodeLensDataPointProvider, IDisposable
 {
     // TODO: do we need to localize this?
     private const string Id = "CSVBReferences";
 
     // this is lazy to get around circular MEF dependency issue
-    private readonly Lazy<ICodeLensCallbackService> _lazyCodeLensCallbackService;
+    private readonly Lazy<ICodeLensCallbackService> _lazyCodeLensCallbackService = codeLensCallbackService;
 
     // Map of project GUID -> data points
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private Task? _pollingTask;
     private readonly Dictionary<Guid, (string version, HashSet<DataPoint> dataPoints)> _dataPoints = [];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ReferenceCodeLensProvider(Lazy<ICodeLensCallbackService> codeLensCallbackService)
-    {
-        // use lazy to break circular MEF dependency issue
-        _lazyCodeLensCallbackService = codeLensCallbackService;
-    }
 
     public void Dispose()
     {
@@ -151,7 +145,10 @@ internal sealed class ReferenceCodeLensProvider : IAsyncCodeLensDataPointProvide
         }
     }
 
-    private sealed class DataPoint : IAsyncCodeLensDataPoint, IDisposable
+    private sealed class DataPoint(
+        ReferenceCodeLensProvider owner,
+        ICodeLensCallbackService callbackService,
+        CodeLensDescriptor descriptor) : IAsyncCodeLensDataPoint, IDisposable
     {
         private static readonly List<CodeLensDetailHeaderDescriptor> s_header =
         [
@@ -169,21 +166,10 @@ internal sealed class ReferenceCodeLensProvider : IAsyncCodeLensDataPointProvide
             new CodeLensDetailHeaderDescriptor() { UniqueName = ReferenceEntryFieldNames.TextAfterReference2 },
         ];
 
-        private readonly ReferenceCodeLensProvider _owner;
-        private readonly ICodeLensCallbackService _callbackService;
+        private readonly ReferenceCodeLensProvider _owner = owner;
+        private readonly ICodeLensCallbackService _callbackService = callbackService;
 
         private ReferenceCount? _calculatedReferenceCount;
-
-        public DataPoint(
-            ReferenceCodeLensProvider owner,
-            ICodeLensCallbackService callbackService,
-            CodeLensDescriptor descriptor)
-        {
-            _owner = owner;
-            _callbackService = callbackService;
-
-            Descriptor = descriptor;
-        }
 
         public void Dispose()
         {
@@ -192,7 +178,7 @@ internal sealed class ReferenceCodeLensProvider : IAsyncCodeLensDataPointProvide
 
         public event AsyncEventHandler? InvalidatedAsync;
 
-        public CodeLensDescriptor Descriptor { get; }
+        public CodeLensDescriptor Descriptor { get; } = descriptor;
 
         public async Task<CodeLensDataPointDescriptor?> GetDataAsync(CodeLensDescriptorContext descriptorContext, CancellationToken cancellationToken)
         {

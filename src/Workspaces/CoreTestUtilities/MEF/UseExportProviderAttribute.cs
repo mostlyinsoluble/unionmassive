@@ -55,13 +55,11 @@ public class UseExportProviderAttribute : BeforeAfterTestAttribute
 
     private MefHostServices? _hostServices;
 
-    static UseExportProviderAttribute()
-    {
+    static UseExportProviderAttribute() =>
         // Make sure we run the module initializer for Roslyn.Test.Utilities. C# projects do this via a
         // build-injected module initializer, but VB projects can ensure initialization occurs by applying the
         // UseExportProviderAttribute to test classes that rely on it.
         RuntimeHelpers.RunModuleConstructor(typeof(TestBase).Module.ModuleHandle);
-    }
 
     public override void Before(MethodInfo? methodUnderTest)
     {
@@ -215,15 +213,9 @@ public class UseExportProviderAttribute : BeforeAfterTestAttribute
         throw new InvalidOperationException("Cannot create host services after test tear down.");
     }
 
-    private sealed class ExportProviderMefHostServices : MefHostServices, IMefHostExportProvider
+    private sealed class ExportProviderMefHostServices(ExportProvider exportProvider) : MefHostServices(new ContainerConfiguration().CreateContainer()), IMefHostExportProvider
     {
-        private readonly VisualStudioMefHostServices _vsHostServices;
-
-        public ExportProviderMefHostServices(ExportProvider exportProvider)
-            : base(new ContainerConfiguration().CreateContainer())
-        {
-            _vsHostServices = VisualStudioMefHostServices.Create(exportProvider);
-        }
+        private readonly VisualStudioMefHostServices _vsHostServices = VisualStudioMefHostServices.Create(exportProvider);
 
         protected internal override HostWorkspaceServices CreateWorkspaceServices(Workspace workspace)
             => _vsHostServices.CreateWorkspaceServices(workspace);

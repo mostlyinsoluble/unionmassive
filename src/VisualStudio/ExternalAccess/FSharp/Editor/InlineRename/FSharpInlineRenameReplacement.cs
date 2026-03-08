@@ -8,16 +8,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor;
 
-internal readonly struct FSharpInlineRenameReplacement
+internal readonly struct FSharpInlineRenameReplacement(FSharpInlineRenameReplacementKind kind, TextSpan originalSpan, TextSpan newSpan)
 {
-    public FSharpInlineRenameReplacementKind Kind { get; }
-    public TextSpan OriginalSpan { get; }
-    public TextSpan NewSpan { get; }
-
-    public FSharpInlineRenameReplacement(FSharpInlineRenameReplacementKind kind, TextSpan originalSpan, TextSpan newSpan)
-    {
-        this.Kind = kind;
-        this.OriginalSpan = originalSpan;
-        this.NewSpan = newSpan;
-    }
+    public FSharpInlineRenameReplacementKind Kind { get; } = kind;
+    public TextSpan OriginalSpan { get; } = originalSpan;
+    public TextSpan NewSpan { get; } = newSpan;
 }

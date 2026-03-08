@@ -13,18 +13,13 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace Microsoft.CodeAnalysis.Workspaces;
 
 [Export(typeof(ITextBufferVisibilityTracker))]
-internal sealed class WpfTextBufferVisibilityTracker
-    : AbstractTextBufferVisibilityTracker<IWpfTextView, DependencyPropertyChangedEventHandler>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WpfTextBufferVisibilityTracker(
+    ITextBufferAssociatedViewService associatedViewService,
+    IThreadingContext threadingContext)
+        : AbstractTextBufferVisibilityTracker<IWpfTextView, DependencyPropertyChangedEventHandler>(associatedViewService, threadingContext)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WpfTextBufferVisibilityTracker(
-        ITextBufferAssociatedViewService associatedViewService,
-        IThreadingContext threadingContext)
-        : base(associatedViewService, threadingContext)
-    {
-    }
-
     protected override bool IsVisible(IWpfTextView view)
         => view.VisualElement.IsVisible;
 

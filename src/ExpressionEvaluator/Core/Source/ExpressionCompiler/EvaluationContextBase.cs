@@ -102,10 +102,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             private readonly string _message;
 
-            internal SimpleMessageDiagnostic(string message)
-            {
-                _message = message;
-            }
+            internal SimpleMessageDiagnostic(string message) => _message = message;
 
             public override IReadOnlyList<Location> AdditionalLocations
             {

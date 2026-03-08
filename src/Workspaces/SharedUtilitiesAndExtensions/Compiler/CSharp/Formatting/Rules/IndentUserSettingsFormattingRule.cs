@@ -17,10 +17,7 @@ internal sealed class IndentUserSettingsFormattingRule : BaseFormattingRule
     {
     }
 
-    private IndentUserSettingsFormattingRule(CSharpSyntaxFormattingOptions options)
-    {
-        _options = options;
-    }
+    private IndentUserSettingsFormattingRule(CSharpSyntaxFormattingOptions options) => _options = options;
 
     public override AbstractFormattingRule WithOptions(SyntaxFormattingOptions options)
     {

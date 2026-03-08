@@ -8,14 +8,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor;
 
-internal readonly struct FSharpInlineRenameLocation
+internal readonly struct FSharpInlineRenameLocation(Document document, TextSpan textSpan)
 {
-    public Document Document { get; }
-    public TextSpan TextSpan { get; }
-
-    public FSharpInlineRenameLocation(Document document, TextSpan textSpan)
-    {
-        this.Document = document;
-        this.TextSpan = textSpan;
-    }
+    public Document Document { get; } = document;
+    public TextSpan TextSpan { get; } = textSpan;
 }

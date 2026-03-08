@@ -8,12 +8,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Structure;
 
-internal class FSharpBlockStructure
+internal class FSharpBlockStructure(ImmutableArray<FSharpBlockSpan> spans)
 {
-    public ImmutableArray<FSharpBlockSpan> Spans { get; }
-
-    public FSharpBlockStructure(ImmutableArray<FSharpBlockSpan> spans)
-    {
-        Spans = spans;
-    }
+    public ImmutableArray<FSharpBlockSpan> Spans { get; } = spans;
 }

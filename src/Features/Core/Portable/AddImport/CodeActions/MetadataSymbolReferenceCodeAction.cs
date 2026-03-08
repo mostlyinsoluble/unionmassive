@@ -19,10 +19,7 @@ internal abstract partial class AbstractAddImportFeatureService<TSimpleNameSynta
         /// document change (and is thus restricted in which hosts it can run).
         /// </summary>
         public MetadataSymbolReferenceCodeAction(Document originalDocument, AddImportFixData fixData)
-            : base(originalDocument, fixData, RequiresNonDocumentChangeTags)
-        {
-            Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.MetadataSymbol);
-        }
+            : base(originalDocument, fixData, RequiresNonDocumentChangeTags) => Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.MetadataSymbol);
 
         protected override Task<CodeActionOperation?> UpdateProjectAsync(Project project, bool isPreview, CancellationToken cancellationToken)
         {

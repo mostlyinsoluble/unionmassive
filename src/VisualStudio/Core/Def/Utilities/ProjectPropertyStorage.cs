@@ -41,23 +41,17 @@ internal abstract class ProjectPropertyStorage
     public void SetProperty(string buildPropertyName, string configurationPropertyName, bool value)
         => SetProperty(buildPropertyName, configurationPropertyName, value.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
 
-    private sealed class BuildPropertyStorage : ProjectPropertyStorage
+    private sealed class BuildPropertyStorage(IVsBuildPropertyStorage propertyStorage) : ProjectPropertyStorage
     {
-        private readonly IVsBuildPropertyStorage _propertyStorage;
-
-        public BuildPropertyStorage(IVsBuildPropertyStorage propertyStorage)
-            => _propertyStorage = propertyStorage;
+        private readonly IVsBuildPropertyStorage _propertyStorage = propertyStorage;
 
         public override void SetProperty(string buildPropertyName, string configurationPropertyName, string value)
             => _propertyStorage.SetPropertyValue(buildPropertyName, null, (uint)_PersistStorageType.PST_PROJECT_FILE, value);
     }
 
-    private sealed class PerConfigurationPropertyStorage : ProjectPropertyStorage
+    private sealed class PerConfigurationPropertyStorage(ConfigurationManager configurationManager) : ProjectPropertyStorage
     {
-        private readonly ConfigurationManager _configurationManager;
-
-        public PerConfigurationPropertyStorage(ConfigurationManager configurationManager)
-            => _configurationManager = configurationManager;
+        private readonly ConfigurationManager _configurationManager = configurationManager;
 
         public override void SetProperty(string buildPropertyName, string configurationPropertyName, string value)
         {

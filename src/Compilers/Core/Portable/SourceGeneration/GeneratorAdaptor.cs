@@ -14,22 +14,16 @@ namespace Microsoft.CodeAnalysis
     /// Adapts an ISourceGenerator to an incremental generator that
     /// by providing an execution environment that matches the old one
     /// </summary>
-    internal sealed class SourceGeneratorAdaptor : IIncrementalGenerator
+    internal sealed class SourceGeneratorAdaptor(ISourceGenerator generator, string sourceExtension) : IIncrementalGenerator
     {
         /// <summary>
         /// A dummy extension that is used to indicate this adaptor was created outside of the driver.
         /// </summary>
         public const string DummySourceExtension = ".dummy";
 
-        private readonly string _sourceExtension;
+        private readonly string _sourceExtension = sourceExtension;
 
-        internal ISourceGenerator SourceGenerator { get; }
-
-        public SourceGeneratorAdaptor(ISourceGenerator generator, string sourceExtension)
-        {
-            SourceGenerator = generator;
-            _sourceExtension = sourceExtension;
-        }
+        internal ISourceGenerator SourceGenerator { get; } = generator;
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {

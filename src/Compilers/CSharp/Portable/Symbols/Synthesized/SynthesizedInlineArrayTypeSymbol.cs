@@ -214,10 +214,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             private readonly SynthesizedInlineArrayTypeSymbol _container;
 
-            internal InlineArrayTypeParameterSymbol(SynthesizedInlineArrayTypeSymbol container)
-            {
-                _container = container;
-            }
+            internal InlineArrayTypeParameterSymbol(SynthesizedInlineArrayTypeSymbol container) => _container = container;
 
             public override string Name => "T";
 

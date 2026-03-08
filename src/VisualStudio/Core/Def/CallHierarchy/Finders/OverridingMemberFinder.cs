@@ -15,13 +15,8 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy.Finders;
 
-internal sealed class OverridingMemberFinder : AbstractCallFinder
+internal sealed class OverridingMemberFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider) : AbstractCallFinder(symbol, projectId, asyncListener, provider)
 {
-    public OverridingMemberFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider)
-        : base(symbol, projectId, asyncListener, provider)
-    {
-    }
-
     public override string DisplayName => EditorFeaturesResources.Overrides_;
 
     public override string SearchCategory => CallHierarchyPredefinedSearchCategoryNames.Overrides;

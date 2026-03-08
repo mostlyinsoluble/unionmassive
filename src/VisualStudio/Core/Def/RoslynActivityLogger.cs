@@ -44,16 +44,13 @@ internal static class RoslynActivityLogger
         }
     }
 
-    private sealed class TraceSourceLogger : ILogger
+    private sealed class TraceSourceLogger(TraceSource traceSource) : ILogger
     {
         private const int LogEventId = 0;
         private const int StartEventId = 1;
         private const int EndEventId = 2;
 
-        public readonly TraceSource TraceSource;
-
-        public TraceSourceLogger(TraceSource traceSource)
-            => TraceSource = traceSource;
+        public readonly TraceSource TraceSource = traceSource;
 
         public bool IsEnabled(FunctionId functionId)
         {

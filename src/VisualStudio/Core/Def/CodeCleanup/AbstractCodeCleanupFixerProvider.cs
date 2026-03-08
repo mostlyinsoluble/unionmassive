@@ -14,15 +14,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeCleanup;
 
-internal abstract class AbstractCodeCleanUpFixerProvider : ICodeCleanUpFixerProvider
+internal abstract class AbstractCodeCleanUpFixerProvider(
+    IEnumerable<Lazy<AbstractCodeCleanUpFixer, ContentTypeMetadata>> codeCleanUpFixers) : ICodeCleanUpFixerProvider
 {
-    private readonly ImmutableArray<Lazy<AbstractCodeCleanUpFixer, ContentTypeMetadata>> _codeCleanUpFixers;
-
-    protected AbstractCodeCleanUpFixerProvider(
-        IEnumerable<Lazy<AbstractCodeCleanUpFixer, ContentTypeMetadata>> codeCleanUpFixers)
-    {
-        _codeCleanUpFixers = [.. codeCleanUpFixers];
-    }
+    private readonly ImmutableArray<Lazy<AbstractCodeCleanUpFixer, ContentTypeMetadata>> _codeCleanUpFixers = [.. codeCleanUpFixers];
 
     public IReadOnlyCollection<ICodeCleanUpFixer> GetFixers()
         => _codeCleanUpFixers.SelectAsArray(lazyFixer => lazyFixer.Value);

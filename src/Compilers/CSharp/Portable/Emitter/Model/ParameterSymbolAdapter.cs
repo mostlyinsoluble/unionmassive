@@ -268,10 +268,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class ParameterSymbolAdapter
     {
-        internal ParameterSymbolAdapter(ParameterSymbol underlyingParameterSymbol)
-        {
-            AdaptedParameterSymbol = underlyingParameterSymbol;
-        }
+        internal ParameterSymbolAdapter(ParameterSymbol underlyingParameterSymbol) => AdaptedParameterSymbol = underlyingParameterSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedParameterSymbol;
         internal ParameterSymbol AdaptedParameterSymbol { get; }

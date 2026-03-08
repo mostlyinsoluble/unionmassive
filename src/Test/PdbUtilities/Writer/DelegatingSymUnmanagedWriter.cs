@@ -12,14 +12,9 @@ using Microsoft.DiaSymReader;
 
 namespace Roslyn.Test.PdbUtilities
 {
-    internal class DelegatingSymUnmanagedWriter : SymUnmanagedWriter
+    internal class DelegatingSymUnmanagedWriter(SymUnmanagedWriter target) : SymUnmanagedWriter
     {
-        private readonly SymUnmanagedWriter _target;
-
-        public DelegatingSymUnmanagedWriter(SymUnmanagedWriter target)
-        {
-            _target = target;
-        }
+        private readonly SymUnmanagedWriter _target = target;
 
         public override int DocumentTableCapacity
         {

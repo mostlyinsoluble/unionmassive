@@ -22,41 +22,34 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Preview;
 
 [Export(typeof(IPreviewFactoryService)), Shared]
-internal sealed class PreviewFactoryService : AbstractPreviewFactoryService<IWpfDifferenceViewer>
-{
-    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService;
-    private readonly IWpfDifferenceViewerFactoryService _differenceViewerService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewFactoryService(
-        IThreadingContext threadingContext,
-        ITextBufferFactoryService textBufferFactoryService,
-        ITextBufferCloneService textBufferCloneService,
-        IContentTypeRegistryService contentTypeRegistryService,
-        IProjectionBufferFactoryService projectionBufferFactoryService,
-        ITextEditorFactoryService textEditorFactoryService,
-        EditorOptionsService editorOptionsService,
-        ITextDifferencingSelectorService differenceSelectorService,
-        IDifferenceBufferFactoryService differenceBufferService,
-        IEditorOperationsFactoryService editorOperationsFactoryService,
-        ITextDocumentFactoryService textDocumentFactoryService,
-        IWpfDifferenceViewerFactoryService differenceViewerService)
-        : base(threadingContext,
-              textBufferFactoryService,
-              textBufferCloneService,
-              contentTypeRegistryService,
-              projectionBufferFactoryService,
-              editorOptionsService,
-              differenceSelectorService,
-              differenceBufferService,
-              textDocumentFactoryService,
-              textEditorFactoryService.CreateTextViewRoleSet(
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewFactoryService(
+    IThreadingContext threadingContext,
+    ITextBufferFactoryService textBufferFactoryService,
+    ITextBufferCloneService textBufferCloneService,
+    IContentTypeRegistryService contentTypeRegistryService,
+    IProjectionBufferFactoryService projectionBufferFactoryService,
+    ITextEditorFactoryService textEditorFactoryService,
+    EditorOptionsService editorOptionsService,
+    ITextDifferencingSelectorService differenceSelectorService,
+    IDifferenceBufferFactoryService differenceBufferService,
+    IEditorOperationsFactoryService editorOperationsFactoryService,
+    ITextDocumentFactoryService textDocumentFactoryService,
+    IWpfDifferenceViewerFactoryService differenceViewerService) : AbstractPreviewFactoryService<IWpfDifferenceViewer>(threadingContext,
+          textBufferFactoryService,
+          textBufferCloneService,
+          contentTypeRegistryService,
+          projectionBufferFactoryService,
+          editorOptionsService,
+          differenceSelectorService,
+          differenceBufferService,
+          textDocumentFactoryService,
+          textEditorFactoryService.CreateTextViewRoleSet(
                   TextViewRoles.PreviewRole, PredefinedTextViewRoles.Analyzable, PredefinedTextViewRoles.Interactive, PredefinedTextViewRoles.ChangePreview))
-    {
-        _editorOperationsFactoryService = editorOperationsFactoryService;
-        _differenceViewerService = differenceViewerService;
-    }
+{
+    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService = editorOperationsFactoryService;
+    private readonly IWpfDifferenceViewerFactoryService _differenceViewerService = differenceViewerService;
 
     protected override IDifferenceViewerPreview<IWpfDifferenceViewer> CreateDifferenceViewerPreview(IWpfDifferenceViewer viewer)
         => new DifferenceViewerPreview(viewer, _editorOperationsFactoryService);

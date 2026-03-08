@@ -4096,10 +4096,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class VariableDeclarationGroupOperation : Operation, IVariableDeclarationGroupOperation
     {
         internal VariableDeclarationGroupOperation(ImmutableArray<IVariableDeclarationOperation> declarations, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Declarations = SetParentOperation(declarations, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => Declarations = SetParentOperation(declarations, this);
         public ImmutableArray<IVariableDeclarationOperation> Declarations { get; }
         internal override int ChildOperationsCount =>
             Declarations.Length;
@@ -4905,10 +4902,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class ExpressionStatementOperation : Operation, IExpressionStatementOperation
     {
         internal ExpressionStatementOperation(IOperation operation, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Operation = SetParentOperation(operation, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => Operation = SetParentOperation(operation, this);
         public IOperation Operation { get; }
         internal override int ChildOperationsCount =>
             (Operation is null ? 0 : 1);
@@ -5373,10 +5367,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal abstract partial class BaseMemberReferenceOperation : Operation, IMemberReferenceOperation
     {
         protected BaseMemberReferenceOperation(IOperation? instance, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Instance = SetParentOperation(instance, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => Instance = SetParentOperation(instance, this);
         public IOperation? Instance { get; }
         public abstract ITypeSymbol? ConstrainedToType { get; }
     }
@@ -6600,10 +6591,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class ConditionalAccessInstanceOperation : Operation, IConditionalAccessInstanceOperation
     {
         internal ConditionalAccessInstanceOperation(SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount => 0;
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
         internal override (bool hasNext, int nextSlot, int nextIndex) MoveNext(int previousSlot, int previousIndex) => (false, int.MinValue, int.MinValue);
@@ -7409,10 +7397,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class DeconstructionAssignmentOperation : BaseAssignmentOperation, IDeconstructionAssignmentOperation
     {
         internal DeconstructionAssignmentOperation(IOperation target, IOperation value, SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(target, value, semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(target, value, semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount =>
             (Target is null ? 0 : 1) +
             (Value is null ? 0 : 1);
@@ -7520,10 +7505,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class OmittedArgumentOperation : Operation, IOmittedArgumentOperation
     {
         internal OmittedArgumentOperation(SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount => 0;
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
         internal override (bool hasNext, int nextSlot, int nextIndex) MoveNext(int previousSlot, int previousIndex) => (false, int.MinValue, int.MinValue);
@@ -7548,10 +7530,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class FieldInitializerOperation : BaseSymbolInitializerOperation, IFieldInitializerOperation
     {
         internal FieldInitializerOperation(ImmutableArray<IFieldSymbol> initializedFields, ImmutableArray<ILocalSymbol> locals, IOperation value, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(locals, value, semanticModel, syntax, isImplicit)
-        {
-            InitializedFields = initializedFields;
-        }
+            : base(locals, value, semanticModel, syntax, isImplicit) => InitializedFields = initializedFields;
         public ImmutableArray<IFieldSymbol> InitializedFields { get; }
         internal override int ChildOperationsCount =>
             (Value is null ? 0 : 1);
@@ -7646,10 +7625,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class PropertyInitializerOperation : BaseSymbolInitializerOperation, IPropertyInitializerOperation
     {
         internal PropertyInitializerOperation(ImmutableArray<IPropertySymbol> initializedProperties, ImmutableArray<ILocalSymbol> locals, IOperation value, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(locals, value, semanticModel, syntax, isImplicit)
-        {
-            InitializedProperties = initializedProperties;
-        }
+            : base(locals, value, semanticModel, syntax, isImplicit) => InitializedProperties = initializedProperties;
         public ImmutableArray<IPropertySymbol> InitializedProperties { get; }
         internal override int ChildOperationsCount =>
             (Value is null ? 0 : 1);
@@ -7697,10 +7673,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class ParameterInitializerOperation : BaseSymbolInitializerOperation, IParameterInitializerOperation
     {
         internal ParameterInitializerOperation(IParameterSymbol parameter, ImmutableArray<ILocalSymbol> locals, IOperation value, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(locals, value, semanticModel, syntax, isImplicit)
-        {
-            Parameter = parameter;
-        }
+            : base(locals, value, semanticModel, syntax, isImplicit) => Parameter = parameter;
         public IParameterSymbol Parameter { get; }
         internal override int ChildOperationsCount =>
             (Value is null ? 0 : 1);
@@ -7748,10 +7721,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class ArrayInitializerOperation : Operation, IArrayInitializerOperation
     {
         internal ArrayInitializerOperation(ImmutableArray<IOperation> elementValues, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            ElementValues = SetParentOperation(elementValues, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => ElementValues = SetParentOperation(elementValues, this);
         public ImmutableArray<IOperation> ElementValues { get; }
         internal override int ChildOperationsCount =>
             ElementValues.Length;
@@ -8164,10 +8134,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal abstract partial class BaseCaseClauseOperation : Operation, ICaseClauseOperation
     {
         protected BaseCaseClauseOperation(ILabelSymbol? label, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Label = label;
-        }
+            : base(semanticModel, syntax, isImplicit) => Label = label;
         public abstract CaseKind CaseKind { get; }
         public ILabelSymbol? Label { get; }
     }
@@ -8366,10 +8333,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class SingleValueCaseClauseOperation : BaseCaseClauseOperation, ISingleValueCaseClauseOperation
     {
         internal SingleValueCaseClauseOperation(IOperation value, ILabelSymbol? label, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(label, semanticModel, syntax, isImplicit)
-        {
-            Value = SetParentOperation(value, this);
-        }
+            : base(label, semanticModel, syntax, isImplicit) => Value = SetParentOperation(value, this);
         public IOperation Value { get; }
         internal override int ChildOperationsCount =>
             (Value is null ? 0 : 1);
@@ -8422,10 +8386,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class InterpolatedStringTextOperation : BaseInterpolatedStringContentOperation, IInterpolatedStringTextOperation
     {
         internal InterpolatedStringTextOperation(IOperation text, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Text = SetParentOperation(text, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => Text = SetParentOperation(text, this);
         public IOperation Text { get; }
         internal override int ChildOperationsCount =>
             (Text is null ? 0 : 1);
@@ -8557,10 +8518,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class ConstantPatternOperation : BasePatternOperation, IConstantPatternOperation
     {
         internal ConstantPatternOperation(IOperation value, ITypeSymbol inputType, ITypeSymbol narrowedType, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(inputType, narrowedType, semanticModel, syntax, isImplicit)
-        {
-            Value = SetParentOperation(value, this);
-        }
+            : base(inputType, narrowedType, semanticModel, syntax, isImplicit) => Value = SetParentOperation(value, this);
         public IOperation Value { get; }
         internal override int ChildOperationsCount =>
             (Value is null ? 0 : 1);
@@ -8980,10 +8938,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class CaughtExceptionOperation : Operation, ICaughtExceptionOperation
     {
         internal CaughtExceptionOperation(SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount => 0;
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
         internal override (bool hasNext, int nextSlot, int nextIndex) MoveNext(int previousSlot, int previousIndex) => (false, int.MinValue, int.MinValue);
@@ -9016,10 +8971,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class CoalesceAssignmentOperation : BaseAssignmentOperation, ICoalesceAssignmentOperation
     {
         internal CoalesceAssignmentOperation(IOperation target, IOperation value, SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(target, value, semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(target, value, semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount =>
             (Target is null ? 0 : 1) +
             (Value is null ? 0 : 1);
@@ -9876,10 +9828,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class NegatedPatternOperation : BasePatternOperation, INegatedPatternOperation
     {
         internal NegatedPatternOperation(IPatternOperation pattern, ITypeSymbol inputType, ITypeSymbol narrowedType, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(inputType, narrowedType, semanticModel, syntax, isImplicit)
-        {
-            Pattern = SetParentOperation(pattern, this);
-        }
+            : base(inputType, narrowedType, semanticModel, syntax, isImplicit) => Pattern = SetParentOperation(pattern, this);
         public IPatternOperation Pattern { get; }
         internal override int ChildOperationsCount =>
             (Pattern is null ? 0 : 1);
@@ -9991,10 +9940,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class TypePatternOperation : BasePatternOperation, ITypePatternOperation
     {
         internal TypePatternOperation(ITypeSymbol matchedType, ITypeSymbol inputType, ITypeSymbol narrowedType, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(inputType, narrowedType, semanticModel, syntax, isImplicit)
-        {
-            MatchedType = matchedType;
-        }
+            : base(inputType, narrowedType, semanticModel, syntax, isImplicit) => MatchedType = matchedType;
         public ITypeSymbol MatchedType { get; }
         internal override int ChildOperationsCount => 0;
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
@@ -10595,10 +10541,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class AttributeOperation : Operation, IAttributeOperation
     {
         internal AttributeOperation(IOperation operation, SemanticModel? semanticModel, SyntaxNode syntax, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Operation = SetParentOperation(operation, this);
-        }
+            : base(semanticModel, syntax, isImplicit) => Operation = SetParentOperation(operation, this);
         public IOperation Operation { get; }
         internal override int ChildOperationsCount =>
             (Operation is null ? 0 : 1);
@@ -10838,10 +10781,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class CollectionExpressionElementsPlaceholderOperation : Operation, ICollectionExpressionElementsPlaceholderOperation
     {
         internal CollectionExpressionElementsPlaceholderOperation(SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit)
-            : base(semanticModel, syntax, isImplicit)
-        {
-            Type = type;
-        }
+            : base(semanticModel, syntax, isImplicit) => Type = type;
         internal override int ChildOperationsCount => 0;
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
         internal override (bool hasNext, int nextSlot, int nextIndex) MoveNext(int previousSlot, int previousIndex) => (false, int.MinValue, int.MinValue);

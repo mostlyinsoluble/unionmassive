@@ -354,10 +354,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             private readonly ArrayBuilder<(BoundReturnStatement, TypeWithAnnotations)> _builder;
 
-            private BlockReturns(ArrayBuilder<(BoundReturnStatement, TypeWithAnnotations)> builder)
-            {
-                _builder = builder;
-            }
+            private BlockReturns(ArrayBuilder<(BoundReturnStatement, TypeWithAnnotations)> builder) => _builder = builder;
 
             public static void GetReturnTypes(ArrayBuilder<(BoundReturnStatement, TypeWithAnnotations)> builder, BoundBlock block)
             {

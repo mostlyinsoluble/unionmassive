@@ -8,18 +8,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal readonly struct NamespaceOrTypeAndUsingDirective
+    internal readonly struct NamespaceOrTypeAndUsingDirective(NamespaceOrTypeSymbol namespaceOrType, UsingDirectiveSyntax? usingDirective, ImmutableArray<AssemblySymbol> dependencies)
     {
-        public readonly NamespaceOrTypeSymbol NamespaceOrType;
-        public readonly SyntaxReference? UsingDirectiveReference;
-        public readonly ImmutableArray<AssemblySymbol> Dependencies;
-
-        public NamespaceOrTypeAndUsingDirective(NamespaceOrTypeSymbol namespaceOrType, UsingDirectiveSyntax? usingDirective, ImmutableArray<AssemblySymbol> dependencies)
-        {
-            this.NamespaceOrType = namespaceOrType;
-            this.UsingDirectiveReference = usingDirective?.GetReference();
-            this.Dependencies = dependencies.NullToEmpty();
-        }
+        public readonly NamespaceOrTypeSymbol NamespaceOrType = namespaceOrType;
+        public readonly SyntaxReference? UsingDirectiveReference = usingDirective?.GetReference();
+        public readonly ImmutableArray<AssemblySymbol> Dependencies = dependencies.NullToEmpty();
 
         public UsingDirectiveSyntax? UsingDirective => (UsingDirectiveSyntax?)UsingDirectiveReference?.GetSyntax();
     }

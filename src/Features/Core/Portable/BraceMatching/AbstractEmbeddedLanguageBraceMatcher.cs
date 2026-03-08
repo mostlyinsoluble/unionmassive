@@ -16,18 +16,13 @@ namespace Microsoft.CodeAnalysis.BraceMatching;
 /// Brace matcher that analyzes string literals (for C#/VB) and then dispatches out to embedded brace matchers for
 /// particular embedded languages (like JSON/Regex).
 /// </summary>
-internal abstract class AbstractEmbeddedLanguageBraceMatcher :
-    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageBraceMatcher>, IBraceMatcher
+internal abstract class AbstractEmbeddedLanguageBraceMatcher(
+    string languageName,
+    EmbeddedLanguageInfo info,
+    ISyntaxKinds syntaxKinds,
+    IEnumerable<Lazy<IEmbeddedLanguageBraceMatcher, EmbeddedLanguageMetadata>> allServices) :
+    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageBraceMatcher>(languageName, info, syntaxKinds, allServices), IBraceMatcher
 {
-    protected AbstractEmbeddedLanguageBraceMatcher(
-        string languageName,
-        EmbeddedLanguageInfo info,
-        ISyntaxKinds syntaxKinds,
-        IEnumerable<Lazy<IEmbeddedLanguageBraceMatcher, EmbeddedLanguageMetadata>> allServices)
-        : base(languageName, info, syntaxKinds, allServices)
-    {
-    }
-
     public async Task<BraceMatchingResult?> FindBracesAsync(
         Document document, int position, BraceMatchingOptions options, CancellationToken cancellationToken)
     {

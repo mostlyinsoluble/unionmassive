@@ -9,21 +9,13 @@ using Microsoft.CodeAnalysis.Options;
 
 namespace Microsoft.CodeAnalysis.Editor.EditorConfigSettings.Data;
 
-internal abstract class Setting
+internal abstract class Setting(OptionKey2 optionKey, string description, OptionUpdater updater, SettingLocation location)
 {
-    public OptionKey2 Key { get; }
-    public OptionUpdater Updater { get; }
-    public string Description { get; }
+    public OptionKey2 Key { get; } = optionKey;
+    public OptionUpdater Updater { get; } = updater;
+    public string Description { get; } = description;
 
-    public SettingLocation Location { get; private set; }
-
-    protected Setting(OptionKey2 optionKey, string description, OptionUpdater updater, SettingLocation location)
-    {
-        Key = optionKey;
-        Description = description;
-        Updater = updater;
-        Location = location;
-    }
+    public SettingLocation Location { get; private set; } = location;
 
     public abstract Type Type { get; }
     protected abstract object UpdateValue(object settingValue);

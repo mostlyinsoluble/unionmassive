@@ -22,25 +22,17 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.NavigateTo;
 
-internal sealed class NavigateToItemDisplay : INavigateToItemDisplay3
+internal sealed class NavigateToItemDisplay(
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    IAsynchronousOperationListener asyncListener,
+    INavigateToSearchResult searchResult) : INavigateToItemDisplay3
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
-    private readonly IAsynchronousOperationListener _asyncListener;
-    private readonly INavigateToSearchResult _searchResult;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
+    private readonly IAsynchronousOperationListener _asyncListener = asyncListener;
+    private readonly INavigateToSearchResult _searchResult = searchResult;
     private ReadOnlyCollection<DescriptionItem> _descriptionItems;
-
-    public NavigateToItemDisplay(
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        IAsynchronousOperationListener asyncListener,
-        INavigateToSearchResult searchResult)
-    {
-        _threadingContext = threadingContext;
-        _threadOperationExecutor = threadOperationExecutor;
-        _asyncListener = asyncListener;
-        _searchResult = searchResult;
-    }
 
     public string AdditionalInformation => _searchResult.AdditionalInformation;
 

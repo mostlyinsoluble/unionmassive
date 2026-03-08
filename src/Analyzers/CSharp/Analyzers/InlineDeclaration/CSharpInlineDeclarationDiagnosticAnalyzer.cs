@@ -62,14 +62,6 @@ internal sealed class CSharpInlineDeclarationDiagnosticAnalyzer()
 
     private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType)
     {
-        var syntaxTree = context.Node.SyntaxTree;
-        var csOptions = (CSharpParseOptions)syntaxTree.Options;
-        if (csOptions.LanguageVersion < LanguageVersion.CSharp7)
-        {
-            // out-vars are not supported prior to C# 7.0.
-            return;
-        }
-
         var option = context.GetCSharpAnalyzerOptions().PreferInlinedVariableDeclaration;
         if (!option.Value || ShouldSkipAnalysis(context, option.Notification))
         {

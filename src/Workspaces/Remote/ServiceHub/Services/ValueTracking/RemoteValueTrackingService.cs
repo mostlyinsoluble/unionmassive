@@ -12,17 +12,12 @@ using Microsoft.CodeAnalysis.ValueTracking;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteValueTrackingService : BrokeredServiceBase, IRemoteValueTrackingService
+internal sealed class RemoteValueTrackingService(BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteValueTrackingService
 {
     internal sealed class Factory : FactoryBase<IRemoteValueTrackingService>
     {
         protected override IRemoteValueTrackingService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteValueTrackingService(arguments);
-    }
-
-    public RemoteValueTrackingService(ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<SerializableValueTrackedItem>> TrackValueSourceAsync(Checksum solutionChecksum, TextSpan selection, DocumentId documentId, CancellationToken cancellationToken)

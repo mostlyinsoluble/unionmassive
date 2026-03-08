@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 {
     internal partial class AbstractFlowPass<TLocalState, TLocalFunctionState>
     {
-        internal abstract class AbstractLocalFunctionState
+        internal abstract class AbstractLocalFunctionState(TLocalState stateFromBottom, TLocalState stateFromTop)
         {
             /// <summary>
             /// This is the state from the local function which makes the
@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// this state is <see cref="Join(ref TLocalState, ref TLocalState)"/>
             /// with the current state.
             /// </summary>
-            public TLocalState StateFromBottom;
+            public TLocalState StateFromBottom = stateFromBottom;
 
             /// <summary>
             /// This is the part of the local function transfer function which
@@ -29,14 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// state is <see cref="Meet(ref TLocalState, ref TLocalState)"/>
             /// with the current state.
             /// </summary>
-            public TLocalState StateFromTop;
-
-            public AbstractLocalFunctionState(TLocalState stateFromBottom, TLocalState stateFromTop)
-            {
-                StateFromBottom = stateFromBottom;
-                StateFromTop = stateFromTop;
-            }
-
+            public TLocalState StateFromTop = stateFromTop;
             public bool Visited = false;
         }
 

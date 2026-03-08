@@ -33,18 +33,13 @@ namespace Microsoft.CodeAnalysis.UseThrowExpression;
 /// Note: this analyzer can be updated to run on VB once VB supports 'throw'
 /// expressions as well.
 /// </summary>
-internal abstract class AbstractUseThrowExpressionDiagnosticAnalyzer :
-    AbstractBuiltInCodeStyleDiagnosticAnalyzer
+internal abstract class AbstractUseThrowExpressionDiagnosticAnalyzer(Option2<CodeStyleOption2<bool>> preferThrowExpressionOption) :
+    AbstractBuiltInCodeStyleDiagnosticAnalyzer(IDEDiagnosticIds.UseThrowExpressionDiagnosticId,
+           EnforceOnBuildValues.UseThrowExpression,
+           preferThrowExpressionOption,
+           new LocalizableResourceString(nameof(AnalyzersResources.Use_throw_expression), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)),
+           new LocalizableResourceString(nameof(AnalyzersResources.Null_check_can_be_simplified), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
 {
-    protected AbstractUseThrowExpressionDiagnosticAnalyzer(Option2<CodeStyleOption2<bool>> preferThrowExpressionOption)
-        : base(IDEDiagnosticIds.UseThrowExpressionDiagnosticId,
-               EnforceOnBuildValues.UseThrowExpression,
-               preferThrowExpressionOption,
-               new LocalizableResourceString(nameof(AnalyzersResources.Use_throw_expression), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)),
-               new LocalizableResourceString(nameof(AnalyzersResources.Null_check_can_be_simplified), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
-    {
-    }
-
     protected abstract ISemanticFacts SemanticFacts { get; }
     protected abstract CodeStyleOption2<bool> PreferThrowExpressionStyle(OperationAnalysisContext context);
     protected abstract bool IsSupported(Compilation compilation);

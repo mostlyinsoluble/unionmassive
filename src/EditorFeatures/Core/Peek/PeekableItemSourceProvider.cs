@@ -18,26 +18,18 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 [Order(Before = "LSPPeekableSourceProvider")]
 [SupportsStandaloneFiles(true)]
 [SupportsPeekRelationship("IsDefinedBy")]
-internal sealed class PeekableItemSourceProvider : IPeekableItemSourceProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PeekableItemSourceProvider(
+    PeekableItemFactory peekableItemFactory,
+    IPeekResultFactory peekResultFactory,
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor uiThreadOperationExecutor) : IPeekableItemSourceProvider
 {
-    private readonly PeekableItemFactory _peekableItemFactory;
-    private readonly IPeekResultFactory _peekResultFactory;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PeekableItemSourceProvider(
-        PeekableItemFactory peekableItemFactory,
-        IPeekResultFactory peekResultFactory,
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor uiThreadOperationExecutor)
-    {
-        _peekableItemFactory = peekableItemFactory;
-        _peekResultFactory = peekResultFactory;
-        _threadingContext = threadingContext;
-        _uiThreadOperationExecutor = uiThreadOperationExecutor;
-    }
+    private readonly PeekableItemFactory _peekableItemFactory = peekableItemFactory;
+    private readonly IPeekResultFactory _peekResultFactory = peekResultFactory;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor = uiThreadOperationExecutor;
 
     public IPeekableItemSource? TryCreatePeekableItemSource(ITextBuffer textBuffer)
         => textBuffer.Properties.GetOrCreateSingletonProperty(() =>

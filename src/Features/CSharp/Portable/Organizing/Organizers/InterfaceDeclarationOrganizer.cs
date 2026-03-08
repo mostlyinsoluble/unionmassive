@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Organizing.Organizers;
 namespace Microsoft.CodeAnalysis.CSharp.Organizing.Organizers;
 
 [ExportSyntaxNodeOrganizer(LanguageNames.CSharp), Shared]
-internal sealed class InterfaceDeclarationOrganizer : AbstractSyntaxNodeOrganizer<InterfaceDeclarationSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InterfaceDeclarationOrganizer() : AbstractSyntaxNodeOrganizer<InterfaceDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InterfaceDeclarationOrganizer()
-    {
-    }
-
     protected override InterfaceDeclarationSyntax Organize(
         InterfaceDeclarationSyntax syntax,
         CancellationToken cancellationToken)

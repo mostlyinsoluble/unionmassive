@@ -24,10 +24,7 @@ namespace Roslyn.Test.Utilities
         public Dictionary<string, TestableFile> Map => _map ?? throw new InvalidOperationException();
         public bool UsingMap => _map is not null;
 
-        private TestableFileSystem(Dictionary<string, TestableFile>? map = null)
-        {
-            _map = map;
-        }
+        private TestableFileSystem(Dictionary<string, TestableFile>? map = null) => _map = map;
 
         public Stream OpenFile(string filePath, FileMode mode, FileAccess access, FileShare share)
             => OpenFileFunc(filePath, mode, access, share);

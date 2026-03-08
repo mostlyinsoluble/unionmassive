@@ -17,15 +17,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.FindReferences;
 /// </summary>
 [Export(typeof(ITableColumnDefinition))]
 [Name(ColumnName)]
-internal sealed class ContainingMemberColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ContainingMemberColumnDefinition() : TableColumnDefinitionBase
 {
     public const string ColumnName = AbstractReferenceFinder.ContainingMemberInfoPropertyName;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ContainingMemberColumnDefinition()
-    {
-    }
 
     public override bool IsFilterable => true;
     public override string Name => ColumnName;

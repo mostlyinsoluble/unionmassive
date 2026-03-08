@@ -22,25 +22,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// on any specific kind of syntax node associated with it. Any syntax node is good enough
     /// for it.
     /// </summary>
-    internal abstract class SourceOrdinaryMethodSymbolBase : SourceOrdinaryMethodOrUserDefinedOperatorSymbol
+    internal abstract class SourceOrdinaryMethodSymbolBase(
+        NamedTypeSymbol containingType,
+        string name,
+        Location location,
+        CSharpSyntaxNode syntax,
+        bool isIterator,
+        (DeclarationModifiers declarationModifiers, SourceMemberMethodSymbol.Flags flags) modifiersAndFlags) : SourceOrdinaryMethodOrUserDefinedOperatorSymbol(containingType,
+             syntax.GetReference(),
+             location,
+             isIterator: isIterator,
+             modifiersAndFlags)
     {
-        private readonly string _name;
-
-        protected SourceOrdinaryMethodSymbolBase(
-            NamedTypeSymbol containingType,
-            string name,
-            Location location,
-            CSharpSyntaxNode syntax,
-            bool isIterator,
-            (DeclarationModifiers declarationModifiers, Flags flags) modifiersAndFlags) :
-            base(containingType,
-                 syntax.GetReference(),
-                 location,
-                 isIterator: isIterator,
-                 modifiersAndFlags)
-        {
-            _name = name;
-        }
+        private readonly string _name = name;
 
         protected sealed override void LazyAsyncMethodChecks(CancellationToken cancellationToken)
         {

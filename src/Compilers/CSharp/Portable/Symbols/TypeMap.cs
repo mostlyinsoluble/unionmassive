@@ -39,11 +39,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         // Only when the caller passes allowAlpha=true do we tolerate substituted (alpha-renamed) type parameters as keys
         internal TypeMap(ImmutableArray<TypeParameterSymbol> from, ImmutableArray<TypeWithAnnotations> to, bool allowAlpha = false)
-            : base(ConstructMapping(from, to))
-        {
+            : base(ConstructMapping(from, to)) =>
             // mapping contents are read-only hereafter
             Debug.Assert(allowAlpha || from.All(static tp => tp.IsDefinition));
-        }
 
         // Only when the caller passes allowAlpha=true do we tolerate substituted (alpha-renamed) type parameters as keys
         internal TypeMap(ImmutableArray<TypeParameterSymbol> from, ImmutableArray<TypeParameterSymbol> to, bool allowAlpha = false)
@@ -84,10 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             new SmallDictionary<TypeParameterSymbol, TypeWithAnnotations>(ReferenceEqualityComparer.Instance);
 
         private TypeMap()
-            : base(s_emptyDictionary)
-        {
-            Debug.Assert(s_emptyDictionary.IsEmpty());
-        }
+            : base(s_emptyDictionary) => Debug.Assert(s_emptyDictionary.IsEmpty());
 
         private static readonly TypeMap s_emptyTypeMap = new TypeMap();
         public static TypeMap Empty

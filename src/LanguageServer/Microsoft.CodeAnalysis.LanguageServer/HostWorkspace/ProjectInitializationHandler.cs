@@ -87,14 +87,9 @@ internal sealed class ProjectInitializationHandler : IDisposable
         _serviceBrokerClient.Dispose();
     }
 
-    internal sealed class ProjectInitializationCompleteObserver : IObserver<ProjectInitializationCompletionState>
+    internal sealed class ProjectInitializationCompleteObserver(ILogger logger) : IObserver<ProjectInitializationCompletionState>
     {
-        private readonly ILogger _logger;
-
-        public ProjectInitializationCompleteObserver(ILogger logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger _logger = logger;
 
         [JsonRpcMethod("onCompleted")]
         public void OnCompleted()

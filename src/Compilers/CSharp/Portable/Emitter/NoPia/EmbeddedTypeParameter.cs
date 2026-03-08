@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
     internal sealed class EmbeddedTypeParameter : EmbeddedTypesManager.CommonEmbeddedTypeParameter
     {
         public EmbeddedTypeParameter(EmbeddedMethod containingMethod, TypeParameterSymbolAdapter underlyingTypeParameter) :
-            base(containingMethod, underlyingTypeParameter)
-        {
-            Debug.Assert(underlyingTypeParameter.AdaptedTypeParameterSymbol.IsDefinition);
-        }
+            base(containingMethod, underlyingTypeParameter) => Debug.Assert(underlyingTypeParameter.AdaptedTypeParameterSymbol.IsDefinition);
 
         protected override IEnumerable<Cci.TypeReferenceWithAttributes> GetConstraints(EmitContext context)
         {

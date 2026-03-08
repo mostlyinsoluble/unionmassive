@@ -38,12 +38,9 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 #pragma warning disable CS0618 // Type or member is obsolete
 #pragma warning disable SYSLIB0014 // 'ServicePointManager' is obsolete
             if (ServicePointManager.SecurityProtocol == (SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls))
-#pragma warning restore CS0618 // Type or member is obsolete
-#pragma warning restore CA5364 // Do Not Use Deprecated Security Protocols
             {
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             }
-#pragma warning restore SYSLIB0014 // 'ServicePointManager' is obsolete
         }
 
         public Test()
@@ -52,12 +49,6 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 
             MarkupOptions = Testing.MarkupOptions.UseFirstDescriptor;
         }
-
-        /// <summary>
-        /// Gets or sets the language version to use for the test. The default value is
-        /// <see cref="LanguageVersion.CSharp8"/>.
-        /// </summary>
-        public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.CSharp8;
 
         /// <inheritdoc cref="SharedVerifierState.Options"/>
         internal OptionsCollection Options => _sharedState.Options;
@@ -91,12 +82,6 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
 
             _sharedState.Apply();
             await base.RunImplAsync(cancellationToken);
-        }
-
-        protected override ParseOptions CreateParseOptions()
-        {
-            var parseOptions = (CSharpParseOptions)base.CreateParseOptions();
-            return parseOptions.WithLanguageVersion(LanguageVersion);
         }
 
         protected override CompilationOptions CreateCompilationOptions()

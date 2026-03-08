@@ -53,12 +53,10 @@ namespace Roslyn.Utilities
             return s_pool.Allocate();
         }
 
-        private BlobBuildingStream()
-        {
+        private BlobBuildingStream() =>
             // NOTE: We pool the wrapping BlobBuildingStream, but not individual chunks.
             // The first chunk will be reused, but any further chunks will be freed when we're done building blob.
             _builder = new BlobBuilder(ChunkSize);
-        }
 
         public override void Write(byte[] buffer, int offset, int count)
         {

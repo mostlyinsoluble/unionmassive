@@ -12,14 +12,9 @@ namespace Microsoft.CodeAnalysis.Collections
     {
         private partial class ReadOnly
         {
-            internal class Enumerable<TUnderlying, T> : Enumerable<TUnderlying>, IEnumerable<T>
+            internal class Enumerable<TUnderlying, T>(TUnderlying underlying) : Enumerable<TUnderlying>(underlying), IEnumerable<T>
                 where TUnderlying : IEnumerable<T>
             {
-                public Enumerable(TUnderlying underlying)
-                    : base(underlying)
-                {
-                }
-
                 public new IEnumerator<T> GetEnumerator()
                 {
                     return this.Underlying.GetEnumerator();

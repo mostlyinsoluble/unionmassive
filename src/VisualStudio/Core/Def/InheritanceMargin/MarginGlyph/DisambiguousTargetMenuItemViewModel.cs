@@ -25,10 +25,7 @@ internal sealed class DisambiguousTargetMenuItemViewModel : TargetMenuItemViewMo
         string displayContent,
         ImageMoniker imageMoniker,
         DetachedDefinitionItem definitionItem,
-        ImageMoniker languageMoniker) : base(displayContent, imageMoniker, definitionItem)
-    {
-        LanguageMoniker = languageMoniker;
-    }
+        ImageMoniker languageMoniker) : base(displayContent, imageMoniker, definitionItem) => LanguageMoniker = languageMoniker;
 
     public static DisambiguousTargetMenuItemViewModel CreateWithSourceLanguageGlyph(
         InheritanceTargetItem target)

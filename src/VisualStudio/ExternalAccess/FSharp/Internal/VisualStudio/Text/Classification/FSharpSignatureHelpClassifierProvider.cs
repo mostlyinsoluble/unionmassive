@@ -18,16 +18,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.VisualStudio.Tex
 
 [Export(typeof(IClassifierProvider))]
 [ContentType(FSharpContentTypeNames.FSharpSignatureHelpContentType)]
-internal class FSharpSignatureHelpClassifierProvider : IClassifierProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpSignatureHelpClassifierProvider(ClassificationTypeMap typeMap) : IClassifierProvider
 {
-    private readonly ClassificationTypeMap _typeMap;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpSignatureHelpClassifierProvider(ClassificationTypeMap typeMap)
-    {
-        _typeMap = typeMap;
-    }
+    private readonly ClassificationTypeMap _typeMap = typeMap;
 
     public IClassifier GetClassifier(ITextBuffer textBuffer)
     {

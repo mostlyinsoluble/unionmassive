@@ -13,9 +13,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// A source parameter that has no default value, no attributes,
     /// and is not params.
     /// </summary>
-    internal sealed class SourceSimpleParameterSymbol : SourceParameterSymbol
+    internal sealed class SourceSimpleParameterSymbol(
+        Symbol owner,
+        TypeWithAnnotations parameterType,
+        int ordinal,
+        RefKind refKind,
+        string name,
+        Location? location) : SourceParameterSymbol(owner, ordinal, refKind, ScopedKind.None, name, location)
     {
-        private readonly TypeWithAnnotations _parameterType;
+        private readonly TypeWithAnnotations _parameterType = parameterType;
 
         public SourceSimpleParameterSymbol(
             Symbol owner,
@@ -24,22 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             RefKind refKind,
             string name,
             ImmutableArray<Location> locations)
-            : this(owner, parameterType, ordinal, refKind, name, locations.FirstOrDefault())
-        {
-            Debug.Assert(locations.Length <= 1);
-        }
-
-        public SourceSimpleParameterSymbol(
-            Symbol owner,
-            TypeWithAnnotations parameterType,
-            int ordinal,
-            RefKind refKind,
-            string name,
-            Location? location)
-            : base(owner, ordinal, refKind, ScopedKind.None, name, location)
-        {
-            _parameterType = parameterType;
-        }
+            : this(owner, parameterType, ordinal, refKind, name, locations.FirstOrDefault()) => Debug.Assert(locations.Length <= 1);
 
         public override TypeWithAnnotations TypeWithAnnotations => _parameterType;
 

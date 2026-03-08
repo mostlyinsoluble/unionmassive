@@ -18,14 +18,9 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Reversed enumerable.
         /// </summary>
-        public readonly struct Reversed : IEnumerable<SyntaxToken>, IEquatable<Reversed>
+        public readonly struct Reversed(SyntaxTokenList list) : IEnumerable<SyntaxToken>, IEquatable<Reversed>
         {
-            private readonly SyntaxTokenList _list;
-
-            public Reversed(SyntaxTokenList list)
-            {
-                _list = list;
-            }
+            private readonly SyntaxTokenList _list = list;
 
             public Enumerator GetEnumerator()
             {
@@ -145,10 +140,7 @@ namespace Microsoft.CodeAnalysis
                 private Enumerator _enumerator;
 
                 // SyntaxTriviaList is a relatively big struct so is passed as ref
-                internal EnumeratorImpl(in SyntaxTokenList list)
-                {
-                    _enumerator = new Enumerator(in list);
-                }
+                internal EnumeratorImpl(in SyntaxTokenList list) => _enumerator = new Enumerator(in list);
 
                 public SyntaxToken Current => _enumerator.Current;
 

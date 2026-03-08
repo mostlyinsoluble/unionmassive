@@ -27,14 +27,10 @@ using RegexTrivia = EmbeddedSyntaxTrivia<RegexKind>;
     [LanguageNames.CSharp, LanguageNames.VisualBasic],
     supportsUnannotatedAPIs: true,
     "Regex", "Regexp"), Shared]
-internal sealed class RegexBraceMatcher : IEmbeddedLanguageBraceMatcher
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RegexBraceMatcher() : IEmbeddedLanguageBraceMatcher
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RegexBraceMatcher()
-    {
-    }
-
     public BraceMatchingResult? FindBraces(
         Project project,
         SemanticModel semanticModel,

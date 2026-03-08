@@ -29,28 +29,21 @@ namespace Microsoft.VisualStudio.LanguageServices;
 
 [Export(typeof(VisualStudioWorkspace))]
 [Export(typeof(VisualStudioWorkspaceImpl))]
-internal sealed class RoslynVisualStudioWorkspace : VisualStudioWorkspaceImpl
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RoslynVisualStudioWorkspace(
+    ExportProvider exportProvider,
+    IThreadingContext threadingContext,
+    Lazy<IStreamingFindUsagesPresenter> streamingPresenter,
+    [Import(typeof(SVsServiceProvider))] IAsyncServiceProvider asyncServiceProvider) : VisualStudioWorkspaceImpl(exportProvider, asyncServiceProvider)
 {
-    private readonly IThreadingContext _threadingContext;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     /// <remarks>
     /// Must be lazily constructed since the <see cref="IStreamingFindUsagesPresenter"/> implementation imports a
     /// backreference to <see cref="VisualStudioWorkspace"/>.
     /// </remarks>
-    private readonly Lazy<IStreamingFindUsagesPresenter> _streamingPresenter;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RoslynVisualStudioWorkspace(
-        ExportProvider exportProvider,
-        IThreadingContext threadingContext,
-        Lazy<IStreamingFindUsagesPresenter> streamingPresenter,
-        [Import(typeof(SVsServiceProvider))] IAsyncServiceProvider asyncServiceProvider)
-        : base(exportProvider, asyncServiceProvider)
-    {
-        _threadingContext = threadingContext;
-        _streamingPresenter = streamingPresenter;
-    }
+    private readonly Lazy<IStreamingFindUsagesPresenter> _streamingPresenter = streamingPresenter;
 
     internal override IInvisibleEditor OpenInvisibleEditor(DocumentId documentId)
     {

@@ -13,15 +13,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 {
     using LockTypeInfo = (MethodSymbol EnterScopeMethod, TypeSymbol ScopeType, MethodSymbol ScopeDisposeMethod);
 
-    internal sealed class LockBinder : LockOrUsingBinder
+    internal sealed class LockBinder(Binder enclosing, LockStatementSyntax syntax) : LockOrUsingBinder(enclosing)
     {
-        private readonly LockStatementSyntax _syntax;
-
-        public LockBinder(Binder enclosing, LockStatementSyntax syntax)
-            : base(enclosing)
-        {
-            _syntax = syntax;
-        }
+        private readonly LockStatementSyntax _syntax = syntax;
 
         protected override ExpressionSyntax TargetExpressionSyntax
         {

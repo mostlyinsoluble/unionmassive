@@ -13,13 +13,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
 internal sealed partial class CSharpCastReducer
 {
-    private sealed class Rewriter : AbstractReductionRewriter
+    private sealed class Rewriter(ObjectPool<AbstractReducer.IReductionRewriter> pool) : AbstractReductionRewriter(pool)
     {
-        public Rewriter(ObjectPool<IReductionRewriter> pool)
-            : base(pool)
-        {
-        }
-
         public override SyntaxNode VisitCastExpression(CastExpressionSyntax node)
         {
             return SimplifyNode(

@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 {
     [DebuggerDisplay("Count = {Count,nq}")]
     [DebuggerTypeProxy(typeof(ArrayBuilder<>.DebuggerProxy))]
-    internal sealed partial class ArrayBuilder<T> : IReadOnlyCollection<T>, IReadOnlyList<T>, ICollection<T>
+    internal sealed partial class ArrayBuilder<T>(int size) : IReadOnlyCollection<T>, IReadOnlyList<T>, ICollection<T>
 #if !MICROSOFT_CODEANALYSIS_POOLEDOBJECTS_NO_POOLED_DISPOSER
         , IPooled
 #endif
@@ -26,14 +26,9 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 
         #region DebuggerProxy
 
-        private sealed class DebuggerProxy
+        private sealed class DebuggerProxy(ArrayBuilder<T> builder)
         {
-            private readonly ArrayBuilder<T> _builder;
-
-            public DebuggerProxy(ArrayBuilder<T> builder)
-            {
-                _builder = builder;
-            }
+            private readonly ArrayBuilder<T> _builder = builder;
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public T[] A
@@ -53,24 +48,16 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 
         #endregion
 
-        private readonly ImmutableArray<T>.Builder _builder;
+        private readonly ImmutableArray<T>.Builder _builder = ImmutableArray.CreateBuilder<T>(size);
 
         private readonly ObjectPool<ArrayBuilder<T>>? _pool;
-
-        public ArrayBuilder(int size)
-        {
-            _builder = ImmutableArray.CreateBuilder<T>(size);
-        }
 
         public ArrayBuilder()
             : this(8)
         { }
 
         private ArrayBuilder(ObjectPool<ArrayBuilder<T>> pool)
-            : this()
-        {
-            _pool = pool;
-        }
+            : this() => _pool = pool;
 
         /// <summary>
         /// Realizes the array.

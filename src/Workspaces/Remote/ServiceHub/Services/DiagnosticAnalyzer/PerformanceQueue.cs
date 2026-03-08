@@ -16,23 +16,12 @@ namespace Microsoft.CodeAnalysis.Remote.Diagnostics;
 /// should take care of that.
 /// </summary>
 /// <threadsafety static="false" instance="false"/>
-internal sealed class PerformanceQueue
+internal sealed class PerformanceQueue(int minSampleSize)
 {
-    private readonly int _maxSampleSize, _minSampleSize;
-    private readonly LinkedList<Snapshot> _snapshots;
+    private readonly int _maxSampleSize = minSampleSize * 3, _minSampleSize = minSampleSize;
+    private readonly LinkedList<Snapshot> _snapshots = new LinkedList<Snapshot>();
 
-    private int _snapshotsSinceLastReport;
-
-    public PerformanceQueue(int minSampleSize)
-    {
-        // We allow at most 3 times the number of samples in the queue and
-        // use sliding window algorithm to choose the latest 'minSampleSize' samples.
-        _maxSampleSize = minSampleSize * 3;
-
-        _minSampleSize = minSampleSize;
-        _snapshots = new LinkedList<Snapshot>();
-        _snapshotsSinceLastReport = 0;
-    }
+    private int _snapshotsSinceLastReport = 0;
 
     public int Count => _snapshots.Count;
     public void Add(IEnumerable<(string analyzerId, TimeSpan timeSpan)> rawData, int unitCount)

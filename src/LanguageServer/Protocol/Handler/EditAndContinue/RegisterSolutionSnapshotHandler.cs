@@ -16,16 +16,11 @@ internal readonly record struct LspSolutionSnapshotId([property: JsonPropertyNam
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(RegisterSolutionSnapshotHandler)), Shared]
 [Method("workspace/_vs_registerSolutionSnapshot")]
-internal sealed class RegisterSolutionSnapshotHandler : ILspServiceRequestHandler<LspSolutionSnapshotId>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RegisterSolutionSnapshotHandler(ISolutionSnapshotRegistry registry) : ILspServiceRequestHandler<LspSolutionSnapshotId>
 {
-    private readonly ISolutionSnapshotRegistry _registry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RegisterSolutionSnapshotHandler(ISolutionSnapshotRegistry registry)
-    {
-        _registry = registry;
-    }
+    private readonly ISolutionSnapshotRegistry _registry = registry;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

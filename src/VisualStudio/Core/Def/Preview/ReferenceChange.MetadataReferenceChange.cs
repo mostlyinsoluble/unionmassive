@@ -8,15 +8,9 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
 internal abstract partial class ReferenceChange : AbstractChange
 {
-    private sealed class MetadataReferenceChange : ReferenceChange
+    private sealed class MetadataReferenceChange(MetadataReference reference, ProjectId projectId, string projectName, bool isAdded, PreviewEngine engine) : ReferenceChange(projectId, projectName, isAdded, engine)
     {
-        private readonly MetadataReference _reference;
-
-        public MetadataReferenceChange(MetadataReference reference, ProjectId projectId, string projectName, bool isAdded, PreviewEngine engine)
-            : base(projectId, projectName, isAdded, engine)
-        {
-            _reference = reference;
-        }
+        private readonly MetadataReference _reference = reference;
 
         internal override Solution AddToSolution(Solution solution)
             => solution.AddMetadataReference(this.ProjectId, _reference);

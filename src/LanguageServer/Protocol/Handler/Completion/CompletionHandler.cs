@@ -25,20 +25,15 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// </summary>
 [ExportCSharpVisualBasicStatelessLspService(typeof(CompletionHandler)), Shared]
 [Method(LSP.Methods.TextDocumentCompletionName)]
-internal sealed partial class CompletionHandler : ILspServiceDocumentRequestHandler<LSP.CompletionParams, LSP.CompletionList?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CompletionHandler(
+    IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<LSP.CompletionParams, LSP.CompletionList?>
 {
-    private readonly IGlobalOptionService _globalOptions;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CompletionHandler(
-        IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
 
     public LSP.TextDocumentIdentifier GetTextDocumentIdentifier(LSP.CompletionParams request) => request.TextDocument;
 

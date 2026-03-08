@@ -29,7 +29,9 @@ internal interface IPersistentStorageConfiguration : IWorkspaceService
 }
 
 [ExportWorkspaceService(typeof(IPersistentStorageConfiguration)), Shared]
-internal sealed class DefaultPersistentStorageConfiguration : IPersistentStorageConfiguration
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultPersistentStorageConfiguration() : IPersistentStorageConfiguration
 {
     /// <summary>
     /// Used to ensure that the path components we generate do not contain any characters that might be invalid in a
@@ -52,12 +54,6 @@ internal sealed class DefaultPersistentStorageConfiguration : IPersistentStorage
         var fileName = Process.GetCurrentProcess().MainModule?.FileName;
         Contract.ThrowIfNull(fileName);
         s_moduleFileName = SafeName(fileName);
-    }
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultPersistentStorageConfiguration()
-    {
     }
 
     public bool ThrowOnFailure => false;

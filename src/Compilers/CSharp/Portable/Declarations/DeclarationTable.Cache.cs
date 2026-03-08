@@ -19,9 +19,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         // and keep that around as long as they do not change.  For example, we keep a single 'merged
         // declaration' for all those root declarations as well as sets of interesting information
         // (like the type names in those decls). 
-        private class Cache
+        private class Cache(DeclarationTable table)
         {
-            private readonly DeclarationTable _table;
+            private readonly DeclarationTable _table = table;
 
             // The merged root declaration for all the 'old' declarations.
             private MergedNamespaceDeclaration? _mergedRoot;
@@ -30,11 +30,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             private ISet<string>? _typeNames;
             private ISet<string>? _namespaceNames;
             private ImmutableArray<ReferenceDirective> _referenceDirectives;
-
-            public Cache(DeclarationTable table)
-            {
-                _table = table;
-            }
 
             public MergedNamespaceDeclaration MergedRoot
             {

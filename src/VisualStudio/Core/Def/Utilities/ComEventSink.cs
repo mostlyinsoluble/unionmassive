@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 
-internal sealed class ComEventSink
+internal sealed class ComEventSink(IConnectionPoint connectionPoint, uint cookie)
 {
     public static ComEventSink Advise<T>(object obj, T sink) where T : class
     {
@@ -32,15 +32,9 @@ internal sealed class ComEventSink
         return new ComEventSink(connectionPoint, cookie);
     }
 
-    private readonly IConnectionPoint _connectionPoint;
-    private readonly uint _cookie;
+    private readonly IConnectionPoint _connectionPoint = connectionPoint;
+    private readonly uint _cookie = cookie;
     private bool _unadvised;
-
-    public ComEventSink(IConnectionPoint connectionPoint, uint cookie)
-    {
-        _connectionPoint = connectionPoint;
-        _cookie = cookie;
-    }
 
     public void Unadvise()
     {

@@ -24,14 +24,10 @@ internal sealed class VisualStudioSupportsFeatureService
     private const string ContainedLanguageMarker = nameof(ContainedLanguageMarker);
 
     [ExportWorkspaceService(typeof(ITextBufferSupportsFeatureService), ServiceLayer.Host), Shared]
-    private sealed class VisualStudioTextBufferSupportsFeatureService : ITextBufferSupportsFeatureService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    private sealed class VisualStudioTextBufferSupportsFeatureService() : ITextBufferSupportsFeatureService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public VisualStudioTextBufferSupportsFeatureService()
-        {
-        }
-
         public bool SupportsCodeFixes(ITextBuffer textBuffer)
         {
             return SupportsCodeFixesWorker(GetContainedDocumentId(textBuffer));
@@ -79,14 +75,10 @@ internal sealed class VisualStudioSupportsFeatureService
     }
 
     [ExportWorkspaceService(typeof(IDocumentSupportsFeatureService), ServiceLayer.Host), Shared]
-    private sealed class VisualStudioDocumentSupportsFeatureService : IDocumentSupportsFeatureService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    private sealed class VisualStudioDocumentSupportsFeatureService() : IDocumentSupportsFeatureService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public VisualStudioDocumentSupportsFeatureService()
-        {
-        }
-
         public bool SupportsCodeFixes(Document document)
             => SupportsCodeFixesWorker(document.Id);
 

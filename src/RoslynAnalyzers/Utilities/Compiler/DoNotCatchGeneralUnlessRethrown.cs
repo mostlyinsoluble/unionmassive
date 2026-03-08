@@ -15,21 +15,14 @@ using Roslyn.Utilities;
 
 namespace Analyzer.Utilities
 {
-    internal abstract class DoNotCatchGeneralUnlessRethrownAnalyzer : DiagnosticAnalyzer
+    internal abstract class DoNotCatchGeneralUnlessRethrownAnalyzer(bool shouldCheckLambdas, string? enablingMethodAttributeFullyQualifiedName = null,
+        bool allowExcludedSymbolNames = false) : DiagnosticAnalyzer
     {
-        private readonly bool _shouldCheckLambdas;
-        private readonly string? _enablingMethodAttributeFullyQualifiedName;
-        private readonly bool _allowExcludedSymbolNames;
+        private readonly bool _shouldCheckLambdas = shouldCheckLambdas;
+        private readonly string? _enablingMethodAttributeFullyQualifiedName = enablingMethodAttributeFullyQualifiedName;
+        private readonly bool _allowExcludedSymbolNames = allowExcludedSymbolNames;
 
         private bool RequiresAttributeOnMethod => !string.IsNullOrEmpty(_enablingMethodAttributeFullyQualifiedName);
-
-        protected DoNotCatchGeneralUnlessRethrownAnalyzer(bool shouldCheckLambdas, string? enablingMethodAttributeFullyQualifiedName = null,
-            bool allowExcludedSymbolNames = false)
-        {
-            _shouldCheckLambdas = shouldCheckLambdas;
-            _enablingMethodAttributeFullyQualifiedName = enablingMethodAttributeFullyQualifiedName;
-            _allowExcludedSymbolNames = allowExcludedSymbolNames;
-        }
 
         protected abstract Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxToken catchKeyword);
         protected virtual bool IsConfiguredDisallowedExceptionType(INamedTypeSymbol namedTypeSymbol, IMethodSymbol containingMethod, Compilation compilation, AnalyzerOptions analyzerOptions, CancellationToken cancellationToken)
@@ -110,19 +103,13 @@ namespace Analyzer.Utilities
         /// <summary>
         /// Walks an IOperation tree to find catch blocks that handle general types without rethrowing them.
         /// </summary>
-        private sealed class DisallowGeneralCatchUnlessRethrowWalker : OperationWalker
+        private sealed class DisallowGeneralCatchUnlessRethrowWalker(Func<INamedTypeSymbol, bool> isDisallowedCatchType, bool checkAnonymousFunctions) : OperationWalker
         {
-            private readonly Func<INamedTypeSymbol, bool> _isDisallowedCatchType;
-            private readonly bool _checkAnonymousFunctions;
+            private readonly Func<INamedTypeSymbol, bool> _isDisallowedCatchType = isDisallowedCatchType;
+            private readonly bool _checkAnonymousFunctions = checkAnonymousFunctions;
             private readonly Stack<bool> _seenRethrowInCatchClauses = new();
 
             public ISet<ICatchClauseOperation> CatchClausesForDisallowedTypesWithoutRethrow { get; } = new HashSet<ICatchClauseOperation>();
-
-            public DisallowGeneralCatchUnlessRethrowWalker(Func<INamedTypeSymbol, bool> isDisallowedCatchType, bool checkAnonymousFunctions)
-            {
-                _isDisallowedCatchType = isDisallowedCatchType;
-                _checkAnonymousFunctions = checkAnonymousFunctions;
-            }
 
             public override void VisitAnonymousFunction(IAnonymousFunctionOperation operation)
             {

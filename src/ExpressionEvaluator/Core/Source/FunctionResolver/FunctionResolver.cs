@@ -196,10 +196,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         private sealed class FunctionResolverDataItem : DkmDataItem
         {
-            internal FunctionResolverDataItem(bool enabled)
-            {
-                Enabled = enabled;
-            }
+            internal FunctionResolverDataItem(bool enabled) => Enabled = enabled;
 
             internal readonly bool Enabled;
         }

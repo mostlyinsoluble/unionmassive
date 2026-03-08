@@ -12,15 +12,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.Diagnostics;
 
 [ExportLanguageService(typeof(IDiagnosticPropertiesService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpDiagnosticPropertiesService : AbstractDiagnosticPropertiesService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpDiagnosticPropertiesService() : AbstractDiagnosticPropertiesService
 {
     private static readonly Compilation s_compilation = CSharpCompilation.Create("empty");
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpDiagnosticPropertiesService()
-    {
-    }
 
     protected override Compilation GetCompilation() => s_compilation;
 }

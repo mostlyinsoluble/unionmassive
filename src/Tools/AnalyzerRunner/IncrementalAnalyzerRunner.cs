@@ -16,16 +16,10 @@ using Microsoft.CodeAnalysis.Storage;
 
 namespace AnalyzerRunner
 {
-    public sealed class IncrementalAnalyzerRunner
+    public sealed class IncrementalAnalyzerRunner(Workspace workspace, Options options)
     {
-        private readonly Workspace _workspace;
-        private readonly Options _options;
-
-        public IncrementalAnalyzerRunner(Workspace workspace, Options options)
-        {
-            _workspace = workspace;
-            _options = options;
-        }
+        private readonly Workspace _workspace = workspace;
+        private readonly Options _options = options;
 
         public bool HasAnalyzers => _options.IncrementalAnalyzerNames.Any();
 

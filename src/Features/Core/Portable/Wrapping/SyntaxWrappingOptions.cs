@@ -7,18 +7,12 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.CodeAnalysis.Wrapping;
 
-internal abstract class SyntaxWrappingOptions
+internal abstract class SyntaxWrappingOptions(
+    SyntaxFormattingOptions formattingOptions,
+    OperatorPlacementWhenWrappingPreference operatorPlacement)
 {
-    public readonly SyntaxFormattingOptions FormattingOptions;
-    public readonly OperatorPlacementWhenWrappingPreference OperatorPlacement;
-
-    protected SyntaxWrappingOptions(
-        SyntaxFormattingOptions formattingOptions,
-        OperatorPlacementWhenWrappingPreference operatorPlacement)
-    {
-        FormattingOptions = formattingOptions;
-        OperatorPlacement = operatorPlacement;
-    }
+    public readonly SyntaxFormattingOptions FormattingOptions = formattingOptions;
+    public readonly OperatorPlacementWhenWrappingPreference OperatorPlacement = operatorPlacement;
 
     public bool UseTabs => FormattingOptions.UseTabs;
     public int TabSize => FormattingOptions.TabSize;

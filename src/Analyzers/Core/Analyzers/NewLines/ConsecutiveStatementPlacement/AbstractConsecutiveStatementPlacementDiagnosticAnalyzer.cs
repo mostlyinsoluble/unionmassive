@@ -11,21 +11,15 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.NewLines.ConsecutiveStatementPlacement;
 
-internal abstract class AbstractConsecutiveStatementPlacementDiagnosticAnalyzer<TExecutableStatementSyntax>
-    : AbstractBuiltInCodeStyleDiagnosticAnalyzer
+internal abstract class AbstractConsecutiveStatementPlacementDiagnosticAnalyzer<TExecutableStatementSyntax>(ISyntaxFacts syntaxFacts)
+    : AbstractBuiltInCodeStyleDiagnosticAnalyzer(IDEDiagnosticIds.ConsecutiveStatementPlacementDiagnosticId,
+           EnforceOnBuildValues.ConsecutiveStatementPlacement,
+           CodeStyleOptions2.AllowStatementImmediatelyAfterBlock,
+           new LocalizableResourceString(
+                   nameof(AnalyzersResources.Blank_line_required_between_block_and_subsequent_statement), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
     where TExecutableStatementSyntax : SyntaxNode
 {
-    private readonly ISyntaxFacts _syntaxFacts;
-
-    protected AbstractConsecutiveStatementPlacementDiagnosticAnalyzer(ISyntaxFacts syntaxFacts)
-        : base(IDEDiagnosticIds.ConsecutiveStatementPlacementDiagnosticId,
-               EnforceOnBuildValues.ConsecutiveStatementPlacement,
-               CodeStyleOptions2.AllowStatementImmediatelyAfterBlock,
-               new LocalizableResourceString(
-                   nameof(AnalyzersResources.Blank_line_required_between_block_and_subsequent_statement), AnalyzersResources.ResourceManager, typeof(AnalyzersResources)))
-    {
-        _syntaxFacts = syntaxFacts;
-    }
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
 
     protected abstract bool IsBlockLikeStatement(SyntaxNode node);
     protected abstract Location GetDiagnosticLocation(SyntaxNode block);

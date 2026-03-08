@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private List<SyntaxDiagnosticInfo>? _errors;
         protected int LexemeStartPosition;
 
-        protected AbstractLexer(SourceText text)
-        {
-            this.TextWindow = new SlidingTextWindow(text);
-        }
+        protected AbstractLexer(SourceText text) => this.TextWindow = new SlidingTextWindow(text);
 
         public virtual void Dispose()
         {

@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SourceLocation nameLocation,
             ImmutableArray<SingleNamespaceOrTypeDeclaration> children,
             ImmutableArray<Diagnostic> diagnostics)
-            : base(name, syntaxReference, nameLocation, diagnostics)
-        {
-            _children = children;
-        }
+            : base(name, syntaxReference, nameLocation, diagnostics) => _children = children;
 
         public override DeclarationKind Kind
         {

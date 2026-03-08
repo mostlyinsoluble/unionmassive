@@ -17,14 +17,12 @@ namespace Microsoft.CodeAnalysis.Remote;
 
 internal sealed class SolutionAssetCache
 {
-    static SolutionAssetCache()
-    {
+    static SolutionAssetCache() =>
         // CRITICAL: The size SharedStopwatch is the size of a TimeSpan (which itself is the size of a long).  This
         // allows stopwatches to be atomically overwritten, without a concern for torn writes, as long as we're
         // running on 64bit machines.  Make sure this value doesn't change as that will cause these current
         // consumers to be invalid.
         RoslynDebug.Assert(Marshal.SizeOf(typeof(SharedStopwatch)) == 8);
-    }
 
     /// <summary>
     /// Workspace we are associated with.  When we purge items from the cache, we will avoid any items associated
@@ -200,17 +198,12 @@ internal sealed class SolutionAssetCache
         }
     }
 
-    private sealed class Entry
+    private sealed class Entry(object @object)
     {
         public SharedStopwatch Stopwatch = SharedStopwatch.StartNew();
 
         // This can't change for same checksum
-        public readonly object Object;
-
-        public Entry(object @object)
-        {
-            Object = @object;
-        }
+        public readonly object Object = @object;
     }
 
     public TestAccessor GetTestAccessor()

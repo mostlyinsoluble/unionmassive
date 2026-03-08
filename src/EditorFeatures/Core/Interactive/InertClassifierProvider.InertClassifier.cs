@@ -14,12 +14,9 @@ namespace Microsoft.CodeAnalysis.Interactive;
 
 internal sealed partial class InertClassifierProvider
 {
-    private sealed class InertClassifier : IClassifier
+    private sealed class InertClassifier(ITextBuffer textBuffer) : IClassifier
     {
-        private readonly ITextBuffer _textBuffer;
-
-        public InertClassifier(ITextBuffer textBuffer)
-            => _textBuffer = textBuffer;
+        private readonly ITextBuffer _textBuffer = textBuffer;
 
 #pragma warning disable 67
         public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;

@@ -6,19 +6,11 @@ using System;
 
 namespace Microsoft.CodeAnalysis.Operations
 {
-    internal class ForToLoopOperationUserDefinedInfo
+    internal class ForToLoopOperationUserDefinedInfo(IBinaryOperation addition, IBinaryOperation subtraction, IOperation lessThanOrEqual, IOperation greaterThanOrEqual)
     {
-        public readonly IBinaryOperation Addition;
-        public readonly IBinaryOperation Subtraction;
-        public readonly IOperation LessThanOrEqual;
-        public readonly IOperation GreaterThanOrEqual;
-
-        public ForToLoopOperationUserDefinedInfo(IBinaryOperation addition, IBinaryOperation subtraction, IOperation lessThanOrEqual, IOperation greaterThanOrEqual)
-        {
-            Addition = addition;
-            Subtraction = subtraction;
-            LessThanOrEqual = lessThanOrEqual;
-            GreaterThanOrEqual = greaterThanOrEqual;
-        }
+        public readonly IBinaryOperation Addition = addition;
+        public readonly IBinaryOperation Subtraction = subtraction;
+        public readonly IOperation LessThanOrEqual = lessThanOrEqual;
+        public readonly IOperation GreaterThanOrEqual = greaterThanOrEqual;
     }
 }

@@ -21,39 +21,26 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.InheritanceMarg
 /// <summary>
 /// GlyphFactory provides the InheritanceMargin shows in IndicatorMargin. (Margin shared with breakpoint)
 /// </summary>
-internal sealed class InheritanceGlyphFactory : IGlyphFactory
+internal sealed class InheritanceGlyphFactory(
+    Workspace workspace,
+    IThreadingContext threadingContext,
+    IStreamingFindUsagesPresenter streamingFindUsagesPresenter,
+    ClassificationTypeMap classificationTypeMap,
+    IClassificationFormatMap classificationFormatMap,
+    IUIThreadOperationExecutor operationExecutor,
+    IWpfTextView textView,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListener listener) : IGlyphFactory
 {
-    private readonly Workspace _workspace;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IStreamingFindUsagesPresenter _streamingFindUsagesPresenter;
-    private readonly ClassificationTypeMap _classificationTypeMap;
-    private readonly IClassificationFormatMap _classificationFormatMap;
-    private readonly IUIThreadOperationExecutor _operationExecutor;
-    private readonly IWpfTextView _textView;
-    private readonly IAsynchronousOperationListener _listener;
-    private readonly IGlobalOptionService _globalOptions;
-
-    public InheritanceGlyphFactory(
-        Workspace workspace,
-        IThreadingContext threadingContext,
-        IStreamingFindUsagesPresenter streamingFindUsagesPresenter,
-        ClassificationTypeMap classificationTypeMap,
-        IClassificationFormatMap classificationFormatMap,
-        IUIThreadOperationExecutor operationExecutor,
-        IWpfTextView textView,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListener listener)
-    {
-        _workspace = workspace;
-        _threadingContext = threadingContext;
-        _streamingFindUsagesPresenter = streamingFindUsagesPresenter;
-        _classificationTypeMap = classificationTypeMap;
-        _classificationFormatMap = classificationFormatMap;
-        _operationExecutor = operationExecutor;
-        _textView = textView;
-        _globalOptions = globalOptions;
-        _listener = listener;
-    }
+    private readonly Workspace _workspace = workspace;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IStreamingFindUsagesPresenter _streamingFindUsagesPresenter = streamingFindUsagesPresenter;
+    private readonly ClassificationTypeMap _classificationTypeMap = classificationTypeMap;
+    private readonly IClassificationFormatMap _classificationFormatMap = classificationFormatMap;
+    private readonly IUIThreadOperationExecutor _operationExecutor = operationExecutor;
+    private readonly IWpfTextView _textView = textView;
+    private readonly IAsynchronousOperationListener _listener = listener;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public UIElement? GenerateGlyph(IWpfTextViewLine line, IGlyphTag tag)
     {

@@ -10,17 +10,11 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor.FindUsages;
 
-internal class FSharpFindUsagesContext : IFSharpFindUsagesContext
+internal class FSharpFindUsagesContext(IFindUsagesContext context, CancellationToken cancellationToken) : IFSharpFindUsagesContext
 {
-    private readonly IFindUsagesContext _context;
+    private readonly IFindUsagesContext _context = context;
 
-    public FSharpFindUsagesContext(IFindUsagesContext context, CancellationToken cancellationToken)
-    {
-        _context = context;
-        CancellationToken = cancellationToken;
-    }
-
-    public CancellationToken CancellationToken { get; }
+    public CancellationToken CancellationToken { get; } = cancellationToken;
 
     public Task OnDefinitionFoundAsync(FSharp.FindUsages.FSharpDefinitionItem definition)
     {

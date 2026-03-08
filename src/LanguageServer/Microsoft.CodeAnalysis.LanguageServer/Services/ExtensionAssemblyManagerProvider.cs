@@ -12,14 +12,10 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Services;
 /// Must be done this way as the manager is required to create MEF as well.
 /// </summary>
 [Export, Shared]
-internal sealed class ExtensionAssemblyManagerMefProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ExtensionAssemblyManagerMefProvider()
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ExtensionAssemblyManagerMefProvider()
-    {
-    }
-
     [Export]
     public ExtensionAssemblyManager ExtensionAssemblyManager { get => field ?? throw new InvalidOperationException($"{nameof(ExtensionAssemblyManager)} is not initialized"); private set; }
 

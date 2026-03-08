@@ -19,16 +19,11 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespac
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Value)]
-internal sealed class WhitespaceValueColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WhitespaceValueColumnDefinition([ImportMany] IEnumerable<IEnumSettingViewModelFactory> factories) : TableColumnDefinitionBase
 {
-    private readonly IEnumerable<IEnumSettingViewModelFactory> _factories;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WhitespaceValueColumnDefinition([ImportMany] IEnumerable<IEnumSettingViewModelFactory> factories)
-    {
-        _factories = factories;
-    }
+    private readonly IEnumerable<IEnumSettingViewModelFactory> _factories = factories;
 
     public override string Name => Value;
     public override string DisplayName => ServicesVSResources.Value;

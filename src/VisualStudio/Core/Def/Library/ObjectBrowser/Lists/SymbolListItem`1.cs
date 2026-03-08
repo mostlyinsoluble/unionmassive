@@ -6,14 +6,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser.Lists;
 
-internal abstract class SymbolListItem<TSymbol> : SymbolListItem
+internal abstract class SymbolListItem<TSymbol>(ProjectId projectId, TSymbol symbol, string displayText, string fullNameText, string searchText, bool isHidden) : SymbolListItem(projectId, symbol, displayText, fullNameText, searchText, isHidden)
     where TSymbol : ISymbol
 {
-    protected SymbolListItem(ProjectId projectId, TSymbol symbol, string displayText, string fullNameText, string searchText, bool isHidden)
-       : base(projectId, symbol, displayText, fullNameText, searchText, isHidden)
-    {
-    }
-
     public TSymbol ResolveTypedSymbol(Compilation compilation)
         => (TSymbol)ResolveSymbol(compilation);
 }

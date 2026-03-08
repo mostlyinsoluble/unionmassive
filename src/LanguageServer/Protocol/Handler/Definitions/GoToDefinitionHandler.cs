@@ -15,15 +15,10 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(GoToDefinitionHandler)), Shared]
 [Method(LSP.Methods.TextDocumentDefinitionName)]
-internal sealed class GoToDefinitionHandler : AbstractGoToDefinitionHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class GoToDefinitionHandler(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions) : AbstractGoToDefinitionHandler(metadataAsSourceFileService, globalOptions)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public GoToDefinitionHandler(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions)
-        : base(metadataAsSourceFileService, globalOptions)
-    {
-    }
-
     public override Task<LSP.Location[]?> HandleRequestAsync(LSP.TextDocumentPositionParams request, RequestContext context, CancellationToken cancellationToken)
         => GetDefinitionAsync(request, forSymbolType: false, context, cancellationToken);
 }

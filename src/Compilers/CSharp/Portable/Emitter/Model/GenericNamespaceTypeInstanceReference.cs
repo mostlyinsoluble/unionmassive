@@ -14,13 +14,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
     /// Represents a reference to a generic type instantiation that is not nested.
     /// e.g. MyNamespace.A{int}
     /// </summary>
-    internal sealed class GenericNamespaceTypeInstanceReference : GenericTypeInstanceReference
+    internal sealed class GenericNamespaceTypeInstanceReference(NamedTypeSymbol underlyingNamedType) : GenericTypeInstanceReference(underlyingNamedType)
     {
-        public GenericNamespaceTypeInstanceReference(NamedTypeSymbol underlyingNamedType)
-            : base(underlyingNamedType)
-        {
-        }
-
         public override Microsoft.Cci.IGenericTypeInstanceReference AsGenericTypeInstanceReference
         {
             get { return this; }

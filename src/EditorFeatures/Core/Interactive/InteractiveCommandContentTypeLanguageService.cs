@@ -14,14 +14,11 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Interactive;
 
 [ExportContentTypeLanguageService(PredefinedInteractiveCommandsContentTypes.InteractiveCommandContentTypeName, InteractiveLanguageNames.InteractiveCommand), Shared]
-internal sealed class InteractiveCommandContentTypeLanguageService : IContentTypeLanguageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InteractiveCommandContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry) : IContentTypeLanguageService
 {
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InteractiveCommandContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry)
-        => _contentTypeRegistry = contentTypeRegistry;
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry;
 
     public IContentType GetDefaultContentType()
         => _contentTypeRegistry.GetContentType(PredefinedInteractiveCommandsContentTypes.InteractiveCommandContentTypeName);

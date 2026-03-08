@@ -14,10 +14,8 @@ internal sealed partial class AnalyzerSettingsViewModel : SettingsViewModelBase<
     AnalyzerSettingsViewModel.SettingsSnapshotFactory,
     AnalyzerSettingsViewModel.SettingsEntriesSnapshot>
 {
-    internal sealed class SettingsEntriesSnapshot : SettingsEntriesSnapshotBase<AnalyzerSetting>
+    internal sealed class SettingsEntriesSnapshot(ImmutableArray<AnalyzerSetting> data, int currentVersionNumber) : SettingsEntriesSnapshotBase<AnalyzerSetting>(data, currentVersionNumber)
     {
-        public SettingsEntriesSnapshot(ImmutableArray<AnalyzerSetting> data, int currentVersionNumber) : base(data, currentVersionNumber) { }
-
         protected override bool TryGetValue(AnalyzerSetting result, string keyName, out object? content)
         {
             content = keyName switch

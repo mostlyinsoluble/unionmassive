@@ -21,14 +21,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(ExternAliasCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(SnippetCompletionProvider))]
 [Shared]
-internal sealed class ExternAliasCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ExternAliasCompletionProvider() : LSPCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ExternAliasCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     public override bool IsInsertionTrigger(SourceText text, int characterPosition, CompletionOptions options)

@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.Completion.Providers;
 
 using static DocumentationCommentXmlNames;
 
-internal abstract class AbstractDocCommentCompletionProvider<TSyntax> : LSPCompletionProvider
+internal abstract class AbstractDocCommentCompletionProvider<TSyntax>(CompletionItemRules defaultRules) : LSPCompletionProvider
     where TSyntax : SyntaxNode
 {
     // Tag names
@@ -66,12 +66,7 @@ internal abstract class AbstractDocCommentCompletionProvider<TSyntax> : LSPCompl
 
     private static readonly ImmutableArray<string> s_listTypeValues = ["bullet", "number", "table"];
 
-    private readonly CompletionItemRules defaultRules;
-
-    protected AbstractDocCommentCompletionProvider(CompletionItemRules defaultRules)
-    {
-        this.defaultRules = defaultRules ?? throw new ArgumentNullException(nameof(defaultRules));
-    }
+    private readonly CompletionItemRules defaultRules = defaultRules ?? throw new ArgumentNullException(nameof(defaultRules));
 
     public override async Task ProvideCompletionsAsync(CompletionContext context)
     {

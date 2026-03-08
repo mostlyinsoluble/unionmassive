@@ -16,14 +16,9 @@ using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.ExtractInterface;
 
-internal abstract class AbstractExtractInterfaceCommandHandler : ICommandHandler<ExtractInterfaceCommandArgs>
+internal abstract class AbstractExtractInterfaceCommandHandler(IThreadingContext threadingContext) : ICommandHandler<ExtractInterfaceCommandArgs>
 {
-    private readonly IThreadingContext _threadingContext;
-
-    protected AbstractExtractInterfaceCommandHandler(IThreadingContext threadingContext)
-    {
-        _threadingContext = threadingContext;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public string DisplayName => EditorFeaturesResources.Extract_Interface;
 

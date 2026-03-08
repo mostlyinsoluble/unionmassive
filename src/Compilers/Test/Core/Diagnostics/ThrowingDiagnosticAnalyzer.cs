@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             {
             }
 
-            protected DeliberateException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-            {
-                throw new NotImplementedException();
-            }
+            protected DeliberateException(SerializationInfo serializationInfo, StreamingContext streamingContext) => throw new NotImplementedException();
 
             public override string Message
             {

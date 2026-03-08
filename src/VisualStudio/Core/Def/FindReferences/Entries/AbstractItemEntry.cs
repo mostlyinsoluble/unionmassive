@@ -13,15 +13,9 @@ namespace Microsoft.VisualStudio.LanguageServices.FindUsages;
 
 internal partial class StreamingFindUsagesPresenter
 {
-    private abstract class AbstractItemEntry : Entry
+    private abstract class AbstractItemEntry(StreamingFindUsagesPresenter.RoslynDefinitionBucket definitionBucket, StreamingFindUsagesPresenter presenter) : Entry(definitionBucket)
     {
-        protected readonly StreamingFindUsagesPresenter Presenter;
-
-        public AbstractItemEntry(RoslynDefinitionBucket definitionBucket, StreamingFindUsagesPresenter presenter)
-            : base(definitionBucket)
-        {
-            Presenter = presenter;
-        }
+        protected readonly StreamingFindUsagesPresenter Presenter = presenter;
 
         public override bool TryCreateColumnContent(string columnName, [NotNullWhen(true)] out FrameworkElement? content)
         {

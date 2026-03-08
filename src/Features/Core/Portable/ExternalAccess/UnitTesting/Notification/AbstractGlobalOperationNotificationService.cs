@@ -27,14 +27,11 @@ internal abstract partial class AbstractGlobalOperationNotificationService : IGl
 
     protected AbstractGlobalOperationNotificationService(
         IAsynchronousOperationListenerProvider listenerProvider,
-        CancellationToken disposalToken)
-    {
-        _eventQueue = new AsyncBatchingWorkQueue<bool>(
+        CancellationToken disposalToken) => _eventQueue = new AsyncBatchingWorkQueue<bool>(
             TimeSpan.Zero,
             ProcessEventsAsync,
             listenerProvider.GetListener(FeatureAttribute.GlobalOperation),
             disposalToken);
-    }
 
     ~AbstractGlobalOperationNotificationService()
     {

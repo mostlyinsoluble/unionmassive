@@ -15,16 +15,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Editor;
 
 [ExportBraceMatcher(LanguageNames.FSharp), Shared]
-internal class FSharpBraceMatcher : IBraceMatcher
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpBraceMatcher(IFSharpBraceMatcher braceMatcher) : IBraceMatcher
 {
-    private readonly IFSharpBraceMatcher _braceMatcher;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpBraceMatcher(IFSharpBraceMatcher braceMatcher)
-    {
-        _braceMatcher = braceMatcher;
-    }
+    private readonly IFSharpBraceMatcher _braceMatcher = braceMatcher;
 
     public async Task<BraceMatchingResult?> FindBracesAsync(Document document, int position, BraceMatchingOptions options, CancellationToken cancellationToken)
     {

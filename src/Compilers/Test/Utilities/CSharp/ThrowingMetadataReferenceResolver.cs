@@ -15,14 +15,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities;
 /// This simulates our default command line compilation experience where the <see cref="MetadataReferenceResolver"/>
 /// throws on equality checks via <see cref="CommonCompiler.LoggingMetadataFileReferenceResolver" />
 /// </summary>
-public sealed class ThrowingMetadataReferenceResolver : MetadataReferenceResolver
+public sealed class ThrowingMetadataReferenceResolver(MetadataReferenceResolver? resolver = null) : MetadataReferenceResolver
 {
-    public MetadataReferenceResolver? Resolver { get; }
-
-    public ThrowingMetadataReferenceResolver(MetadataReferenceResolver? resolver = null)
-    {
-        Resolver = resolver;
-    }
+    public MetadataReferenceResolver? Resolver { get; } = resolver;
 
     public override bool Equals(object? other) => throw new NotImplementedException();
 

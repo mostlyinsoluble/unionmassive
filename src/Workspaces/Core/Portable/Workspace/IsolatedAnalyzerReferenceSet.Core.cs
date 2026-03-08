@@ -91,11 +91,9 @@ internal sealed partial class IsolatedAnalyzerReferenceSet
     private readonly Dictionary<Checksum, ImmutableArray<AnalyzerReference>> _analyzerReferences = [];
 
     private IsolatedAnalyzerReferenceSet(
-        IAnalyzerAssemblyLoaderProvider provider)
-    {
+        IAnalyzerAssemblyLoaderProvider provider) =>
         // Make a fresh loader that uses that ALC that will ensure these references are properly isolated.
         _shadowCopyLoader = provider.CreateNewShadowCopyLoader();
-    }
 
     /// <summary>
     /// When the last reference this to this reference set finally goes away, it is safe to unload our loader+ALC.

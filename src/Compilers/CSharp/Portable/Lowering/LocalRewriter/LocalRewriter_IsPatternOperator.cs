@@ -88,15 +88,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// A local rewriter for lowering an is-pattern expression.  This handles the general case by lowering
         /// the decision dag, and returning a "true" or "false" value as the result at the end.
         /// </summary>
-        private sealed class IsPatternExpressionGeneralLocalRewriter : DecisionDagRewriter
+        private sealed class IsPatternExpressionGeneralLocalRewriter(
+            SyntaxNode node,
+            LocalRewriter localRewriter) : DecisionDagRewriter(node, localRewriter, generateInstrumentation: false)
         {
             private readonly ArrayBuilder<BoundStatement> _statements = ArrayBuilder<BoundStatement>.GetInstance();
-
-            public IsPatternExpressionGeneralLocalRewriter(
-                SyntaxNode node,
-                LocalRewriter localRewriter) : base(node, localRewriter, generateInstrumentation: false)
-            {
-            }
 
             protected override ArrayBuilder<BoundStatement> BuilderForSection(SyntaxNode section) => _statements;
 
@@ -141,26 +137,19 @@ namespace Microsoft.CodeAnalysis.CSharp
             return node is BoundLeafDecisionDagNode l && l.Label == whenFalseLabel;
         }
 
-        private sealed class IsPatternExpressionLinearLocalRewriter : PatternLocalRewriter
+        private sealed class IsPatternExpressionLinearLocalRewriter(BoundIsPatternExpression node, LocalRewriter localRewriter) : PatternLocalRewriter(node.Syntax, localRewriter, generateInstrumentation: false)
         {
             /// <summary>
             /// Accumulates side-effects that come before the next conjunct.
             /// </summary>
-            private readonly ArrayBuilder<BoundExpression> _sideEffectBuilder;
+            private readonly ArrayBuilder<BoundExpression> _sideEffectBuilder = ArrayBuilder<BoundExpression>.GetInstance();
 
             /// <summary>
             /// Accumulates conjuncts (conditions that must all be true) for the translation. When a conjunct is added,
             /// elements of the _sideEffectBuilder, if any, should be added as part of a sequence expression for
             /// the conjunct being added.
             /// </summary>
-            private readonly ArrayBuilder<BoundExpression> _conjunctBuilder;
-
-            public IsPatternExpressionLinearLocalRewriter(BoundIsPatternExpression node, LocalRewriter localRewriter)
-                : base(node.Syntax, localRewriter, generateInstrumentation: false)
-            {
-                _conjunctBuilder = ArrayBuilder<BoundExpression>.GetInstance();
-                _sideEffectBuilder = ArrayBuilder<BoundExpression>.GetInstance();
-            }
+            private readonly ArrayBuilder<BoundExpression> _conjunctBuilder = ArrayBuilder<BoundExpression>.GetInstance();
 
             public new void Free()
             {

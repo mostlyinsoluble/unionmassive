@@ -14,10 +14,7 @@ internal abstract class FindUsagesContext : IFindUsagesContext
 {
     public IStreamingProgressTracker ProgressTracker { get; }
 
-    protected FindUsagesContext()
-    {
-        ProgressTracker = new StreamingProgressTracker(ReportProgressAsync);
-    }
+    protected FindUsagesContext() => ProgressTracker = new StreamingProgressTracker(ReportProgressAsync);
 
     public virtual ValueTask ReportNoResultsAsync(string message, CancellationToken cancellationToken) => default;
 

@@ -42,10 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 PropertyName,
                 indexerNameAttributeLists: new SyntaxList<AttributeListSyntax>(),
                 containingType.GetFirstLocation(),
-                diagnostics)
-        {
-            Debug.Assert(!containingType.IsRecordStruct);
-        }
+                diagnostics) => Debug.Assert(!containingType.IsRecordStruct);
 
         public override bool IsImplicitlyDeclared => true;
 

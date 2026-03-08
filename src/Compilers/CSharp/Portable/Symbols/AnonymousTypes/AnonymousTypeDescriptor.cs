@@ -13,13 +13,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Describes anonymous type in terms of fields
     /// </summary>
-    internal readonly struct AnonymousTypeDescriptor : IEquatable<AnonymousTypeDescriptor>
+    internal readonly struct AnonymousTypeDescriptor(ImmutableArray<AnonymousTypeField> fields, Location location) : IEquatable<AnonymousTypeDescriptor>
     {
         /// <summary> Anonymous type location </summary>
-        public readonly Location Location;
+        public readonly Location Location = location;
 
         /// <summary> Anonymous type fields </summary>
-        public readonly ImmutableArray<AnonymousTypeField> Fields;
+        public readonly ImmutableArray<AnonymousTypeField> Fields = fields;
 
         /// <summary>
         /// Anonymous type descriptor Key 
@@ -28,14 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// The type descriptors with the same keys are supposed to map to 'the same' anonymous type 
         /// template in terms of the same generic type being used for their implementation.
         /// </summary>
-        public readonly string Key;
-
-        public AnonymousTypeDescriptor(ImmutableArray<AnonymousTypeField> fields, Location location)
-        {
-            this.Fields = fields;
-            this.Location = location;
-            this.Key = ComputeKey(fields, f => f.Name);
-        }
+        public readonly string Key = ComputeKey(fields, f => f.Name);
 
         internal static string ComputeKey<T>(ImmutableArray<T> fields, Func<T, string> getName)
         {

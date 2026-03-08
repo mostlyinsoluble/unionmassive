@@ -13,15 +13,12 @@ namespace Microsoft.CodeAnalysis.Test.Utilities.MoveToNamespace;
 
 public abstract partial class AbstractMoveToNamespaceTests
 {
-    internal sealed class TestState : IDisposable
+    internal sealed class TestState(EditorTestWorkspace workspace) : IDisposable
     {
-        public TestState(EditorTestWorkspace workspace)
-            => Workspace = workspace;
-
         public void Dispose()
             => Workspace?.Dispose();
 
-        public EditorTestWorkspace Workspace { get; }
+        public EditorTestWorkspace Workspace { get; } = workspace;
         public EditorTestHostDocument TestInvocationDocument => Workspace.Documents.Single();
         public Document InvocationDocument => Workspace.CurrentSolution.GetDocument(TestInvocationDocument.Id);
 

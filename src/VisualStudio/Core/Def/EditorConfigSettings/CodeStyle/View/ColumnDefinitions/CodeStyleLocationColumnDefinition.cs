@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Location)]
-internal sealed class CodeStyleLocationColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleLocationColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleLocationColumnDefinition()
-    {
-    }
-
     public override string Name => Location;
     public override string DisplayName => ServicesVSResources.Location;
     public override double MinWidth => 350;

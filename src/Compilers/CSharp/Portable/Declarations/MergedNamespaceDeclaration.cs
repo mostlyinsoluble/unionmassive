@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ImmutableArray<MergedNamespaceOrTypeDeclaration> _lazyChildren;
 
         private MergedNamespaceDeclaration(ImmutableArray<SingleNamespaceDeclaration> declarations)
-            : base(declarations.IsEmpty ? string.Empty : declarations[0].Name)
-        {
-            _declarations = declarations;
-        }
+            : base(declarations.IsEmpty ? string.Empty : declarations[0].Name) => _declarations = declarations;
 
         public static MergedNamespaceDeclaration Create(ImmutableArray<SingleNamespaceDeclaration> declarations)
         {

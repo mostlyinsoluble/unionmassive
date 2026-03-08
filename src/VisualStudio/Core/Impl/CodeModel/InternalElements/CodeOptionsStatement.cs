@@ -57,10 +57,7 @@ public sealed class CodeOptionsStatement : AbstractCodeElement
         FileCodeModel fileCodeModel,
         int nodeKind,
         string name)
-        : base(state, fileCodeModel, nodeKind)
-    {
-        _name = name;
-    }
+        : base(state, fileCodeModel, nodeKind) => _name = name;
 
     internal override bool TryLookupNode(out SyntaxNode node)
     {

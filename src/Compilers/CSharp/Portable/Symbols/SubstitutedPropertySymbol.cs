@@ -17,10 +17,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ImmutableArray<ParameterSymbol> _lazyParameters;
 
         internal SubstitutedPropertySymbol(SubstitutedNamedTypeSymbol containingType, PropertySymbol originalDefinition)
-            : base(originalDefinition)
-        {
-            _containingType = containingType;
-        }
+            : base(originalDefinition) => _containingType = containingType;
 
         public override TypeWithAnnotations TypeWithAnnotations
         {

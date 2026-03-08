@@ -18,12 +18,8 @@ namespace Microsoft.VisualStudio.LanguageServices.CSharp.ObjectBrowser;
 [Export(typeof(Commanding.ICommandHandler))]
 [ContentType(ContentTypeNames.CSharpContentType)]
 [Name(PredefinedCommandHandlerNames.ClassView)]
-internal sealed class CSharpSyncClassViewCommandHandler : AbstractSyncClassViewCommandHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSyncClassViewCommandHandler(IThreadingContext threadingContext, SVsServiceProvider serviceProvider) : AbstractSyncClassViewCommandHandler(threadingContext, serviceProvider)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSyncClassViewCommandHandler(IThreadingContext threadingContext, SVsServiceProvider serviceProvider)
-        : base(threadingContext, serviceProvider)
-    {
-    }
 }

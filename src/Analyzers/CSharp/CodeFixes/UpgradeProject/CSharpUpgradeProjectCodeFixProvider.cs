@@ -62,29 +62,6 @@ internal sealed class CSharpUpgradeProjectCodeFixProvider() : AbstractUpgradePro
     public override string UpgradeThisProjectResource => CSharpCodeFixesResources.Upgrade_this_project_to_csharp_language_version_0;
     public override string UpgradeAllProjectsResource => CSharpCodeFixesResources.Upgrade_all_csharp_projects_to_language_version_0;
 
-    public override string SuggestedVersion(ImmutableArray<Diagnostic> diagnostics)
-        => RequiredVersion(diagnostics).ToDisplayString();
-
-    private static LanguageVersion RequiredVersion(ImmutableArray<Diagnostic> diagnostics)
-    {
-        LanguageVersion max = 0;
-        foreach (var diagnostic in diagnostics)
-        {
-            if (diagnostic.Properties.TryGetValue(DiagnosticPropertyConstants.RequiredLanguageVersion, out var requiredVersion) &&
-                LanguageVersionFacts.TryParse(requiredVersion, out var required))
-            {
-                max = max > required ? max : required;
-            }
-            else if (diagnostic.Id == "CS8652")
-            {
-                max = LanguageVersion.Preview;
-                break;
-            }
-        }
-
-        return max;
-    }
-
     public override Solution UpgradeProject(Project project, string newVersion)
     {
         if (IsUpgrade(project, newVersion))

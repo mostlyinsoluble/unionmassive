@@ -48,11 +48,9 @@ internal partial class MoveStaticMembersDialog : DialogWindow
         DialogResult = ViewModel.CanSubmit;
     }
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(MoveStaticMembersDialog dialog)
     {
-        private readonly MoveStaticMembersDialog _dialog;
-        public TestAccessor(MoveStaticMembersDialog dialog)
-            => _dialog = dialog;
+        private readonly MoveStaticMembersDialog _dialog = dialog;
 
         public Button OKButton => _dialog.OKButton;
         public Button CancelButton => _dialog.CancelButton;

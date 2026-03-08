@@ -8,24 +8,14 @@ namespace Roslyn.Test.Utilities
 {
     internal sealed partial class SourceWithMarkedNodes
     {
-        internal readonly struct MarkedSpan
+        internal readonly struct MarkedSpan(TextSpan markedSyntax, TextSpan matchedSpan, string tagName, int syntaxKind, int id, int parentId)
         {
-            public readonly TextSpan MarkedSyntax;
-            public readonly TextSpan MatchedSpan;
-            public readonly string TagName;
-            public readonly int SyntaxKind;
-            public readonly int Id;
-            public readonly int ParentId;
-
-            public MarkedSpan(TextSpan markedSyntax, TextSpan matchedSpan, string tagName, int syntaxKind, int id, int parentId)
-            {
-                MarkedSyntax = markedSyntax;
-                MatchedSpan = matchedSpan;
-                TagName = tagName;
-                SyntaxKind = syntaxKind;
-                Id = id;
-                ParentId = parentId;
-            }
+            public readonly TextSpan MarkedSyntax = markedSyntax;
+            public readonly TextSpan MatchedSpan = matchedSpan;
+            public readonly string TagName = tagName;
+            public readonly int SyntaxKind = syntaxKind;
+            public readonly int Id = id;
+            public readonly int ParentId = parentId;
         }
     }
 }

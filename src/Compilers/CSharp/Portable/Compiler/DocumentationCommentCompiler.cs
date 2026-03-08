@@ -1495,16 +1495,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private readonly struct TemporaryStringBuilder
+        private readonly struct TemporaryStringBuilder(int indentDepth)
         {
-            public readonly PooledStringBuilder Pooled;
-            public readonly int InitialIndentDepth;
-
-            public TemporaryStringBuilder(int indentDepth)
-            {
-                this.InitialIndentDepth = indentDepth;
-                this.Pooled = PooledStringBuilder.GetInstance();
-            }
+            public readonly PooledStringBuilder Pooled = PooledStringBuilder.GetInstance();
+            public readonly int InitialIndentDepth = indentDepth;
         }
     }
 }

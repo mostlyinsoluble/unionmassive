@@ -12,7 +12,9 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.UseNamedArguments;
 
-internal abstract class AbstractUseNamedArgumentsCodeRefactoringProvider : CodeRefactoringProvider
+internal abstract class AbstractUseNamedArgumentsCodeRefactoringProvider(
+AbstractUseNamedArgumentsCodeRefactoringProvider.IAnalyzer argumentAnalyzer,
+AbstractUseNamedArgumentsCodeRefactoringProvider.IAnalyzer attributeArgumentAnalyzer) : CodeRefactoringProvider
 {
     protected interface IAnalyzer
     {
@@ -183,16 +185,8 @@ internal abstract class AbstractUseNamedArgumentsCodeRefactoringProvider : CodeR
         protected abstract bool IsImplicitIndexOrRangeIndexer(ImmutableArray<IParameterSymbol> parameters, TBaseArgumentSyntax argument, SemanticModel semanticModel);
     }
 
-    private readonly IAnalyzer _argumentAnalyzer;
-    private readonly IAnalyzer _attributeArgumentAnalyzer;
-
-    protected AbstractUseNamedArgumentsCodeRefactoringProvider(
-        IAnalyzer argumentAnalyzer,
-        IAnalyzer attributeArgumentAnalyzer)
-    {
-        _argumentAnalyzer = argumentAnalyzer;
-        _attributeArgumentAnalyzer = attributeArgumentAnalyzer;
-    }
+    private readonly IAnalyzer _argumentAnalyzer = argumentAnalyzer;
+    private readonly IAnalyzer _attributeArgumentAnalyzer = attributeArgumentAnalyzer;
 
     public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
     {

@@ -26,7 +26,9 @@ namespace Microsoft.CodeAnalysis.Interactive;
 /// </summary>
 [Export(typeof(IInteractiveWindowCommand))]
 [ContentType(InteractiveWindowContentTypes.CommandContentTypeName)]
-internal sealed class InteractiveWindowResetCommand : IInteractiveWindowCommand
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InteractiveWindowResetCommand(IStandardClassificationService registry) : IInteractiveWindowCommand
 {
     private const string CommandName = "reset";
     private const string NoConfigParameterName = "noconfig";
@@ -36,12 +38,7 @@ internal sealed class InteractiveWindowResetCommand : IInteractiveWindowCommand
     private const string PlatformNames = PlatformCore + "|" + PlatformDesktop32 + "|" + PlatformDesktop64;
 
     private static readonly int s_noConfigParameterNameLength = NoConfigParameterName.Length;
-    private readonly IStandardClassificationService _registry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InteractiveWindowResetCommand(IStandardClassificationService registry)
-        => _registry = registry;
+    private readonly IStandardClassificationService _registry = registry;
 
     public string Description
         => EditorFeaturesWpfResources.Reset_the_execution_environment_to_the_initial_state_and_keep_history_with_the_option_to_switch_the_runtime_of_the_host_process;

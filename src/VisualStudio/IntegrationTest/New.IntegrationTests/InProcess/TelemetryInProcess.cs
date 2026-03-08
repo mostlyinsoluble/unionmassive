@@ -42,14 +42,9 @@ internal sealed partial class TelemetryInProcess
     public async Task<bool> TryWaitForTelemetryEventsAsync(string[] names, CancellationToken cancellationToken)
         => await LoggerTestChannel.Instance.TryWaitForEventsAsync(names, cancellationToken);
 
-    public sealed class TelemetryVerifier : IAsyncDisposable
+    public sealed class TelemetryVerifier(TestServices testServices) : IAsyncDisposable
     {
-        internal TestServices _testServices;
-
-        public TelemetryVerifier(TestServices testServices)
-        {
-            _testServices = testServices;
-        }
+        internal TestServices _testServices = testServices;
 
         public async ValueTask DisposeAsync()
             => await _testServices.Telemetry.DisableTestTelemetryChannelAsync(CancellationToken.None);

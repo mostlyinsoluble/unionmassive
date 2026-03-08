@@ -19,14 +19,10 @@ using static Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Severity)]
-internal sealed class NamingStylesSeverityColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NamingStylesSeverityColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NamingStylesSeverityColumnDefinition()
-    {
-    }
-
     public override string Name => Severity;
     public override string DisplayName => ServicesVSResources.Severity;
     public override bool IsFilterable => false;

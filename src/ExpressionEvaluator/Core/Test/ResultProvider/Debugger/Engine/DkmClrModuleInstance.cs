@@ -24,24 +24,17 @@ using Token = System.Reflection.Adds.Token;
 
 namespace Microsoft.VisualStudio.Debugger.Clr
 {
-    public class DkmClrModuleInstance : DkmModuleInstance
+    public class DkmClrModuleInstance(DkmClrRuntimeInstance runtimeInstance, Assembly assembly, DkmModule module) : DkmModuleInstance(module)
     {
-        internal readonly Assembly Assembly;
+        internal readonly Assembly Assembly = assembly;
         private int _resolveTypeNameFailures;
-
-        public DkmClrModuleInstance(DkmClrRuntimeInstance runtimeInstance, Assembly assembly, DkmModule module) :
-            base(module)
-        {
-            RuntimeInstance = runtimeInstance;
-            this.Assembly = assembly;
-        }
 
         public Guid Mvid
         {
             get { return this.Assembly.Modules.First().ModuleVersionId; }
         }
 
-        public DkmClrRuntimeInstance RuntimeInstance { get; }
+        public DkmClrRuntimeInstance RuntimeInstance { get; } = runtimeInstance;
 
         public DkmProcess Process => RuntimeInstance.Process;
 
@@ -69,13 +62,9 @@ namespace Microsoft.VisualStudio.Debugger.Clr
 
         public DkmMetadataImportHolder GetMetaDataImportHolder() => new DkmMetadataImportHolder(new MetadataImportMock(Assembly));
 
-        private class MetadataImportMock : IMetadataImport
+        private class MetadataImportMock(Assembly assembly) : IMetadataImport
         {
-            private readonly Assembly _assembly;
-            public MetadataImportMock(Assembly assembly)
-            {
-                _assembly = assembly;
-            }
+            private readonly Assembly _assembly = assembly;
 
             int IMetadataImport.GetFieldProps(Token mb, out Token mdTypeDef, char[] szField, uint cchField, out uint pchField, out FieldAttributes pdwAttr, out EmbeddedBlobPointer ppvSigBlob, out uint pcbSigBlob, out uint pdwCPlusTypeFlab, out IntPtr ppValue, out uint pcchValue)
             {

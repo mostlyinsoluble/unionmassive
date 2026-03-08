@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
 [ExportNewDocumentFormattingProvider(LanguageNames.CSharp), Shared]
-internal sealed class CSharpOrganizeUsingsNewDocumentFormattingProvider : INewDocumentFormattingProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpOrganizeUsingsNewDocumentFormattingProvider() : INewDocumentFormattingProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpOrganizeUsingsNewDocumentFormattingProvider()
-    {
-    }
-
     public async Task<Document> FormatNewDocumentAsync(Document document, Document? hintDocument, CodeCleanupOptions options, CancellationToken cancellationToken)
     {
         var organizeImportsService = document.GetRequiredLanguageService<IOrganizeImportsService>();

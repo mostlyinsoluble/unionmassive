@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.Host;
 /// </summary>
 [Obsolete]
 [ExportWorkspaceService(typeof(ITemporaryStorageService)), Shared]
-internal sealed class LegacyTemporaryStorageService : ITemporaryStorageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LegacyTemporaryStorageService() : ITemporaryStorageService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LegacyTemporaryStorageService()
-    {
-    }
-
     public ITemporaryStreamStorage CreateTemporaryStreamStorage(CancellationToken cancellationToken = default)
         => new StreamStorage();
 

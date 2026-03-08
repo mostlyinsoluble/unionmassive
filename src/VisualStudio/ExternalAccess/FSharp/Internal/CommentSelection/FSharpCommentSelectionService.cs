@@ -13,14 +13,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.CommentSelection
 
 [Shared]
 [ExportLanguageService(typeof(ICommentSelectionService), LanguageNames.FSharp)]
-internal class FSharpCommentSelectionService : ICommentSelectionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpCommentSelectionService() : ICommentSelectionService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpCommentSelectionService()
-    {
-    }
-
     public CommentSelectionInfo GetInfo()
         => new(
             supportsSingleLineComment: true,

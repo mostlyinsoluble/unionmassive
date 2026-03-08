@@ -41,7 +41,7 @@ internal sealed class CSharpUseInferredMemberNameDiagnosticAnalyzer : AbstractUs
         var preference = context.GetAnalyzerOptions().PreferInferredTupleNames;
         if (!preference.Value
             || ShouldSkipAnalysis(context, preference.Notification)
-            || !CSharpInferredMemberNameSimplifier.CanSimplifyTupleElementName(argument, parseOptions))
+            || !CSharpInferredMemberNameSimplifier.CanSimplifyTupleElementName(argument))
         {
             return;
         }

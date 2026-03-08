@@ -11,19 +11,11 @@ namespace Microsoft.CodeAnalysis.CodeGen
     /// <summary>
     /// An expression that represents a (name, value) pair and that is typically used in method calls, custom attributes and object initializers.
     /// </summary>
-    internal sealed class MetadataNamedArgument : Cci.IMetadataNamedArgument
+    internal sealed class MetadataNamedArgument(ISymbolInternal entity, Cci.ITypeReference type, Cci.IMetadataExpression value) : Cci.IMetadataNamedArgument
     {
-        private readonly ISymbolInternal _entity;
-        private readonly Cci.ITypeReference _type;
-        private readonly Cci.IMetadataExpression _value;
-
-        public MetadataNamedArgument(ISymbolInternal entity, Cci.ITypeReference type, Cci.IMetadataExpression value)
-        {
-            // entity must be one of INamedEntity or IFieldDefinition or IPropertyDefinition
-            _entity = entity;
-            _type = type;
-            _value = value;
-        }
+        private readonly ISymbolInternal _entity = entity;
+        private readonly Cci.ITypeReference _type = type;
+        private readonly Cci.IMetadataExpression _value = value;
 
         /// <summary>
         /// The name of the parameter or property or field that corresponds to the argument.

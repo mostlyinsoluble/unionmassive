@@ -239,23 +239,15 @@ internal sealed class RegexCharacterClassSubtractionNode : RegexPrimaryExpressio
 /// <summary>
 /// Root of all expression nodes.
 /// </summary>
-internal abstract class RegexExpressionNode : RegexNode
+internal abstract class RegexExpressionNode(RegexKind kind) : RegexNode(kind)
 {
-    protected RegexExpressionNode(RegexKind kind)
-        : base(kind)
-    {
-    }
 }
 
 /// <summary>
 /// Root of all the primary nodes (similar to unary nodes in C#).
 /// </summary>
-internal abstract class RegexPrimaryExpressionNode : RegexExpressionNode
+internal abstract class RegexPrimaryExpressionNode(RegexKind kind) : RegexExpressionNode(kind)
 {
-    protected RegexPrimaryExpressionNode(RegexKind kind)
-        : base(kind)
-    {
-    }
 }
 
 /// <summary>
@@ -288,12 +280,8 @@ internal sealed class RegexWildcardNode : RegexPrimaryExpressionNode
 /// <summary>
 /// Root of all quantifier nodes: ```?```, ```*``` etc.
 /// </summary>
-internal abstract class RegexQuantifierNode : RegexExpressionNode
+internal abstract class RegexQuantifierNode(RegexKind kind) : RegexExpressionNode(kind)
 {
-    protected RegexQuantifierNode(RegexKind kind)
-        : base(kind)
-    {
-    }
 }
 
 /// <summary>
@@ -665,15 +653,9 @@ internal abstract class RegexQuestionGroupingNode : RegexGroupingNode
 /// <summary>
 /// Base type of ```(?inmsx)``` or ```(?inmsx:...)``` nodes.
 /// </summary>
-internal abstract class RegexOptionsGroupingNode : RegexQuestionGroupingNode
+internal abstract class RegexOptionsGroupingNode(RegexKind kind, RegexToken openParenToken, RegexToken questionToken, RegexToken optionsToken, RegexToken closeParenToken) : RegexQuestionGroupingNode(kind, openParenToken, questionToken, closeParenToken)
 {
-    protected RegexOptionsGroupingNode(RegexKind kind, RegexToken openParenToken, RegexToken questionToken, RegexToken optionsToken, RegexToken closeParenToken)
-        : base(kind, openParenToken, questionToken, closeParenToken)
-    {
-        OptionsToken = optionsToken;
-    }
-
-    public RegexToken OptionsToken { get; }
+    public RegexToken OptionsToken { get; } = optionsToken;
 }
 
 /// <summary>
@@ -1166,15 +1148,9 @@ internal abstract class RegexEscapeNode : RegexPrimaryExpressionNode
 /// <summary>
 /// Base type of all regex escapes that start with \ and some informative character (like \v \t \c etc.).
 /// </summary>
-internal abstract class RegexTypeEscapeNode : RegexEscapeNode
+internal abstract class RegexTypeEscapeNode(RegexKind kind, RegexToken backslashToken, RegexToken typeToken) : RegexEscapeNode(kind, backslashToken)
 {
-    protected RegexTypeEscapeNode(RegexKind kind, RegexToken backslashToken, RegexToken typeToken)
-        : base(kind, backslashToken)
-    {
-        TypeToken = typeToken;
-    }
-
-    public RegexToken TypeToken { get; }
+    public RegexToken TypeToken { get; } = typeToken;
 }
 
 /// <summary>
@@ -1183,10 +1159,7 @@ internal abstract class RegexTypeEscapeNode : RegexEscapeNode
 internal sealed class RegexSimpleEscapeNode : RegexTypeEscapeNode
 {
     public RegexSimpleEscapeNode(RegexToken backslashToken, RegexToken typeToken)
-        : base(RegexKind.SimpleEscape, backslashToken, typeToken)
-    {
-        Debug.Assert(typeToken.Kind == RegexKind.TextToken);
-    }
+        : base(RegexKind.SimpleEscape, backslashToken, typeToken) => Debug.Assert(typeToken.Kind == RegexKind.TextToken);
 
     internal override int ChildCount => 2;
 

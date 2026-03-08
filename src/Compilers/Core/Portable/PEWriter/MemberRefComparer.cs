@@ -12,10 +12,7 @@ namespace Microsoft.Cci
     {
         private readonly MetadataWriter _metadataWriter;
 
-        internal MemberRefComparer(MetadataWriter metadataWriter)
-        {
-            _metadataWriter = metadataWriter;
-        }
+        internal MemberRefComparer(MetadataWriter metadataWriter) => _metadataWriter = metadataWriter;
 
         public bool Equals(ITypeMemberReference? x, ITypeMemberReference? y)
         {

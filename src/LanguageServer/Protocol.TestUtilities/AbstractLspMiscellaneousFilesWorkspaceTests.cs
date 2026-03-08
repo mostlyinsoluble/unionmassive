@@ -23,12 +23,8 @@ using LSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.UnitTests.Miscellaneous;
 
-public abstract class AbstractLspMiscellaneousFilesWorkspaceTests : AbstractLanguageServerProtocolTests
+public abstract class AbstractLspMiscellaneousFilesWorkspaceTests(ITestOutputHelper testOutputHelper) : AbstractLanguageServerProtocolTests(testOutputHelper)
 {
-    public AbstractLspMiscellaneousFilesWorkspaceTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Theory, CombinatorialData]
     public async Task TestLooseFile_Opened(bool mutatingLspWorkspace)
     {

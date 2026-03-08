@@ -14,7 +14,22 @@ namespace Microsoft.CodeAnalysis.Emit
     /// <summary>
     /// Represents compilation emit options.
     /// </summary>
-    public sealed class EmitOptions : IEquatable<EmitOptions>
+    public sealed class EmitOptions(
+        bool metadataOnly = false,
+        DebugInformationFormat debugInformationFormat = 0,
+        string? pdbFilePath = null,
+        string? outputNameOverride = null,
+        int fileAlignment = 0,
+        ulong baseAddress = 0,
+        bool highEntropyVirtualAddressSpace = false,
+        SubsystemVersion subsystemVersion = default,
+        string? runtimeMetadataVersion = null,
+        bool tolerateErrors = false,
+        bool includePrivateMembers = true,
+        ImmutableArray<InstrumentationKind> instrumentationKinds = default,
+        HashAlgorithmName? pdbChecksumAlgorithm = null,
+        Encoding? defaultSourceFileEncoding = null,
+        Encoding? fallbackSourceFileEncoding = null) : IEquatable<EmitOptions>
     {
         internal static readonly EmitOptions Default = PlatformInformation.IsWindows
             ? new EmitOptions()
@@ -23,29 +38,29 @@ namespace Microsoft.CodeAnalysis.Emit
         /// <summary>
         /// True to emit an assembly excluding executable code such as method bodies.
         /// </summary>
-        public bool EmitMetadataOnly { get; private set; }
+        public bool EmitMetadataOnly { get; private set; } = metadataOnly;
 
         /// <summary>
         /// Tolerate errors, producing a PE stream and a success result even in the presence of (some) errors. 
         /// </summary>
-        public bool TolerateErrors { get; private set; }
+        public bool TolerateErrors { get; private set; } = tolerateErrors;
 
         /// <summary>
         /// Unless set (private) members that don't affect the language semantics of the resulting assembly will be excluded
         /// when emitting metadata-only assemblies as primary output (with <see cref="EmitMetadataOnly"/> on).
         /// If emitting a secondary output, this flag is required to be false.
         /// </summary>
-        public bool IncludePrivateMembers { get; private set; }
+        public bool IncludePrivateMembers { get; private set; } = includePrivateMembers;
 
         /// <summary>
         /// Type of instrumentation that should be added to the output binary.
         /// </summary>
-        public ImmutableArray<InstrumentationKind> InstrumentationKinds { get; private set; }
+        public ImmutableArray<InstrumentationKind> InstrumentationKinds { get; private set; } = instrumentationKinds.NullToEmpty();
 
         /// <summary>
         /// Subsystem version
         /// </summary>
-        public SubsystemVersion SubsystemVersion { get; private set; }
+        public SubsystemVersion SubsystemVersion { get; private set; } = subsystemVersion;
 
         /// <summary>
         /// Specifies the size of sections in the output file. 
@@ -54,22 +69,22 @@ namespace Microsoft.CodeAnalysis.Emit
         /// Valid values are 0, 512, 1024, 2048, 4096 and 8192.
         /// If the value is 0 the file alignment is determined based upon the value of <see cref="Platform"/>.
         /// </remarks>
-        public int FileAlignment { get; private set; }
+        public int FileAlignment { get; private set; } = fileAlignment;
 
         /// <summary>
         /// True to enable high entropy virtual address space for the output binary.
         /// </summary>
-        public bool HighEntropyVirtualAddressSpace { get; private set; }
+        public bool HighEntropyVirtualAddressSpace { get; private set; } = highEntropyVirtualAddressSpace;
 
         /// <summary>
         /// Specifies the preferred base address at which to load the output DLL.
         /// </summary>
-        public ulong BaseAddress { get; private set; }
+        public ulong BaseAddress { get; private set; } = baseAddress;
 
         /// <summary>
         /// Debug information format.
         /// </summary>
-        public DebugInformationFormat DebugInformationFormat { get; private set; }
+        public DebugInformationFormat DebugInformationFormat { get; private set; } = (debugInformationFormat == 0) ? DebugInformationFormat.Pdb : debugInformationFormat;
 
         /// <summary>
         /// Assembly name override - file name and extension. If not specified the compilation name is used.
@@ -82,7 +97,7 @@ namespace Microsoft.CodeAnalysis.Emit
         /// and assembly references may not work as expected.  In particular, things that were visible at bind time, based on the 
         /// name of the compilation, may not be visible at runtime and vice-versa.
         /// </remarks>
-        public string? OutputNameOverride { get; private set; }
+        public string? OutputNameOverride { get; private set; } = outputNameOverride;
 
         /// <summary>
         /// The name of the PDB file to be embedded in the PE image, or null to use the default.
@@ -90,30 +105,30 @@ namespace Microsoft.CodeAnalysis.Emit
         /// <remarks>
         /// If not specified the file name of the source module with an extension changed to "pdb" is used.
         /// </remarks>
-        public string? PdbFilePath { get; private set; }
+        public string? PdbFilePath { get; private set; } = pdbFilePath;
 
         /// <summary>
         /// A crypto hash algorithm used to calculate PDB Checksum stored in the PE/COFF File.
         /// If not specified (the value is <c>default(HashAlgorithmName)</c>) the checksum is not calculated.
         /// </summary>
-        public HashAlgorithmName PdbChecksumAlgorithm { get; private set; }
+        public HashAlgorithmName PdbChecksumAlgorithm { get; private set; } = pdbChecksumAlgorithm ?? HashAlgorithmName.SHA256;
 
         /// <summary>
         /// Runtime metadata version. 
         /// </summary>
-        public string? RuntimeMetadataVersion { get; private set; }
+        public string? RuntimeMetadataVersion { get; private set; } = runtimeMetadataVersion;
 
         /// <summary>
         /// The encoding used to parse source files that do not have a Byte Order Mark. If specified,
         /// is stored in the emitted PDB in order to allow recreating the original compilation.
         /// </summary>
-        public Encoding? DefaultSourceFileEncoding { get; private set; }
+        public Encoding? DefaultSourceFileEncoding { get; private set; } = defaultSourceFileEncoding;
 
         /// <summary>
         /// If <see cref="DefaultSourceFileEncoding"/> is not specified, the encoding used to parse source files
         /// that do not declare their encoding via Byte Order Mark and are not UTF-8 encoded.
         /// </summary>
-        public Encoding? FallbackSourceFileEncoding { get; private set; }
+        public Encoding? FallbackSourceFileEncoding { get; private set; } = fallbackSourceFileEncoding;
 
         /// <summary>
         /// Test only - allows us to test <see cref="InstrumentationKindExtensions.LocalStateTracing"/>.
@@ -214,40 +229,6 @@ namespace Microsoft.CodeAnalysis.Emit
                   defaultSourceFileEncoding: null,
                   fallbackSourceFileEncoding: null)
         {
-        }
-
-        public EmitOptions(
-            bool metadataOnly = false,
-            DebugInformationFormat debugInformationFormat = 0,
-            string? pdbFilePath = null,
-            string? outputNameOverride = null,
-            int fileAlignment = 0,
-            ulong baseAddress = 0,
-            bool highEntropyVirtualAddressSpace = false,
-            SubsystemVersion subsystemVersion = default,
-            string? runtimeMetadataVersion = null,
-            bool tolerateErrors = false,
-            bool includePrivateMembers = true,
-            ImmutableArray<InstrumentationKind> instrumentationKinds = default,
-            HashAlgorithmName? pdbChecksumAlgorithm = null,
-            Encoding? defaultSourceFileEncoding = null,
-            Encoding? fallbackSourceFileEncoding = null)
-        {
-            EmitMetadataOnly = metadataOnly;
-            DebugInformationFormat = (debugInformationFormat == 0) ? DebugInformationFormat.Pdb : debugInformationFormat;
-            PdbFilePath = pdbFilePath;
-            OutputNameOverride = outputNameOverride;
-            FileAlignment = fileAlignment;
-            BaseAddress = baseAddress;
-            HighEntropyVirtualAddressSpace = highEntropyVirtualAddressSpace;
-            SubsystemVersion = subsystemVersion;
-            RuntimeMetadataVersion = runtimeMetadataVersion;
-            TolerateErrors = tolerateErrors;
-            IncludePrivateMembers = includePrivateMembers;
-            InstrumentationKinds = instrumentationKinds.NullToEmpty();
-            PdbChecksumAlgorithm = pdbChecksumAlgorithm ?? HashAlgorithmName.SHA256;
-            DefaultSourceFileEncoding = defaultSourceFileEncoding;
-            FallbackSourceFileEncoding = fallbackSourceFileEncoding;
         }
 
         private EmitOptions(EmitOptions other) : this(

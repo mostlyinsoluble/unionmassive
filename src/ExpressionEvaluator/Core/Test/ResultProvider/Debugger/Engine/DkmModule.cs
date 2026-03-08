@@ -13,10 +13,7 @@ namespace Microsoft.VisualStudio.Debugger.Symbols
 {
     public class DkmModule
     {
-        internal DkmModule(string name)
-        {
-            this.Name = name;
-        }
+        internal DkmModule(string name) => this.Name = name;
 
         public readonly string Name;
     }

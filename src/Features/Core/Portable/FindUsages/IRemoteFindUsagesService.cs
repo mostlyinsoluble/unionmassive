@@ -48,14 +48,10 @@ internal interface IRemoteFindUsagesService
 }
 
 [ExportRemoteServiceCallbackDispatcher(typeof(IRemoteFindUsagesService)), Shared]
-internal sealed class FindUsagesServerCallbackDispatcher : RemoteServiceCallbackDispatcher, IRemoteFindUsagesService.ICallback
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FindUsagesServerCallbackDispatcher() : RemoteServiceCallbackDispatcher, IRemoteFindUsagesService.ICallback
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FindUsagesServerCallbackDispatcher()
-    {
-    }
-
     private new FindUsagesServerCallback GetCallback(RemoteServiceCallbackId callbackId)
         => (FindUsagesServerCallback)base.GetCallback(callbackId);
 

@@ -38,8 +38,5 @@ public class ExportWorkspaceServiceFactoryAttribute(Type serviceType, string lay
     internal IReadOnlyList<string> WorkspaceKinds { get; } = [];
 
     internal ExportWorkspaceServiceFactoryAttribute(Type serviceType, string[] workspaceKinds)
-        : this(serviceType)
-    {
-        WorkspaceKinds = workspaceKinds;
-    }
+        : this(serviceType) => WorkspaceKinds = workspaceKinds;
 }

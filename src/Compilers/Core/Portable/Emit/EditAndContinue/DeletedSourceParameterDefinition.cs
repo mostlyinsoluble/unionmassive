@@ -11,13 +11,8 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Emit.EditAndContinue
 {
-    internal sealed class DeletedSourceParameterDefinition : DeletedSourceDefinition<IParameterDefinition>, IParameterDefinition
+    internal sealed class DeletedSourceParameterDefinition(IParameterDefinition oldParameter, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers) : DeletedSourceDefinition<IParameterDefinition>(oldParameter, typesUsedByDeletedMembers, deletedAttribute: null), IParameterDefinition
     {
-        public DeletedSourceParameterDefinition(IParameterDefinition oldParameter, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers)
-            : base(oldParameter, typesUsedByDeletedMembers, deletedAttribute: null)
-        {
-        }
-
         public bool HasDefaultValue => OldDefinition.HasDefaultValue;
 
         public bool IsIn => OldDefinition.IsIn;

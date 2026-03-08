@@ -16,16 +16,11 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeRefactorings.InlineMethod;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.InlineMethod), Shared]
 [Export(typeof(CSharpInlineMethodRefactoringProvider))]
-internal sealed class CSharpInlineMethodRefactoringProvider
-    : AbstractInlineMethodRefactoringProvider<BaseMethodDeclarationSyntax, StatementSyntax, ExpressionSyntax, InvocationExpressionSyntax>
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpInlineMethodRefactoringProvider()
+        : AbstractInlineMethodRefactoringProvider<BaseMethodDeclarationSyntax, StatementSyntax, ExpressionSyntax, InvocationExpressionSyntax>(CSharpSyntaxFacts.Instance, CSharpSemanticFactsService.Instance)
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpInlineMethodRefactoringProvider()
-        : base(CSharpSyntaxFacts.Instance, CSharpSemanticFactsService.Instance)
-    {
-    }
-
     protected override ExpressionSyntax? GetRawInlineExpression(BaseMethodDeclarationSyntax methodDeclarationSyntax)
     {
         var blockSyntaxNode = methodDeclarationSyntax.Body;

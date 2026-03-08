@@ -2171,7 +2171,7 @@ namespace Microsoft.Cci
 
             foreach (SecurityAttribute securityAttribute in attributes)
             {
-                groupedSecurityAttributes = groupedSecurityAttributes ?? OrderPreservingMultiDictionary<DeclarativeSecurityAction, ICustomAttribute>.GetInstance();
+                groupedSecurityAttributes ??= OrderPreservingMultiDictionary<DeclarativeSecurityAction, ICustomAttribute>.GetInstance();
                 groupedSecurityAttributes.Add(securityAttribute.Action, securityAttribute.Attribute);
             }
 
@@ -4205,18 +4205,11 @@ namespace Microsoft.Cci
             return locals.SelectAsArray(variable => variable.SlotInfo);
         }
 
-        protected abstract class HeapOrReferenceIndexBase<T>
+        protected abstract class HeapOrReferenceIndexBase<T>(MetadataWriter writer, int lastRowId)
         {
-            private readonly MetadataWriter _writer;
-            private readonly List<T> _rows;
-            private readonly int _firstRowId;
-
-            protected HeapOrReferenceIndexBase(MetadataWriter writer, int lastRowId)
-            {
-                _writer = writer;
-                _rows = new List<T>();
-                _firstRowId = lastRowId + 1;
-            }
+            private readonly MetadataWriter _writer = writer;
+            private readonly List<T> _rows = new List<T>();
+            private readonly int _firstRowId = lastRowId + 1;
 
             public abstract bool TryGetValue(T item, out int index);
 
@@ -4304,17 +4297,10 @@ namespace Microsoft.Cci
             }
         }
 
-        protected sealed class InstanceAndStructuralReferenceIndex<T> : HeapOrReferenceIndexBase<T> where T : class, IReference
+        protected sealed class InstanceAndStructuralReferenceIndex<T>(MetadataWriter writer, IEqualityComparer<T> structuralComparer, int lastRowId = 0) : HeapOrReferenceIndexBase<T>(writer, lastRowId) where T : class, IReference
         {
-            private readonly Dictionary<T, int> _instanceIndex;
-            private readonly Dictionary<T, int> _structuralIndex;
-
-            public InstanceAndStructuralReferenceIndex(MetadataWriter writer, IEqualityComparer<T> structuralComparer, int lastRowId = 0)
-                : base(writer, lastRowId)
-            {
-                _instanceIndex = new Dictionary<T, int>(ReferenceEqualityComparer.Instance);
-                _structuralIndex = new Dictionary<T, int>(structuralComparer);
-            }
+            private readonly Dictionary<T, int> _instanceIndex = new Dictionary<T, int>(ReferenceEqualityComparer.Instance);
+            private readonly Dictionary<T, int> _structuralIndex = new Dictionary<T, int>(structuralComparer);
 
             public override bool TryGetValue(T item, out int index)
             {

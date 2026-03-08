@@ -14,8 +14,8 @@ namespace Microsoft.CodeAnalysis.Wrapping.SeparatedSyntaxList;
 /// </summary>
 internal abstract partial class AbstractSeparatedSyntaxListWrapper<
     TListSyntax,
-    TListItemSyntax>
-    : AbstractSyntaxWrapper
+    TListItemSyntax>(IIndentationService indentationService)
+    : AbstractSyntaxWrapper(indentationService)
     where TListSyntax : SyntaxNode
     where TListItemSyntax : SyntaxNode
 {
@@ -33,11 +33,6 @@ internal abstract partial class AbstractSeparatedSyntaxListWrapper<
     public abstract bool Supports_WrapEveryGroup_UnwrapFirst { get; }
     public abstract bool Supports_UnwrapGroup_WrapFirst_IndentRest { get; }
     public abstract bool Supports_WrapLongGroup_UnwrapFirst { get; }
-
-    protected AbstractSeparatedSyntaxListWrapper(IIndentationService indentationService)
-        : base(indentationService)
-    {
-    }
 
     protected abstract bool ShouldMoveCloseBraceToNewLine { get; }
     protected abstract bool ShouldMoveOpenBraceToNewLine(SyntaxWrappingOptions options);

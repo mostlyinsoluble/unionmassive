@@ -744,7 +744,7 @@ namespace Microsoft.CodeAnalysis
         private static void ShiftLeft(ref BigInteger number, uint shift)
         {
             var powerOfTwo = BigInteger.Pow(s_bigTwo, (int)shift);
-            number = number * powerOfTwo;
+            number *= powerOfTwo;
         }
 
         /// <summary>
@@ -755,7 +755,7 @@ namespace Microsoft.CodeAnalysis
         private static void MultiplyByPowerOfTen(ref BigInteger number, uint power)
         {
             var powerOfTen = BigInteger.Pow(s_bigTen, (int)power);
-            number = number * powerOfTen;
+            number *= powerOfTen;
         }
 
         /// <summary>

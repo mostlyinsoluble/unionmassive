@@ -25,10 +25,7 @@ namespace Microsoft.CodeAnalysis
 
         public readonly ImmutableHashSet<INamedTypeSymbolInternal> CallingConventionTypes;
 
-        private UnmanagedCallersOnlyAttributeData(ImmutableHashSet<INamedTypeSymbolInternal> callingConventionTypes)
-        {
-            CallingConventionTypes = callingConventionTypes;
-        }
+        private UnmanagedCallersOnlyAttributeData(ImmutableHashSet<INamedTypeSymbolInternal> callingConventionTypes) => CallingConventionTypes = callingConventionTypes;
 
         internal static bool IsCallConvsTypedConstant(string key, bool isField, in TypedConstant value)
         {

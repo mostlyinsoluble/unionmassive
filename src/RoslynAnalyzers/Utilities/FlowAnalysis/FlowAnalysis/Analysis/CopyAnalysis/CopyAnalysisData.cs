@@ -24,22 +24,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
         }
 
         internal CopyAnalysisData(IDictionary<AnalysisEntity, CopyAbstractValue> fromData)
-            : base(fromData)
-        {
-            AssertValidCopyAnalysisData();
-        }
+            : base(fromData) => AssertValidCopyAnalysisData();
 
         private CopyAnalysisData(CopyAnalysisData fromData)
-            : base(fromData)
-        {
-            AssertValidCopyAnalysisData();
-        }
+            : base(fromData) => AssertValidCopyAnalysisData();
 
         private CopyAnalysisData(CopyAnalysisData data1, CopyAnalysisData data2, MapAbstractDomain<AnalysisEntity, CopyAbstractValue> coreDataAnalysisDomain)
-            : base(data1, data2, coreDataAnalysisDomain)
-        {
-            AssertValidCopyAnalysisData();
-        }
+            : base(data1, data2, coreDataAnalysisDomain) => AssertValidCopyAnalysisData();
 
         protected override AbstractValueDomain<CopyAbstractValue> ValueDomain => ValueDomainInstance;
         public override AnalysisEntityBasedPredicateAnalysisData<CopyAbstractValue> Clone() => new CopyAnalysisData(this);

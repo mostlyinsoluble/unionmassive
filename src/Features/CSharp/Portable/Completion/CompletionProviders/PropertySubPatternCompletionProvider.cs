@@ -24,14 +24,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(PropertySubpatternCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(InternalsVisibleToCompletionProvider))]
 [Shared]
-internal sealed class PropertySubpatternCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PropertySubpatternCompletionProvider() : LSPCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PropertySubpatternCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     // Examples:

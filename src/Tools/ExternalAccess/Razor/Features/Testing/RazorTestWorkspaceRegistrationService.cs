@@ -12,13 +12,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
     [Export(typeof(RazorTestWorkspaceRegistrationService))]
     [Export(typeof(LspWorkspaceRegistrationService))]
     [Shared, PartNotDiscoverable]
-    internal sealed class RazorTestWorkspaceRegistrationService : LspWorkspaceRegistrationService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class RazorTestWorkspaceRegistrationService() : LspWorkspaceRegistrationService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public RazorTestWorkspaceRegistrationService()
-        {
-        }
 
         // Method purposely doesn't override the base so any changes to the method
         // signature in the base class won't automatically break Razor.

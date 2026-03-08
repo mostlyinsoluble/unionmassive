@@ -71,8 +71,7 @@ internal sealed class UseExpressionBodyForLambdaDiagnosticAnalyzer : AbstractBui
         SemanticModel semanticModel, CodeStyleOption2<ExpressionBodyPreference> option,
         LambdaExpressionSyntax declaration, AnalyzerOptions analyzerOptions, CancellationToken cancellationToken)
     {
-        if (UseExpressionBodyForLambdaHelpers.CanOfferUseExpressionBody(
-                semanticModel, option.Value, declaration, declaration.GetLanguageVersion(), cancellationToken))
+        if (UseExpressionBodyForLambdaHelpers.CanOfferUseExpressionBody(semanticModel, option.Value, declaration, cancellationToken))
         {
             return DiagnosticHelper.Create(
                 s_useExpressionBodyForLambda,

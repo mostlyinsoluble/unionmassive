@@ -19,21 +19,15 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.DebuggerIntelliSense;
 
-internal sealed class DebuggerIntelliSenseFilter : AbstractVsTextViewFilter, IDisposable, IFeatureController
+internal sealed class DebuggerIntelliSenseFilter(
+    IWpfTextView wpfTextView,
+    IComponentModel componentModel,
+    IFeatureServiceFactory featureServiceFactory) : AbstractVsTextViewFilter(wpfTextView, componentModel), IDisposable, IFeatureController
 {
-    private readonly IFeatureServiceFactory _featureServiceFactory;
+    private readonly IFeatureServiceFactory _featureServiceFactory = featureServiceFactory;
     private AbstractDebuggerIntelliSenseContext _context;
     private IOleCommandTarget _originalNextCommandFilter;
     private IFeatureDisableToken _completionDisabledToken;
-
-    public DebuggerIntelliSenseFilter(
-        IWpfTextView wpfTextView,
-        IComponentModel componentModel,
-        IFeatureServiceFactory featureServiceFactory)
-        : base(wpfTextView, componentModel)
-    {
-        _featureServiceFactory = featureServiceFactory;
-    }
 
     internal void EnableCompletion()
     {

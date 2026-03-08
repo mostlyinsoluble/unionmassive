@@ -12,18 +12,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(OpenSolutionHandler)), Shared]
 [Method(OpenSolutionName)]
-internal sealed class OpenSolutionHandler : ILspServiceNotificationHandler<OpenSolutionHandler.NotificationParams>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OpenSolutionHandler(LanguageServerProjectSystem projectSystem) : ILspServiceNotificationHandler<OpenSolutionHandler.NotificationParams>
 {
     internal const string OpenSolutionName = "solution/open";
 
-    private readonly LanguageServerProjectSystem _projectSystem;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OpenSolutionHandler(LanguageServerProjectSystem projectSystem)
-    {
-        _projectSystem = projectSystem;
-    }
+    private readonly LanguageServerProjectSystem _projectSystem = projectSystem;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => false;

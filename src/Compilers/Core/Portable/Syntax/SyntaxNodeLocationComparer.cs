@@ -6,14 +6,10 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal class SyntaxNodeLocationComparer : IComparer<SyntaxNode>
+    internal class SyntaxNodeLocationComparer(Compilation compilation) : IComparer<SyntaxNode>
     {
-        private readonly Compilation _compilation;
+        private readonly Compilation _compilation = compilation;
 
-        public SyntaxNodeLocationComparer(Compilation compilation)
-        {
-            _compilation = compilation;
-        }
         public int Compare(SyntaxNode? x, SyntaxNode? y)
         {
             if (x is null)

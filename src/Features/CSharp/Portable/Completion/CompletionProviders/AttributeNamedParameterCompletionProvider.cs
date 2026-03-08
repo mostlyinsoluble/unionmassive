@@ -26,7 +26,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(AttributeNamedParameterCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(FirstBuiltInCompletionProvider))]
 [Shared]
-internal sealed class AttributeNamedParameterCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AttributeNamedParameterCompletionProvider() : LSPCompletionProvider
 {
     private const string EqualsString = "=";
     private const string SpaceEqualsString = " =";
@@ -34,12 +36,6 @@ internal sealed class AttributeNamedParameterCompletionProvider : LSPCompletionP
 
     private static readonly CompletionItemRules _spaceItemFilterRule = CompletionItemRules.Default.WithFilterCharacterRule(
         CharacterSetModificationRule.Create(CharacterSetModificationKind.Remove, ' '));
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AttributeNamedParameterCompletionProvider()
-    {
-    }
 
     internal override string Language => LanguageNames.CSharp;
 

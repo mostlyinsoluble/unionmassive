@@ -11,15 +11,11 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Logging;
 [Export(typeof(ILoggerFactory))]
 [Export(typeof(ServerLoggerFactory))]
 [Shared]
-internal sealed class ServerLoggerFactory : ILoggerFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ServerLoggerFactory() : ILoggerFactory
 {
     private ILoggerFactory? _loggerFactory;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ServerLoggerFactory()
-    {
-    }
 
     public void SetFactory(ILoggerFactory loggerFactory)
     {

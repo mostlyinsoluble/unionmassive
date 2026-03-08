@@ -19,14 +19,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.LegacySolutionEvents
 /// for unit testing.
 /// </summary>
 [Export(typeof(ILegacySolutionEventsListener)), Shared]
-internal sealed class UnitTestingLegacySolutionEventsListener : ILegacySolutionEventsListener
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class UnitTestingLegacySolutionEventsListener() : ILegacySolutionEventsListener
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public UnitTestingLegacySolutionEventsListener()
-    {
-    }
-
     private static IUnitTestingWorkCoordinator? GetCoordinator(Solution solution)
     {
         var service = solution.Services.GetService<IUnitTestingSolutionCrawlerRegistrationService>();

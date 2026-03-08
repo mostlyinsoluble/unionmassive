@@ -39,10 +39,7 @@ internal abstract partial class AbstractBuiltInCodeStyleDiagnosticAnalyzer
         bool isUnnecessary = false,
         bool configurable = true)
         : this(diagnosticId, enforceOnBuild, title, messageFormat, isUnnecessary, configurable,
-               hasAnyCodeStyleOption: option != null)
-    {
-        AddDiagnosticIdToOptionMapping(diagnosticId, option);
-    }
+               hasAnyCodeStyleOption: option != null) => AddDiagnosticIdToOptionMapping(diagnosticId, option);
 
     /// <summary>
     /// Constructor for a code style analyzer with a single diagnostic descriptor and

@@ -9,15 +9,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class RemoveAdditionalDocumentUndoUnit : AbstractRemoveDocumentUndoUnit
+    private sealed class RemoveAdditionalDocumentUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        DocumentId documentId) : AbstractRemoveDocumentUndoUnit(workspace, documentId)
     {
-        public RemoveAdditionalDocumentUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            DocumentId documentId)
-            : base(workspace, documentId)
-        {
-        }
-
         protected override IReadOnlyList<DocumentId> GetDocumentIds(Project fromProject)
             => fromProject.AdditionalDocumentIds;
 

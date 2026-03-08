@@ -15,9 +15,6 @@ namespace Microsoft.VisualStudio.Debugger.Evaluation
     {
         public readonly DkmCompilerId Id;
 
-        internal DkmLanguage(DkmCompilerId compilerId)
-        {
-            Id = compilerId;
-        }
+        internal DkmLanguage(DkmCompilerId compilerId) => Id = compilerId;
     }
 }

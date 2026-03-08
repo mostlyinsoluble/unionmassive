@@ -41,10 +41,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         {
         }
 
-        private HazardousUsageEvaluatorCollection()
-        {
-            throw new NotSupportedException();
-        }
+        private HazardousUsageEvaluatorCollection() => throw new NotSupportedException();
 
         private ImmutableDictionary<(HazardousUsageEvaluatorKind Kind, string? InstanceTypeName, string? MethodName, string? ParameterName, bool DerivedClasses), HazardousUsageEvaluator> HazardousUsageEvaluators { get; }
 

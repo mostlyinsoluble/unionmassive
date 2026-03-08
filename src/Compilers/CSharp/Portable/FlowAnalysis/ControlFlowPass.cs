@@ -66,11 +66,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        internal sealed class LocalFunctionState : AbstractLocalFunctionState
+        internal sealed class LocalFunctionState(ControlFlowPass.LocalState unreachableState) : AbstractLocalFunctionState(unreachableState.Clone(), unreachableState.Clone())
         {
-            public LocalFunctionState(LocalState unreachableState)
-                : base(unreachableState.Clone(), unreachableState.Clone())
-            { }
         }
 
         protected override LocalFunctionState CreateLocalFunctionState(LocalFunctionSymbol symbol) => new LocalFunctionState(UnreachableState());

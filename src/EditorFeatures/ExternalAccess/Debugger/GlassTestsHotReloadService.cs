@@ -12,21 +12,15 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Debugger;
 
-internal sealed class GlassTestsHotReloadService
+internal sealed class GlassTestsHotReloadService(HostWorkspaceServices services, IManagedHotReloadService debuggerService)
 {
     private static readonly ActiveStatementSpanProvider s_noActiveStatementSpanProvider =
        async (_, _, _) => ImmutableArray<ActiveStatementSpan>.Empty;
 
-    private readonly IManagedHotReloadService _debuggerService;
+    private readonly IManagedHotReloadService _debuggerService = debuggerService;
 
-    private readonly IEditAndContinueService _encService;
+    private readonly IEditAndContinueService _encService = services.GetRequiredService<IEditAndContinueWorkspaceService>().Service;
     private DebuggingSessionId _sessionId;
-
-    public GlassTestsHotReloadService(HostWorkspaceServices services, IManagedHotReloadService debuggerService)
-    {
-        _encService = services.GetRequiredService<IEditAndContinueWorkspaceService>().Service;
-        _debuggerService = debuggerService;
-    }
 
 #pragma warning disable IDE0060 // Remove unused parameter
     public async Task StartSessionAsync(Solution solution, CancellationToken cancellationToken)

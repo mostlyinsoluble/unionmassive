@@ -11,8 +11,12 @@ namespace Xunit.Harness
     /// <summary>
     /// Mapper for the Watson entry in the Event Log.
     /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="FeedbackItemWatsonEntry"/> class based on an
+    /// <see cref="EventRecord"/> for future easiness of reading and modifying.
+    /// </remarks>
     [DataContract]
-    internal class FeedbackItemWatsonEntry
+    internal class FeedbackItemWatsonEntry(EventRecord eventLogRecord)
     {
         /// <summary>
         /// FaultBucket is the first property on the log entry.
@@ -60,84 +64,66 @@ namespace Xunit.Harness
         private const int HashedBucketIndex = 21;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FeedbackItemWatsonEntry"/> class based on an
-        /// <see cref="EventRecord"/> for future easiness of reading and modifying.
-        /// </summary>
-        public FeedbackItemWatsonEntry(EventRecord eventLogRecord)
-        {
-            EventTime = eventLogRecord.TimeCreated?.ToUniversalTime() ?? DateTime.MinValue;
-            FaultBucket = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultBucketIndex);
-            HashedBucket = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, HashedBucketIndex);
-            WatsonReportId = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, WatsonReportIdIndex);
-            EventName = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, EventNameIndex);
-            CabId = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, CabIdIndex);
-            ApplicationName = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, ApplicationNameIndex);
-            ApplicationVersion = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, ApplicationVersionIndex);
-            FaultingModule = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultingModuleIndex);
-            FaultingModuleVersion = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultingModuleVersionindex);
-        }
-
-        /// <summary>
         /// Gets the time the event happened (UTC).
         /// </summary>
         [DataMember(Name = "eventTime")]
-        public DateTime EventTime { get; }
+        public DateTime EventTime { get; } = eventLogRecord.TimeCreated?.ToUniversalTime() ?? DateTime.MinValue;
 
         /// <summary>
         /// Gets the Bucket Id.
         /// </summary>
         [DataMember(Name = "faultBucket")]
-        public string FaultBucket { get; }
+        public string FaultBucket { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultBucketIndex);
 
         /// <summary>
         /// Gets the Bucket Hash (might replace ID which would be deprecated, so sending for future proofing).
         /// </summary>
         [DataMember(Name = "hashedBucket")]
-        public string HashedBucket { get; }
+        public string HashedBucket { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, HashedBucketIndex);
 
         /// <summary>
         /// Gets the Watson Report ID.
         /// </summary>
         [DataMember(Name = "watsonReportId")]
-        public string WatsonReportId { get; }
+        public string WatsonReportId { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, WatsonReportIdIndex);
 
         /// <summary>
         /// Gets the name of the event (some possible ones: "AppHangB1", "AppHangXProcB1", "MoAppHang",
         /// "MoAppHangXProc", "AppCrash", "Crash32", "Crash64", "MoAppCrash", "BEX", "BEX64", "clr20r3", "MoBEX").
         /// </summary>
         [DataMember(Name = "eventName")]
-        public string EventName { get; }
+        public string EventName { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, EventNameIndex);
 
         /// <summary>
         /// Gets the CAB unique ID (can be empty - 0).
         /// </summary>
         [DataMember(Name = "cabId")]
-        public string CabId { get; }
+        public string CabId { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, CabIdIndex);
 
         /// <summary>
         /// Gets the name of the application causing the event (we have a list of VS EXEs that we grab for), e.g.
         /// "devenv.exe".
         /// </summary>
         [DataMember(Name = "applicationName")]
-        public string ApplicationName { get; }
+        public string ApplicationName { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, ApplicationNameIndex);
 
         /// <summary>
         /// Gets the version of the application causing the event, e.g. "14.0.23107.0".
         /// </summary>
         [DataMember(Name = "applicationVersion")]
-        public string ApplicationVersion { get; }
+        public string ApplicationVersion { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, ApplicationVersionIndex);
 
         /// <summary>
         /// Gets the faulting module (what inside the app is causing the event), e.g. "ntdll.dll".
         /// </summary>
         [DataMember(Name = "faultingModule")]
-        public string FaultingModule { get; }
+        public string FaultingModule { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultingModuleIndex);
 
         /// <summary>
         /// Gets the faulting module version.
         /// </summary>
         [DataMember(Name = "faultModuleVersion")]
-        public string FaultingModuleVersion { get; }
+        public string FaultingModuleVersion { get; } = EventLogCollector.GetEventRecordPropertyToString(eventLogRecord, FaultingModuleVersionindex);
 
         /// <summary>
         /// Used to make sure we aren't adding dupe entries to the list of Watson entries.

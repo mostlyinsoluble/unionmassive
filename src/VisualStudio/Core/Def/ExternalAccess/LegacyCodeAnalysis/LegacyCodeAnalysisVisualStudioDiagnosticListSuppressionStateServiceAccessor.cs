@@ -12,15 +12,12 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.LegacyCodeAnalysis;
 
 [Export(typeof(ILegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor))]
 [Shared]
-internal sealed class LegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor
-    : ILegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor(IVisualStudioDiagnosticListSuppressionStateService implementation)
+        : ILegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor
 {
-    private readonly IVisualStudioDiagnosticListSuppressionStateService _implementation;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LegacyCodeAnalysisVisualStudioDiagnosticListSuppressionStateServiceAccessor(IVisualStudioDiagnosticListSuppressionStateService implementation)
-        => _implementation = implementation;
+    private readonly IVisualStudioDiagnosticListSuppressionStateService _implementation = implementation;
 
     public bool CanSuppressSelectedEntries => _implementation.CanSuppressSelectedEntries;
     public bool CanSuppressSelectedEntriesInSource => _implementation.CanSuppressSelectedEntriesInSource;

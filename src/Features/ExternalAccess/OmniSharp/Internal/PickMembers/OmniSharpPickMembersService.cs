@@ -13,16 +13,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Internal.PickMembers;
 
 [Shared]
 [ExportWorkspaceService(typeof(IPickMembersService), ServiceLayer.Host)]
-internal class OmniSharpPickMembersService : IPickMembersService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class OmniSharpPickMembersService(IOmniSharpPickMembersService omniSharpPickMembersService) : IPickMembersService
 {
-    private readonly IOmniSharpPickMembersService _omniSharpPickMembersService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OmniSharpPickMembersService(IOmniSharpPickMembersService omniSharpPickMembersService)
-    {
-        _omniSharpPickMembersService = omniSharpPickMembersService;
-    }
+    private readonly IOmniSharpPickMembersService _omniSharpPickMembersService = omniSharpPickMembersService;
 
     public PickMembersResult PickMembers(string title, ImmutableArray<ISymbol> members, ImmutableArray<PickMembersOption> options = default, bool selectAll = true)
     {

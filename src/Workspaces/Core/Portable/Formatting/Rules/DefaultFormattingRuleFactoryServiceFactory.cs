@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Formatting.Rules;
 
 [ExportWorkspaceService(typeof(IHostDependentFormattingRuleFactoryService), ServiceLayer.Default), Shared]
-internal sealed class DefaultFormattingRuleFactoryService : IHostDependentFormattingRuleFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultFormattingRuleFactoryService() : IHostDependentFormattingRuleFactoryService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultFormattingRuleFactoryService()
-    {
-    }
-
     public bool ShouldNotFormatOrCommitOnPaste(DocumentId documentId)
         => false;
 

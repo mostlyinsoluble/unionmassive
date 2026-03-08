@@ -61,28 +61,22 @@ internal static class ValueTaskExtensions
     /// <summary>
     /// An awaitable that wraps a task and never throws an exception when waited on.
     /// </summary>
-    public readonly struct NoThrowValueTaskAwaitable
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaitable"/> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
+    public readonly struct NoThrowValueTaskAwaitable(ValueTask task, bool captureContext)
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly ValueTask _task;
+        private readonly ValueTask _task = task.Preserve();
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaitable"/> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
-        public NoThrowValueTaskAwaitable(ValueTask task, bool captureContext)
-        {
-            _task = task.Preserve();
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets the awaiter.
@@ -97,28 +91,22 @@ internal static class ValueTaskExtensions
     /// <summary>
     /// An awaiter that wraps a task and never throws an exception when waited on.
     /// </summary>
-    public readonly struct NoThrowValueTaskAwaiter : ICriticalNotifyCompletion
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaiter"/> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">if set to <see langword="true"/> [capture context].</param>
+    public readonly struct NoThrowValueTaskAwaiter(ValueTask task, bool captureContext) : ICriticalNotifyCompletion
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly ValueTask _task;
+        private readonly ValueTask _task = task;
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaiter"/> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">if set to <see langword="true"/> [capture context].</param>
-        public NoThrowValueTaskAwaiter(ValueTask task, bool captureContext)
-        {
-            _task = task;
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets a value indicating whether the task has completed.
@@ -160,28 +148,22 @@ internal static class ValueTaskExtensions
     /// An awaitable that wraps a <see cref="ValueTask{TResult}"/> and never throws an exception when waited on.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public readonly struct NoThrowValueTaskAwaitable<TResult>
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaitable{TResult}" /> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
+    public readonly struct NoThrowValueTaskAwaitable<TResult>(ValueTask<TResult> task, bool captureContext)
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly ValueTask<TResult> _task;
+        private readonly ValueTask<TResult> _task = task.Preserve();
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaitable{TResult}" /> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
-        public NoThrowValueTaskAwaitable(ValueTask<TResult> task, bool captureContext)
-        {
-            _task = task.Preserve();
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets the awaiter.
@@ -197,28 +179,22 @@ internal static class ValueTaskExtensions
     /// An awaiter that wraps a task and never throws an exception when waited on.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public readonly struct NoThrowValueTaskAwaiter<TResult> : ICriticalNotifyCompletion
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaiter{TResult}"/> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">if set to <see langword="true"/> [capture context].</param>
+    public readonly struct NoThrowValueTaskAwaiter<TResult>(ValueTask<TResult> task, bool captureContext) : ICriticalNotifyCompletion
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly ValueTask<TResult> _task;
+        private readonly ValueTask<TResult> _task = task;
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowValueTaskAwaiter{TResult}"/> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">if set to <see langword="true"/> [capture context].</param>
-        public NoThrowValueTaskAwaiter(ValueTask<TResult> task, bool captureContext)
-        {
-            _task = task;
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets a value indicating whether the task has completed.

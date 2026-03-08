@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis
 
         public static readonly StateTableStore Empty = new StateTableStore(ImmutableSegmentedDictionary<object, IStateTable>.Empty);
 
-        private StateTableStore(ImmutableSegmentedDictionary<object, IStateTable> tables)
-        {
-            _tables = tables;
-        }
+        private StateTableStore(ImmutableSegmentedDictionary<object, IStateTable> tables) => _tables = tables;
 
         public bool TryGetValue(object key, [NotNullWhen(true)] out IStateTable? table) => _tables.TryGetValue(key, out table);
 

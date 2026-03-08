@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if ((memberValue & constantToDecode) == memberValue)
                     {
                         // update the current value
-                        curValue = curValue | memberValue;
+                        curValue |= memberValue;
 
                         if (valueStringBuilder == null)
                         {
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if ((memberValue & constantToDecode) == memberValue)
                     {
                         // update the current value
-                        curValue = curValue | memberValue;
+                        curValue |= memberValue;
 
                         if (valueStringBuilder == null)
                         {

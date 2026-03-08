@@ -24,42 +24,33 @@ namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client;
 /// <summary>
 /// Remote language service workspace host
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="RemoteLanguageServiceWorkspaceHost"/> class.
+/// </remarks>
+/// <param name="remoteLanguageServiceWorkspace">The workspace</param>
 [Export(typeof(RemoteLanguageServiceWorkspaceHost))]
 [ExportCollaborationService(typeof(RemoteLanguageServiceSession),
                             Scope = SessionScope.Guest,
                             Role = ServiceRole.LocalService,
                             Features = "LspServices",
                             CreationPriority = (int)ServiceRole.LocalService + 2100)]
-
-internal sealed class RemoteLanguageServiceWorkspaceHost : ICollaborationServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RemoteLanguageServiceWorkspaceHost(RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace,
+                                          RemoteProjectInfoProvider remoteProjectInfoProvider,
+                                          SVsServiceProvider serviceProvider,
+                                          IThreadingContext threadingContext) : ICollaborationServiceFactory
 {
     // A collection of loaded Roslyn Project IDs, indexed by project path.
     private ImmutableDictionary<string, ProjectId> _loadedProjects = ImmutableDictionary.Create<string, ProjectId>(StringComparer.OrdinalIgnoreCase);
     private ImmutableDictionary<string, ProjectInfo> _loadedProjectInfo = ImmutableDictionary.Create<string, ProjectInfo>(StringComparer.OrdinalIgnoreCase);
     private TaskCompletionSource<bool> _projectsLoadedTaskCompletionSource = new();
-    private readonly RemoteProjectInfoProvider _remoteProjectInfoProvider;
+    private readonly RemoteProjectInfoProvider _remoteProjectInfoProvider = Requires.NotNull(remoteProjectInfoProvider, nameof(remoteProjectInfoProvider));
 
-    private readonly SVsServiceProvider _serviceProvider;
-    private readonly IThreadingContext _threadingContext;
+    private readonly SVsServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+    private readonly IThreadingContext _threadingContext = Requires.NotNull(threadingContext, nameof(threadingContext));
 
-    public RemoteLanguageServiceWorkspace Workspace { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RemoteLanguageServiceWorkspaceHost"/> class.
-    /// </summary>
-    /// <param name="remoteLanguageServiceWorkspace">The workspace</param>
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RemoteLanguageServiceWorkspaceHost(RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace,
-                                              RemoteProjectInfoProvider remoteProjectInfoProvider,
-                                              SVsServiceProvider serviceProvider,
-                                              IThreadingContext threadingContext)
-    {
-        Workspace = Requires.NotNull(remoteLanguageServiceWorkspace, nameof(remoteLanguageServiceWorkspace));
-        _remoteProjectInfoProvider = Requires.NotNull(remoteProjectInfoProvider, nameof(remoteProjectInfoProvider));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _threadingContext = Requires.NotNull(threadingContext, nameof(threadingContext));
-    }
+    public RemoteLanguageServiceWorkspace Workspace { get; } = Requires.NotNull(remoteLanguageServiceWorkspace, nameof(remoteLanguageServiceWorkspace));
 
     public async Task<ICollaborationService> CreateServiceAsync(CollaborationSession collaborationSession, CancellationToken cancellationToken)
     {

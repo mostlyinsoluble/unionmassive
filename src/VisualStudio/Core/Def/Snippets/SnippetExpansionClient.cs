@@ -47,7 +47,16 @@ using VsTextSpan = Microsoft.VisualStudio.TextManager.Interop.TextSpan;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Snippets;
 
-internal class SnippetExpansionClient : IVsExpansionClient
+internal class SnippetExpansionClient(
+    IThreadingContext threadingContext,
+    ISnippetExpansionLanguageHelper languageHelper,
+    ITextView textView,
+    ITextBuffer subjectBuffer,
+    SignatureHelpControllerProvider signatureHelpControllerProvider,
+    IEditorCommandHandlerServiceFactory editorCommandHandlerServiceFactory,
+    IVsEditorAdaptersFactoryService editorAdaptersFactoryService,
+    ImmutableArray<Lazy<ArgumentProvider, OrderableLanguageMetadata>> argumentProviders,
+    EditorOptionsService editorOptionsService) : IVsExpansionClient
 {
     /// <summary>
     /// The name of a snippet field created for caret placement in Full Method Call snippet sessions when the
@@ -60,16 +69,16 @@ internal class SnippetExpansionClient : IVsExpansionClient
     /// </summary>
     private static readonly string s_fullMethodCallDescriptionSentinel = Guid.NewGuid().ToString("N");
 
-    private readonly IThreadingContext _threadingContext;
-    private readonly ISnippetExpansionLanguageHelper _languageHelper;
-    private readonly SignatureHelpControllerProvider _signatureHelpControllerProvider;
-    private readonly IEditorCommandHandlerServiceFactory _editorCommandHandlerServiceFactory;
-    private readonly IVsEditorAdaptersFactoryService EditorAdaptersFactoryService;
-    private readonly ITextView TextView;
-    private readonly ITextBuffer SubjectBuffer;
-    internal readonly EditorOptionsService EditorOptionsService;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ISnippetExpansionLanguageHelper _languageHelper = languageHelper;
+    private readonly SignatureHelpControllerProvider _signatureHelpControllerProvider = signatureHelpControllerProvider;
+    private readonly IEditorCommandHandlerServiceFactory _editorCommandHandlerServiceFactory = editorCommandHandlerServiceFactory;
+    private readonly IVsEditorAdaptersFactoryService EditorAdaptersFactoryService = editorAdaptersFactoryService;
+    private readonly ITextView TextView = textView;
+    private readonly ITextBuffer SubjectBuffer = subjectBuffer;
+    internal readonly EditorOptionsService EditorOptionsService = editorOptionsService;
 
-    private readonly ImmutableArray<Lazy<ArgumentProvider, OrderableLanguageMetadata>> _allArgumentProviders;
+    private readonly ImmutableArray<Lazy<ArgumentProvider, OrderableLanguageMetadata>> _allArgumentProviders = argumentProviders;
     private ImmutableArray<ArgumentProvider> _argumentProviders;
 
     private bool _indentCaretOnCommit;
@@ -87,28 +96,6 @@ internal class SnippetExpansionClient : IVsExpansionClient
 
     // Writes to this state only occur on the main thread.
     private readonly State _state = new();
-
-    public SnippetExpansionClient(
-        IThreadingContext threadingContext,
-        ISnippetExpansionLanguageHelper languageHelper,
-        ITextView textView,
-        ITextBuffer subjectBuffer,
-        SignatureHelpControllerProvider signatureHelpControllerProvider,
-        IEditorCommandHandlerServiceFactory editorCommandHandlerServiceFactory,
-        IVsEditorAdaptersFactoryService editorAdaptersFactoryService,
-        ImmutableArray<Lazy<ArgumentProvider, OrderableLanguageMetadata>> argumentProviders,
-        EditorOptionsService editorOptionsService)
-    {
-        _threadingContext = threadingContext;
-        _languageHelper = languageHelper;
-        TextView = textView;
-        SubjectBuffer = subjectBuffer;
-        _signatureHelpControllerProvider = signatureHelpControllerProvider;
-        _editorCommandHandlerServiceFactory = editorCommandHandlerServiceFactory;
-        EditorAdaptersFactoryService = editorAdaptersFactoryService;
-        EditorOptionsService = editorOptionsService;
-        _allArgumentProviders = argumentProviders;
-    }
 
     /// <inheritdoc cref="State._expansionSession"/>
     public IVsExpansionSession? ExpansionSession => _state._expansionSession;

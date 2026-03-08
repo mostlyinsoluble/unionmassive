@@ -21,16 +21,10 @@ namespace Analyzer.Utilities.PooledObjects
     {
         private readonly ObjectPool<PooledConcurrentDictionary<K, V>>? _pool;
 
-        private PooledConcurrentDictionary(ObjectPool<PooledConcurrentDictionary<K, V>>? pool)
-        {
-            _pool = pool;
-        }
+        private PooledConcurrentDictionary(ObjectPool<PooledConcurrentDictionary<K, V>>? pool) => _pool = pool;
 
         private PooledConcurrentDictionary(ObjectPool<PooledConcurrentDictionary<K, V>>? pool, IEqualityComparer<K> keyComparer)
-            : base(keyComparer)
-        {
-            _pool = pool;
-        }
+            : base(keyComparer) => _pool = pool;
 
         public void Dispose() => Free(CancellationToken.None);
 

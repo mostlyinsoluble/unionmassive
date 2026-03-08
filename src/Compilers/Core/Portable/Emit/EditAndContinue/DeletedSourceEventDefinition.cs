@@ -9,16 +9,10 @@ using Microsoft.Cci;
 
 namespace Microsoft.CodeAnalysis.Emit.EditAndContinue
 {
-    internal sealed class DeletedSourceEventDefinition
-        : DeletedSourceDefinition<IEventDefinition>, IDeletedEventDefinition
+    internal sealed class DeletedSourceEventDefinition(IEventDefinition oldEvent, EventDefinitionHandle handle, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers, ICustomAttribute? deletedAttribute)
+                : DeletedSourceDefinition<IEventDefinition>(oldEvent, typesUsedByDeletedMembers, deletedAttribute), IDeletedEventDefinition
     {
-        private readonly EventDefinitionHandle _handle;
-
-        public DeletedSourceEventDefinition(IEventDefinition oldEvent, EventDefinitionHandle handle, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers, ICustomAttribute? deletedAttribute)
-            : base(oldEvent, typesUsedByDeletedMembers, deletedAttribute)
-        {
-            _handle = handle;
-        }
+        private readonly EventDefinitionHandle _handle = handle;
 
         public EventDefinitionHandle MetadataHandle
             => _handle;

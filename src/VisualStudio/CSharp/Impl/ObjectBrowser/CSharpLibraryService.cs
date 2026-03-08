@@ -14,7 +14,9 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.ObjectBrowser;
 
 [ExportLanguageService(typeof(ILibraryService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpLibraryService : AbstractLibraryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpLibraryService() : AbstractLibraryService(Guids.CSharpLibraryId, __SymbolToolLanguage.SymbolToolLanguage_CSharp, s_typeDisplayFormat, s_memberDisplayFormat)
 {
     private static readonly SymbolDisplayFormat s_typeDisplayFormat = new(
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
@@ -26,11 +28,4 @@ internal sealed class CSharpLibraryService : AbstractLibraryService
         memberOptions: SymbolDisplayMemberOptions.IncludeExplicitInterface | SymbolDisplayMemberOptions.IncludeParameters,
         parameterOptions: SymbolDisplayParameterOptions.IncludeType,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpLibraryService()
-        : base(Guids.CSharpLibraryId, __SymbolToolLanguage.SymbolToolLanguage_CSharp, s_typeDisplayFormat, s_memberDisplayFormat)
-    {
-    }
 }

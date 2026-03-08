@@ -60,14 +60,9 @@ internal static class FSharpInlineRenameReplacementKindHelpers
 }
 
 [Obsolete]
-internal class FSharpInlineRenameReplacementInfoLegacyWrapper : IInlineRenameReplacementInfo
+internal class FSharpInlineRenameReplacementInfoLegacyWrapper(IFSharpInlineRenameReplacementInfo info) : IInlineRenameReplacementInfo
 {
-    private readonly IFSharpInlineRenameReplacementInfo _info;
-
-    public FSharpInlineRenameReplacementInfoLegacyWrapper(IFSharpInlineRenameReplacementInfo info)
-    {
-        _info = info;
-    }
+    private readonly IFSharpInlineRenameReplacementInfo _info = info;
 
     public Solution NewSolution => _info.NewSolution;
 
@@ -83,17 +78,11 @@ internal class FSharpInlineRenameReplacementInfoLegacyWrapper : IInlineRenameRep
 }
 
 [Obsolete]
-internal class FSharpInlineRenameLocationSetLegacyWrapper : IInlineRenameLocationSet
+internal class FSharpInlineRenameLocationSetLegacyWrapper(IFSharpInlineRenameLocationSet set) : IInlineRenameLocationSet
 {
-    private readonly IFSharpInlineRenameLocationSet _set;
+    private readonly IFSharpInlineRenameLocationSet _set = set;
 
-    public FSharpInlineRenameLocationSetLegacyWrapper(IFSharpInlineRenameLocationSet set)
-    {
-        _set = set;
-        Locations = set.Locations?.Select(x => new InlineRenameLocation(x.Document, x.TextSpan)).ToList();
-    }
-
-    public IList<InlineRenameLocation> Locations { get; }
+    public IList<InlineRenameLocation> Locations { get; } = set.Locations?.Select(x => new InlineRenameLocation(x.Document, x.TextSpan)).ToList();
 
     public async Task<IInlineRenameReplacementInfo> GetReplacementsAsync(string replacementText, SymbolRenameOptions options, CancellationToken cancellationToken)
     {
@@ -110,14 +99,9 @@ internal class FSharpInlineRenameLocationSetLegacyWrapper : IInlineRenameLocatio
 }
 
 [Obsolete]
-internal class FSharpInlineRenameInfoLegacyWrapper : IInlineRenameInfo
+internal class FSharpInlineRenameInfoLegacyWrapper(IFSharpInlineRenameInfo info) : IInlineRenameInfo
 {
-    private readonly IFSharpInlineRenameInfo _info;
-
-    public FSharpInlineRenameInfoLegacyWrapper(IFSharpInlineRenameInfo info)
-    {
-        _info = info;
-    }
+    private readonly IFSharpInlineRenameInfo _info = info;
 
     public bool CanRename => _info.CanRename;
 
@@ -183,22 +167,16 @@ internal class FSharpInlineRenameInfoLegacyWrapper : IInlineRenameInfo
 #nullable enable
 [Shared]
 [ExportLanguageService(typeof(IEditorInlineRenameService), LanguageNames.FSharp)]
-internal class FSharpEditorInlineRenameService : IEditorInlineRenameService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpEditorInlineRenameService(
+    [Import(AllowDefault = true)] IFSharpEditorInlineRenameService? legacyService,
+    [Import(AllowDefault = true)] FSharpInlineRenameServiceImplementation? service) : IEditorInlineRenameService
 {
     [Obsolete]
-    private readonly IFSharpEditorInlineRenameService? _legacyService;
+    private readonly IFSharpEditorInlineRenameService? _legacyService = legacyService;
 
-    private readonly FSharpInlineRenameServiceImplementation? _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpEditorInlineRenameService(
-        [Import(AllowDefault = true)] IFSharpEditorInlineRenameService? legacyService,
-        [Import(AllowDefault = true)] FSharpInlineRenameServiceImplementation? service)
-    {
-        _legacyService = legacyService;
-        _service = service;
-    }
+    private readonly FSharpInlineRenameServiceImplementation? _service = service;
 
     public bool IsEnabled => true;
 

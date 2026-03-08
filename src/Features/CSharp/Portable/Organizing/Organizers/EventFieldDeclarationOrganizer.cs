@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Organizing.Organizers;
 namespace Microsoft.CodeAnalysis.CSharp.Organizing.Organizers;
 
 [ExportSyntaxNodeOrganizer(LanguageNames.CSharp), Shared]
-internal sealed class EventFieldDeclarationOrganizer : AbstractSyntaxNodeOrganizer<EventFieldDeclarationSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EventFieldDeclarationOrganizer() : AbstractSyntaxNodeOrganizer<EventFieldDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EventFieldDeclarationOrganizer()
-    {
-    }
-
     protected override EventFieldDeclarationSyntax Organize(
         EventFieldDeclarationSyntax syntax,
         CancellationToken cancellationToken)

@@ -34,10 +34,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private readonly bool _inParameterOrReturnType;
 
-            private PartVisitor(bool inParameterOrReturnType)
-            {
-                _inParameterOrReturnType = inParameterOrReturnType;
-            }
+            private PartVisitor(bool inParameterOrReturnType) => _inParameterOrReturnType = inParameterOrReturnType;
 
             public override object VisitArrayType(ArrayTypeSymbol symbol, StringBuilder builder)
             {

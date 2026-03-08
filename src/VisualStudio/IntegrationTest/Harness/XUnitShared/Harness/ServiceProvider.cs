@@ -9,16 +9,11 @@ namespace Xunit.Harness
     using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
-    internal class ServiceProvider : IServiceProvider, IObjectWithSite
+    internal class ServiceProvider(IOleServiceProvider serviceProvider) : IServiceProvider, IObjectWithSite
     {
         private static readonly Guid IUnknownGuid = new Guid("00000000-0000-0000-C000-000000000046");
 
-        private IOleServiceProvider _serviceProvider;
-
-        public ServiceProvider(IOleServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        private IOleServiceProvider _serviceProvider = serviceProvider;
 
         public object? GetService(Type serviceType)
         {

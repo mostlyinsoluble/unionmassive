@@ -7,16 +7,11 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
 {
-    internal class SyntaxListBuilder
+    internal class SyntaxListBuilder(int size)
     {
-        private ArrayElement<GreenNode?>[] _nodes;
+        private ArrayElement<GreenNode?>[] _nodes = new ArrayElement<GreenNode?>[size];
         public int Count { get; private set; }
         public int Capacity => _nodes.Length;
-
-        public SyntaxListBuilder(int size)
-        {
-            _nodes = new ArrayElement<GreenNode?>[size];
-        }
 
         public static SyntaxListBuilder Create()
         {

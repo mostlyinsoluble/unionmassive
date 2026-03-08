@@ -18,21 +18,15 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.SolutionExplore
 /// that is selected by the user in the dialog.
 /// </summary>
 [Export]
-internal sealed class AnalyzerReferenceManager : IVsReferenceManagerUser
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerReferenceManager(
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+    AnalyzerItemsTracker analyzerItemsTracker) : IVsReferenceManagerUser
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private IVsReferenceManager? _referenceManager;
-    private readonly AnalyzerItemsTracker _tracker;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerReferenceManager(
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        AnalyzerItemsTracker analyzerItemsTracker)
-    {
-        _serviceProvider = serviceProvider;
-        _tracker = analyzerItemsTracker;
-    }
+    private readonly AnalyzerItemsTracker _tracker = analyzerItemsTracker;
 
     /// <summary>
     /// Show the add analyzer dialog.

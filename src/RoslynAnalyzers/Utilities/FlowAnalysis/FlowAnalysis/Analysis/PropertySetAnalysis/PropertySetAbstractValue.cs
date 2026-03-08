@@ -98,15 +98,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             }
         }
 
-        private PropertySetAbstractValue(ImmutableArray<PropertySetAbstractValueKind> propertyAbstractValues)
-        {
-            this.KnownPropertyAbstractValues = propertyAbstractValues;
-        }
+        private PropertySetAbstractValue(ImmutableArray<PropertySetAbstractValueKind> propertyAbstractValues) => this.KnownPropertyAbstractValues = propertyAbstractValues;
 
-        private PropertySetAbstractValue()
-        {
-            this.KnownPropertyAbstractValues = ImmutableArray<PropertySetAbstractValueKind>.Empty;
-        }
+        private PropertySetAbstractValue() => this.KnownPropertyAbstractValues = ImmutableArray<PropertySetAbstractValueKind>.Empty;
 
         /// <summary>
         /// Individual values of the set of properties being tracked.

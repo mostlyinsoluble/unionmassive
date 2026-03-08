@@ -31,10 +31,7 @@ public sealed class UnionCollection : AbstractCodeElementCollection
         CodeModelState state,
         AbstractCodeElement parent,
         ICodeElements[] collections)
-        : base(state, parent)
-    {
-        _collections = collections;
-    }
+        : base(state, parent) => _collections = collections;
 
     protected override bool TryGetItemByIndex(int index, out EnvDTE.CodeElement element)
     {

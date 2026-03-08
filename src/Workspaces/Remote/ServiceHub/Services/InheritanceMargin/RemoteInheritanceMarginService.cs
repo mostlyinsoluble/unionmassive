@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteInheritanceMarginService : BrokeredServiceBase, IRemoteInheritanceMarginService
+internal sealed class RemoteInheritanceMarginService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(in arguments), IRemoteInheritanceMarginService
 {
     internal sealed class Factory : FactoryBase<IRemoteInheritanceMarginService>
     {
@@ -19,10 +19,6 @@ internal sealed class RemoteInheritanceMarginService : BrokeredServiceBase, IRem
         {
             return new RemoteInheritanceMarginService(arguments);
         }
-    }
-
-    public RemoteInheritanceMarginService(in ServiceConstructionArguments arguments) : base(in arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<InheritanceMarginItem>> GetInheritanceMarginItemsAsync(

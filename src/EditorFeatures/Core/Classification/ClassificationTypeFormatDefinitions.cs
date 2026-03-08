@@ -242,10 +242,7 @@ internal sealed class ClassificationTypeFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UserTypeRecordsFormatDefinition()
-        {
-            this.DisplayName = EditorFeaturesResources.User_Types_Records;
-        }
+        public UserTypeRecordsFormatDefinition() => this.DisplayName = EditorFeaturesResources.User_Types_Records;
     }
     #endregion
     #region User Types - Record structs
@@ -261,10 +258,7 @@ internal sealed class ClassificationTypeFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UserTypeRecordStructsFormatDefinition()
-        {
-            this.DisplayName = EditorFeaturesResources.User_Types_Record_Structs;
-        }
+        public UserTypeRecordStructsFormatDefinition() => this.DisplayName = EditorFeaturesResources.User_Types_Record_Structs;
     }
     #endregion
     #region User Types - Delegates
@@ -399,10 +393,7 @@ internal sealed class ClassificationTypeFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UserTypeArraysFormatDefinition()
-        {
-            this.DisplayName = EditorFeaturesResources.User_Types_Arrays;
-        }
+        public UserTypeArraysFormatDefinition() => this.DisplayName = EditorFeaturesResources.User_Types_Arrays;
     }
     #endregion
     #region User Types - Pointers
@@ -418,10 +409,7 @@ internal sealed class ClassificationTypeFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UserTypePointersFormatDefinition()
-        {
-            this.DisplayName = EditorFeaturesResources.User_Types_Pointers;
-        }
+        public UserTypePointersFormatDefinition() => this.DisplayName = EditorFeaturesResources.User_Types_Pointers;
     }
     #endregion
     #region User Types - Function Pointers
@@ -437,10 +425,7 @@ internal sealed class ClassificationTypeFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UserTypeFunctionPointersFormatDefinition()
-        {
-            this.DisplayName = EditorFeaturesResources.User_Types_Function_Pointers;
-        }
+        public UserTypeFunctionPointersFormatDefinition() => this.DisplayName = EditorFeaturesResources.User_Types_Function_Pointers;
     }
     #endregion
 

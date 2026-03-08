@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundMethodGroupFlags flags,
             Binder binder,
             bool hasErrors = false)
-            : this(syntax, typeArgumentsOpt, name, methods, lookupResult.SingleSymbolOrDefault, lookupResult.Error, flags, functionType: new FunctionTypeSymbol(binder, static (binder, expr) => binder.GetMethodGroupDelegateType((BoundMethodGroup)expr)), receiverOpt, lookupResult.Kind, hasErrors)
-        {
-            FunctionType?.SetExpression(this);
-        }
+            : this(syntax, typeArgumentsOpt, name, methods, lookupResult.SingleSymbolOrDefault, lookupResult.Error, flags, functionType: new FunctionTypeSymbol(binder, static (binder, expr) => binder.GetMethodGroupDelegateType((BoundMethodGroup)expr)), receiverOpt, lookupResult.Kind, hasErrors) => FunctionType?.SetExpression(this);
 
         public MemberAccessExpressionSyntax? MemberAccessExpressionSyntax
         {

@@ -33,15 +33,9 @@ namespace Microsoft.VisualStudio.Debugger
         //   code:
         //     The HRESULT code for this exception. Using HRESULT values that are defined outside
         //     the range of this enumerator are acceptable, but not encouraged.
-        public DkmException(DkmExceptionCode code)
-        {
-            _code = code;
-        }
+        public DkmException(DkmExceptionCode code) => _code = code;
 
-        protected DkmException(SerializationInfo info, StreamingContext context)
-        {
-            throw new NotImplementedException();
-        }
+        protected DkmException(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 
         //
         // Summary:

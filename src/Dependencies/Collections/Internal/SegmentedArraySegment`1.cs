@@ -6,18 +6,11 @@
 
 namespace Microsoft.CodeAnalysis.Collections.Internal
 {
-    internal readonly struct SegmentedArraySegment<T>
+    internal readonly struct SegmentedArraySegment<T>(SegmentedArray<T> array, int start, int length)
     {
-        public SegmentedArray<T> Array { get; }
-        public int Start { get; }
-        public int Length { get; }
-
-        public SegmentedArraySegment(SegmentedArray<T> array, int start, int length)
-        {
-            Array = array;
-            Start = start;
-            Length = length;
-        }
+        public SegmentedArray<T> Array { get; } = array;
+        public int Start { get; } = start;
+        public int Length { get; } = length;
 
         public ref T this[int index]
         {

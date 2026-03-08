@@ -10,14 +10,9 @@ using Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
-internal sealed class RequestContextFactory : AbstractRequestContextFactory<RequestContext>, ILspService
+internal sealed class RequestContextFactory(ILspServices lspServices) : AbstractRequestContextFactory<RequestContext>, ILspService
 {
-    private readonly ILspServices _lspServices;
-
-    public RequestContextFactory(ILspServices lspServices)
-    {
-        _lspServices = lspServices;
-    }
+    private readonly ILspServices _lspServices = lspServices;
 
     public override Task<RequestContext> CreateRequestContextAsync<TRequestParam>(QueueItem<RequestContext> queueItem, IMethodHandler methodHandler, TRequestParam requestParam, CancellationToken cancellationToken)
     {

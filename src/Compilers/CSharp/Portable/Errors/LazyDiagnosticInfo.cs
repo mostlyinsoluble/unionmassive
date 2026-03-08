@@ -25,10 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return _lazyInfo;
         }
 
-        protected LazyDiagnosticInfo(LazyDiagnosticInfo original, DiagnosticSeverity severity) : base(original, severity)
-        {
-            _lazyInfo = original._lazyInfo;
-        }
+        protected LazyDiagnosticInfo(LazyDiagnosticInfo original, DiagnosticSeverity severity) : base(original, severity) => _lazyInfo = original._lazyInfo;
 
         protected abstract override DiagnosticInfo GetInstanceWithSeverityCore(DiagnosticSeverity severity);
 

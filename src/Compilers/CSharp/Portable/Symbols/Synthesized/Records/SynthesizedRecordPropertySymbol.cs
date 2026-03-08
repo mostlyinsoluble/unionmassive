@@ -10,41 +10,35 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class SynthesizedRecordPropertySymbol : SourcePropertySymbolBase
+    internal sealed class SynthesizedRecordPropertySymbol(
+        SourceMemberContainerTypeSymbol containingType,
+        CSharpSyntaxNode syntax,
+        ParameterSymbol backingParameter,
+        bool isOverride,
+        BindingDiagnosticBag diagnostics) : SourcePropertySymbolBase(
+            containingType,
+            syntax: syntax,
+            hasGetAccessor: true,
+            hasSetAccessor: true,
+            isExplicitInterfaceImplementation: false,
+            explicitInterfaceType: null,
+            aliasQualifierOpt: null,
+            modifiers: DeclarationModifiers.Public | (isOverride ? DeclarationModifiers.Override : DeclarationModifiers.None),
+            hasInitializer: true, // Synthesized record properties always have a synthesized initializer
+            hasExplicitAccessMod: false,
+            hasAutoPropertyGet: true,
+            hasAutoPropertySet: true,
+            isExpressionBodied: false,
+            accessorsHaveImplementation: true,
+            getterUsesFieldKeyword: false,
+            setterUsesFieldKeyword: false,
+            RefKind.None,
+            backingParameter.Name,
+            indexerNameAttributeLists: new SyntaxList<AttributeListSyntax>(),
+            backingParameter.GetFirstLocation(),
+            diagnostics)
     {
-        public SourceParameterSymbol BackingParameter { get; }
-
-        public SynthesizedRecordPropertySymbol(
-            SourceMemberContainerTypeSymbol containingType,
-            CSharpSyntaxNode syntax,
-            ParameterSymbol backingParameter,
-            bool isOverride,
-            BindingDiagnosticBag diagnostics)
-            : base(
-                containingType,
-                syntax: syntax,
-                hasGetAccessor: true,
-                hasSetAccessor: true,
-                isExplicitInterfaceImplementation: false,
-                explicitInterfaceType: null,
-                aliasQualifierOpt: null,
-                modifiers: DeclarationModifiers.Public | (isOverride ? DeclarationModifiers.Override : DeclarationModifiers.None),
-                hasInitializer: true, // Synthesized record properties always have a synthesized initializer
-                hasExplicitAccessMod: false,
-                hasAutoPropertyGet: true,
-                hasAutoPropertySet: true,
-                isExpressionBodied: false,
-                accessorsHaveImplementation: true,
-                getterUsesFieldKeyword: false,
-                setterUsesFieldKeyword: false,
-                RefKind.None,
-                backingParameter.Name,
-                indexerNameAttributeLists: new SyntaxList<AttributeListSyntax>(),
-                backingParameter.GetFirstLocation(),
-                diagnostics)
-        {
-            BackingParameter = (SourceParameterSymbol)backingParameter;
-        }
+        public SourceParameterSymbol BackingParameter { get; } = (SourceParameterSymbol)backingParameter;
 
         protected override SourcePropertySymbolBase? BoundAttributesSource => null;
 

@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
         {
             private readonly GreenNode? _node;
 
-            internal Reversed(GreenNode? node)
-            {
-                _node = node;
-            }
+            internal Reversed(GreenNode? node) => _node = node;
 
             public Enumerator GetEnumerator()
             {

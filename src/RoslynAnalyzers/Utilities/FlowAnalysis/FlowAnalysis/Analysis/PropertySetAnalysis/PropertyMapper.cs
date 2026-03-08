@@ -90,10 +90,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         /// <summary>
         /// Doesn't construct.
         /// </summary>
-        private PropertyMapper()
-        {
-            throw new NotSupportedException();
-        }
+        private PropertyMapper() => throw new NotSupportedException();
 
         /// <summary>
         /// Name of the property.

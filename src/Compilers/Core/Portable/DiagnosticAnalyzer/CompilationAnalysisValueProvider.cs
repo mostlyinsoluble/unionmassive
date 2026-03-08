@@ -13,17 +13,11 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// Wrapper over the core <see cref="AnalysisValueProvider{TKey, TValue}"/> which holds a strong reference to key-value pairs for the lifetime of a compilation that this provider is associated with.
     /// This ensures that values are never re-computed for equivalent keys while analyzing each compilation, improving overall analyzer performance.
     /// </summary>
-    internal sealed class CompilationAnalysisValueProvider<TKey, TValue>
+    internal sealed class CompilationAnalysisValueProvider<TKey, TValue>(AnalysisValueProvider<TKey, TValue> analysisValueProvider)
         where TKey : class
     {
-        private readonly AnalysisValueProvider<TKey, TValue> _analysisValueProvider;
-        private readonly Dictionary<TKey, TValue> _valueMap;
-
-        public CompilationAnalysisValueProvider(AnalysisValueProvider<TKey, TValue> analysisValueProvider)
-        {
-            _analysisValueProvider = analysisValueProvider;
-            _valueMap = new Dictionary<TKey, TValue>(analysisValueProvider.KeyComparer);
-        }
+        private readonly AnalysisValueProvider<TKey, TValue> _analysisValueProvider = analysisValueProvider;
+        private readonly Dictionary<TKey, TValue> _valueMap = new Dictionary<TKey, TValue>(analysisValueProvider.KeyComparer);
 
         internal bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {

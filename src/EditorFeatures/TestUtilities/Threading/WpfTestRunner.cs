@@ -27,30 +27,24 @@ namespace Roslyn.Test.Utilities;
 /// running on the current thread vs. the STA ones. Just completely wrapping the invocation
 /// here is the best case. 
 /// </summary>
-public sealed class WpfTestRunner : XunitTestRunner
+public sealed class WpfTestRunner(
+    WpfTestSharedData sharedData,
+    ITest test,
+    IMessageBus messageBus,
+    Type testClass,
+    object[] constructorArguments,
+    MethodInfo testMethod,
+    object[] testMethodArguments,
+    string skipReason,
+    IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource) : XunitTestRunner(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
 {
 #pragma warning disable IDE0052 // Remove unread private members.  Can be used for debugging purposes.
     private static string s_wpfFactRequirementReason;
 #pragma warning restore IDE0052 // Remove unread private members
 
-    public WpfTestSharedData SharedData { get; }
-
-    public WpfTestRunner(
-        WpfTestSharedData sharedData,
-        ITest test,
-        IMessageBus messageBus,
-        Type testClass,
-        object[] constructorArguments,
-        MethodInfo testMethod,
-        object[] testMethodArguments,
-        string skipReason,
-        IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
-        : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
-    {
-        SharedData = sharedData;
-    }
+    public WpfTestSharedData SharedData { get; } = sharedData;
 
     protected override Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator)
     {

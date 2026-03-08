@@ -25,10 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private readonly ImmutableArray<ISymbol> _dataFlowsIn;
 
         private DataFlowsOutWalker(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion, HashSet<Symbol> unassignedVariables, ImmutableArray<ISymbol> dataFlowsIn)
-            : base(compilation, member, node, firstInRegion, lastInRegion, unassignedVariables, trackUnassignments: true)
-        {
-            _dataFlowsIn = dataFlowsIn;
-        }
+            : base(compilation, member, node, firstInRegion, lastInRegion, unassignedVariables, trackUnassignments: true) => _dataFlowsIn = dataFlowsIn;
 
         internal static HashSet<Symbol> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion, HashSet<Symbol> unassignedVariables, ImmutableArray<ISymbol> dataFlowsIn)
         {

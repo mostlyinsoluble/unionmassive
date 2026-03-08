@@ -12,35 +12,28 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor;
 /// this will be used to provide dynamic content such as generated content from cshtml to workspace
 /// we acquire this from <see cref="IDynamicFileInfoProvider"/> exposed from external components such as razor for cshtml
 /// </summary>
-internal sealed class RazorDynamicFileInfo
+internal sealed class RazorDynamicFileInfo(string filePath, SourceCodeKind sourceCodeKind, TextLoader textLoader, IRazorDocumentServiceProvider documentServiceProvider)
 {
-    public RazorDynamicFileInfo(string filePath, SourceCodeKind sourceCodeKind, TextLoader textLoader, IRazorDocumentServiceProvider documentServiceProvider)
-    {
-        FilePath = filePath;
-        SourceCodeKind = sourceCodeKind;
-        TextLoader = textLoader;
-        DocumentServiceProvider = documentServiceProvider;
-    }
 
     /// <summary>
     /// for now, return null. in future, we will use this to get right options from editorconfig
     /// </summary>
-    public string FilePath { get; }
+    public string FilePath { get; } = filePath;
 
     /// <summary>
     /// return <see cref="SourceCodeKind"/> for this file
     /// </summary>
-    public SourceCodeKind SourceCodeKind { get; }
+    public SourceCodeKind SourceCodeKind { get; } = sourceCodeKind;
 
     /// <summary>
     /// return <see cref="RazorDynamicFileInfo.TextLoader"/> to load content for the dynamic file
     /// </summary>
-    public TextLoader TextLoader { get; }
+    public TextLoader TextLoader { get; } = textLoader;
 
     /// <summary>
     /// return <see cref="IRazorDocumentServiceProvider"/> for the contents it provides
     /// </summary>
-    public IRazorDocumentServiceProvider DocumentServiceProvider { get; }
+    public IRazorDocumentServiceProvider DocumentServiceProvider { get; } = documentServiceProvider;
 
     /// <summary>
     /// Constructs a new <see cref="DocumentInfo"/> from an existing <see cref="DocumentInfo"/> but with updated

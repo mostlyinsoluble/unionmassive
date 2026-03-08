@@ -26,44 +26,28 @@ internal static partial class ConflictResolver
     /// Helper class to track the state necessary for finding/resolving conflicts in a 
     /// rename session.
     /// </summary>
-    private sealed class Session
+    private sealed class Session(
+        SymbolicRenameLocations renameLocationSet,
+        Location renameSymbolDeclarationLocation,
+        string replacementText,
+        CancellationToken cancellationToken)
     {
         // Set of All Locations that will be renamed (does not include non-reference locations that need to be checked for conflicts)
-        private readonly SymbolicRenameLocations _renameLocationSet;
+        private readonly SymbolicRenameLocations _renameLocationSet = renameLocationSet;
 
         // Rename Symbol's Source Location
-        private readonly Location _renameSymbolDeclarationLocation;
-        private readonly DocumentId _documentIdOfRenameSymbolDeclaration;
-        private readonly string _originalText;
-        private readonly string _replacementText;
-        private readonly CancellationToken _cancellationToken;
+        private readonly Location _renameSymbolDeclarationLocation = renameSymbolDeclarationLocation;
+        private readonly DocumentId _documentIdOfRenameSymbolDeclaration = renameLocationSet.Solution.GetRequiredDocument(renameSymbolDeclarationLocation.SourceTree!).Id;
+        private readonly string _originalText = renameLocationSet.Symbol.Name;
+        private readonly string _replacementText = replacementText;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
 
         private readonly RenameAnnotation _renamedSymbolDeclarationAnnotation = new();
 
-        private readonly AnnotationTable<RenameAnnotation> _renameAnnotations;
+        private readonly AnnotationTable<RenameAnnotation> _renameAnnotations = new AnnotationTable<RenameAnnotation>(RenameAnnotation.Kind);
 
-        private bool _replacementTextValid;
+        private bool _replacementTextValid = true;
         private bool _documentOfRenameSymbolHasBeenRenamed;
-
-        public Session(
-            SymbolicRenameLocations renameLocationSet,
-            Location renameSymbolDeclarationLocation,
-            string replacementText,
-            CancellationToken cancellationToken)
-        {
-            _renameLocationSet = renameLocationSet;
-            _renameSymbolDeclarationLocation = renameSymbolDeclarationLocation;
-            _originalText = renameLocationSet.Symbol.Name;
-            _replacementText = replacementText;
-            _cancellationToken = cancellationToken;
-
-            _replacementTextValid = true;
-
-            // only process documents which possibly contain the identifiers.
-            _documentIdOfRenameSymbolDeclaration = renameLocationSet.Solution.GetRequiredDocument(renameSymbolDeclarationLocation.SourceTree!).Id;
-
-            _renameAnnotations = new AnnotationTable<RenameAnnotation>(RenameAnnotation.Kind);
-        }
 
         private SymbolRenameOptions RenameOptions => _renameLocationSet.Options;
 

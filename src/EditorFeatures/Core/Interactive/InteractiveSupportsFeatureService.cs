@@ -15,14 +15,10 @@ namespace Microsoft.CodeAnalysis.Interactive;
 internal sealed class InteractiveSupportsFeatureService
 {
     [ExportWorkspaceService(typeof(ITextBufferSupportsFeatureService), [WorkspaceKind.Interactive]), Shared]
-    internal sealed class InteractiveTextBufferSupportsFeatureService : ITextBufferSupportsFeatureService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class InteractiveTextBufferSupportsFeatureService() : ITextBufferSupportsFeatureService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public InteractiveTextBufferSupportsFeatureService()
-        {
-        }
-
         private static bool IsActiveLanguageBuffer(ITextBuffer textBuffer)
         {
             var evaluator = (IInteractiveEvaluator)textBuffer.Properties[typeof(IInteractiveEvaluator)];
@@ -53,14 +49,10 @@ internal sealed class InteractiveSupportsFeatureService
     }
 
     [ExportWorkspaceService(typeof(IDocumentSupportsFeatureService), [WorkspaceKind.Interactive]), Shared]
-    internal sealed class InteractiveDocumentSupportsFeatureService : IDocumentSupportsFeatureService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class InteractiveDocumentSupportsFeatureService() : IDocumentSupportsFeatureService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public InteractiveDocumentSupportsFeatureService()
-        {
-        }
-
         public bool SupportsCodeFixes(Document document)
         {
             // TODO: Implement this.

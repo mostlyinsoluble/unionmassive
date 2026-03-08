@@ -24,23 +24,16 @@ using Microsoft.VisualStudio.Language.Intellisense;
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 
 [Export]
-internal class PeekableItemFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class PeekableItemFactory(
+    IMetadataAsSourceFileService metadataAsSourceFileService,
+    IGlobalOptionService globalOptions,
+    IThreadingContext threadingContext)
 {
-    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService;
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly IThreadingContext _threadingContext;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PeekableItemFactory(
-        IMetadataAsSourceFileService metadataAsSourceFileService,
-        IGlobalOptionService globalOptions,
-        IThreadingContext threadingContext)
-    {
-        _metadataAsSourceFileService = metadataAsSourceFileService;
-        _globalOptions = globalOptions;
-        _threadingContext = threadingContext;
-    }
+    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService = metadataAsSourceFileService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public async Task<IEnumerable<IPeekableItem>> GetPeekableItemsAsync(
         ISymbol symbol,

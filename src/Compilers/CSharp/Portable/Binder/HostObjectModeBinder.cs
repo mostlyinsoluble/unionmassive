@@ -12,13 +12,8 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class HostObjectModelBinder : Binder
+    internal sealed class HostObjectModelBinder(Binder next) : Binder(next)
     {
-        public HostObjectModelBinder(Binder next)
-            : base(next)
-        {
-        }
-
         private TypeSymbol GetHostObjectType()
         {
             TypeSymbol result = this.Compilation.GetHostObjectTypeSymbol();

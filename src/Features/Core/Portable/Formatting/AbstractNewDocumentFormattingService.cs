@@ -14,17 +14,12 @@ using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Microsoft.CodeAnalysis.Formatting;
 
-internal abstract class AbstractNewDocumentFormattingService : INewDocumentFormattingService
+internal abstract class AbstractNewDocumentFormattingService(IEnumerable<Lazy<INewDocumentFormattingProvider, LanguageMetadata>> providers) : INewDocumentFormattingService
 {
-    private readonly IEnumerable<Lazy<INewDocumentFormattingProvider, LanguageMetadata>> _providers;
+    private readonly IEnumerable<Lazy<INewDocumentFormattingProvider, LanguageMetadata>> _providers = providers;
     private IEnumerable<INewDocumentFormattingProvider>? _providerValues;
 
     protected abstract string Language { get; }
-
-    protected AbstractNewDocumentFormattingService(IEnumerable<Lazy<INewDocumentFormattingProvider, LanguageMetadata>> providers)
-    {
-        _providers = providers;
-    }
 
     private IEnumerable<INewDocumentFormattingProvider> GetProviders()
     {

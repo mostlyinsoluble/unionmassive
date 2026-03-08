@@ -11,10 +11,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
     {
         internal readonly DiagnosticBag Diagnostics;
 
-        internal DiagnosticBagErrorLogger(DiagnosticBag diagnostics)
-        {
-            Diagnostics = diagnostics;
-        }
+        internal DiagnosticBagErrorLogger(DiagnosticBag diagnostics) => Diagnostics = diagnostics;
 
         public override void LogDiagnostic(Diagnostic diagnostic, SuppressionInfo? suppressionInfo)
         {

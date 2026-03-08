@@ -15,21 +15,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.StringIndentation;
 /// <summary>
 /// Tag that specifies how a string's content is indented.
 /// </summary>
-internal sealed class StringIndentationTag : BrushTag, IEquatable<StringIndentationTag>
+internal sealed class StringIndentationTag(
+    StringIndentationTaggerProvider provider,
+    IEditorFormatMap editorFormatMap,
+    ImmutableArray<SnapshotSpan> orderedHoleSpans) : BrushTag(editorFormatMap), IEquatable<StringIndentationTag>
 {
-    private readonly StringIndentationTaggerProvider _provider;
+    private readonly StringIndentationTaggerProvider _provider = provider;
 
-    public readonly ImmutableArray<SnapshotSpan> OrderedHoleSpans;
-
-    public StringIndentationTag(
-        StringIndentationTaggerProvider provider,
-        IEditorFormatMap editorFormatMap,
-        ImmutableArray<SnapshotSpan> orderedHoleSpans)
-        : base(editorFormatMap)
-    {
-        _provider = provider;
-        OrderedHoleSpans = orderedHoleSpans;
-    }
+    public readonly ImmutableArray<SnapshotSpan> OrderedHoleSpans = orderedHoleSpans;
 
     protected override Color? GetColor(IWpfTextView view, IEditorFormatMap editorFormatMap)
     {

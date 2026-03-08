@@ -9,17 +9,12 @@ using System.Threading.Tasks;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class RemoteBuildHost
+internal sealed class RemoteBuildHost(RpcClient client)
 {
-    private readonly RpcClient _client;
+    private readonly RpcClient _client = client;
 
     // This is always zero, as this will be the first object registered into the server for any given process
     private const int BuildHostTargetObject = 0;
-
-    public RemoteBuildHost(RpcClient client)
-    {
-        _client = client;
-    }
 
     /// <summary>
     /// Finds the best MSBuild instance installed for loading the given project or solution.

@@ -12,14 +12,9 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// Logs metadata on LSP requests (duration, success / failure metrics)
 /// for this particular LSP server instance.
 /// </summary>
-internal class RequestTelemetryLogger : IDisposable, ILspService
+internal class RequestTelemetryLogger(string serverTypeName) : IDisposable, ILspService
 {
-    protected readonly string ServerTypeName;
-
-    public RequestTelemetryLogger(string serverTypeName)
-    {
-        ServerTypeName = serverTypeName;
-    }
+    protected readonly string ServerTypeName = serverTypeName;
 
     public void UpdateFindDocumentTelemetryData(bool success, string? workspaceKind)
     {

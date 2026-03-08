@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         internal static readonly SequencePointList Empty = new SequencePointList();
 
         // Construct a list with no sequence points.
-        private SequencePointList()
-        {
-            _points = Array.Empty<OffsetAndSpan>();
-        }
+        private SequencePointList() => _points = Array.Empty<OffsetAndSpan>();
 
         // Construct a list with sequence points from exactly one syntax tree.
         private SequencePointList(SyntaxTree tree, OffsetAndSpan[] points)
@@ -241,16 +238,10 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// <summary>
         /// Represents the combination of an IL offset and a source text span.
         /// </summary>
-        private readonly struct OffsetAndSpan
+        private readonly struct OffsetAndSpan(int offset, TextSpan span)
         {
-            public readonly int Offset;
-            public readonly TextSpan Span;
-
-            public OffsetAndSpan(int offset, TextSpan span)
-            {
-                this.Offset = offset;
-                this.Span = span;
-            }
+            public readonly int Offset = offset;
+            public readonly TextSpan Span = span;
         }
     }
 }

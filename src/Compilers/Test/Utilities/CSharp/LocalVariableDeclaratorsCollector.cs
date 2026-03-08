@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
     {
         private readonly ArrayBuilder<SyntaxNode> _builder;
 
-        private LocalVariableDeclaratorsCollector(ArrayBuilder<SyntaxNode> builder)
-        {
-            _builder = builder;
-        }
+        private LocalVariableDeclaratorsCollector(ArrayBuilder<SyntaxNode> builder) => _builder = builder;
 
         internal static ImmutableArray<SyntaxNode> GetDeclarators(SourceMemberMethodSymbol method)
         {

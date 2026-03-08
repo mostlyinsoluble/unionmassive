@@ -16,16 +16,11 @@ using Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespace.ViewModel;
 
 [Export(typeof(IEnumSettingViewModelFactory)), Shared]
-internal sealed class NewLineViewModelFactory : IEnumSettingViewModelFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NewLineViewModelFactory() : IEnumSettingViewModelFactory
 {
-    private readonly OptionKey2 _key;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NewLineViewModelFactory()
-    {
-        _key = new OptionKey2(FormattingOptions2.NewLine, LanguageNames.CSharp);
-    }
+    private readonly OptionKey2 _key = new OptionKey2(FormattingOptions2.NewLine, LanguageNames.CSharp);
 
     public IEnumSettingViewModel CreateViewModel(Setting setting)
     {
@@ -43,14 +38,9 @@ internal enum NewLineSetting
     NotSet
 }
 
-internal sealed class NewLineViewModel : EnumSettingViewModel<NewLineSetting>
+internal sealed class NewLineViewModel(Setting setting) : EnumSettingViewModel<NewLineSetting>
 {
-    private readonly Setting _setting;
-
-    public NewLineViewModel(Setting setting)
-    {
-        _setting = setting;
-    }
+    private readonly Setting _setting = setting;
 
     protected override void ChangePropertyTo(NewLineSetting newValue)
     {

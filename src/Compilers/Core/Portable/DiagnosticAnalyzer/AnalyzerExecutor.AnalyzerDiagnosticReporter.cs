@@ -90,10 +90,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
             // Pooled objects are initialized in their GetInstance method
 #pragma warning disable 8618
-            private AnalyzerDiagnosticReporter()
-            {
-                AddDiagnosticAction = AddDiagnostic;
-            }
+            private AnalyzerDiagnosticReporter() => AddDiagnosticAction = AddDiagnostic;
 #pragma warning restore 8618
 
             private void AddDiagnostic(Diagnostic diagnostic)

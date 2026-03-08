@@ -508,17 +508,10 @@ internal partial class SerializerService
         }
     }
 
-    private sealed class MissingMetadataReference : PortableExecutableReference
+    private sealed class MissingMetadataReference(
+        MetadataReferenceProperties properties, string? fullPath, DocumentationProvider initialDocumentation) : PortableExecutableReference(properties, fullPath, initialDocumentation)
     {
-        private readonly DocumentationProvider _provider;
-
-        public MissingMetadataReference(
-            MetadataReferenceProperties properties, string? fullPath, DocumentationProvider initialDocumentation)
-            : base(properties, fullPath, initialDocumentation)
-        {
-            // TODO: doc comment provider is a bit weird.
-            _provider = initialDocumentation;
-        }
+        private readonly DocumentationProvider _provider = initialDocumentation;
 
         protected override DocumentationProvider CreateDocumentationProvider()
         {

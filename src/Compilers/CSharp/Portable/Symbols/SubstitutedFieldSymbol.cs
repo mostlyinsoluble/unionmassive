@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private TypeWithAnnotations.Boxed _lazyType;
 
         internal SubstitutedFieldSymbol(SubstitutedNamedTypeSymbol containingType, FieldSymbol substitutedFrom)
-            : base((FieldSymbol)substitutedFrom.OriginalDefinition)
-        {
-            _containingType = containingType;
-        }
+            : base((FieldSymbol)substitutedFrom.OriginalDefinition) => _containingType = containingType;
 
         internal override TypeWithAnnotations GetFieldType(ConsList<FieldSymbol> fieldsBeingBound)
         {

@@ -115,28 +115,16 @@ namespace Microsoft.CodeAnalysis
         private static readonly AttributeValueExtractor<BoolAndStringArrayData> s_attributeBoolAndStringArrayValueExtractor = CrackBoolAndStringArrayInAttributeValue;
         private static readonly AttributeValueExtractor<BoolAndStringData> s_attributeBoolAndStringValueExtractor = CrackBoolAndStringInAttributeValue;
 
-        internal readonly struct BoolAndStringArrayData
+        internal readonly struct BoolAndStringArrayData(bool sense, ImmutableArray<string?> strings)
         {
-            public BoolAndStringArrayData(bool sense, ImmutableArray<string?> strings)
-            {
-                Sense = sense;
-                Strings = strings;
-            }
-
-            public readonly bool Sense;
-            public readonly ImmutableArray<string?> Strings;
+            public readonly bool Sense = sense;
+            public readonly ImmutableArray<string?> Strings = strings;
         }
 
-        internal readonly struct BoolAndStringData
+        internal readonly struct BoolAndStringData(bool sense, string? @string)
         {
-            public BoolAndStringData(bool sense, string? @string)
-            {
-                Sense = sense;
-                String = @string;
-            }
-
-            public readonly bool Sense;
-            public readonly string? String;
+            public readonly bool Sense = sense;
+            public readonly string? String = @string;
         }
 #nullable disable
 
@@ -691,14 +679,9 @@ namespace Microsoft.CodeAnalysis
             return result;
         }
 
-        internal sealed class TypesByNamespaceSortComparer : IComparer<IGrouping<string, TypeDefinitionHandle>>
+        internal sealed class TypesByNamespaceSortComparer(StringComparer nameComparer) : IComparer<IGrouping<string, TypeDefinitionHandle>>
         {
-            private readonly StringComparer _nameComparer;
-
-            public TypesByNamespaceSortComparer(StringComparer nameComparer)
-            {
-                _nameComparer = nameComparer;
-            }
+            private readonly StringComparer _nameComparer = nameComparer;
 
             public int Compare(IGrouping<string, TypeDefinitionHandle>? left, IGrouping<string, TypeDefinitionHandle>? right)
             {

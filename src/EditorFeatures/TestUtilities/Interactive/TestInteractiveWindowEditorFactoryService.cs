@@ -16,22 +16,15 @@ using Roslyn.Test.Utilities;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.UnitTests.Interactive;
 
 [Export(typeof(IInteractiveWindowEditorFactoryService))]
-internal sealed class TestInteractiveWindowEditorFactoryService : IInteractiveWindowEditorFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestInteractiveWindowEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService textEditorFactoryService, IContentTypeRegistryService contentTypeRegistry) : IInteractiveWindowEditorFactoryService
 {
     public const string ContentType = "text";
 
-    private readonly ITextBufferFactoryService _textBufferFactoryService;
-    private readonly ITextEditorFactoryService _textEditorFactoryService;
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestInteractiveWindowEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService textEditorFactoryService, IContentTypeRegistryService contentTypeRegistry)
-    {
-        _textBufferFactoryService = textBufferFactoryService;
-        _textEditorFactoryService = textEditorFactoryService;
-        _contentTypeRegistry = contentTypeRegistry;
-    }
+    private readonly ITextBufferFactoryService _textBufferFactoryService = textBufferFactoryService;
+    private readonly ITextEditorFactoryService _textEditorFactoryService = textEditorFactoryService;
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry;
 
     IWpfTextView IInteractiveWindowEditorFactoryService.CreateTextView(IInteractiveWindow window, ITextBuffer buffer, ITextViewRoleSet roles)
     {

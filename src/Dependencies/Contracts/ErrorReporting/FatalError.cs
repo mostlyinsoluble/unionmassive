@@ -19,12 +19,8 @@ namespace Microsoft.CodeAnalysis.ErrorReporting
     /// Thrown when async code must cancel the current execution but does not have access to the <see cref="CancellationTokenSource"/> of the <see cref="CancellationToken"/> passed to the code.
     /// Should be used in very rare cases where the <see cref="CancellationTokenSource"/> is out of our control (e.g. owned but not exposed by JSON RPC in certain call-back scenarios).
     /// </summary>
-    internal sealed class OperationCanceledIgnoringCallerTokenException : OperationCanceledException
+    internal sealed class OperationCanceledIgnoringCallerTokenException(Exception innerException) : OperationCanceledException(innerException.Message, innerException)
     {
-        public OperationCanceledIgnoringCallerTokenException(Exception innerException)
-            : base(innerException.Message, innerException)
-        {
-        }
     }
 
     internal static class FatalError

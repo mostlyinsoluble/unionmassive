@@ -6,14 +6,11 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
-internal sealed partial class ChangeList : IVsPreviewChangesList, IVsLiteTreeList
+internal sealed partial class ChangeList(AbstractChange[] changes) : IVsPreviewChangesList, IVsLiteTreeList
 {
     public static readonly ChangeList Empty = new([]);
 
-    internal AbstractChange[] Changes { get; }
-
-    public ChangeList(AbstractChange[] changes)
-        => this.Changes = changes;
+    internal AbstractChange[] Changes { get; } = changes;
 
     public int GetDisplayData(uint index, VSTREEDISPLAYDATA[] pData)
     {

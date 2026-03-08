@@ -13,16 +13,10 @@ namespace Xunit.Threading
     using Xunit.Harness;
     using Xunit.Sdk;
 
-    public class InProcessIdeTestInvoker : XunitTestInvoker
+    public class InProcessIdeTestInvoker(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : XunitTestInvoker(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, beforeAfterAttributes, aggregator, cancellationTokenSource)
     {
         private readonly Stack<BeforeAfterTestAttribute> _beforeAfterAttributesRun = new();
-        private readonly IReadOnlyList<BeforeAfterTestAttribute> _beforeAfterAttributes;
-
-        public InProcessIdeTestInvoker(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
-            : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, beforeAfterAttributes, aggregator, cancellationTokenSource)
-        {
-            _beforeAfterAttributes = beforeAfterAttributes;
-        }
+        private readonly IReadOnlyList<BeforeAfterTestAttribute> _beforeAfterAttributes = beforeAfterAttributes;
 
         public new Task<decimal> RunAsync()
         {

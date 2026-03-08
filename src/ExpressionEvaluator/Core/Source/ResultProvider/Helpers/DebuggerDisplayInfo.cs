@@ -10,9 +10,9 @@ using Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation;
 
 namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 {
-    internal class DebuggerDisplayInfo
+    internal class DebuggerDisplayInfo(DkmClrType targetType)
     {
-        private readonly DkmClrType m_targetType;
+        private readonly DkmClrType m_targetType = targetType;
         private readonly DebuggerDisplayItemInfo m_value;
         private readonly DebuggerDisplayItemInfo m_simpleValue;
 
@@ -20,11 +20,6 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 
         public readonly DebuggerDisplayItemInfo Name;
         public readonly DebuggerDisplayItemInfo TypeName;
-
-        public DebuggerDisplayInfo(DkmClrType targetType)
-        {
-            m_targetType = targetType;
-        }
 
         private DebuggerDisplayInfo(
             DkmClrType targetType,
@@ -109,15 +104,9 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         }
     }
 
-    internal class DebuggerDisplayItemInfo
+    internal class DebuggerDisplayItemInfo(string value, DkmClrType targetType)
     {
-        public readonly string Value;
-        public readonly DkmClrType TargetType;
-
-        public DebuggerDisplayItemInfo(string value, DkmClrType targetType)
-        {
-            Value = value;
-            TargetType = targetType;
-        }
+        public readonly string Value = value;
+        public readonly DkmClrType TargetType = targetType;
     }
 }

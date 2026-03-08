@@ -18,14 +18,9 @@ namespace Microsoft.CodeAnalysis.Internal.Log;
 /// <summary>
 /// Implementation of <see cref="ILogger"/> that output to output window
 /// </summary>
-internal sealed class OutputWindowLogger : ILogger
+internal sealed class OutputWindowLogger(Func<FunctionId, bool> isEnabledPredicate) : ILogger
 {
-    private readonly Func<FunctionId, bool> _isEnabledPredicate;
-
-    public OutputWindowLogger(Func<FunctionId, bool> isEnabledPredicate)
-    {
-        _isEnabledPredicate = isEnabledPredicate;
-    }
+    private readonly Func<FunctionId, bool> _isEnabledPredicate = isEnabledPredicate;
 
     public bool IsEnabled(FunctionId functionId)
         => _isEnabledPredicate(functionId);

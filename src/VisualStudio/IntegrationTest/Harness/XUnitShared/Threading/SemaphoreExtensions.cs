@@ -38,14 +38,9 @@ namespace Xunit.Threading
                 TaskScheduler.Default);
         }
 
-        internal struct SemaphoreDisposer : IDisposable
+        internal struct SemaphoreDisposer(Semaphore semaphore) : IDisposable
         {
-            private readonly Semaphore _semaphore;
-
-            public SemaphoreDisposer(Semaphore semaphore)
-            {
-                _semaphore = semaphore;
-            }
+            private readonly Semaphore _semaphore = semaphore;
 
             public void Dispose()
             {

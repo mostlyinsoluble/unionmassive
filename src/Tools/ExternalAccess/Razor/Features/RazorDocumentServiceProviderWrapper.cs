@@ -9,19 +9,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal sealed class RazorDocumentServiceProviderWrapper : IDocumentServiceProvider, IDocumentOperationService
+    internal sealed class RazorDocumentServiceProviderWrapper(IRazorDocumentServiceProvider innerDocumentServiceProvider) : IDocumentServiceProvider, IDocumentOperationService
     {
-        private readonly IRazorDocumentServiceProvider _innerDocumentServiceProvider;
+        private readonly IRazorDocumentServiceProvider _innerDocumentServiceProvider = innerDocumentServiceProvider ?? throw new ArgumentNullException(nameof(innerDocumentServiceProvider));
 
         // The lazily initialized service fields use StrongBox<T> to explicitly allow null as an initialized value.
         private StrongBox<ISpanMappingService?>? _lazySpanMappingService;
         private StrongBox<IDocumentExcerptService?>? _lazyExcerptService;
         private StrongBox<IDocumentService?>? _lazyDocumentPropertiesService;
-
-        public RazorDocumentServiceProviderWrapper(IRazorDocumentServiceProvider innerDocumentServiceProvider)
-        {
-            _innerDocumentServiceProvider = innerDocumentServiceProvider ?? throw new ArgumentNullException(nameof(innerDocumentServiceProvider));
-        }
 
         public bool CanApplyChange => _innerDocumentServiceProvider.CanApplyChange;
 

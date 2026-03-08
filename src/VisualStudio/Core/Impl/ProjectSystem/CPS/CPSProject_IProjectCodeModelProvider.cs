@@ -25,12 +25,9 @@ internal sealed partial class CPSProject
         return _projectCodeModel.GetOrCreateFileCodeModel(filePath, item);
     }
 
-    private sealed class CPSCodeModelInstanceFactory : ICodeModelInstanceFactory
+    private sealed class CPSCodeModelInstanceFactory(CPSProject project) : ICodeModelInstanceFactory
     {
-        private readonly CPSProject _project;
-
-        public CPSCodeModelInstanceFactory(CPSProject project)
-            => _project = project;
+        private readonly CPSProject _project = project;
 
         EnvDTE.FileCodeModel ICodeModelInstanceFactory.TryCreateFileCodeModelThroughProjectSystem(string filePath)
         {

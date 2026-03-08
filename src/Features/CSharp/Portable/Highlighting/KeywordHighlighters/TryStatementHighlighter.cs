@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.KeywordHighlighting.KeywordHighlighters;
 
 [ExportHighlighter(LanguageNames.CSharp), Shared]
-internal sealed class TryStatementHighlighter : AbstractKeywordHighlighter<TryStatementSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TryStatementHighlighter() : AbstractKeywordHighlighter<TryStatementSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TryStatementHighlighter()
-    {
-    }
-
     protected override void AddHighlights(
         TryStatementSyntax tryStatement, List<TextSpan> highlights, CancellationToken cancellationToken)
     {

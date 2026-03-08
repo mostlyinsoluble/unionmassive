@@ -13,22 +13,15 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.EditorConfigSettings.Updater;
 
-internal abstract class SettingsUpdaterBase<TOption, TValue> : ISettingUpdater<TOption, TValue>
+internal abstract class SettingsUpdaterBase<TOption, TValue>(Workspace workspace, string editorconfigPath) : ISettingUpdater<TOption, TValue>
 {
     private readonly List<(TOption option, TValue value)> _queue = [];
     private readonly SemaphoreSlim _guard = new(1);
-    private readonly IAsynchronousOperationListener _listener;
-    protected readonly Workspace Workspace;
-    protected readonly string EditorconfigPath;
+    private readonly IAsynchronousOperationListener _listener = workspace.Services.GetRequiredService<IWorkspaceAsynchronousOperationListenerProvider>().GetListener();
+    protected readonly Workspace Workspace = workspace;
+    protected readonly string EditorconfigPath = editorconfigPath;
 
     protected abstract SourceText? GetNewText(SourceText analyzerConfigDocument, IReadOnlyList<(TOption option, TValue value)> settingsToUpdate, CancellationToken token);
-
-    protected SettingsUpdaterBase(Workspace workspace, string editorconfigPath)
-    {
-        Workspace = workspace;
-        _listener = workspace.Services.GetRequiredService<IWorkspaceAsynchronousOperationListenerProvider>().GetListener();
-        EditorconfigPath = editorconfigPath;
-    }
 
     public void QueueUpdate(TOption setting, TValue value)
     {

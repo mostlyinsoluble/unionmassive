@@ -21,7 +21,9 @@ internal sealed partial class SolutionCompilationState
         /// cref="RegularCompilationTracker" /> starts at null, and then will progress through the other states until it
         /// finally reaches <see cref="FinalCompilationTrackerState" />.
         /// </summary>
-        private abstract class CompilationTrackerState
+        private abstract class CompilationTrackerState(
+SolutionCompilationState.CreationPolicy creationPolicy,
+RegularCompilationTracker.CompilationTrackerGeneratorInfo generatorInfo)
         {
             /// <summary>
             /// Whether the generated documents in <see cref="GeneratorInfo"/> are frozen and generators should
@@ -39,7 +41,7 @@ internal sealed partial class SolutionCompilationState
             /// creating the compilation for a particular project.  When entirely frozen, we do not want to do this due
             /// to the enormous cost of emitting ref assemblies for cross language cases.
             /// </summary>
-            public readonly CreationPolicy CreationPolicy;
+            public readonly CreationPolicy CreationPolicy = creationPolicy;
 
             /// <summary>
             /// The best compilation that is available that source generators have not ran on. May be an
@@ -47,15 +49,7 @@ internal sealed partial class SolutionCompilationState
             /// </summary>
             public abstract Compilation CompilationWithoutGeneratedDocuments { get; }
 
-            public CompilationTrackerGeneratorInfo GeneratorInfo { get; }
-
-            protected CompilationTrackerState(
-                CreationPolicy creationPolicy,
-                CompilationTrackerGeneratorInfo generatorInfo)
-            {
-                CreationPolicy = creationPolicy;
-                GeneratorInfo = generatorInfo;
-            }
+            public CompilationTrackerGeneratorInfo GeneratorInfo { get; } = generatorInfo;
         }
 
         /// <summary>

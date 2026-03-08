@@ -12,66 +12,55 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.SignatureHelp;
 
-internal class FSharpSignatureHelpParameter
+internal class FSharpSignatureHelpParameter(
+    string name,
+    bool isOptional,
+    Func<CancellationToken, IEnumerable<TaggedText>> documentationFactory,
+    IEnumerable<TaggedText> displayParts,
+    IEnumerable<TaggedText> prefixDisplayParts = null,
+    IEnumerable<TaggedText> suffixDisplayParts = null,
+    IEnumerable<TaggedText> selectedDisplayParts = null)
 {
     /// <summary>
     /// The name of this parameter.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name ?? string.Empty;
 
     /// <summary>
     /// Documentation for this parameter.  This should normally be presented to the user when
     /// this parameter is selected.
     /// </summary>
-    public Func<CancellationToken, IEnumerable<TaggedText>> DocumentationFactory { get; }
+    public Func<CancellationToken, IEnumerable<TaggedText>> DocumentationFactory { get; } = documentationFactory ?? s_emptyDocumentationFactory;
 
     /// <summary>
     /// Display parts to show before the normal display parts for the parameter.
     /// </summary>
-    public IList<TaggedText> PrefixDisplayParts { get; }
+    public IList<TaggedText> PrefixDisplayParts { get; } = prefixDisplayParts.ToImmutableArrayOrEmpty();
 
     /// <summary>
     /// Display parts to show after the normal display parts for the parameter.
     /// </summary>
-    public IList<TaggedText> SuffixDisplayParts { get; }
+    public IList<TaggedText> SuffixDisplayParts { get; } = suffixDisplayParts.ToImmutableArrayOrEmpty();
 
     /// <summary>
     /// Display parts for this parameter.  This should normally be presented to the user as part
     /// of the entire signature display.
     /// </summary>
-    public IList<TaggedText> DisplayParts { get; }
+    public IList<TaggedText> DisplayParts { get; } = displayParts.ToImmutableArrayOrEmpty();
 
     /// <summary>
     /// True if this parameter is optional or not.  Optional parameters may be presented in a
     /// different manner to users.
     /// </summary>
-    public bool IsOptional { get; }
+    public bool IsOptional { get; } = isOptional;
 
     /// <summary>
     /// Display parts for this parameter that should be presented to the user when this
     /// parameter is selected.
     /// </summary>
-    public IList<TaggedText> SelectedDisplayParts { get; }
+    public IList<TaggedText> SelectedDisplayParts { get; } = selectedDisplayParts.ToImmutableArrayOrEmpty();
 
     private static readonly Func<CancellationToken, IEnumerable<TaggedText>> s_emptyDocumentationFactory = _ => [];
-
-    public FSharpSignatureHelpParameter(
-        string name,
-        bool isOptional,
-        Func<CancellationToken, IEnumerable<TaggedText>> documentationFactory,
-        IEnumerable<TaggedText> displayParts,
-        IEnumerable<TaggedText> prefixDisplayParts = null,
-        IEnumerable<TaggedText> suffixDisplayParts = null,
-        IEnumerable<TaggedText> selectedDisplayParts = null)
-    {
-        this.Name = name ?? string.Empty;
-        this.IsOptional = isOptional;
-        this.DocumentationFactory = documentationFactory ?? s_emptyDocumentationFactory;
-        this.DisplayParts = displayParts.ToImmutableArrayOrEmpty();
-        this.PrefixDisplayParts = prefixDisplayParts.ToImmutableArrayOrEmpty();
-        this.SuffixDisplayParts = suffixDisplayParts.ToImmutableArrayOrEmpty();
-        this.SelectedDisplayParts = selectedDisplayParts.ToImmutableArrayOrEmpty();
-    }
 
     internal IEnumerable<TaggedText> GetAllParts()
     {

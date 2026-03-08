@@ -68,10 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             private readonly SourceAttributeData _original;
 
-            internal FromSourceAttributeData(SourceAttributeData original)
-            {
-                _original = original;
-            }
+            internal FromSourceAttributeData(SourceAttributeData original) => _original = original;
 
             public override SyntaxReference? ApplicationSyntaxReference => _original.ApplicationSyntaxReference;
             public override NamedTypeSymbol AttributeClass => _original.AttributeClass;

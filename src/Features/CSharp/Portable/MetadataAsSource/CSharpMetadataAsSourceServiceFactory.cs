@@ -13,14 +13,10 @@ using Microsoft.CodeAnalysis.MetadataAsSource;
 namespace Microsoft.CodeAnalysis.CSharp.MetadataAsSource;
 
 [ExportLanguageServiceFactory(typeof(IMetadataAsSourceService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpMetadataAsSourceServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpMetadataAsSourceServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpMetadataAsSourceServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices provider)
         => CSharpMetadataAsSourceService.Instance;
 }

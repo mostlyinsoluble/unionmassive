@@ -55,8 +55,7 @@ internal abstract class AbstractConvertAutoPropertyToFullPropertyCodeRefactoring
 
         // If supported, offer to convert auto-prop to use 'field' instead.
         var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
-        if (syntaxFacts.SupportsFieldExpression(semanticModel.SyntaxTree.Options) &&
-            !property.DescendantNodes().Any(syntaxFacts.IsFieldExpression))
+        if (!property.DescendantNodes().Any(syntaxFacts.IsFieldExpression))
         {
             context.RegisterRefactoring(CodeAction.Create(
                     FeaturesResources.Convert_to_field_property,

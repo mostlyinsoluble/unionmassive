@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
 
-                _seenYield = _seenYield | origSeenYield;
+                _seenYield |= origSeenYield;
                 return null;
             }
 

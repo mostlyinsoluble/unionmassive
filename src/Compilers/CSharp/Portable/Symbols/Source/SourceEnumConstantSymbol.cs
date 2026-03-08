@@ -142,16 +142,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 #nullable disable
 
-        private sealed class ZeroValuedEnumConstantSymbol : SourceEnumConstantSymbol
+        private sealed class ZeroValuedEnumConstantSymbol(
+            SourceMemberContainerTypeSymbol containingEnum,
+            EnumMemberDeclarationSyntax syntax,
+            BindingDiagnosticBag diagnostics) : SourceEnumConstantSymbol(containingEnum, syntax, diagnostics)
         {
-            public ZeroValuedEnumConstantSymbol(
-                SourceMemberContainerTypeSymbol containingEnum,
-                EnumMemberDeclarationSyntax syntax,
-                BindingDiagnosticBag diagnostics)
-                : base(containingEnum, syntax, diagnostics)
-            {
-            }
-
             protected override ConstantValue MakeConstantValue(HashSet<SourceFieldSymbolWithSyntaxReference> dependencies, bool earlyDecodingWellKnownAttributes, BindingDiagnosticBag diagnostics)
             {
                 var constantType = this.ContainingType.EnumUnderlyingType.SpecialType;
@@ -165,10 +160,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 SourceMemberContainerTypeSymbol containingEnum,
                 EnumMemberDeclarationSyntax syntax,
                 BindingDiagnosticBag diagnostics) :
-                base(containingEnum, syntax, diagnostics)
-            {
-                Debug.Assert(syntax.EqualsValue != null);
-            }
+                base(containingEnum, syntax, diagnostics) => Debug.Assert(syntax.EqualsValue != null);
 
             protected override ConstantValue MakeConstantValue(HashSet<SourceFieldSymbolWithSyntaxReference> dependencies, bool earlyDecodingWellKnownAttributes, BindingDiagnosticBag diagnostics)
             {

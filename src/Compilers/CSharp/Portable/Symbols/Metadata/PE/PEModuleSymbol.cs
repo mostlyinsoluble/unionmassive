@@ -133,22 +133,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 #nullable disable
 
         internal PEModuleSymbol(PEAssemblySymbol assemblySymbol, PEModule module, MetadataImportOptions importOptions, int ordinal)
-            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal)
-        {
-            Debug.Assert(ordinal >= 0);
-        }
+            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal) => Debug.Assert(ordinal >= 0);
 
         internal PEModuleSymbol(SourceAssemblySymbol assemblySymbol, PEModule module, MetadataImportOptions importOptions, int ordinal)
-            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal)
-        {
-            Debug.Assert(ordinal > 0);
-        }
+            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal) => Debug.Assert(ordinal > 0);
 
         internal PEModuleSymbol(RetargetingAssemblySymbol assemblySymbol, PEModule module, MetadataImportOptions importOptions, int ordinal)
-            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal)
-        {
-            Debug.Assert(ordinal > 0);
-        }
+            : this((AssemblySymbol)assemblySymbol, module, importOptions, ordinal) => Debug.Assert(ordinal > 0);
 
         private PEModuleSymbol(AssemblySymbol assemblySymbol, PEModule module, MetadataImportOptions importOptions, int ordinal)
         {

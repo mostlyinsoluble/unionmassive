@@ -13,17 +13,13 @@ namespace Microsoft.CodeAnalysis.Editor.Undo;
 /// This factory will create a service that provides workspace global undo service.
 /// </summary>
 [ExportWorkspaceServiceFactory(typeof(IGlobalUndoService), ServiceLayer.Default), Shared]
-internal sealed class NoOpGlobalUndoServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NoOpGlobalUndoServiceFactory() : IWorkspaceServiceFactory
 {
     public static readonly IWorkspaceGlobalUndoTransaction Transaction = new NoOpUndoTransaction();
 
     private readonly NoOpGlobalUndoService _singleton = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NoOpGlobalUndoServiceFactory()
-    {
-    }
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => _singleton;

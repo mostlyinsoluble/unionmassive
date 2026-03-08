@@ -74,9 +74,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        internal DeconstructionInfo(Conversion conversion)
-        {
-            _conversion = conversion;
-        }
+        internal DeconstructionInfo(Conversion conversion) => _conversion = conversion;
     }
 }

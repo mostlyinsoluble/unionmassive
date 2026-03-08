@@ -8,18 +8,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Roslyn.Test.Utilities
 {
-    internal class TestAnalyzerReference : AnalyzerReference
+    internal class TestAnalyzerReference(string? fullPath = null, string? display = null, object? id = null) : AnalyzerReference
     {
-        private readonly string? _fullPath;
-        private readonly string? _display;
-        private readonly object? _id;
-
-        public TestAnalyzerReference(string? fullPath = null, string? display = null, object? id = null)
-        {
-            _fullPath = fullPath;
-            _display = display;
-            _id = id;
-        }
+        private readonly string? _fullPath = fullPath;
+        private readonly string? _display = display;
+        private readonly object? _id = id;
 
         public override string Display => _display ?? throw new NotImplementedException();
         public override string FullPath => _fullPath ?? throw new NotImplementedException();

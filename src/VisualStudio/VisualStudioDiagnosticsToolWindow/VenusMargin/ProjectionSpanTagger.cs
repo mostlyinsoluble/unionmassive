@@ -19,15 +19,11 @@ namespace Roslyn.Hosting.Diagnostics.VenusMargin;
 [Export(typeof(IViewTaggerProvider))]
 [ContentType("text")]
 [TagType(typeof(TextMarkerTag))]
-internal sealed class ProjectionSpanTaggerProvider : IViewTaggerProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ProjectionSpanTaggerProvider() : IViewTaggerProvider
 {
     public const string PropertyName = "Projection Tags";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ProjectionSpanTaggerProvider()
-    {
-    }
 
     public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {

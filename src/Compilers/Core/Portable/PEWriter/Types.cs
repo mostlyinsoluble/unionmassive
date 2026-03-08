@@ -349,23 +349,17 @@ namespace Microsoft.Cci
     /// <summary>
     /// Models an explicit implementation or override of a base class virtual method or an explicit implementation of an interface method.
     /// </summary>
-    internal readonly struct MethodImplementation
+    internal readonly struct MethodImplementation(Cci.IMethodDefinition ImplementingMethod, Cci.IMethodReference ImplementedMethod)
     {
         /// <summary>
         /// The type that is explicitly implementing or overriding the base class virtual method or explicitly implementing an interface method.
         /// </summary>
-        public readonly Cci.IMethodDefinition ImplementingMethod;
+        public readonly Cci.IMethodDefinition ImplementingMethod = ImplementingMethod;
 
         /// <summary>
         /// A reference to the method that provides the implementation.
         /// </summary>
-        public readonly Cci.IMethodReference ImplementedMethod;
-
-        public MethodImplementation(Cci.IMethodDefinition ImplementingMethod, Cci.IMethodReference ImplementedMethod)
-        {
-            this.ImplementingMethod = ImplementingMethod;
-            this.ImplementedMethod = ImplementedMethod;
-        }
+        public readonly Cci.IMethodReference ImplementedMethod = ImplementedMethod;
 
         /// <summary>
         /// The type that is explicitly implementing or overriding the base class virtual method or explicitly implementing an interface method.
@@ -427,25 +421,19 @@ namespace Microsoft.Cci
     // be unnecessary if we added a GetAttributes method onto IDefinition and
     // properly segregated attributes that are on type references and attributes
     // that are on underlying type definitions.
-    internal readonly struct TypeReferenceWithAttributes
+    internal readonly struct TypeReferenceWithAttributes(
+        ITypeReference typeRef,
+        ImmutableArray<ICustomAttribute> attributes = default)
     {
         /// <summary>
         /// The type reference.
         /// </summary>
-        public ITypeReference TypeRef { get; }
+        public ITypeReference TypeRef { get; } = typeRef;
 
         /// <summary>
         /// The attributes on the type reference itself.
         /// </summary>
-        public ImmutableArray<ICustomAttribute> Attributes { get; }
-
-        public TypeReferenceWithAttributes(
-            ITypeReference typeRef,
-            ImmutableArray<ICustomAttribute> attributes = default)
-        {
-            TypeRef = typeRef;
-            Attributes = attributes.NullToEmpty();
-        }
+        public ImmutableArray<ICustomAttribute> Attributes { get; } = attributes.NullToEmpty();
     }
 
     /// <summary>

@@ -23,10 +23,7 @@ namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
             return new SeparatedSyntaxListBuilder<TNode>(8);
         }
 
-        internal SeparatedSyntaxListBuilder(SyntaxListBuilder builder)
-        {
-            _builder = builder;
-        }
+        internal SeparatedSyntaxListBuilder(SyntaxListBuilder builder) => _builder = builder;
 
         public bool IsNull
         {

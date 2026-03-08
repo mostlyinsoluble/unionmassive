@@ -17,16 +17,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.NavigateTo;
 
 [Shared]
 [ExportLanguageService(typeof(INavigateToSearchService), LanguageNames.FSharp)]
-internal class FSharpNavigateToSearchService : INavigateToSearchService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpNavigateToSearchService(IFSharpNavigateToSearchService service) : INavigateToSearchService
 {
-    private readonly IFSharpNavigateToSearchService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpNavigateToSearchService(IFSharpNavigateToSearchService service)
-    {
-        _service = service;
-    }
+    private readonly IFSharpNavigateToSearchService _service = service;
 
     public IImmutableSet<string> KindsProvided => _service.KindsProvided;
 

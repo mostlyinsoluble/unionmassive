@@ -147,17 +147,11 @@ namespace Microsoft.CodeAnalysis.Operations
         }
     }
 
-    internal sealed class FlowAnonymousFunctionOperation : Operation, IFlowAnonymousFunctionOperation
+    internal sealed class FlowAnonymousFunctionOperation(in ControlFlowGraphBuilder.Context context, IAnonymousFunctionOperation original, bool isImplicit) : Operation(semanticModel: null, original.Syntax, isImplicit), IFlowAnonymousFunctionOperation
     {
-        public readonly ControlFlowGraphBuilder.Context Context;
-        public readonly IAnonymousFunctionOperation Original;
+        public readonly ControlFlowGraphBuilder.Context Context = context;
+        public readonly IAnonymousFunctionOperation Original = original;
 
-        public FlowAnonymousFunctionOperation(in ControlFlowGraphBuilder.Context context, IAnonymousFunctionOperation original, bool isImplicit) :
-            base(semanticModel: null, original.Syntax, isImplicit)
-        {
-            Context = context;
-            Original = original;
-        }
         public IMethodSymbol Symbol => Original.Symbol;
 
         internal override IOperation GetCurrent(int slot, int index) => throw ExceptionUtilities.UnexpectedValue((slot, index));
@@ -250,10 +244,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class DynamicObjectCreationOperation : HasDynamicArgumentsExpression, IDynamicObjectCreationOperation
     {
         public DynamicObjectCreationOperation(IObjectOrCollectionInitializerOperation? initializer, ImmutableArray<IOperation> arguments, ImmutableArray<string?> argumentNames, ImmutableArray<RefKind> argumentRefKinds, SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit) :
-            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit)
-        {
-            Initializer = SetParentOperation(initializer, this);
-        }
+            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit) => Initializer = SetParentOperation(initializer, this);
 
         public IObjectOrCollectionInitializerOperation? Initializer { get; }
         internal override ConstantValue? OperationConstantValue => null;
@@ -332,10 +323,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class DynamicInvocationOperation : HasDynamicArgumentsExpression, IDynamicInvocationOperation
     {
         public DynamicInvocationOperation(IOperation operation, ImmutableArray<IOperation> arguments, ImmutableArray<string?> argumentNames, ImmutableArray<RefKind> argumentRefKinds, SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit) :
-            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit)
-        {
-            Operation = SetParentOperation(operation, this);
-        }
+            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit) => Operation = SetParentOperation(operation, this);
 
         internal override int ChildOperationsCount => (Operation is null ? 0 : 1) + Arguments.Length;
 
@@ -414,10 +402,7 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class DynamicIndexerAccessOperation : HasDynamicArgumentsExpression, IDynamicIndexerAccessOperation
     {
         public DynamicIndexerAccessOperation(IOperation operation, ImmutableArray<IOperation> arguments, ImmutableArray<string?> argumentNames, ImmutableArray<RefKind> argumentRefKinds, SemanticModel? semanticModel, SyntaxNode syntax, ITypeSymbol? type, bool isImplicit) :
-            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit)
-        {
-            Operation = SetParentOperation(operation, this);
-        }
+            base(arguments, argumentNames, argumentRefKinds, semanticModel, syntax, type, isImplicit) => Operation = SetParentOperation(operation, this);
 
         public IOperation Operation { get; }
         internal override ConstantValue? OperationConstantValue => null;
@@ -647,19 +632,13 @@ namespace Microsoft.CodeAnalysis.Operations
     internal sealed partial class FlowCaptureOperation
     {
         public FlowCaptureOperation(int id, SyntaxNode syntax, IOperation value) :
-            this(new CaptureId(id), value, semanticModel: null, syntax: syntax, isImplicit: true)
-        {
-            Debug.Assert(value != null);
-        }
+            this(new CaptureId(id), value, semanticModel: null, syntax: syntax, isImplicit: true) => Debug.Assert(value != null);
     }
 
     internal sealed partial class IsNullOperation
     {
         public IsNullOperation(SyntaxNode syntax, IOperation operand, ITypeSymbol type, ConstantValue? constantValue) :
-            this(operand, semanticModel: null, syntax: syntax, type: type, constantValue: constantValue, isImplicit: true)
-        {
-            Debug.Assert(operand != null);
-        }
+            this(operand, semanticModel: null, syntax: syntax, type: type, constantValue: constantValue, isImplicit: true) => Debug.Assert(operand != null);
     }
 
     internal sealed partial class CaughtExceptionOperation

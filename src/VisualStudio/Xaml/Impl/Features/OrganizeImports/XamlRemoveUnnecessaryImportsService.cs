@@ -13,16 +13,11 @@ using Microsoft.CodeAnalysis.RemoveUnnecessaryImports;
 namespace Microsoft.CodeAnalysis.Editor.Xaml.OrganizeImports;
 
 [ExportLanguageService(typeof(IRemoveUnnecessaryImportsService), StringConstants.XamlLanguageName), Shared]
-internal sealed class XamlRemoveUnnecessaryImportsService : IRemoveUnnecessaryImportsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class XamlRemoveUnnecessaryImportsService(IXamlRemoveUnnecessaryNamespacesService removeService) : IRemoveUnnecessaryImportsService
 {
-    private readonly IXamlRemoveUnnecessaryNamespacesService _removeService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XamlRemoveUnnecessaryImportsService(IXamlRemoveUnnecessaryNamespacesService removeService)
-    {
-        _removeService = removeService;
-    }
+    private readonly IXamlRemoveUnnecessaryNamespacesService _removeService = removeService;
 
     public Task<Document> RemoveUnnecessaryImportsAsync(Document document, CancellationToken cancellationToken)
         => RemoveUnnecessaryImportsAsync(document, predicate: null, cancellationToken: cancellationToken);

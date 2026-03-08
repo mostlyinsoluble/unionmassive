@@ -8,9 +8,6 @@ using Microsoft.VisualStudio.Text.Editor.Commanding;
 
 namespace Microsoft.VisualStudio.LanguageServices.ValueTracking;
 
-internal sealed class ValueTrackingEditorCommandArgs : EditorCommandArgs
+internal sealed class ValueTrackingEditorCommandArgs(ITextView textView, ITextBuffer subjectBuffer) : EditorCommandArgs(textView, subjectBuffer)
 {
-    public ValueTrackingEditorCommandArgs(ITextView textView, ITextBuffer subjectBuffer) : base(textView, subjectBuffer)
-    {
-    }
 }

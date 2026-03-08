@@ -88,18 +88,11 @@ namespace Microsoft.CodeAnalysis
             ExtendedLayoutKind,
         }
 
-        internal readonly struct TypeHandleTargetInfo
+        internal readonly struct TypeHandleTargetInfo(string @namespace, string name, SerializationTypeCode underlying)
         {
-            public readonly string Namespace;
-            public readonly string Name;
-            public readonly SerializationTypeCode Underlying;
-
-            public TypeHandleTargetInfo(string @namespace, string name, SerializationTypeCode underlying)
-            {
-                Namespace = @namespace;
-                Name = name;
-                Underlying = underlying;
-            }
+            public readonly string Namespace = @namespace;
+            public readonly string Name = name;
+            public readonly SerializationTypeCode Underlying = underlying;
         }
 
         internal static ImmutableArray<TypeHandleTargetInfo> TypeHandleTargets;

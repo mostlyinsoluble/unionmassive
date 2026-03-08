@@ -14,18 +14,11 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Text
 {
-    internal class StringTextWriter : SourceTextWriter
+    internal class StringTextWriter(Encoding? encoding, SourceHashAlgorithm checksumAlgorithm, int capacity) : SourceTextWriter
     {
-        private readonly StringBuilder _builder;
-        private readonly Encoding? _encoding;
-        private readonly SourceHashAlgorithm _checksumAlgorithm;
-
-        public StringTextWriter(Encoding? encoding, SourceHashAlgorithm checksumAlgorithm, int capacity)
-        {
-            _builder = new StringBuilder(capacity);
-            _encoding = encoding;
-            _checksumAlgorithm = checksumAlgorithm;
-        }
+        private readonly StringBuilder _builder = new StringBuilder(capacity);
+        private readonly Encoding? _encoding = encoding;
+        private readonly SourceHashAlgorithm _checksumAlgorithm = checksumAlgorithm;
 
         // https://github.com/dotnet/roslyn/issues/40830
         public override Encoding Encoding

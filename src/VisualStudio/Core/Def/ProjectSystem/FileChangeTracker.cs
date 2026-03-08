@@ -17,14 +17,14 @@ using IVsAsyncFileChangeEx2 = Microsoft.VisualStudio.Shell.IVsAsyncFileChangeEx2
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
-internal sealed class FileChangeTracker : IVsFreeThreadedFileChangeEvents2, IDisposable
+internal sealed class FileChangeTracker(IVsFileChangeEx fileChangeService, string filePath, _VSFILECHANGEFLAGS fileChangeFlags = FileChangeTracker.DefaultFileChangeFlags) : IVsFreeThreadedFileChangeEvents2, IDisposable
 {
     internal const _VSFILECHANGEFLAGS DefaultFileChangeFlags = _VSFILECHANGEFLAGS.VSFILECHG_Time | _VSFILECHANGEFLAGS.VSFILECHG_Add | _VSFILECHANGEFLAGS.VSFILECHG_Del | _VSFILECHANGEFLAGS.VSFILECHG_Size;
 
     private static readonly AsyncLazy<uint?> s_none = AsyncLazy.Create(value: (uint?)null);
 
-    private readonly IVsFileChangeEx _fileChangeService;
-    private readonly _VSFILECHANGEFLAGS _fileChangeFlags;
+    private readonly IVsFileChangeEx _fileChangeService = fileChangeService;
+    private readonly _VSFILECHANGEFLAGS _fileChangeFlags = fileChangeFlags;
     private bool _disposed;
 
     /// <summary>
@@ -32,7 +32,7 @@ internal sealed class FileChangeTracker : IVsFreeThreadedFileChangeEvents2, IDis
     /// this file. This field may never be null, but might be a Lazy that has a value of null if
     /// we either failed to subscribe over never have tried to subscribe.
     /// </summary>
-    private AsyncLazy<uint?> _fileChangeCookie;
+    private AsyncLazy<uint?> _fileChangeCookie = s_none;
 
     public event EventHandler UpdatedOnDisk;
 
@@ -53,14 +53,6 @@ internal sealed class FileChangeTracker : IVsFreeThreadedFileChangeEvents2, IDis
     /// </summary>
     private static readonly object s_lastBackgroundTaskGate = new();
 
-    public FileChangeTracker(IVsFileChangeEx fileChangeService, string filePath, _VSFILECHANGEFLAGS fileChangeFlags = DefaultFileChangeFlags)
-    {
-        _fileChangeService = fileChangeService;
-        FilePath = filePath;
-        _fileChangeFlags = fileChangeFlags;
-        _fileChangeCookie = s_none;
-    }
-
     ~FileChangeTracker()
     {
         if (!Environment.HasShutdownStarted)
@@ -69,7 +61,7 @@ internal sealed class FileChangeTracker : IVsFreeThreadedFileChangeEvents2, IDis
         }
     }
 
-    public string FilePath { get; }
+    public string FilePath { get; } = filePath;
 
     /// <summary>
     /// Returns true if a previous call to <see cref="StartFileChangeListeningAsync"/> has completed.

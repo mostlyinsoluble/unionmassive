@@ -15,14 +15,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Interactive;
 
-internal sealed class InteractiveDocumentNavigationService : AbstractDocumentNavigationService
+internal sealed class InteractiveDocumentNavigationService(IThreadingContext threadingContext) : AbstractDocumentNavigationService
 {
-    private readonly IThreadingContext _threadingContext;
-
-    public InteractiveDocumentNavigationService(IThreadingContext threadingContext)
-    {
-        _threadingContext = threadingContext;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public override async Task<bool> CanNavigateToSpanAsync(Workspace workspace, DocumentId documentId, TextSpan textSpan, bool allowInvalidSpan, CancellationToken cancellationToken)
         => true;

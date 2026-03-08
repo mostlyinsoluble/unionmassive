@@ -14,14 +14,11 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExtractMethod;
 
-internal abstract partial class AbstractSyntaxTriviaService : ISyntaxTriviaService
+internal abstract partial class AbstractSyntaxTriviaService(int endOfLineKind) : ISyntaxTriviaService
 {
     private const int TriviaLocationsCount = 4;
 
-    private readonly int _endOfLineKind;
-
-    protected AbstractSyntaxTriviaService(int endOfLineKind)
-        => _endOfLineKind = endOfLineKind;
+    private readonly int _endOfLineKind = endOfLineKind;
 
     public ITriviaSavedResult SaveTriviaAroundSelection(SyntaxNode root, TextSpan textSpan)
     {

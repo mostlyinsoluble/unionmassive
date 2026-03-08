@@ -14,11 +14,11 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
 {
-    internal class MockCSharpCompiler : CSharpCompiler
+    internal class MockCSharpCompiler(string responseFile, BuildPaths buildPaths, string[] args, ImmutableArray<DiagnosticAnalyzer> analyzers = default, ImmutableArray<ISourceGenerator> generators = default, AnalyzerAssemblyLoader loader = null, GeneratorDriverCache driverCache = null, ImmutableArray<MetadataReference> additionalReferences = default) : CSharpCompiler(CSharpCommandLineParser.Default, responseFile, args, buildPaths, Environment.GetEnvironmentVariable("LIB"), loader ?? new AnalyzerAssemblyLoader(), driverCache)
     {
-        private readonly ImmutableArray<DiagnosticAnalyzer> _analyzers;
-        private readonly ImmutableArray<ISourceGenerator> _generators;
-        private readonly ImmutableArray<MetadataReference> _additionalReferences;
+        private readonly ImmutableArray<DiagnosticAnalyzer> _analyzers = analyzers.NullToEmpty();
+        private readonly ImmutableArray<ISourceGenerator> _generators = generators.NullToEmpty();
+        private readonly ImmutableArray<MetadataReference> _additionalReferences = additionalReferences.NullToEmpty();
         internal Compilation Compilation;
         internal AnalyzerOptions AnalyzerOptions;
         internal ImmutableArray<(DiagnosticDescriptor Descriptor, DiagnosticDescriptorErrorLoggerInfo Info)> DescriptorsWithInfo;
@@ -27,14 +27,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
         public MockCSharpCompiler(string responseFile, string workingDirectory, string[] args, ImmutableArray<DiagnosticAnalyzer> analyzers = default, ImmutableArray<ISourceGenerator> generators = default, AnalyzerAssemblyLoader loader = null, ImmutableArray<MetadataReference> additionalReferences = default)
             : this(responseFile, CreateBuildPaths(workingDirectory), args, analyzers, generators, loader, additionalReferences: additionalReferences)
         {
-        }
-
-        public MockCSharpCompiler(string responseFile, BuildPaths buildPaths, string[] args, ImmutableArray<DiagnosticAnalyzer> analyzers = default, ImmutableArray<ISourceGenerator> generators = default, AnalyzerAssemblyLoader loader = null, GeneratorDriverCache driverCache = null, ImmutableArray<MetadataReference> additionalReferences = default)
-            : base(CSharpCommandLineParser.Default, responseFile, args, buildPaths, Environment.GetEnvironmentVariable("LIB"), loader ?? new AnalyzerAssemblyLoader(), driverCache)
-        {
-            _analyzers = analyzers.NullToEmpty();
-            _generators = generators.NullToEmpty();
-            _additionalReferences = additionalReferences.NullToEmpty();
         }
 
         private static BuildPaths CreateBuildPaths(string workingDirectory, string sdkDirectory = null) => RuntimeUtilities.CreateBuildPaths(workingDirectory, sdkDirectory);

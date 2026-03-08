@@ -22,10 +22,7 @@ public sealed class SolutionServices
 
     // This ensures a single instance of this type associated with each HostWorkspaceServices.
     [Obsolete("Do not call directly.  Use HostWorkspaceServices.SolutionServices to acquire an instance")]
-    internal SolutionServices(HostWorkspaceServices services)
-    {
-        _services = services;
-    }
+    internal SolutionServices(HostWorkspaceServices services) => _services = services;
 
     [Obsolete("Only use to implement obsolete public API")]
     internal HostWorkspaceServices WorkspaceServices => _services;

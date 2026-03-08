@@ -20,25 +20,18 @@ namespace Microsoft.VisualStudio.LanguageServices.Xaml;
 [ContentType(ContentTypeNames.XamlContentType)]
 [TextViewRole(PredefinedTextViewRoles.PrimaryDocument)]
 [TextViewRole(PredefinedTextViewRoles.Document)]
-internal sealed partial class XamlTextViewCreationListener : IWpfTextViewCreationListener
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class XamlTextViewCreationListener(
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+    XamlProjectService projectService) : IWpfTextViewCreationListener
 {
     // Temporary UIConext GUID owned by the XAML language service until we can get a KnownUIContext
     private static readonly Guid s_serverUIContextGuid = new("39F55746-6E65-4FCF-BEC5-EC0B466EAC0F");
 
-    private readonly IServiceProvider _serviceProvider;
-    private readonly XamlProjectService _projectService;
-    private readonly UIContext _serverUIContext;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XamlTextViewCreationListener(
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        XamlProjectService projectService)
-    {
-        _serviceProvider = serviceProvider;
-        _projectService = projectService;
-        _serverUIContext = UIContext.FromUIContextGuid(s_serverUIContextGuid);
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly XamlProjectService _projectService = projectService;
+    private readonly UIContext _serverUIContext = UIContext.FromUIContextGuid(s_serverUIContextGuid);
 
     public void TextViewCreated(IWpfTextView textView)
     {

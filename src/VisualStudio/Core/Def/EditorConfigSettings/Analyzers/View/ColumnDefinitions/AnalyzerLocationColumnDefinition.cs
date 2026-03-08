@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Location)]
-internal sealed class AnalyzerLocationColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerLocationColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerLocationColumnDefinition()
-    {
-    }
-
     public override string Name => Location;
     public override string DisplayName => ServicesVSResources.Location;
     public override bool IsFilterable => true;

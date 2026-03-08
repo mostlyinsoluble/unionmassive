@@ -23,10 +23,7 @@ internal sealed class CSharpWhitespaceSettingsProvider : SettingsProviderBase<Se
     private static readonly Conversions<NewLineBeforeOpenBracePlacement, int> s_newLinesForBracesConversions = new(v => (int)v, v => (NewLineBeforeOpenBracePlacement)v);
 
     public CSharpWhitespaceSettingsProvider(IThreadingContext threadingContext, string filePath, OptionUpdater updaterService, Workspace workspace, IGlobalOptionService globalOptions)
-        : base(threadingContext, filePath, updaterService, workspace, globalOptions)
-    {
-        Update();
-    }
+        : base(threadingContext, filePath, updaterService, workspace, globalOptions) => Update();
 
     protected override Task UpdateOptionsAsync(
         TieredAnalyzerConfigOptions options, ImmutableArray<Project> projectsInScope, CancellationToken cancellationToken)

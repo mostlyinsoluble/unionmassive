@@ -78,14 +78,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private class NestedUncommonData : UncommonData
+        private class NestedUncommonData(ImmutableArray<Conversion> nestedConversions) : UncommonData
         {
-            public NestedUncommonData(ImmutableArray<Conversion> nestedConversions)
-            {
-                _nestedConversionsOpt = nestedConversions;
-            }
-
-            internal readonly ImmutableArray<Conversion> _nestedConversionsOpt;
+            internal readonly ImmutableArray<Conversion> _nestedConversionsOpt = nestedConversions;
 #if DEBUG
             internal bool _nestedConversionsChecked;
 #endif

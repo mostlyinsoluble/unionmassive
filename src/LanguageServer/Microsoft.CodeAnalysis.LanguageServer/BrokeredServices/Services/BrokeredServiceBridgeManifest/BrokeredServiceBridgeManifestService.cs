@@ -12,7 +12,9 @@ namespace Microsoft.CodeAnalysis.LanguageServer.BrokeredServices.Services.Broker
 
 #pragma warning disable RS0030 // This is intentionally using System.ComponentModel.Composition for compatibility with MEF service broker.
 [ExportBrokeredService(MonikerName, MonikerVersion, Audience = ServiceAudience.Local)]
-internal sealed class BrokeredServiceBridgeManifest : IBrokeredServiceBridgeManifest, IExportedBrokeredService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class BrokeredServiceBridgeManifest(ServiceBrokerFactory serviceBrokerFactory, ILoggerFactory loggerFactory) : IBrokeredServiceBridgeManifest, IExportedBrokeredService
 {
     internal const string MonikerName = "Microsoft.VisualStudio.Server.IBrokeredServiceBridgeManifest";
     internal const string MonikerVersion = "0.1";
@@ -22,16 +24,8 @@ internal sealed class BrokeredServiceBridgeManifest : IBrokeredServiceBridgeMani
         ServiceJsonRpcDescriptor.Formatters.UTF8,
         ServiceJsonRpcDescriptor.MessageDelimiters.HttpLikeHeaders);
 
-    private readonly ServiceBrokerFactory _serviceBrokerFactory;
-    private readonly ILogger _logger;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public BrokeredServiceBridgeManifest(ServiceBrokerFactory serviceBrokerFactory, ILoggerFactory loggerFactory)
-    {
-        _serviceBrokerFactory = serviceBrokerFactory;
-        _logger = loggerFactory.CreateLogger<BrokeredServiceBridgeManifest>();
-    }
+    private readonly ServiceBrokerFactory _serviceBrokerFactory = serviceBrokerFactory;
+    private readonly ILogger _logger = loggerFactory.CreateLogger<BrokeredServiceBridgeManifest>();
 
     public ServiceRpcDescriptor Descriptor => s_serviceDescriptor;
 

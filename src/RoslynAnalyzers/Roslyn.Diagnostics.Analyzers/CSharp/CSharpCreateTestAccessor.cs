@@ -16,14 +16,10 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 {
     [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(CSharpCreateTestAccessor))]
     [Shared]
-    public sealed class CSharpCreateTestAccessor : AbstractCreateTestAccessor<TypeDeclarationSyntax>
+    [method: ImportingConstructor]
+    [method: Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
+    public sealed class CSharpCreateTestAccessor() : AbstractCreateTestAccessor<TypeDeclarationSyntax>
     {
-        [ImportingConstructor]
-        [Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
-        public CSharpCreateTestAccessor()
-        {
-        }
-
         private protected override IRefactoringHelpers RefactoringHelpers => CSharpRefactoringHelpers.Instance;
 
         protected override SyntaxNode GetTypeDeclarationForNode(SyntaxNode reportedNode)

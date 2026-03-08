@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp;
 
 [ExportLanguageService(typeof(ISyntaxTreeFactoryService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpSyntaxTreeFactoryService : AbstractSyntaxTreeFactoryService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class CSharpSyntaxTreeFactoryService() : AbstractSyntaxTreeFactoryService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSyntaxTreeFactoryService()
-    {
-    }
-
     public override ParseOptions GetDefaultParseOptions()
         => CSharpParseOptions.Default;
 

@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.RenameTracking;
 
 [ExportLanguageService(typeof(IRenameTrackingLanguageHeuristicsService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpRenameTrackingLanguageHeuristicsService : IRenameTrackingLanguageHeuristicsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpRenameTrackingLanguageHeuristicsService() : IRenameTrackingLanguageHeuristicsService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpRenameTrackingLanguageHeuristicsService()
-    {
-    }
-
     public bool IsIdentifierValidForRenameTracking(string name)
         => name is not "var" and not "dynamic" and not "_";
 }

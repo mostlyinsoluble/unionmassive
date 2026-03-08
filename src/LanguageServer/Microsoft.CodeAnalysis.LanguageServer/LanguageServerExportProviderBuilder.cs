@@ -25,10 +25,7 @@ internal sealed class LanguageServerExportProviderBuilder : ExportProviderBuilde
         string cacheDirectory,
         string catalogPrefix,
         ILoggerFactory loggerFactory)
-        : base(assemblyPaths, resolver, cacheDirectory, catalogPrefix)
-    {
-        _logger = loggerFactory.CreateLogger<ExportProviderBuilder>();
-    }
+        : base(assemblyPaths, resolver, cacheDirectory, catalogPrefix) => _logger = loggerFactory.CreateLogger<ExportProviderBuilder>();
 
     public static async Task<ExportProvider> CreateExportProviderAsync(
         string baseDirectory,

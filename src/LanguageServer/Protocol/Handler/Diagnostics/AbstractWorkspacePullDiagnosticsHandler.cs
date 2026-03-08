@@ -120,7 +120,7 @@ internal abstract class AbstractWorkspacePullDiagnosticsHandler<TDiagnosticsPara
     /// The semantics of this type are thus: there is internally a "set" state. When the event is <see cref="Set()"/>, the next waiter to call <see cref="WaitAsync()"/> will be let through, and the
     /// event resets to false. A call to <see cref="Set()"/> while there is already waiters will release all the waiters, and since it already let a waiter through, the state is untouched.
     /// </summary>
-    private sealed class ReleaseAllAutoResetEvent
+    private sealed class ReleaseAllAutoResetEvent(bool initialState)
     {
         private readonly object _gate = new object();
         private readonly List<TaskCompletionSource<object?>> _waiters = new();
@@ -128,12 +128,7 @@ internal abstract class AbstractWorkspacePullDiagnosticsHandler<TDiagnosticsPara
         /// <summary>
         /// True if <see cref="Set()"/> has been called, indicating the next waiter should be let through.
         /// </summary>
-        private bool _state;
-
-        public ReleaseAllAutoResetEvent(bool initialState)
-        {
-            _state = initialState;
-        }
+        private bool _state = initialState;
 
         public Task WaitAsync()
         {

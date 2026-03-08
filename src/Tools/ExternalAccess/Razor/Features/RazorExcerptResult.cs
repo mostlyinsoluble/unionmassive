@@ -8,26 +8,16 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal readonly struct RazorExcerptResult
+    internal readonly struct RazorExcerptResult(SourceText content, TextSpan mappedSpan, ImmutableArray<ClassifiedSpan> classifiedSpans, Document document, TextSpan span)
     {
-        public readonly SourceText Content;
+        public readonly SourceText Content = content;
 
-        public readonly TextSpan MappedSpan;
+        public readonly TextSpan MappedSpan = mappedSpan;
 
-        public readonly ImmutableArray<ClassifiedSpan> ClassifiedSpans;
+        public readonly ImmutableArray<ClassifiedSpan> ClassifiedSpans = classifiedSpans;
 
-        public readonly Document Document;
+        public readonly Document Document = document;
 
-        public readonly TextSpan Span;
-
-        public RazorExcerptResult(SourceText content, TextSpan mappedSpan, ImmutableArray<ClassifiedSpan> classifiedSpans, Document document, TextSpan span)
-        {
-            Content = content;
-            MappedSpan = mappedSpan;
-            ClassifiedSpans = classifiedSpans;
-
-            Document = document;
-            Span = span;
-        }
+        public readonly TextSpan Span = span;
     }
 }

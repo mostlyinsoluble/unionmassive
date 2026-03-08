@@ -64,10 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ImmutableArray<ImmutableArray<CustomModifier>> paramRefCustomModifiers)
             => new FunctionPointerTypeSymbol(Signature.SubstituteParameterSymbols(substitutedReturnType, substitutedParameterTypes, refCustomModifiers, paramRefCustomModifiers));
 
-        private FunctionPointerTypeSymbol(FunctionPointerMethodSymbol signature)
-        {
-            Signature = signature;
-        }
+        private FunctionPointerTypeSymbol(FunctionPointerMethodSymbol signature) => Signature = signature;
 
         public FunctionPointerMethodSymbol Signature { get; }
 

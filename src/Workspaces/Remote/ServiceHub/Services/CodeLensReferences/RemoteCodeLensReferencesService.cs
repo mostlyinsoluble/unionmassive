@@ -12,17 +12,12 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteCodeLensReferencesService : BrokeredServiceBase, IRemoteCodeLensReferencesService
+internal sealed class RemoteCodeLensReferencesService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteCodeLensReferencesService
 {
     internal sealed class Factory : FactoryBase<IRemoteCodeLensReferencesService>
     {
         protected override IRemoteCodeLensReferencesService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteCodeLensReferencesService(arguments);
-    }
-
-    public RemoteCodeLensReferencesService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     private static async ValueTask<SyntaxNode?> TryFindNodeAsync(Solution solution, DocumentId documentId, TextSpan textSpan, CancellationToken cancellationToken)

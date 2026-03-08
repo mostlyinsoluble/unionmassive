@@ -9,21 +9,13 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Navigation;
 
-internal class FSharpNavigableItem
+internal class FSharpNavigableItem(FSharpGlyph glyph, ImmutableArray<TaggedText> displayTaggedParts, Document document, TextSpan sourceSpan)
 {
-    public FSharpNavigableItem(FSharpGlyph glyph, ImmutableArray<TaggedText> displayTaggedParts, Document document, TextSpan sourceSpan)
-    {
-        Glyph = glyph;
-        DisplayTaggedParts = displayTaggedParts;
-        Document = document;
-        SourceSpan = sourceSpan;
-    }
+    public FSharpGlyph Glyph { get; } = glyph;
 
-    public FSharpGlyph Glyph { get; }
+    public ImmutableArray<TaggedText> DisplayTaggedParts { get; } = displayTaggedParts;
 
-    public ImmutableArray<TaggedText> DisplayTaggedParts { get; }
+    public Document Document { get; } = document;
 
-    public Document Document { get; }
-
-    public TextSpan SourceSpan { get; }
+    public TextSpan SourceSpan { get; } = sourceSpan;
 }

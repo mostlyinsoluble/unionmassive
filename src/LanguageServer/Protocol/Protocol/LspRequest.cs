@@ -9,19 +9,15 @@ namespace Roslyn.LanguageServer.Protocol;
 /// </summary>
 /// <typeparam name="TIn">The parameter type.</typeparam>
 /// <typeparam name="TOut">The return type.</typeparam>
-internal sealed class LspRequest<TIn, TOut>
+/// <remarks>
+/// Initializes a new instance of the <see cref="LspRequest{TIn, TOut}"/> class.
+/// </remarks>
+/// <param name="name">The name of the JSON-RPC request.</param>
+internal sealed class LspRequest<TIn, TOut>(string name)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LspRequest{TIn, TOut}"/> class.
-    /// </summary>
-    /// <param name="name">The name of the JSON-RPC request.</param>
-    public LspRequest(string name)
-    {
-        this.Name = name;
-    }
 
     /// <summary>
     /// Gets the name of the JSON-RPC request.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name;
 }

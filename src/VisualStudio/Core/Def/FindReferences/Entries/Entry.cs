@@ -15,12 +15,9 @@ internal partial class StreamingFindUsagesPresenter
     /// <summary>
     /// Represents a single entry (i.e. row) in the ungrouped FAR table.
     /// </summary>
-    private abstract class Entry
+    private abstract class Entry(StreamingFindUsagesPresenter.RoslynDefinitionBucket definitionBucket)
     {
-        public readonly RoslynDefinitionBucket DefinitionBucket;
-
-        protected Entry(RoslynDefinitionBucket definitionBucket)
-            => DefinitionBucket = definitionBucket;
+        public readonly RoslynDefinitionBucket DefinitionBucket = definitionBucket;
 
         public bool TryGetValue(string keyName, out object? content)
         {

@@ -24,10 +24,7 @@ internal sealed class FileIdentifier
     private readonly string _filePath;
     private FileIdentifierData? _data;
 
-    private FileIdentifier(string filePath)
-    {
-        _filePath = filePath;
-    }
+    private FileIdentifier(string filePath) => _filePath = filePath;
 
     private FileIdentifier(ImmutableArray<byte> filePathChecksumOpt, string displayFilePath)
     {

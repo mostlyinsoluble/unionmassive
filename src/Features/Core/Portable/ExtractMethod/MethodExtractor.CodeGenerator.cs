@@ -53,7 +53,11 @@ internal abstract partial class AbstractExtractMethodService<
             public abstract Task<SemanticDocument> GenerateAsync(CancellationToken cancellationToken);
         }
 
-        protected abstract partial class CodeGenerator<TNodeUnderContainer, TCodeGenerationOptions> : CodeGenerator
+        protected abstract partial class CodeGenerator<TNodeUnderContainer, TCodeGenerationOptions>(
+AbstractExtractMethodService<TStatementSyntax, TExecutableStatementSyntax, TExpressionSyntax>.SelectionResult selectionResult,
+MethodExtractor.AnalyzerResult analyzerResult,
+            ExtractMethodGenerationOptions options,
+            bool localFunction) : CodeGenerator
             where TNodeUnderContainer : SyntaxNode
             where TCodeGenerationOptions : CodeGenerationOptions
         {
@@ -63,29 +67,15 @@ internal abstract partial class AbstractExtractMethodService<
             protected const string FlowControlName = "flowControl";
             protected const string ReturnValueName = "value";
 
-            protected readonly SelectionResult SelectionResult;
-            protected readonly AnalyzerResult AnalyzerResult;
+            protected readonly SelectionResult SelectionResult = selectionResult;
+            protected readonly AnalyzerResult AnalyzerResult = analyzerResult;
 
-            protected readonly ExtractMethodGenerationOptions ExtractMethodGenerationOptions;
-            protected readonly TCodeGenerationOptions Options;
+            protected readonly ExtractMethodGenerationOptions ExtractMethodGenerationOptions = options;
+            protected readonly TCodeGenerationOptions Options = (TCodeGenerationOptions)options.CodeGenerationOptions;
 
-            protected readonly bool LocalFunction;
+            protected readonly bool LocalFunction = localFunction;
 
             private ITypeSymbol _finalReturnType;
-
-            protected CodeGenerator(
-                SelectionResult selectionResult,
-                AnalyzerResult analyzerResult,
-                ExtractMethodGenerationOptions options,
-                bool localFunction)
-            {
-                SelectionResult = selectionResult;
-                AnalyzerResult = analyzerResult;
-
-                ExtractMethodGenerationOptions = options;
-                Options = (TCodeGenerationOptions)options.CodeGenerationOptions;
-                LocalFunction = localFunction;
-            }
 
             protected SemanticDocument SemanticDocument => SelectionResult.SemanticDocument;
 

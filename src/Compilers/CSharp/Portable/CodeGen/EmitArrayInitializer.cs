@@ -119,16 +119,10 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         /// This structure is used for capturing initializers of a given index and 
         /// the index value itself.
         /// </summary>
-        private readonly struct IndexDesc
+        private readonly struct IndexDesc(int index, ImmutableArray<BoundExpression> initializers)
         {
-            public IndexDesc(int index, ImmutableArray<BoundExpression> initializers)
-            {
-                this.Index = index;
-                this.Initializers = initializers;
-            }
-
-            public readonly int Index;
-            public readonly ImmutableArray<BoundExpression> Initializers;
+            public readonly int Index = index;
+            public readonly ImmutableArray<BoundExpression> Initializers = initializers;
         }
 
         private void EmitMultidimensionalElementInitializers(ArrayTypeSymbol arrayType,

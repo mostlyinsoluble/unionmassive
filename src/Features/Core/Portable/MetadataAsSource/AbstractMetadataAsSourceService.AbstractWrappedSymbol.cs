@@ -13,18 +13,11 @@ namespace Microsoft.CodeAnalysis.MetadataAsSource;
 
 internal abstract partial class AbstractMetadataAsSourceService
 {
-    private abstract class AbstractWrappedSymbol : ISymbol
+    private abstract class AbstractWrappedSymbol(ISymbol symbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService) : ISymbol
     {
-        private readonly ISymbol _symbol;
-        protected readonly bool CanImplementImplicitly;
-        protected readonly IDocumentationCommentFormattingService DocCommentFormattingService;
-
-        protected AbstractWrappedSymbol(ISymbol symbol, bool canImplementImplicitly, IDocumentationCommentFormattingService docCommentFormattingService)
-        {
-            _symbol = symbol;
-            CanImplementImplicitly = canImplementImplicitly;
-            DocCommentFormattingService = docCommentFormattingService;
-        }
+        private readonly ISymbol _symbol = symbol;
+        protected readonly bool CanImplementImplicitly = canImplementImplicitly;
+        protected readonly IDocumentationCommentFormattingService DocCommentFormattingService = docCommentFormattingService;
 
         public bool CanBeReferencedByName => _symbol.CanBeReferencedByName;
 

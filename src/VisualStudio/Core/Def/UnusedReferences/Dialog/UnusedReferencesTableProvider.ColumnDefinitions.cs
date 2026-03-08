@@ -108,14 +108,10 @@ internal sealed partial class UnusedReferencesTableProvider
 
     [Export(typeof(ITableColumnDefinition))]
     [Name(UnusedReferencesColumnDefinitions.SolutionName)]
-    internal sealed class SolutionNameColumnDefinition : TableColumnDefinitionBase
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class SolutionNameColumnDefinition() : TableColumnDefinitionBase
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public SolutionNameColumnDefinition()
-        {
-        }
-
         public override string Name => UnusedReferencesColumnDefinitions.SolutionName;
 
         public override bool TryCreateColumnContent(ITableEntryHandle entry, bool singleColumnView, out FrameworkElement? content)
@@ -145,14 +141,10 @@ internal sealed partial class UnusedReferencesTableProvider
 
     [Export(typeof(ITableColumnDefinition))]
     [Name(UnusedReferencesColumnDefinitions.ProjectName)]
-    internal sealed class ProjectNameColumnDefinition : TableColumnDefinitionBase
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class ProjectNameColumnDefinition() : TableColumnDefinitionBase
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public ProjectNameColumnDefinition()
-        {
-        }
-
         public override string Name => UnusedReferencesColumnDefinitions.ProjectName;
 
         public override bool TryCreateColumnContent(ITableEntryHandle entry, bool singleColumnView, out FrameworkElement? content)
@@ -189,14 +181,10 @@ internal sealed partial class UnusedReferencesTableProvider
 
     [Export(typeof(ITableColumnDefinition))]
     [Name(UnusedReferencesColumnDefinitions.ReferenceType)]
-    internal sealed class ReferenceTypeColumnDefinition : TableColumnDefinitionBase
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class ReferenceTypeColumnDefinition() : TableColumnDefinitionBase
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public ReferenceTypeColumnDefinition()
-        {
-        }
-
         public override string Name => UnusedReferencesColumnDefinitions.ReferenceType;
 
         public override bool TryCreateColumnContent(ITableEntryHandle entry, bool singleColumnView, out FrameworkElement? content)
@@ -240,14 +228,10 @@ internal sealed partial class UnusedReferencesTableProvider
 
     [Export(typeof(ITableColumnDefinition))]
     [Name(UnusedReferencesColumnDefinitions.ReferenceName)]
-    internal sealed class ReferenceNameColumnDefinition : TableColumnDefinitionBase
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class ReferenceNameColumnDefinition() : TableColumnDefinitionBase
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public ReferenceNameColumnDefinition()
-        {
-        }
-
         public override string Name => UnusedReferencesColumnDefinitions.ReferenceName;
         public override string DisplayName => ServicesVSResources.Reference;
         public override bool IsFilterable => false;
@@ -281,14 +265,10 @@ internal sealed partial class UnusedReferencesTableProvider
 
     [Export(typeof(ITableColumnDefinition))]
     [Name(UnusedReferencesColumnDefinitions.UpdateAction)]
-    internal sealed class UpdateActionColumnDefinition : TableColumnDefinitionBase
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class UpdateActionColumnDefinition() : TableColumnDefinitionBase
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UpdateActionColumnDefinition()
-        {
-        }
-
         public override string Name => UnusedReferencesColumnDefinitions.UpdateAction;
         public override string DisplayName => ServicesVSResources.Action;
         public override bool IsFilterable => false;
@@ -334,15 +314,9 @@ internal sealed partial class UnusedReferencesTableProvider
     /// <summary>
     /// Used for columns that will be grouped on. Displays an image and text string.
     /// </summary>
-    internal sealed class ImageEntryBucket : StringEntryBucket
+    internal sealed class ImageEntryBucket(ImageMoniker imageMoniker, string name, object? tooltip = null, StringComparer? comparer = null, bool expandedByDefault = true) : StringEntryBucket(name, tooltip, comparer, expandedByDefault)
     {
-        public readonly ImageMoniker ImageMoniker;
-
-        public ImageEntryBucket(ImageMoniker imageMoniker, string name, object? tooltip = null, StringComparer? comparer = null, bool expandedByDefault = true)
-            : base(name, tooltip, comparer, expandedByDefault)
-        {
-            ImageMoniker = imageMoniker;
-        }
+        public readonly ImageMoniker ImageMoniker = imageMoniker;
 
         public override bool TryCreateColumnContent(out FrameworkElement content)
         {

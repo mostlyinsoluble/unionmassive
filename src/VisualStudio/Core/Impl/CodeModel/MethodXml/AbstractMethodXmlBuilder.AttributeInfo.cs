@@ -8,18 +8,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel.Metho
 
 internal abstract partial class AbstractMethodXmlBuilder
 {
-    private readonly struct AttributeInfo
+    private readonly struct AttributeInfo(string name, string value)
     {
         public static readonly AttributeInfo Empty = new();
 
-        public readonly string Name;
-        public readonly string Value;
-
-        public AttributeInfo(string name, string value)
-        {
-            this.Name = name;
-            this.Value = value;
-        }
+        public readonly string Name = name;
+        public readonly string Value = value;
 
         public bool IsEmpty
         {

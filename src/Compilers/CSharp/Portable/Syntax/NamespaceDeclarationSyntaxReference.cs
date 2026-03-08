@@ -13,13 +13,8 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// A SyntaxReference implementation that lazily translates the result (CSharpSyntaxNode) of the
     /// original syntax reference to a syntax reference for its NamespaceDeclarationSyntax.
     /// </summary>
-    internal sealed class NamespaceDeclarationSyntaxReference : TranslationSyntaxReference
+    internal sealed class NamespaceDeclarationSyntaxReference(SyntaxReference reference) : TranslationSyntaxReference(reference)
     {
-        public NamespaceDeclarationSyntaxReference(SyntaxReference reference)
-            : base(reference)
-        {
-        }
-
         protected override SyntaxNode Translate(SyntaxReference reference, CancellationToken cancellationToken)
         {
             return GetSyntax(reference, cancellationToken);

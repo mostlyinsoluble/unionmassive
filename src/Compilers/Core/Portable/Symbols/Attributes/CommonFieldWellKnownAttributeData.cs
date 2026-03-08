@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis
     /// </summary>
     internal class CommonFieldWellKnownAttributeData : WellKnownAttributeData, IMarshalAsAttributeTarget
     {
-        public CommonFieldWellKnownAttributeData()
-        {
-            _offset = Uninitialized;
-        }
+        public CommonFieldWellKnownAttributeData() => _offset = Uninitialized;
 
         #region FieldOffsetAttribute
         private int _offset;                    // may be Uninitialized

@@ -8,26 +8,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
 internal sealed partial class CSharpTriviaFormatter
 {
-    private sealed class DocumentationCommentExteriorCommentRewriter : CSharpSyntaxRewriter
+    private sealed class DocumentationCommentExteriorCommentRewriter(
+        bool forceIndentation,
+        int indentation,
+        int indentationDelta,
+        SyntaxFormattingOptions options,
+        bool visitStructuredTrivia = true) : CSharpSyntaxRewriter(visitIntoStructuredTrivia: visitStructuredTrivia)
     {
-        private readonly bool _forceIndentation;
-        private readonly int _indentation;
-        private readonly int _indentationDelta;
-        private readonly SyntaxFormattingOptions _options;
-
-        public DocumentationCommentExteriorCommentRewriter(
-            bool forceIndentation,
-            int indentation,
-            int indentationDelta,
-            SyntaxFormattingOptions options,
-            bool visitStructuredTrivia = true)
-            : base(visitIntoStructuredTrivia: visitStructuredTrivia)
-        {
-            _forceIndentation = forceIndentation;
-            _indentation = indentation;
-            _indentationDelta = indentationDelta;
-            _options = options;
-        }
+        private readonly bool _forceIndentation = forceIndentation;
+        private readonly int _indentation = indentation;
+        private readonly int _indentationDelta = indentationDelta;
+        private readonly SyntaxFormattingOptions _options = options;
 
         public override SyntaxTrivia VisitTrivia(SyntaxTrivia trivia)
         {

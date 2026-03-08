@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         private readonly CSharpCompilation _compilation;
 
         internal EETypeNameDecoder(CSharpCompilation compilation, PEModuleSymbol moduleSymbol) :
-            base(SymbolFactory.Instance, moduleSymbol)
-        {
-            _compilation = compilation;
-        }
+            base(SymbolFactory.Instance, moduleSymbol) => _compilation = compilation;
 
         protected override int GetIndexOfReferencedAssembly(AssemblyIdentity identity)
         {

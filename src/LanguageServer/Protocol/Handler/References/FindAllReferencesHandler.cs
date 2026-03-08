@@ -22,23 +22,16 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(FindAllReferencesHandler)), Shared]
 [Method(LSP.Methods.TextDocumentReferencesName)]
-internal sealed class FindAllReferencesHandler : ILspServiceDocumentRequestHandler<VSInternalReferenceParams, LSP.SumType<VSInternalReferenceItem, LSP.Location>[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FindAllReferencesHandler(
+    IMetadataAsSourceFileService metadataAsSourceFileService,
+    IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
+    IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<VSInternalReferenceParams, LSP.SumType<VSInternalReferenceItem, LSP.Location>[]?>
 {
-    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService;
-    private readonly IAsynchronousOperationListener _asyncListener;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FindAllReferencesHandler(
-        IMetadataAsSourceFileService metadataAsSourceFileService,
-        IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
-        IGlobalOptionService globalOptions)
-    {
-        _metadataAsSourceFileService = metadataAsSourceFileService;
-        _asyncListener = asynchronousOperationListenerProvider.GetListener(FeatureAttribute.LanguageServer);
-        _globalOptions = globalOptions;
-    }
+    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService = metadataAsSourceFileService;
+    private readonly IAsynchronousOperationListener _asyncListener = asynchronousOperationListenerProvider.GetListener(FeatureAttribute.LanguageServer);
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

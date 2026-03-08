@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
     internal sealed class DesktopAssemblyLoaderImpl : AssemblyLoaderImpl
     {
         public DesktopAssemblyLoaderImpl(InteractiveAssemblyLoader loader)
-            : base(loader)
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-        }
+            : base(loader) => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
         public override void Dispose()
         {

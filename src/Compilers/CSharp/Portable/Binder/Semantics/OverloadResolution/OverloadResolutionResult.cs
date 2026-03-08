@@ -30,10 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal readonly ArrayBuilder<MemberResolutionResult<TMember>> ResultsBuilder;
 
         // Create an overload resolution result from a single result.
-        internal OverloadResolutionResult()
-        {
-            this.ResultsBuilder = new ArrayBuilder<MemberResolutionResult<TMember>>();
-        }
+        internal OverloadResolutionResult() => this.ResultsBuilder = new ArrayBuilder<MemberResolutionResult<TMember>>();
 
         internal void Clear()
         {

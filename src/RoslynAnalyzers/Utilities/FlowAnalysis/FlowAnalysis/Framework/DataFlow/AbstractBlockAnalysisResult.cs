@@ -7,13 +7,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// <summary>
     /// Result from execution of a <see cref="DataFlowAnalysis"/> on a basic block.
     /// </summary>
-    public abstract class AbstractBlockAnalysisResult
+    public abstract class AbstractBlockAnalysisResult(BasicBlock basicBlock)
     {
-        protected AbstractBlockAnalysisResult(BasicBlock basicBlock)
-        {
-            BasicBlock = basicBlock;
-        }
-
-        public BasicBlock BasicBlock { get; }
+        public BasicBlock BasicBlock { get; } = basicBlock;
     }
 }

@@ -11,9 +11,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client.Razor;
 
 [Export]
-internal sealed class CSharpLspRazorProjectFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpLspRazorProjectFactory(RemoteLanguageServiceWorkspaceHost remoteLanguageServiceWorkspaceHost)
 {
-    private readonly RemoteLanguageServiceWorkspaceHost _remoteLanguageServiceWorkspaceHost;
+    private readonly RemoteLanguageServiceWorkspaceHost _remoteLanguageServiceWorkspaceHost = remoteLanguageServiceWorkspaceHost ?? throw new ArgumentNullException(nameof(remoteLanguageServiceWorkspaceHost));
     private readonly Dictionary<string, ProjectId> _projects = [];
 
     public ProjectId GetProject(string projectName)
@@ -33,9 +35,4 @@ internal sealed class CSharpLspRazorProjectFactory
     }
 
     public CodeAnalysis.Workspace Workspace => _remoteLanguageServiceWorkspaceHost.Workspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpLspRazorProjectFactory(RemoteLanguageServiceWorkspaceHost remoteLanguageServiceWorkspaceHost)
-        => _remoteLanguageServiceWorkspaceHost = remoteLanguageServiceWorkspaceHost ?? throw new ArgumentNullException(nameof(remoteLanguageServiceWorkspaceHost));
 }

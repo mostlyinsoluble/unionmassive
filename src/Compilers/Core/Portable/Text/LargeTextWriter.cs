@@ -9,23 +9,15 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Text
 {
-    internal sealed class LargeTextWriter : SourceTextWriter
+    internal sealed class LargeTextWriter(Encoding? encoding, SourceHashAlgorithm checksumAlgorithm, int length) : SourceTextWriter
     {
-        private readonly Encoding? _encoding;
-        private readonly SourceHashAlgorithm _checksumAlgorithm;
-        private readonly ArrayBuilder<char[]> _chunks;
+        private readonly Encoding? _encoding = encoding;
+        private readonly SourceHashAlgorithm _checksumAlgorithm = checksumAlgorithm;
+        private readonly ArrayBuilder<char[]> _chunks = ArrayBuilder<char[]>.GetInstance(1 + length / LargeText.ChunkSize);
 
-        private readonly int _bufferSize;
+        private readonly int _bufferSize = Math.Min(LargeText.ChunkSize, length);
         private char[]? _buffer;
         private int _currentUsed;
-
-        public LargeTextWriter(Encoding? encoding, SourceHashAlgorithm checksumAlgorithm, int length)
-        {
-            _encoding = encoding;
-            _checksumAlgorithm = checksumAlgorithm;
-            _chunks = ArrayBuilder<char[]>.GetInstance(1 + length / LargeText.ChunkSize);
-            _bufferSize = Math.Min(LargeText.ChunkSize, length);
-        }
 
         public override SourceText ToSourceText()
         {

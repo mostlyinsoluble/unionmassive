@@ -22,10 +22,7 @@ internal sealed class UseExpressionBodyDiagnosticAnalyzer : AbstractBuiltInCodeS
     private static readonly ImmutableArray<UseExpressionBodyHelper> _helpers = UseExpressionBodyHelper.Helpers;
 
     public UseExpressionBodyDiagnosticAnalyzer()
-        : base(GetSupportedDescriptorsWithOptions())
-    {
-        _syntaxKinds = _helpers.SelectManyAsArray(h => h.SyntaxKinds);
-    }
+        : base(GetSupportedDescriptorsWithOptions()) => _syntaxKinds = _helpers.SelectManyAsArray(h => h.SyntaxKinds);
 
     private static ImmutableArray<(DiagnosticDescriptor, IOption2)> GetSupportedDescriptorsWithOptions()
     {

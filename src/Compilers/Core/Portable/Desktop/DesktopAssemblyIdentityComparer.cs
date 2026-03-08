@@ -39,10 +39,7 @@ namespace Microsoft.CodeAnalysis
         internal readonly AssemblyPortabilityPolicy policy;
 
         /// <param name="policy">Assembly portability policy, usually provided through an app.config file.</param>
-        internal DesktopAssemblyIdentityComparer(AssemblyPortabilityPolicy policy)
-        {
-            this.policy = policy;
-        }
+        internal DesktopAssemblyIdentityComparer(AssemblyPortabilityPolicy policy) => this.policy = policy;
 
         /// <summary>
         /// Loads <see cref="AssemblyPortabilityPolicy"/> information from XML with app.config schema.

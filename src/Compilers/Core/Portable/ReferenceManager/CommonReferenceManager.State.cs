@@ -554,7 +554,7 @@ namespace Microsoft.CodeAnalysis
                 {
                     Debug.Assert(versionPattern.Build == ushort.MaxValue || versionPattern.Revision == ushort.MaxValue);
 
-                    lazyBuilder = lazyBuilder ?? ImmutableDictionary.CreateBuilder<AssemblyIdentity, AssemblyIdentity>();
+                    lazyBuilder ??= ImmutableDictionary.CreateBuilder<AssemblyIdentity, AssemblyIdentity>();
 
                     var sourceIdentity = symbolIdentity.WithVersion(versionPattern);
 

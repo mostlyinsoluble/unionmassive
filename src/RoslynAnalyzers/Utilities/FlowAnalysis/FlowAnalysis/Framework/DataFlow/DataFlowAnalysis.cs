@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// Subtype for all dataflow analyses on a control flow graph.
     /// It performs a worklist based approach to flow abstract data values for <see cref="AnalysisEntity"/>/<see cref="IOperation"/> across the basic blocks until a fix point is reached.
     /// </summary>
-    public abstract class DataFlowAnalysis<TAnalysisData, TAnalysisContext, TAnalysisResult, TBlockAnalysisResult, TAbstractAnalysisValue>
+    public abstract class DataFlowAnalysis<TAnalysisData, TAnalysisContext, TAnalysisResult, TBlockAnalysisResult, TAbstractAnalysisValue>(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue> operationVisitor)
         where TAnalysisData : AbstractAnalysisData
         where TAnalysisContext : AbstractDataFlowAnalysisContext<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisResult : DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>
@@ -26,14 +26,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     {
         private static readonly BoundedCache<IOperation, SingleThreadedConcurrentDictionary<TAnalysisContext, TAnalysisResult>> s_resultCache = new();
 
-        protected DataFlowAnalysis(AbstractAnalysisDomain<TAnalysisData> analysisDomain, DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue> operationVisitor)
-        {
-            AnalysisDomain = analysisDomain;
-            OperationVisitor = operationVisitor;
-        }
-
-        protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; }
-        protected DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue> OperationVisitor { get; }
+        protected AbstractAnalysisDomain<TAnalysisData> AnalysisDomain { get; } = analysisDomain;
+        protected DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue> OperationVisitor { get; } = operationVisitor;
 
         protected TAnalysisResult? TryGetOrComputeResultCore(TAnalysisContext analysisContext, bool cacheResult)
         {

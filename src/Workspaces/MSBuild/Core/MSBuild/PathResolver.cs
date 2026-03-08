@@ -9,14 +9,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class PathResolver
+internal sealed class PathResolver(DiagnosticReporter? diagnosticReporter)
 {
-    private readonly DiagnosticReporter? _diagnosticReporter;
-
-    public PathResolver(DiagnosticReporter? diagnosticReporter)
-    {
-        _diagnosticReporter = diagnosticReporter;
-    }
+    private readonly DiagnosticReporter? _diagnosticReporter = diagnosticReporter;
 
     public bool TryGetAbsoluteSolutionPath(string path, string baseDirectory, DiagnosticReportingMode reportingMode, [NotNullWhen(true)] out string? absolutePath)
     {

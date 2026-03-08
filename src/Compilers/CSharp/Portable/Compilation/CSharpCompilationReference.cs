@@ -35,16 +35,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             CSharpCompilation compilation,
             ImmutableArray<string> aliases = default,
             bool embedInteropTypes = false)
-            : base(GetProperties(compilation, aliases, embedInteropTypes))
-        {
-            this.Compilation = compilation;
-        }
+            : base(GetProperties(compilation, aliases, embedInteropTypes)) => this.Compilation = compilation;
 
         private CSharpCompilationReference(CSharpCompilation compilation, MetadataReferenceProperties properties)
-            : base(properties)
-        {
-            this.Compilation = compilation;
-        }
+            : base(properties) => this.Compilation = compilation;
 
         internal override CompilationReference WithPropertiesImpl(MetadataReferenceProperties properties)
         {

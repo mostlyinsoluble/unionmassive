@@ -12,15 +12,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.SolutionExplore
 /// The attribute used for adding localized display names to properties
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-internal sealed class BrowseObjectDisplayNameAttribute : DisplayNameAttribute
+internal sealed class BrowseObjectDisplayNameAttribute(string key) : DisplayNameAttribute
 {
-    private readonly string m_key;
+    private readonly string m_key = key;
     private bool m_initialized;
-
-    public BrowseObjectDisplayNameAttribute(string key)
-    {
-        m_key = key;
-    }
 
     public override string DisplayName
     {

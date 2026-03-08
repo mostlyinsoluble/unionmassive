@@ -4,18 +4,12 @@
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal readonly struct DiagnosticReportingOptions
+internal readonly struct DiagnosticReportingOptions(
+    DiagnosticReportingMode onPathFailure,
+    DiagnosticReportingMode onLoaderFailure)
 {
-    public DiagnosticReportingMode OnPathFailure { get; }
-    public DiagnosticReportingMode OnLoaderFailure { get; }
-
-    public DiagnosticReportingOptions(
-        DiagnosticReportingMode onPathFailure,
-        DiagnosticReportingMode onLoaderFailure)
-    {
-        OnPathFailure = onPathFailure;
-        OnLoaderFailure = onLoaderFailure;
-    }
+    public DiagnosticReportingMode OnPathFailure { get; } = onPathFailure;
+    public DiagnosticReportingMode OnLoaderFailure { get; } = onLoaderFailure;
 
     public static DiagnosticReportingOptions IgnoreAll { get; }
         = new DiagnosticReportingOptions(DiagnosticReportingMode.Ignore, DiagnosticReportingMode.Ignore);

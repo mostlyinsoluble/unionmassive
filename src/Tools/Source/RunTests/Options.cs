@@ -25,7 +25,13 @@ namespace RunTests
         Framework
     }
 
-    internal class Options
+    internal class Options(
+        string dotnetFilePath,
+        string artifactsDirectory,
+        string configuration,
+        string testResultsDirectory,
+        string logFilesDirectory,
+        string architecture)
     {
         /// <summary>
         /// Use HTML output files.
@@ -42,7 +48,7 @@ namespace RunTests
         /// </summary>
         public string? TestFilter { get; set; }
 
-        public string Configuration { get; set; }
+        public string Configuration { get; set; } = configuration;
 
         /// <summary>
         /// The set of target frameworks that should be probed for test assemblies.
@@ -53,7 +59,7 @@ namespace RunTests
 
         public List<string> ExcludeFilter { get; set; } = new List<string>();
 
-        public string ArtifactsDirectory { get; }
+        public string ArtifactsDirectory { get; } = artifactsDirectory;
 
         /// <summary>
         /// Time after which the runner should kill the xunit process and exit with a failure.
@@ -94,19 +100,19 @@ namespace RunTests
         /// <summary>
         /// Path to the dotnet executable we should use for running dotnet test
         /// </summary>
-        public string DotnetFilePath { get; set; }
+        public string DotnetFilePath { get; set; } = dotnetFilePath;
 
         /// <summary>
         /// Directory to hold all of the xml files created as test results.
         /// </summary>
-        public string TestResultsDirectory { get; set; }
+        public string TestResultsDirectory { get; set; } = testResultsDirectory;
 
         /// <summary>
         /// Directory to hold dump files and other log files created while running tests.
         /// </summary>
-        public string LogFilesDirectory { get; set; }
+        public string LogFilesDirectory { get; set; } = logFilesDirectory;
 
-        public string Architecture { get; set; }
+        public string Architecture { get; set; } = architecture;
 
         public string? AccessToken { get; set; }
 
@@ -117,22 +123,6 @@ namespace RunTests
         public string? PhaseName { get; set; }
 
         public string? TargetBranchName { get; set; }
-
-        public Options(
-            string dotnetFilePath,
-            string artifactsDirectory,
-            string configuration,
-            string testResultsDirectory,
-            string logFilesDirectory,
-            string architecture)
-        {
-            DotnetFilePath = dotnetFilePath;
-            ArtifactsDirectory = artifactsDirectory;
-            Configuration = configuration;
-            TestResultsDirectory = testResultsDirectory;
-            LogFilesDirectory = logFilesDirectory;
-            Architecture = architecture;
-        }
 
         internal static Options? Parse(string[] args)
         {

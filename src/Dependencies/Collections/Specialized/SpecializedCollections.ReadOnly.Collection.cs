@@ -13,14 +13,9 @@ namespace Microsoft.CodeAnalysis.Collections
     {
         private static partial class ReadOnly
         {
-            internal class Collection<TUnderlying, T> : Enumerable<TUnderlying, T>, ICollection<T>
+            internal class Collection<TUnderlying, T>(TUnderlying underlying) : Enumerable<TUnderlying, T>(underlying), ICollection<T>
                 where TUnderlying : ICollection<T>
             {
-                public Collection(TUnderlying underlying)
-                    : base(underlying)
-                {
-                }
-
                 public void Add(T item)
                 {
                     throw new NotSupportedException();

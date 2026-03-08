@@ -36,10 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private readonly TypeCompareKind _comparison;
 
-        private SymbolEqualityComparer(TypeCompareKind comparison)
-        {
-            _comparison = comparison;
-        }
+        private SymbolEqualityComparer(TypeCompareKind comparison) => _comparison = comparison;
 
         internal static EqualityComparer<Symbol> Create(TypeCompareKind comparison)
         {

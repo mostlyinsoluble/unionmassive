@@ -290,12 +290,9 @@ internal partial class ChangeSignatureDialog : DialogWindow
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(ChangeSignatureDialog dialog)
     {
-        private readonly ChangeSignatureDialog _dialog;
-
-        public TestAccessor(ChangeSignatureDialog dialog)
-            => _dialog = dialog;
+        private readonly ChangeSignatureDialog _dialog = dialog;
 
         public ChangeSignatureDialogViewModel ViewModel => _dialog._viewModel;
 

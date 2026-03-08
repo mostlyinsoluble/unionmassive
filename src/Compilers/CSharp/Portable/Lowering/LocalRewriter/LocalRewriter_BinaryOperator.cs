@@ -2271,7 +2271,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // NOTE: This is here to persist a bug in Dev10.  checked(p[n]) should be equivalent to checked(*(p + n)),
                 // but Dev10 omits the check on the addition (though it retains the check on the multiplication of n by
                 // the size).
-                kind = kind & ~BinaryOperatorKind.Checked;
+                kind &= ~BinaryOperatorKind.Checked;
             }
 
             return new BoundBinaryOperator(

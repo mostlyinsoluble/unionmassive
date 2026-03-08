@@ -12,15 +12,11 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.DebugConfiguration;
 /// Keeps track of which project uses what TFM.
 /// </summary>
 [Export, Shared]
-internal sealed class ProjectTargetFrameworkManager
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ProjectTargetFrameworkManager()
 {
     private readonly ConcurrentDictionary<ProjectId, string?> _projectToTargetFrameworkIdentifer = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ProjectTargetFrameworkManager()
-    {
-    }
 
     public void UpdateIdentifierForProject(ProjectId projectId, string? identifier)
     {

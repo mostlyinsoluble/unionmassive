@@ -12,16 +12,11 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Editor.Xaml.Features;
 
 [ExportContentTypeLanguageService(ContentTypeNames.XamlContentType, StringConstants.XamlLanguageName), Shared]
-internal sealed class XamlContentTypeLanguageService : IContentTypeLanguageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class XamlContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry) : IContentTypeLanguageService
 {
-    private readonly IContentTypeRegistryService _contentTypeRegistry;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XamlContentTypeLanguageService(IContentTypeRegistryService contentTypeRegistry)
-    {
-        _contentTypeRegistry = contentTypeRegistry;
-    }
+    private readonly IContentTypeRegistryService _contentTypeRegistry = contentTypeRegistry;
 
     public IContentType GetDefaultContentType()
     {

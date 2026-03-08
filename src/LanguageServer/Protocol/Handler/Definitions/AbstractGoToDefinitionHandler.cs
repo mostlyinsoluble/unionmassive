@@ -17,16 +17,10 @@ using LSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
-internal abstract class AbstractGoToDefinitionHandler : ILspServiceDocumentRequestHandler<LSP.TextDocumentPositionParams, LSP.Location[]?>
+internal abstract class AbstractGoToDefinitionHandler(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<LSP.TextDocumentPositionParams, LSP.Location[]?>
 {
-    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService;
-    private readonly IGlobalOptionService _globalOptions;
-
-    public AbstractGoToDefinitionHandler(IMetadataAsSourceFileService metadataAsSourceFileService, IGlobalOptionService globalOptions)
-    {
-        _metadataAsSourceFileService = metadataAsSourceFileService;
-        _globalOptions = globalOptions;
-    }
+    private readonly IMetadataAsSourceFileService _metadataAsSourceFileService = metadataAsSourceFileService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

@@ -22,29 +22,22 @@ namespace Microsoft.CodeAnalysis.Remote.Testing;
 internal sealed class InProcRemoteHostClientProvider : IRemoteHostClientProvider, IDisposable
 {
     [ExportWorkspaceServiceFactory(typeof(IRemoteHostClientProvider), ServiceLayer.Test), Shared, PartNotDiscoverable]
-    internal sealed class Factory : IWorkspaceServiceFactory
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class Factory([ImportMany] IEnumerable<Lazy<IRemoteServiceCallbackDispatcher, RemoteServiceCallbackDispatcherRegistry.ExportMetadata>> callbackDispatchers) : IWorkspaceServiceFactory
     {
-        private readonly RemoteServiceCallbackDispatcherRegistry _callbackDispatchers;
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public Factory([ImportMany] IEnumerable<Lazy<IRemoteServiceCallbackDispatcher, RemoteServiceCallbackDispatcherRegistry.ExportMetadata>> callbackDispatchers)
-            => _callbackDispatchers = new RemoteServiceCallbackDispatcherRegistry(callbackDispatchers);
+        private readonly RemoteServiceCallbackDispatcherRegistry _callbackDispatchers = new RemoteServiceCallbackDispatcherRegistry(callbackDispatchers);
 
         public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
             => new InProcRemoteHostClientProvider(workspaceServices.SolutionServices, _callbackDispatchers);
     }
 
-    private sealed class WorkspaceManager : RemoteWorkspaceManager
+    private sealed class WorkspaceManager(
+        Func<RemoteWorkspace, SolutionAssetCache> createAssetStorage,
+        ConcurrentDictionary<Guid, TestGeneratorReference> sharedTestGeneratorReferences,
+        Type[]? additionalRemoteParts,
+        Type[]? excludedRemoteParts) : RemoteWorkspaceManager(createAssetStorage, CreateRemoteWorkspace(sharedTestGeneratorReferences, additionalRemoteParts, excludedRemoteParts))
     {
-        public WorkspaceManager(
-            Func<RemoteWorkspace, SolutionAssetCache> createAssetStorage,
-            ConcurrentDictionary<Guid, TestGeneratorReference> sharedTestGeneratorReferences,
-            Type[]? additionalRemoteParts,
-            Type[]? excludedRemoteParts)
-            : base(createAssetStorage, CreateRemoteWorkspace(sharedTestGeneratorReferences, additionalRemoteParts, excludedRemoteParts))
-        {
-        }
     }
 
     private static RemoteWorkspace CreateRemoteWorkspace(

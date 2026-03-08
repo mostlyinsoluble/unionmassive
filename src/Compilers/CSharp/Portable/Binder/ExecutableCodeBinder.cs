@@ -30,10 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private SmallDictionary<SyntaxNode, Binder> _lazyBinderMap;
 
         internal ExecutableCodeBinder(SyntaxNode root, Symbol memberSymbol, Binder next, Action<Binder, SyntaxNode> binderUpdatedHandler = null)
-            : this(root, memberSymbol, next, next.Flags)
-        {
-            _binderUpdatedHandler = binderUpdatedHandler;
-        }
+            : this(root, memberSymbol, next, next.Flags) => _binderUpdatedHandler = binderUpdatedHandler;
 
         internal ExecutableCodeBinder(SyntaxNode root, Symbol memberSymbol, Binder next, BinderFlags additionalFlags)
             : base(next, (next.Flags | additionalFlags) & ~BinderFlags.AllClearedAtExecutableCodeBoundary)

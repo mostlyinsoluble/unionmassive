@@ -30,10 +30,7 @@ internal class NamingStyleSetting
         Location = new SettingLocation(fileName is null ? LocationKind.VisualStudio : LocationKind.EditorConfig, fileName);
     }
 
-    private NamingStyleSetting()
-    {
-        _allStyles = [];
-    }
+    private NamingStyleSetting() => _allStyles = [];
 
     public event EventHandler<EventArgs>? SettingChanged;
 

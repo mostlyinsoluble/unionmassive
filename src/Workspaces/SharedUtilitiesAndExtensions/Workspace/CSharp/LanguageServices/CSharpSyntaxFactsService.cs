@@ -45,14 +45,11 @@ internal sealed partial class CSharpSyntaxFactsServiceFactory
             newContextNode = (TContextNode)newRoot.GetAnnotatedNodes(s_annotation).Single();
         }
 
-        private sealed class AddFirstMissingCloseBraceRewriter : CSharpSyntaxRewriter
+        private sealed class AddFirstMissingCloseBraceRewriter(SyntaxNode contextNode) : CSharpSyntaxRewriter
         {
-            private readonly SyntaxNode _contextNode;
+            private readonly SyntaxNode _contextNode = contextNode;
             private bool _seenContextNode = false;
             private bool _addedFirstCloseCurly = false;
-
-            public AddFirstMissingCloseBraceRewriter(SyntaxNode contextNode)
-                => _contextNode = contextNode;
 
             public override SyntaxNode Visit(SyntaxNode node)
             {

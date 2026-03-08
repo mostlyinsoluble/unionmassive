@@ -16,14 +16,11 @@ internal partial class AbstractCodeModelService
 {
     protected abstract AbstractCodeModelEventCollector CreateCodeModelEventCollector();
 
-    protected abstract class AbstractCodeModelEventCollector
+    protected abstract class AbstractCodeModelEventCollector(AbstractCodeModelService codeModelService)
     {
         private const int MaxChildDelta = 5;
 
-        protected readonly AbstractCodeModelService CodeModelService;
-
-        protected AbstractCodeModelEventCollector(AbstractCodeModelService codeModelService)
-            => this.CodeModelService = codeModelService;
+        protected readonly AbstractCodeModelService CodeModelService = codeModelService;
 
         protected abstract void CollectCore(SyntaxNode oldRoot, SyntaxNode newRoot, CodeModelEventQueue eventQueue);
 

@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
         private readonly PEModuleSymbol _module;
         private CSharpAttributeData? _nullableContext;
 
-        private NullableAttributesVisitor(PEModuleSymbol module, StringBuilder builder) : base(builder)
-        {
-            _module = module;
-        }
+        private NullableAttributesVisitor(PEModuleSymbol module, StringBuilder builder) : base(builder) => _module = module;
 
         public override void VisitNamedType(NamedTypeSymbol type)
         {

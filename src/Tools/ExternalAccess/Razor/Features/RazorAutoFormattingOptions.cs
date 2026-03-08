@@ -6,12 +6,9 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal readonly struct RazorAutoFormattingOptions
+    internal readonly struct RazorAutoFormattingOptions(AutoFormattingOptions underlyingObject)
     {
-        internal readonly AutoFormattingOptions UnderlyingObject;
-
-        public RazorAutoFormattingOptions(AutoFormattingOptions underlyingObject)
-            => UnderlyingObject = underlyingObject;
+        internal readonly AutoFormattingOptions UnderlyingObject = underlyingObject;
 
         public RazorAutoFormattingOptions(
             bool formatOnReturn,

@@ -15,14 +15,10 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.CSharp.Serialization;
 
 [ExportLanguageService(typeof(IOptionsSerializationService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpOptionsSerializationService : AbstractOptionsSerializationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpOptionsSerializationService() : AbstractOptionsSerializationService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpOptionsSerializationService()
-    {
-    }
-
     public override void WriteTo(CompilationOptions options, ObjectWriter writer, CancellationToken cancellationToken)
     {
         WriteCompilationOptionsTo(options, writer, cancellationToken);
@@ -37,8 +33,6 @@ internal sealed class CSharpOptionsSerializationService : AbstractOptionsSeriali
     {
         WriteParseOptionsTo(options, writer);
 
-        var csharpOptions = (CSharpParseOptions)options;
-        writer.WriteInt32((int)csharpOptions.SpecifiedLanguageVersion);
         writer.WriteArray(options.PreprocessorSymbolNames.ToImmutableArrayOrEmpty(), static (w, p) => w.WriteString(p));
     }
 
@@ -66,10 +60,9 @@ internal sealed class CSharpOptionsSerializationService : AbstractOptionsSeriali
     {
         var (kind, documentationMode, features) = ReadParseOptionsPieces(reader, cancellationToken);
 
-        var languageVersion = (LanguageVersion)reader.ReadInt32();
         var preprocessorSymbolNames = reader.ReadArray(static r => r.ReadString());
 
-        var options = new CSharpParseOptions(languageVersion, documentationMode, kind, preprocessorSymbolNames);
+        var options = new CSharpParseOptions(documentationMode, kind, preprocessorSymbolNames);
         return options.WithFeatures(features);
     }
 }

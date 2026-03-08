@@ -15,13 +15,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
     /// Represents a reference to a generic method instantiation, closed over type parameters,
     /// e.g. MyNamespace.Class.Method{T}()
     /// </summary>
-    internal sealed class GenericMethodInstanceReference : MethodReference, Cci.IGenericMethodInstanceReference
+    internal sealed class GenericMethodInstanceReference(MethodSymbol underlyingMethod) : MethodReference(underlyingMethod), Cci.IGenericMethodInstanceReference
     {
-        public GenericMethodInstanceReference(MethodSymbol underlyingMethod)
-            : base(underlyingMethod)
-        {
-        }
-
         public override void Dispatch(Cci.MetadataVisitor visitor)
         {
             visitor.Visit((Cci.IGenericMethodInstanceReference)this);

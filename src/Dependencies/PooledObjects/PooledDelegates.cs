@@ -333,10 +333,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects
         {
             private readonly Poolable _pooledObject;
 
-            internal Releaser(Poolable pooledObject)
-            {
-                _pooledObject = pooledObject;
-            }
+            internal Releaser(Poolable pooledObject) => _pooledObject = pooledObject;
 
             public void Dispose() => _pooledObject.ClearAndFree();
         }

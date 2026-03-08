@@ -11,17 +11,11 @@ using Microsoft.VisualStudio.LogHub;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.LanguageClient;
 
-internal sealed class LogHubLspLogger : AbstractLspLogger, ILspService
+internal sealed class LogHubLspLogger(TraceConfiguration configuration, TraceSource traceSource) : AbstractLspLogger, ILspService
 {
-    private readonly TraceConfiguration _configuration;
-    private readonly TraceSource _traceSource;
+    private readonly TraceConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    private readonly TraceSource _traceSource = traceSource ?? throw new ArgumentNullException(nameof(traceSource));
     private bool _disposed;
-
-    public LogHubLspLogger(TraceConfiguration configuration, TraceSource traceSource)
-    {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        _traceSource = traceSource ?? throw new ArgumentNullException(nameof(traceSource));
-    }
 
     public void Dispose()
     {

@@ -338,26 +338,17 @@ namespace Microsoft.CodeAnalysis
     }
 
     // https://github.com/dotnet/roslyn/issues/53608 right now we only support generating source + diagnostics, but actively want to support generation of other things
-    internal readonly struct IncrementalExecutionContext
+    internal readonly struct IncrementalExecutionContext(DriverStateTable.Builder? tableBuilder, GeneratorRunStateTable.Builder generatorRunStateBuilder, AdditionalSourcesCollection sources)
     {
-        internal readonly DiagnosticBag Diagnostics;
+        internal readonly DiagnosticBag Diagnostics = DiagnosticBag.GetInstance();
 
-        internal readonly AdditionalSourcesCollection Sources;
+        internal readonly AdditionalSourcesCollection Sources = sources;
 
-        internal readonly DriverStateTable.Builder? TableBuilder;
+        internal readonly DriverStateTable.Builder? TableBuilder = tableBuilder;
 
-        internal readonly GeneratorRunStateTable.Builder GeneratorRunStateBuilder;
+        internal readonly GeneratorRunStateTable.Builder GeneratorRunStateBuilder = generatorRunStateBuilder;
 
-        internal readonly ImmutableDictionary<string, object>.Builder HostOutputBuilder;
-
-        public IncrementalExecutionContext(DriverStateTable.Builder? tableBuilder, GeneratorRunStateTable.Builder generatorRunStateBuilder, AdditionalSourcesCollection sources)
-        {
-            TableBuilder = tableBuilder;
-            GeneratorRunStateBuilder = generatorRunStateBuilder;
-            Sources = sources;
-            HostOutputBuilder = ImmutableDictionary.CreateBuilder<string, object>();
-            Diagnostics = DiagnosticBag.GetInstance();
-        }
+        internal readonly ImmutableDictionary<string, object>.Builder HostOutputBuilder = ImmutableDictionary.CreateBuilder<string, object>();
 
         internal (ImmutableArray<GeneratedSourceText> sources, ImmutableArray<Diagnostic> diagnostics, GeneratorRunStateTable executedSteps, ImmutableDictionary<string, object> hostOutputs) ToImmutableAndFree()
                 => (Sources.ToImmutableAndFree(), Diagnostics.ToReadOnlyAndFree(), GeneratorRunStateBuilder.ToImmutableAndFree(), HostOutputBuilder.ToImmutable());

@@ -429,19 +429,22 @@ namespace Microsoft.CodeAnalysis.ReleaseTracking
         }
     }
 
-    internal abstract class ReleaseTrackingLine
+    internal abstract class ReleaseTrackingLine(string ruleId, string category, bool? enabledByDefault,
+        DiagnosticSeverity? defaultSeverity,
+        TextSpan span, SourceText sourceText,
+        string path, bool isShipped, ReleaseTrackingRuleEntryKind kind)
     {
-        public string RuleId { get; }
-        public string Category { get; }
-        public bool? EnabledByDefault { get; }
-        public DiagnosticSeverity? DefaultSeverity { get; }
+        public string RuleId { get; } = ruleId;
+        public string Category { get; } = category;
+        public bool? EnabledByDefault { get; } = enabledByDefault;
+        public DiagnosticSeverity? DefaultSeverity { get; } = defaultSeverity;
 
-        public TextSpan Span { get; }
-        public SourceText SourceText { get; }
-        public string Path { get; }
-        public bool IsShipped { get; }
+        public TextSpan Span { get; } = span;
+        public SourceText SourceText { get; } = sourceText;
+        public string Path { get; } = path;
+        public bool IsShipped { get; } = isShipped;
         public bool IsRemovedRule => Kind == ReleaseTrackingRuleEntryKind.Removed;
-        public ReleaseTrackingRuleEntryKind Kind { get; }
+        public ReleaseTrackingRuleEntryKind Kind { get; } = kind;
 
         internal static ReleaseTrackingLine Create(
             string ruleId, string category, bool? enabledByDefault,
@@ -452,22 +455,6 @@ namespace Microsoft.CodeAnalysis.ReleaseTracking
             return new NewOrRemovedRuleReleaseTrackingLine(ruleId, category,
                 enabledByDefault, defaultSeverity, span, sourceText, path, isShipped, kind);
         }
-
-        protected ReleaseTrackingLine(string ruleId, string category, bool? enabledByDefault,
-            DiagnosticSeverity? defaultSeverity,
-            TextSpan span, SourceText sourceText,
-            string path, bool isShipped, ReleaseTrackingRuleEntryKind kind)
-        {
-            RuleId = ruleId;
-            Category = category;
-            EnabledByDefault = enabledByDefault;
-            DefaultSeverity = defaultSeverity;
-            Span = span;
-            SourceText = sourceText;
-            Path = path;
-            IsShipped = isShipped;
-            Kind = kind;
-        }
     }
 
     internal sealed class NewOrRemovedRuleReleaseTrackingLine : ReleaseTrackingLine
@@ -477,10 +464,7 @@ namespace Microsoft.CodeAnalysis.ReleaseTracking
             DiagnosticSeverity? defaultSeverity,
             TextSpan span, SourceText sourceText,
             string path, bool isShipped, ReleaseTrackingRuleEntryKind kind)
-            : base(ruleId, category, enabledByDefault, defaultSeverity, span, sourceText, path, isShipped, kind)
-        {
-            Debug.Assert(kind is ReleaseTrackingRuleEntryKind.New or ReleaseTrackingRuleEntryKind.Removed);
-        }
+            : base(ruleId, category, enabledByDefault, defaultSeverity, span, sourceText, path, isShipped, kind) => Debug.Assert(kind is ReleaseTrackingRuleEntryKind.New or ReleaseTrackingRuleEntryKind.Removed);
     }
 
     internal sealed class ChangedRuleReleaseTrackingLine : ReleaseTrackingLine

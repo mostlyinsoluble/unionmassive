@@ -11,9 +11,6 @@ namespace IdeBenchmarks
 {
     public class MemoryDiagnoserConfig : ManualConfig
     {
-        public MemoryDiagnoserConfig()
-        {
-            AddDiagnoser(MemoryDiagnoser.Default);
-        }
+        public MemoryDiagnoserConfig() => AddDiagnoser(MemoryDiagnoser.Default);
     }
 }

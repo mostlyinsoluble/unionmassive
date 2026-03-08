@@ -59,17 +59,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return result;
         }
 
-        private QuickAttributeChecker()
-        {
-            _nameToAttributeMap = new Dictionary<string, QuickAttributes>(StringComparer.Ordinal);
-            // NOTE: caller must seal
-        }
+        private QuickAttributeChecker() => _nameToAttributeMap = new Dictionary<string, QuickAttributes>(StringComparer.Ordinal);// NOTE: caller must seal
 
-        private QuickAttributeChecker(QuickAttributeChecker previous)
-        {
-            _nameToAttributeMap = new Dictionary<string, QuickAttributes>(previous._nameToAttributeMap, StringComparer.Ordinal);
-            // NOTE: caller must seal
-        }
+        private QuickAttributeChecker(QuickAttributeChecker previous) => _nameToAttributeMap = new Dictionary<string, QuickAttributes>(previous._nameToAttributeMap, StringComparer.Ordinal);// NOTE: caller must seal
 
         private void AddName(string name, QuickAttributes newAttributes)
         {

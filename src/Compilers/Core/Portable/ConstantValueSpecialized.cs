@@ -225,14 +225,9 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        private sealed class ConstantValueDecimal : ConstantValue
+        private sealed class ConstantValueDecimal(decimal value) : ConstantValue
         {
-            private readonly decimal _value;
-
-            public ConstantValueDecimal(decimal value)
-            {
-                _value = value;
-            }
+            private readonly decimal _value = value;
 
             public override ConstantValueTypeDiscriminator Discriminator
             {
@@ -266,14 +261,9 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        private sealed class ConstantValueDateTime : ConstantValue
+        private sealed class ConstantValueDateTime(DateTime value) : ConstantValue
         {
-            private readonly DateTime _value;
-
-            public ConstantValueDateTime(DateTime value)
-            {
-                _value = value;
-            }
+            private readonly DateTime _value = value;
 
             public override ConstantValueTypeDiscriminator Discriminator
             {
@@ -309,14 +299,9 @@ namespace Microsoft.CodeAnalysis
 
         // base for constant classes that may represent more than one 
         // constant type
-        private abstract class ConstantValueDiscriminated : ConstantValue
+        private abstract class ConstantValueDiscriminated(ConstantValueTypeDiscriminator discriminator) : ConstantValue
         {
-            private readonly ConstantValueTypeDiscriminator _discriminator;
-
-            public ConstantValueDiscriminated(ConstantValueTypeDiscriminator discriminator)
-            {
-                _discriminator = discriminator;
-            }
+            private readonly ConstantValueTypeDiscriminator _discriminator = discriminator;
 
             public override ConstantValueTypeDiscriminator Discriminator
             {
@@ -687,16 +672,10 @@ namespace Microsoft.CodeAnalysis
             private readonly byte _value;
 
             public ConstantValueI8(sbyte value)
-                : base(ConstantValueTypeDiscriminator.SByte)
-            {
-                _value = unchecked((byte)value);
-            }
+                : base(ConstantValueTypeDiscriminator.SByte) => _value = unchecked((byte)value);
 
             public ConstantValueI8(byte value)
-                : base(ConstantValueTypeDiscriminator.Byte)
-            {
-                _value = value;
-            }
+                : base(ConstantValueTypeDiscriminator.Byte) => _value = value;
 
             public override byte ByteValue
             {
@@ -730,22 +709,13 @@ namespace Microsoft.CodeAnalysis
             private readonly short _value;
 
             public ConstantValueI16(short value)
-                : base(ConstantValueTypeDiscriminator.Int16)
-            {
-                _value = value;
-            }
+                : base(ConstantValueTypeDiscriminator.Int16) => _value = value;
 
             public ConstantValueI16(ushort value)
-                : base(ConstantValueTypeDiscriminator.UInt16)
-            {
-                _value = unchecked((short)value);
-            }
+                : base(ConstantValueTypeDiscriminator.UInt16) => _value = unchecked((short)value);
 
             public ConstantValueI16(char value)
-                : base(ConstantValueTypeDiscriminator.Char)
-            {
-                _value = unchecked((short)value);
-            }
+                : base(ConstantValueTypeDiscriminator.Char) => _value = unchecked((short)value);
 
             public override short Int16Value
             {
@@ -787,16 +757,10 @@ namespace Microsoft.CodeAnalysis
             private readonly int _value;
 
             public ConstantValueI32(int value)
-                : base(ConstantValueTypeDiscriminator.Int32)
-            {
-                _value = value;
-            }
+                : base(ConstantValueTypeDiscriminator.Int32) => _value = value;
 
             public ConstantValueI32(uint value)
-                : base(ConstantValueTypeDiscriminator.UInt32)
-            {
-                _value = unchecked((int)value);
-            }
+                : base(ConstantValueTypeDiscriminator.UInt32) => _value = unchecked((int)value);
 
             public override int Int32Value
             {
@@ -830,16 +794,10 @@ namespace Microsoft.CodeAnalysis
             private readonly long _value;
 
             public ConstantValueI64(long value)
-                : base(ConstantValueTypeDiscriminator.Int64)
-            {
-                _value = value;
-            }
+                : base(ConstantValueTypeDiscriminator.Int64) => _value = value;
 
             public ConstantValueI64(ulong value)
-                : base(ConstantValueTypeDiscriminator.UInt64)
-            {
-                _value = unchecked((long)value);
-            }
+                : base(ConstantValueTypeDiscriminator.UInt64) => _value = unchecked((long)value);
 
             public override long Int64Value
             {
@@ -874,16 +832,10 @@ namespace Microsoft.CodeAnalysis
             private readonly int _value;
 
             public ConstantValueNativeInt(int value)
-                : base(ConstantValueTypeDiscriminator.NInt)
-            {
-                _value = value;
-            }
+                : base(ConstantValueTypeDiscriminator.NInt) => _value = value;
 
             public ConstantValueNativeInt(uint value)
-                : base(ConstantValueTypeDiscriminator.NUInt)
-            {
-                _value = unchecked((int)value);
-            }
+                : base(ConstantValueTypeDiscriminator.NUInt) => _value = unchecked((int)value);
 
             public override int Int32Value
             {

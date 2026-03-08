@@ -25,10 +25,7 @@ public static partial class Renamer
 
         private RenameSymbolDocumentAction(
             AnalysisResult analysis)
-            : base([])
-        {
-            _analysis = analysis;
-        }
+            : base([]) => _analysis = analysis;
 
         public override string GetDescription(CultureInfo? culture)
             => string.Format(WorkspacesResources.ResourceManager.GetString("Rename_0_to_1", culture ?? WorkspacesResources.Culture)!, _analysis.OriginalDocumentName, _analysis.NewDocumentName);

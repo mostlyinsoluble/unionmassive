@@ -21,77 +21,59 @@ namespace Microsoft.CodeAnalysis.MSBuild;
 
 public partial class MSBuildProjectLoader
 {
-    private sealed partial class Worker
+    private sealed partial class Worker(
+        SolutionServices services,
+        DiagnosticReporter diagnosticReporter,
+        PathResolver pathResolver,
+        ProjectFileExtensionRegistry projectFileExtensionRegistry,
+        IProjectFileInfoProvider projectFileInfoProvider,
+        ImmutableArray<string> requestedProjectPaths,
+        ProjectMap? projectMap,
+        IProgress<ProjectLoadProgress>? progress,
+        DiagnosticReportingOptions requestedProjectOptions,
+        DiagnosticReportingOptions discoveredProjectOptions,
+        bool preferMetadataForReferencesOfDiscoveredProjects)
     {
-        private readonly SolutionServices _solutionServices;
-        private readonly DiagnosticReporter _diagnosticReporter;
-        private readonly PathResolver _pathResolver;
-        private readonly ProjectFileExtensionRegistry _projectFileExtensionRegistry;
-        private readonly IProjectFileInfoProvider _projectFileInfoProvider;
+        private readonly SolutionServices _solutionServices = services;
+        private readonly DiagnosticReporter _diagnosticReporter = diagnosticReporter;
+        private readonly PathResolver _pathResolver = pathResolver;
+        private readonly ProjectFileExtensionRegistry _projectFileExtensionRegistry = projectFileExtensionRegistry;
+        private readonly IProjectFileInfoProvider _projectFileInfoProvider = projectFileInfoProvider;
 
         /// <summary>
         /// An ordered list of paths to project files that should be loaded. In the case of a solution,
         /// this is the list of project file paths in the solution.
         /// </summary>
-        private readonly ImmutableArray<string> _requestedProjectPaths;
+        private readonly ImmutableArray<string> _requestedProjectPaths = requestedProjectPaths;
 
         /// <summary>
         /// Map of <see cref="ProjectId"/>s, project paths, and output file paths.
         /// </summary>
-        private readonly ProjectMap _projectMap;
+        private readonly ProjectMap _projectMap = projectMap ?? ProjectMap.Create();
 
         /// <summary>
         /// Progress reporter.
         /// </summary>
-        private readonly IProgress<ProjectLoadProgress>? _progress;
+        private readonly IProgress<ProjectLoadProgress>? _progress = progress;
 
         /// <summary>
         /// Provides options for how failures should be reported when loading requested project files.
         /// </summary>
-        private readonly DiagnosticReportingOptions _requestedProjectOptions;
+        private readonly DiagnosticReportingOptions _requestedProjectOptions = requestedProjectOptions;
 
         /// <summary>
         /// Provides options for how failures should be reported when loading any discovered project files.
         /// </summary>
-        private readonly DiagnosticReportingOptions _discoveredProjectOptions;
+        private readonly DiagnosticReportingOptions _discoveredProjectOptions = discoveredProjectOptions;
 
         /// <summary>
         /// When true, metadata is preferred for any project reference unless the referenced project is already loaded
         /// because it was requested.
         /// </summary>
-        private readonly bool _preferMetadataForReferencesOfDiscoveredProjects;
-        private readonly Dictionary<ProjectId, ProjectFileInfo> _projectIdToFileInfoMap;
-        private readonly Dictionary<ProjectId, List<ProjectReference>> _projectIdToProjectReferencesMap;
-        private readonly Dictionary<string, ImmutableArray<ProjectInfo>> _pathToDiscoveredProjectInfosMap;
-
-        public Worker(
-            SolutionServices services,
-            DiagnosticReporter diagnosticReporter,
-            PathResolver pathResolver,
-            ProjectFileExtensionRegistry projectFileExtensionRegistry,
-            IProjectFileInfoProvider projectFileInfoProvider,
-            ImmutableArray<string> requestedProjectPaths,
-            ProjectMap? projectMap,
-            IProgress<ProjectLoadProgress>? progress,
-            DiagnosticReportingOptions requestedProjectOptions,
-            DiagnosticReportingOptions discoveredProjectOptions,
-            bool preferMetadataForReferencesOfDiscoveredProjects)
-        {
-            _solutionServices = services;
-            _diagnosticReporter = diagnosticReporter;
-            _pathResolver = pathResolver;
-            _projectFileExtensionRegistry = projectFileExtensionRegistry;
-            _projectFileInfoProvider = projectFileInfoProvider;
-            _requestedProjectPaths = requestedProjectPaths;
-            _projectMap = projectMap ?? ProjectMap.Create();
-            _progress = progress;
-            _requestedProjectOptions = requestedProjectOptions;
-            _discoveredProjectOptions = discoveredProjectOptions;
-            _preferMetadataForReferencesOfDiscoveredProjects = preferMetadataForReferencesOfDiscoveredProjects;
-            _projectIdToFileInfoMap = [];
-            _pathToDiscoveredProjectInfosMap = new Dictionary<string, ImmutableArray<ProjectInfo>>(PathUtilities.Comparer);
-            _projectIdToProjectReferencesMap = [];
-        }
+        private readonly bool _preferMetadataForReferencesOfDiscoveredProjects = preferMetadataForReferencesOfDiscoveredProjects;
+        private readonly Dictionary<ProjectId, ProjectFileInfo> _projectIdToFileInfoMap = [];
+        private readonly Dictionary<ProjectId, List<ProjectReference>> _projectIdToProjectReferencesMap = [];
+        private readonly Dictionary<string, ImmutableArray<ProjectInfo>> _pathToDiscoveredProjectInfosMap = new Dictionary<string, ImmutableArray<ProjectInfo>>(PathUtilities.Comparer);
 
         public async Task<ImmutableArray<ProjectInfo>> LoadAsync(CancellationToken cancellationToken)
         {

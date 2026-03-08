@@ -9,22 +9,26 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 {
     internal abstract partial class AnalyzerDriver
     {
-        internal readonly struct DeclarationAnalysisData
+        internal readonly struct DeclarationAnalysisData(
+            SyntaxNode declaringReferenceSyntax,
+            SyntaxNode topmostNodeForAnalysis,
+            ImmutableArray<DeclarationInfo> declarationsInNodeBuilder,
+            bool isPartialAnalysis)
         {
             /// <summary>
             /// GetSyntax() for the given SyntaxReference.
             /// </summary>
-            public readonly SyntaxNode DeclaringReferenceSyntax;
+            public readonly SyntaxNode DeclaringReferenceSyntax = declaringReferenceSyntax;
 
             /// <summary>
             /// Topmost declaration node for analysis.
             /// </summary>
-            public readonly SyntaxNode TopmostNodeForAnalysis;
+            public readonly SyntaxNode TopmostNodeForAnalysis = topmostNodeForAnalysis;
 
             /// <summary>
             /// All member declarations within the declaration.
             /// </summary>
-            public readonly ImmutableArray<DeclarationInfo> DeclarationsInNode;
+            public readonly ImmutableArray<DeclarationInfo> DeclarationsInNode = declarationsInNodeBuilder;
 
             /// <summary>
             /// All descendant nodes for syntax node actions.
@@ -34,19 +38,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             /// <summary>
             /// Flag indicating if this is a partial analysis.
             /// </summary>
-            public readonly bool IsPartialAnalysis;
-
-            public DeclarationAnalysisData(
-                SyntaxNode declaringReferenceSyntax,
-                SyntaxNode topmostNodeForAnalysis,
-                ImmutableArray<DeclarationInfo> declarationsInNodeBuilder,
-                bool isPartialAnalysis)
-            {
-                DeclaringReferenceSyntax = declaringReferenceSyntax;
-                TopmostNodeForAnalysis = topmostNodeForAnalysis;
-                DeclarationsInNode = declarationsInNodeBuilder;
-                IsPartialAnalysis = isPartialAnalysis;
-            }
+            public readonly bool IsPartialAnalysis = isPartialAnalysis;
 
             public void Free()
             {

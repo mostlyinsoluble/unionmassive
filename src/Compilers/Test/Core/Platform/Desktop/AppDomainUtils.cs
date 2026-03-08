@@ -18,8 +18,8 @@ namespace Roslyn.Test.Utilities.Desktop
 
         public static AppDomain Create(string name = null, string basePath = null)
         {
-            name = name ?? "Custom AppDomain";
-            basePath = basePath ?? Path.GetDirectoryName(typeof(AppDomainUtils).Assembly.Location);
+            name ??= "Custom AppDomain";
+            basePath ??= Path.GetDirectoryName(typeof(AppDomainUtils).Assembly.Location);
 
             lock (s_lock)
             {

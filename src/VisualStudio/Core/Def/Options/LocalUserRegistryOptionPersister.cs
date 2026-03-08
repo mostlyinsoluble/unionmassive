@@ -19,10 +19,7 @@ internal sealed class LocalUserRegistryOptionPersister
     private readonly object _gate = new();
     private readonly RegistryKey _registryKey;
 
-    private LocalUserRegistryOptionPersister(RegistryKey registryKey)
-    {
-        _registryKey = registryKey;
-    }
+    private LocalUserRegistryOptionPersister(RegistryKey registryKey) => _registryKey = registryKey;
 
     public static LocalUserRegistryOptionPersister Create(ILocalRegistry4 localRegistry)
     {

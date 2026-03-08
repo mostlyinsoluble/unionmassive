@@ -22,10 +22,7 @@ namespace IdeBenchmarks.InheritanceMargin
         private readonly UseExportProviderAttribute _useExportProviderAttribute = new();
         private Solution _solution;
 
-        public InheritanceMarginServiceBenchmarks()
-        {
-            _solution = null!;
-        }
+        public InheritanceMarginServiceBenchmarks() => _solution = null!;
 
         [IterationSetup]
         public void IterationSetup()

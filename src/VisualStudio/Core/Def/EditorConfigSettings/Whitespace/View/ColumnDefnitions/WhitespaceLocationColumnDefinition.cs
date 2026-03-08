@@ -13,14 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespac
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Location)]
-internal sealed class WhitespaceLocationColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WhitespaceLocationColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WhitespaceLocationColumnDefinition()
-    {
-    }
-
     public override string Name => Location;
     public override string DisplayName => ServicesVSResources.Location;
     public override double MinWidth => 350;

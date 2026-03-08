@@ -11,17 +11,10 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslyn.Test.Utilities
 {
-    public class TestMetadataReference : PortableExecutableReference
+    public class TestMetadataReference(Metadata metadata = null, string fullPath = null, string display = null) : PortableExecutableReference(MetadataReferenceProperties.Assembly, fullPath)
     {
-        private readonly Metadata _metadata;
-        private readonly string _display;
-
-        public TestMetadataReference(Metadata metadata = null, string fullPath = null, string display = null)
-            : base(MetadataReferenceProperties.Assembly, fullPath)
-        {
-            _metadata = metadata;
-            _display = display;
-        }
+        private readonly Metadata _metadata = metadata;
+        private readonly string _display = display;
 
         public override string Display
         {
@@ -52,21 +45,14 @@ namespace Roslyn.Test.Utilities
         }
     }
 
-    public class TestImageReference : PortableExecutableReference
+    public class TestImageReference(ImmutableArray<byte> metadataBytes, string display) : PortableExecutableReference(MetadataReferenceProperties.Assembly)
     {
-        private readonly ImmutableArray<byte> _metadataBytes;
-        private readonly string _display;
+        private readonly ImmutableArray<byte> _metadataBytes = metadataBytes;
+        private readonly string _display = display;
 
         public TestImageReference(byte[] metadataBytes, string display)
             : this(ImmutableArray.Create(metadataBytes), display)
         {
-        }
-
-        public TestImageReference(ImmutableArray<byte> metadataBytes, string display)
-            : base(MetadataReferenceProperties.Assembly)
-        {
-            _metadataBytes = metadataBytes;
-            _display = display;
         }
 
         public override string Display

@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.AspNetCore.Internal.EmbeddedLang
     supportsUnannotatedAPIs: false,
     // Add more syntax names here in the future if there are additional cases ASP.Net would like to light up on.
     identifiers: ["Route"]), Shared]
-internal class AspNetCoreEmbeddedLanguageClassifier : IEmbeddedLanguageClassifier
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class AspNetCoreEmbeddedLanguageClassifier() : IEmbeddedLanguageClassifier
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AspNetCoreEmbeddedLanguageClassifier()
-    {
-    }
-
     public void RegisterClassifications(EmbeddedLanguageClassificationContext context)
     {
         if (context.Project is null)

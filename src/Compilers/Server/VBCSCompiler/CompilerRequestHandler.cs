@@ -19,24 +19,14 @@ using static Microsoft.CodeAnalysis.CommandLine.CompilerServerLogger;
 
 namespace Microsoft.CodeAnalysis.CompilerServer
 {
-    internal readonly struct RunRequest
+    internal readonly struct RunRequest(string requestId, string language, string? workingDirectory, string? tempDirectory, string? libDirectory, string[] arguments)
     {
-        public string RequestId { get; }
-        public string Language { get; }
-        public string? WorkingDirectory { get; }
-        public string? TempDirectory { get; }
-        public string? LibDirectory { get; }
-        public string[] Arguments { get; }
-
-        public RunRequest(string requestId, string language, string? workingDirectory, string? tempDirectory, string? libDirectory, string[] arguments)
-        {
-            RequestId = requestId;
-            Language = language;
-            WorkingDirectory = workingDirectory;
-            TempDirectory = tempDirectory;
-            LibDirectory = libDirectory;
-            Arguments = arguments;
-        }
+        public string RequestId { get; } = requestId;
+        public string Language { get; } = language;
+        public string? WorkingDirectory { get; } = workingDirectory;
+        public string? TempDirectory { get; } = tempDirectory;
+        public string? LibDirectory { get; } = libDirectory;
+        public string[] Arguments { get; } = arguments;
     }
 
     internal sealed class CompilerServerHost : ICompilerServerHost

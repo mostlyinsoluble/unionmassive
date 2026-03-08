@@ -10,16 +10,10 @@ using Roslyn.Utilities;
 
 namespace Roslyn.Test.Utilities
 {
-    internal readonly struct CustomAttributeRow : IEquatable<CustomAttributeRow>
+    internal readonly struct CustomAttributeRow(EntityHandle parentToken, EntityHandle constructorToken) : IEquatable<CustomAttributeRow>
     {
-        public readonly EntityHandle ParentToken;
-        public readonly EntityHandle ConstructorToken;
-
-        public CustomAttributeRow(EntityHandle parentToken, EntityHandle constructorToken)
-        {
-            this.ParentToken = parentToken;
-            this.ConstructorToken = constructorToken;
-        }
+        public readonly EntityHandle ParentToken = parentToken;
+        public readonly EntityHandle ConstructorToken = constructorToken;
 
         public bool Equals(CustomAttributeRow other)
         {

@@ -10,23 +10,17 @@ using Xunit.Sdk;
 
 namespace Roslyn.Test.Utilities;
 
-public class WpfFactDiscoverer : FactDiscoverer
+public class WpfFactDiscoverer(IMessageSink diagnosticMessageSink) : FactDiscoverer(diagnosticMessageSink)
 {
-    private readonly IMessageSink _diagnosticMessageSink;
-
-    public WpfFactDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink)
-        => _diagnosticMessageSink = diagnosticMessageSink;
+    private readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
     protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
         => new WpfTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod);
 }
 
-public class WpfTheoryDiscoverer : TheoryDiscoverer
+public class WpfTheoryDiscoverer(IMessageSink diagnosticMessageSink) : TheoryDiscoverer(diagnosticMessageSink)
 {
-    private readonly IMessageSink _diagnosticMessageSink;
-
-    public WpfTheoryDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink)
-        => _diagnosticMessageSink = diagnosticMessageSink;
+    private readonly IMessageSink _diagnosticMessageSink = diagnosticMessageSink;
 
     protected override IEnumerable<IXunitTestCase> CreateTestCasesForDataRow(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute, object[] dataRow)
     {

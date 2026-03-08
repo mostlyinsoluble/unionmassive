@@ -18,37 +18,19 @@ namespace Roslyn.Core.Imaging;
 //     to and from various other image representations via the ImageIdExtensions extension
 //     methods.
 [JsonConverter(typeof(ImageIdConverter))]
-internal struct ImageId : IEquatable<ImageId>
+internal struct ImageId(Guid guid, int id) : IEquatable<ImageId>
 {
     //
     // Summary:
     //     The Microsoft.VisualStudio.Core.Imaging.ImageId.Guid identifying the group to
     //     which this image belongs.
-    public readonly Guid Guid;
+    public readonly Guid Guid = guid;
 
     //
     // Summary:
     //     The System.Int32 identifying the particular image from the group that this id
     //     maps to.
-    public readonly int Id;
-
-    //
-    // Summary:
-    //     Creates a new instance of ImageId.
-    //
-    // Parameters:
-    //   guid:
-    //     The Microsoft.VisualStudio.Core.Imaging.ImageId.Guid identifying the group to
-    //     which this image belongs.
-    //
-    //   id:
-    //     The System.Int32 identifying the particular image from the group that this id
-    //     maps to.
-    public ImageId(Guid guid, int id)
-    {
-        Guid = guid;
-        Id = id;
-    }
+    public readonly int Id = id;
 
     public override string ToString()
     {

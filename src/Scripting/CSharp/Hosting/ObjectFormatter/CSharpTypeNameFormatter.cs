@@ -10,14 +10,9 @@ using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace Microsoft.CodeAnalysis.CSharp.Scripting.Hosting
 {
-    internal class CSharpTypeNameFormatter : CommonTypeNameFormatter
+    internal class CSharpTypeNameFormatter(CommonPrimitiveFormatter primitiveFormatter) : CommonTypeNameFormatter
     {
-        protected override CommonPrimitiveFormatter PrimitiveFormatter { get; }
-
-        public CSharpTypeNameFormatter(CommonPrimitiveFormatter primitiveFormatter)
-        {
-            PrimitiveFormatter = primitiveFormatter;
-        }
+        protected override CommonPrimitiveFormatter PrimitiveFormatter { get; } = primitiveFormatter;
 
         protected override string GenericParameterOpening => "<";
         protected override string GenericParameterClosing => ">";

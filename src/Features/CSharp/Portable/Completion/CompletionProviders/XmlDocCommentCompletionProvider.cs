@@ -29,14 +29,10 @@ using static DocumentationCommentXmlNames;
 [ExportCompletionProvider(nameof(XmlDocCommentCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(PartialTypeCompletionProvider))]
 [Shared]
-internal sealed partial class XmlDocCommentCompletionProvider : AbstractDocCommentCompletionProvider<DocumentationCommentTriviaSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class XmlDocCommentCompletionProvider() : AbstractDocCommentCompletionProvider<DocumentationCommentTriviaSyntax>(s_defaultRules)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XmlDocCommentCompletionProvider() : base(s_defaultRules)
-    {
-    }
-
     private static readonly ImmutableArray<string> s_keywordNames;
 
     static XmlDocCommentCompletionProvider()

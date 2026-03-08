@@ -477,10 +477,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
         End Function
 #Region "Patterns"
 
-        Public Overrides Function SupportsPatterns(options As ParseOptions) As Boolean
-            Return False
-        End Function
-
         Public Overrides Function IsPatternExpression(expression As SyntaxNode, isToken As SyntaxToken, pattern As SyntaxNode) As SyntaxNode
             Throw New NotImplementedException()
         End Function

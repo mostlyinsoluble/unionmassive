@@ -11,20 +11,13 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class BatchNode<TInput> : IIncrementalGeneratorNode<ImmutableArray<TInput>>
+    internal sealed class BatchNode<TInput>(IIncrementalGeneratorNode<TInput> sourceNode, IEqualityComparer<ImmutableArray<TInput>>? comparer = null, string? name = null) : IIncrementalGeneratorNode<ImmutableArray<TInput>>
     {
         private static readonly string? s_tableType = typeof(ImmutableArray<TInput>).FullName;
 
-        private readonly IIncrementalGeneratorNode<TInput> _sourceNode;
-        private readonly IEqualityComparer<ImmutableArray<TInput>>? _comparer;
-        private readonly string? _name;
-
-        public BatchNode(IIncrementalGeneratorNode<TInput> sourceNode, IEqualityComparer<ImmutableArray<TInput>>? comparer = null, string? name = null)
-        {
-            _sourceNode = sourceNode;
-            _comparer = comparer;
-            _name = name;
-        }
+        private readonly IIncrementalGeneratorNode<TInput> _sourceNode = sourceNode;
+        private readonly IEqualityComparer<ImmutableArray<TInput>>? _comparer = comparer;
+        private readonly string? _name = name;
 
         public IIncrementalGeneratorNode<ImmutableArray<TInput>> WithComparer(IEqualityComparer<ImmutableArray<TInput>> comparer) => new BatchNode<TInput>(_sourceNode, comparer, _name);
 

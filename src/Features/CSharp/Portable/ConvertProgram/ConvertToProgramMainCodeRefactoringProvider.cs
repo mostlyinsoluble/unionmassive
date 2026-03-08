@@ -20,14 +20,10 @@ using static ConvertProgramAnalysis;
 using static ConvertProgramTransform;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertToProgramMain), Shared]
-internal sealed class ConvertToProgramMainCodeRefactoringProvider : CodeRefactoringProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ConvertToProgramMainCodeRefactoringProvider() : CodeRefactoringProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ConvertToProgramMainCodeRefactoringProvider()
-    {
-    }
-
     public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
     {
         var (document, span, cancellationToken) = context;

@@ -20,19 +20,14 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(FormatDocumentOnTypeHandler)), Shared]
 [Method(Methods.TextDocumentOnTypeFormattingName)]
-internal sealed class FormatDocumentOnTypeHandler : ILspServiceDocumentRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FormatDocumentOnTypeHandler(IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>
 {
-    private readonly IGlobalOptionService _globalOptions;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FormatDocumentOnTypeHandler(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentOnTypeFormattingParams request) => request.TextDocument;
 

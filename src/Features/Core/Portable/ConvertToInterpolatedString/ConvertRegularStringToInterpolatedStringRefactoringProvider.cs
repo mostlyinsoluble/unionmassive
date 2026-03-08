@@ -19,14 +19,10 @@ namespace Microsoft.CodeAnalysis.ConvertToInterpolatedString;
 /// Code refactoring that converts a regular string containing braces to an interpolated string
 /// </summary>
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = PredefinedCodeRefactoringProviderNames.ConvertToInterpolatedString), Shared]
-internal sealed class ConvertRegularStringToInterpolatedStringRefactoringProvider : CodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class ConvertRegularStringToInterpolatedStringRefactoringProvider() : CodeRefactoringProvider
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public ConvertRegularStringToInterpolatedStringRefactoringProvider()
-    {
-    }
-
     public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
     {
         var (document, _, cancellationToken) = context;
@@ -51,25 +47,6 @@ internal sealed class ConvertRegularStringToInterpolatedStringRefactoringProvide
 
         if (!token.Text.Contains('{') && !token.Text.Contains('}'))
             return;
-
-        var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
-
-        if (!syntaxFacts.SupportsConstantInterpolatedStrings(document.Project.ParseOptions!))
-        {
-            // If there is a const keyword, do not offer the refactoring (an interpolated string is not const)
-            var declarator = literalExpression.FirstAncestorOrSelf<SyntaxNode>(syntaxFacts.IsVariableDeclarator);
-            if (declarator != null)
-            {
-                var generator = SyntaxGenerator.GetGenerator(document);
-                if (generator.GetModifiers(declarator).IsConst)
-                    return;
-            }
-
-            // Attributes also only allow constant values.
-            var attribute = literalExpression.FirstAncestorOrSelf<SyntaxNode>(syntaxFacts.IsAttribute);
-            if (attribute != null)
-                return;
-        }
 
         context.RegisterRefactoring(
             CodeAction.Create(

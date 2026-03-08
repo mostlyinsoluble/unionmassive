@@ -19,19 +19,12 @@ namespace Microsoft.CodeAnalysis.CSharp.RemoveUnnecessaryImports;
 
 internal sealed partial class CSharpRemoveUnnecessaryImportsService
 {
-    private sealed class Rewriter : CSharpSyntaxRewriter
+    private sealed class Rewriter(
+        ISet<UsingDirectiveSyntax> unnecessaryUsings,
+        CancellationToken cancellationToken) : CSharpSyntaxRewriter(visitIntoStructuredTrivia: true)
     {
-        private readonly ISet<UsingDirectiveSyntax> _unnecessaryUsingsDoNotAccessDirectly;
-        private readonly CancellationToken _cancellationToken;
-
-        public Rewriter(
-            ISet<UsingDirectiveSyntax> unnecessaryUsings,
-            CancellationToken cancellationToken)
-            : base(visitIntoStructuredTrivia: true)
-        {
-            _unnecessaryUsingsDoNotAccessDirectly = unnecessaryUsings;
-            _cancellationToken = cancellationToken;
-        }
+        private readonly ISet<UsingDirectiveSyntax> _unnecessaryUsingsDoNotAccessDirectly = unnecessaryUsings;
+        private readonly CancellationToken _cancellationToken = cancellationToken;
 
         public override SyntaxNode DefaultVisit(SyntaxNode node)
         {

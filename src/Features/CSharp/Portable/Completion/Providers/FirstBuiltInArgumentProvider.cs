@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 /// </summary>
 [ExportArgumentProvider(nameof(FirstBuiltInArgumentProvider), LanguageNames.CSharp)]
 [Shared]
-internal sealed class FirstBuiltInArgumentProvider : ArgumentProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FirstBuiltInArgumentProvider() : ArgumentProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FirstBuiltInArgumentProvider()
-    {
-    }
-
     public override Task ProvideArgumentAsync(ArgumentContext context)
         => Task.CompletedTask;
 }

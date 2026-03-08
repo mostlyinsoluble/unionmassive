@@ -12,10 +12,7 @@ internal sealed partial class VSTypeScriptVisualStudioProjectWrapper
     {
         private readonly VirtualDocumentPropertiesService _documentPropertiesService;
 
-        private LspContainedDocumentServiceProvider()
-        {
-            _documentPropertiesService = VirtualDocumentPropertiesService.Instance;
-        }
+        private LspContainedDocumentServiceProvider() => _documentPropertiesService = VirtualDocumentPropertiesService.Instance;
 
         public static LspContainedDocumentServiceProvider Instance = new();
 

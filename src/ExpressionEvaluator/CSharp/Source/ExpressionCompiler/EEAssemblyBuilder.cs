@@ -134,10 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             private readonly ImmutableArray<LocalDefinition> _locals;
 
-            internal SlotAllocator(ImmutableArray<LocalDefinition> locals)
-            {
-                _locals = locals;
-            }
+            internal SlotAllocator(ImmutableArray<LocalDefinition> locals) => _locals = locals;
 
             public override void AddPreviousLocals(ArrayBuilder<Cci.ILocalDefinition> builder)
             {

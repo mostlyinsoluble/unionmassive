@@ -10,17 +10,12 @@ using Microsoft.CodeAnalysis.UnusedReferences.ProjectAssets;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteUnusedReferenceAnalysisService : BrokeredServiceBase, IRemoteUnusedReferenceAnalysisService
+internal sealed class RemoteUnusedReferenceAnalysisService(BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteUnusedReferenceAnalysisService
 {
     internal sealed class Factory : FactoryBase<IRemoteUnusedReferenceAnalysisService>
     {
         protected override IRemoteUnusedReferenceAnalysisService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteUnusedReferenceAnalysisService(arguments);
-    }
-
-    public RemoteUnusedReferenceAnalysisService(ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<ReferenceInfo>> GetUnusedReferencesAsync(Checksum solutionChecksum, string projectFilePath, string projectAssetsFilePath, ImmutableArray<ReferenceInfo> projectReferences, CancellationToken cancellationToken)

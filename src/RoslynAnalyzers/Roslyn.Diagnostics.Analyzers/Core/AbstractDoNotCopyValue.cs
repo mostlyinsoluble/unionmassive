@@ -201,17 +201,11 @@ namespace Roslyn.Diagnostics.Analyzers
         }
 
         [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "This type is never compared.")]
-        private readonly struct VisitReleaser<T> : IDisposable
+        private readonly struct VisitReleaser<T>(HashSet<T> set, T value) : IDisposable
             where T : class
         {
-            private readonly HashSet<T> _set;
-            private readonly T _value;
-
-            public VisitReleaser(HashSet<T> set, T value)
-            {
-                _set = set;
-                _value = value;
-            }
+            private readonly HashSet<T> _set = set;
+            private readonly T _value = value;
 
             public void Dispose()
             {
@@ -219,18 +213,11 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        protected abstract class NonCopyableSymbolWalker : SymbolVisitor
+        protected abstract class NonCopyableSymbolWalker(SymbolAnalysisContext context, AbstractDoNotCopyValue.NonCopyableTypesCache cache) : SymbolVisitor
         {
-            private readonly SymbolAnalysisContext _context;
-            //private readonly HashSet<ISymbol> _handledSymbols = new();
+            private readonly SymbolAnalysisContext _context = context;
 
-            protected NonCopyableSymbolWalker(SymbolAnalysisContext context, NonCopyableTypesCache cache)
-            {
-                _context = context;
-                Cache = cache;
-            }
-
-            protected NonCopyableTypesCache Cache { get; }
+            protected NonCopyableTypesCache Cache { get; } = cache;
 
             public sealed override void Visit(ISymbol? symbol)
             {
@@ -355,18 +342,12 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        protected abstract class NonCopyableWalker : OperationWalker
+        protected abstract class NonCopyableWalker(OperationBlockAnalysisContext context, AbstractDoNotCopyValue.NonCopyableTypesCache cache) : OperationWalker
         {
-            private readonly OperationBlockAnalysisContext _context;
+            private readonly OperationBlockAnalysisContext _context = context;
             private readonly HashSet<IOperation> _handledOperations = [];
 
-            protected NonCopyableWalker(OperationBlockAnalysisContext context, NonCopyableTypesCache cache)
-            {
-                _context = context;
-                Cache = cache;
-            }
-
-            protected NonCopyableTypesCache Cache { get; }
+            protected NonCopyableTypesCache Cache { get; } = cache;
 
             protected abstract bool CheckForEachGetEnumerator(IForEachLoopOperation operation, [DisallowNull] ref IConversionOperation? conversion, [DisallowNull] ref IOperation? instance);
 

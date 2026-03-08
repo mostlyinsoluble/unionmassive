@@ -19,14 +19,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 [TagType(typeof(HighlightTag))]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [ContentType(ContentTypeNames.XamlContentType)]
-internal sealed class PreviewTaggerProvider : IViewTaggerProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewTaggerProvider() : IViewTaggerProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewTaggerProvider()
-    {
-    }
-
     public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {
         if (textView.Properties.TryGetProperty(typeof(PreviewUpdater.PreviewTagger), out PreviewUpdater.PreviewTagger tagger))

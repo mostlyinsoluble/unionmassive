@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ICollection<string> _lazyMemberNames;
 
         internal MergedTypeDeclaration(ImmutableArray<SingleTypeDeclaration> declarations)
-            : base(declarations[0].Name)
-        {
-            _declarations = declarations;
-        }
+            : base(declarations[0].Name) => _declarations = declarations;
 
         public ImmutableArray<SingleTypeDeclaration> Declarations
         {

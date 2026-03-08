@@ -12,10 +12,7 @@ namespace Microsoft.Cci
     {
         private readonly MetadataWriter _metadataWriter;
 
-        internal MethodSpecComparer(MetadataWriter metadataWriter)
-        {
-            _metadataWriter = metadataWriter;
-        }
+        internal MethodSpecComparer(MetadataWriter metadataWriter) => _metadataWriter = metadataWriter;
 
         public bool Equals(IGenericMethodInstanceReference? x, IGenericMethodInstanceReference? y)
         {

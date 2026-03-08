@@ -8,14 +8,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// Represents a <see cref="CSharpSyntaxVisitor"/> that descends an entire <see cref="CSharpSyntaxNode"/> graph
     /// visiting each CSharpSyntaxNode and its child SyntaxNodes and <see cref="SyntaxToken"/>s in depth-first order.
     /// </summary>
-    public abstract class CSharpSyntaxWalker : CSharpSyntaxVisitor
+    public abstract class CSharpSyntaxWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Node) : CSharpSyntaxVisitor
     {
-        protected SyntaxWalkerDepth Depth { get; }
-
-        protected CSharpSyntaxWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Node)
-        {
-            this.Depth = depth;
-        }
+        protected SyntaxWalkerDepth Depth { get; } = depth;
 
         private int _recursionDepth;
 

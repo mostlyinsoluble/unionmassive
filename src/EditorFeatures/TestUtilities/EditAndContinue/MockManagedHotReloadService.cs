@@ -14,14 +14,10 @@ using Microsoft.VisualStudio.Debugger.Contracts.HotReload;
 namespace Microsoft.CodeAnalysis.EditAndContinue.UnitTests;
 
 [Export(typeof(IManagedHotReloadService)), PartNotDiscoverable, Shared]
-internal sealed class MockManagedHotReloadService : IManagedHotReloadService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MockManagedHotReloadService() : IManagedHotReloadService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MockManagedHotReloadService()
-    {
-    }
-
     public ValueTask<ImmutableArray<ManagedActiveStatementDebugInfo>> GetActiveStatementsAsync(CancellationToken cancellation)
         => throw new NotImplementedException();
 

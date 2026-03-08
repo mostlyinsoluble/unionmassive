@@ -19,10 +19,7 @@ namespace Microsoft.Cci
         private string _lastTypeDefName;
         private string _lastTypeDefNamespace;
 
-        internal SymWriterMetadataProvider(MetadataWriter writer)
-        {
-            _writer = writer;
-        }
+        internal SymWriterMetadataProvider(MetadataWriter writer) => _writer = writer;
 
         // typeDefinitionToken is token returned by GetMethodProps or GetNestedClassProps
         public bool TryGetTypeDefinitionInfo(int typeDefinitionToken, out string namespaceName, out string typeName, out TypeAttributes attributes)

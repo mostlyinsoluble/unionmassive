@@ -7,13 +7,8 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal class RazorLanguageServerTargetWrapper : IRazorLanguageServerTarget
+    internal class RazorLanguageServerTargetWrapper(AbstractLanguageServer<RequestContext> languageServer) : IRazorLanguageServerTarget
     {
-        private readonly AbstractLanguageServer<RequestContext> _languageServer;
-
-        public RazorLanguageServerTargetWrapper(AbstractLanguageServer<RequestContext> languageServer)
-        {
-            _languageServer = languageServer;
-        }
+        private readonly AbstractLanguageServer<RequestContext> _languageServer = languageServer;
     }
 }

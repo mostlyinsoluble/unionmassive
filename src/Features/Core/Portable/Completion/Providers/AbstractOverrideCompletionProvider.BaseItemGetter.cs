@@ -12,7 +12,14 @@ namespace Microsoft.CodeAnalysis.Completion.Providers;
 
 internal abstract partial class AbstractMemberInsertingCompletionProvider
 {
-    protected abstract class AbstractItemGetter<TProvider>
+    protected abstract class AbstractItemGetter<TProvider>(
+        TProvider provider,
+        Document document,
+        int position,
+        SourceText text,
+        SyntaxTree syntaxTree,
+        int startLineNumber,
+        CancellationToken cancellationToken)
         where TProvider : AbstractMemberInsertingCompletionProvider
     {
         protected static readonly SymbolDisplayFormat DefaultNameFormat = SymbolDisplayFormats.NameFormat
@@ -24,32 +31,14 @@ internal abstract partial class AbstractMemberInsertingCompletionProvider
                 SymbolDisplayParameterOptions.IncludeParamsRefOut)
             .AddMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
-        protected readonly CancellationToken CancellationToken;
-        protected readonly int Position;
-        protected readonly TProvider Provider;
+        protected readonly CancellationToken CancellationToken = cancellationToken;
+        protected readonly int Position = position;
+        protected readonly TProvider Provider = provider;
 
-        protected readonly Document Document;
-        protected readonly SourceText Text;
-        protected readonly SyntaxTree SyntaxTree;
-        protected readonly int StartLineNumber;
-
-        protected AbstractItemGetter(
-            TProvider provider,
-            Document document,
-            int position,
-            SourceText text,
-            SyntaxTree syntaxTree,
-            int startLineNumber,
-            CancellationToken cancellationToken)
-        {
-            Provider = provider;
-            Document = document;
-            Position = position;
-            Text = text;
-            SyntaxTree = syntaxTree;
-            StartLineNumber = startLineNumber;
-            CancellationToken = cancellationToken;
-        }
+        protected readonly Document Document = document;
+        protected readonly SourceText Text = text;
+        protected readonly SyntaxTree SyntaxTree = syntaxTree;
+        protected readonly int StartLineNumber = startLineNumber;
 
         public abstract Task<ImmutableArray<CompletionItem>> GetItemsAsync();
 

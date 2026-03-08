@@ -11,13 +11,8 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests.VisualBasic;
 
-public abstract class BasicSquigglesCommon : AbstractEditorTest
+public abstract class BasicSquigglesCommon(string projectTemplate) : AbstractEditorTest(nameof(BasicSquigglesCommon), projectTemplate)
 {
-    protected BasicSquigglesCommon(string projectTemplate)
-        : base(nameof(BasicSquigglesCommon), projectTemplate)
-    {
-    }
-
     protected override string LanguageName => LanguageNames.VisualBasic;
 
     [IdeFact(Skip = "https://github.com/dotnet/roslyn/issues/72428"), WorkItem("https://github.com/dotnet/roslyn-project-system/issues/1825")]

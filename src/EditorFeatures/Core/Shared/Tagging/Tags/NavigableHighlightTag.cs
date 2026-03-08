@@ -12,9 +12,6 @@ namespace Microsoft.CodeAnalysis.Editor.Shared.Tagging;
 /// <remarks>
 /// Unless you are writing code relating to reference or keyword highlighting, you should not be using
 /// this type.</remarks>
-internal abstract class NavigableHighlightTag : TextMarkerTag
+internal abstract class NavigableHighlightTag(string type) : TextMarkerTag(type)
 {
-    protected NavigableHighlightTag(string type) : base(type)
-    {
-    }
 }

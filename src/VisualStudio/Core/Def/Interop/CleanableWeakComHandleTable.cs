@@ -22,37 +22,28 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Interop;
 /// logic for cleaning up dead references in a time-sliced way. Public members of this
 /// collection are affinitized to the foreground thread.
 /// </summary>
-internal sealed class CleanableWeakComHandleTable<TKey, TValue> where TValue : class
+internal sealed class CleanableWeakComHandleTable<TKey, TValue>(IThreadingContext threadingContext, int? cleanUpThreshold = null, TimeSpan? cleanUpTimeSlice = null) where TValue : class
 {
     private const int DefaultCleanUpThreshold = 25;
     private static readonly TimeSpan s_defaultCleanUpTimeSlice = TimeSpan.FromMilliseconds(15);
 
-    private readonly Dictionary<TKey, WeakComHandle<TValue, TValue>> _table;
-    private readonly HashSet<TKey> _deadKeySet;
-    private readonly IThreadingContext _threadingContext;
+    private readonly Dictionary<TKey, WeakComHandle<TValue, TValue>> _table = [];
+    private readonly HashSet<TKey> _deadKeySet = [];
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     /// <summary>
     /// The upper limit of items that the collection will store before clean up is recommended.
     /// </summary>
-    public int CleanUpThreshold { get; }
+    public int CleanUpThreshold { get; } = cleanUpThreshold ?? DefaultCleanUpThreshold;
 
     /// <summary>
     /// The amount of time that can pass during clean up it returns.
     /// </summary>
-    public TimeSpan CleanUpTimeSlice { get; }
+    public TimeSpan CleanUpTimeSlice { get; } = cleanUpTimeSlice ?? s_defaultCleanUpTimeSlice;
 
     private int _itemsAddedSinceLastCleanUp;
 
     public bool NeedsCleanUp { get; private set; }
-
-    public CleanableWeakComHandleTable(IThreadingContext threadingContext, int? cleanUpThreshold = null, TimeSpan? cleanUpTimeSlice = null)
-    {
-        _table = [];
-        _deadKeySet = [];
-        _threadingContext = threadingContext;
-        CleanUpThreshold = cleanUpThreshold ?? DefaultCleanUpThreshold;
-        CleanUpTimeSlice = cleanUpTimeSlice ?? s_defaultCleanUpTimeSlice;
-    }
 
     /// <summary>
     /// Cleans up references to dead objects in the table. This operation will yield to other foreground operations

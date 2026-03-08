@@ -82,54 +82,38 @@ namespace Microsoft.Cci
         }
     }
 
-    internal sealed class ExceptionHandlerRegionFinally : ExceptionHandlerRegion
+    internal sealed class ExceptionHandlerRegionFinally(
+        int tryStartOffset,
+        int tryEndOffset,
+        int handlerStartOffset,
+        int handlerEndOffset) : ExceptionHandlerRegion(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
     {
-        public ExceptionHandlerRegionFinally(
-            int tryStartOffset,
-            int tryEndOffset,
-            int handlerStartOffset,
-            int handlerEndOffset)
-            : base(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
-        {
-        }
-
         public override ExceptionRegionKind HandlerKind
         {
             get { return ExceptionRegionKind.Finally; }
         }
     }
 
-    internal sealed class ExceptionHandlerRegionFault : ExceptionHandlerRegion
+    internal sealed class ExceptionHandlerRegionFault(
+        int tryStartOffset,
+        int tryEndOffset,
+        int handlerStartOffset,
+        int handlerEndOffset) : ExceptionHandlerRegion(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
     {
-        public ExceptionHandlerRegionFault(
-            int tryStartOffset,
-            int tryEndOffset,
-            int handlerStartOffset,
-            int handlerEndOffset)
-            : base(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
-        {
-        }
-
         public override ExceptionRegionKind HandlerKind
         {
             get { return ExceptionRegionKind.Fault; }
         }
     }
 
-    internal sealed class ExceptionHandlerRegionCatch : ExceptionHandlerRegion
+    internal sealed class ExceptionHandlerRegionCatch(
+        int tryStartOffset,
+        int tryEndOffset,
+        int handlerStartOffset,
+        int handlerEndOffset,
+        ITypeReference exceptionType) : ExceptionHandlerRegion(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
     {
-        private readonly ITypeReference _exceptionType;
-
-        public ExceptionHandlerRegionCatch(
-            int tryStartOffset,
-            int tryEndOffset,
-            int handlerStartOffset,
-            int handlerEndOffset,
-            ITypeReference exceptionType)
-            : base(tryStartOffset, tryEndOffset, handlerStartOffset, handlerEndOffset)
-        {
-            _exceptionType = exceptionType;
-        }
+        private readonly ITypeReference _exceptionType = exceptionType;
 
         public override ExceptionRegionKind HandlerKind
         {

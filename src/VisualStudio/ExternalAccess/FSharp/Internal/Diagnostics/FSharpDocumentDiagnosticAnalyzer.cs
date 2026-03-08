@@ -18,16 +18,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Diagnostics;
 
 [Shared]
 [ExportLanguageService(typeof(FSharpDocumentDiagnosticAnalyzerService), LanguageNames.FSharp)]
-internal class FSharpDocumentDiagnosticAnalyzerService : ILanguageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpDocumentDiagnosticAnalyzerService(IFSharpDocumentDiagnosticAnalyzer analyzer) : ILanguageService
 {
-    private readonly IFSharpDocumentDiagnosticAnalyzer _analyzer;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpDocumentDiagnosticAnalyzerService(IFSharpDocumentDiagnosticAnalyzer analyzer)
-    {
-        _analyzer = analyzer;
-    }
+    private readonly IFSharpDocumentDiagnosticAnalyzer _analyzer = analyzer;
 
     public Task<ImmutableArray<Diagnostic>> AnalyzeSemanticsAsync(Document document, CancellationToken cancellationToken)
     {
@@ -45,10 +40,7 @@ internal class FSharpDocumentDiagnosticAnalyzer : DocumentDiagnosticAnalyzer, IB
 {
     private readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
 
-    public FSharpDocumentDiagnosticAnalyzer()
-    {
-        _supportedDiagnostics = CreateSupportedDiagnostics();
-    }
+    public FSharpDocumentDiagnosticAnalyzer() => _supportedDiagnostics = CreateSupportedDiagnostics();
 
     public static ImmutableArray<DiagnosticDescriptor> CreateSupportedDiagnostics()
     {

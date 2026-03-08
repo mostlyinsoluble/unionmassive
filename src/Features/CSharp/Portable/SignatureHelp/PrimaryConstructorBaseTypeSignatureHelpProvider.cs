@@ -28,14 +28,10 @@ namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 /// such as 'record Student(int Id) : Person($$"first", "last");`.
 /// </summary>
 [ExportSignatureHelpProvider("PrimaryConstructorBaseTypeSignatureHelpProvider", LanguageNames.CSharp), Shared]
-internal sealed partial class PrimaryConstructorBaseTypeSignatureHelpProvider : AbstractCSharpSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class PrimaryConstructorBaseTypeSignatureHelpProvider() : AbstractCSharpSignatureHelpProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PrimaryConstructorBaseTypeSignatureHelpProvider()
-    {
-    }
-
     public override ImmutableArray<char> TriggerCharacters => ['(', ','];
 
     public override ImmutableArray<char> RetriggerCharacters => [')'];

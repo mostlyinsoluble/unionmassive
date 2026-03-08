@@ -25,10 +25,7 @@ namespace Microsoft.VisualStudio.Debugger
         /// <summary>
         /// internal helper for testing only (not available on *real* DkmWorkList)...
         /// </summary>
-        internal DkmWorkList()
-        {
-            _workList = new Queue<Action>(1);
-        }
+        internal DkmWorkList() => _workList = new Queue<Action>(1);
 
         /// <summary>
         /// internal helper for testing only (not available on *real* DkmWorkList)...

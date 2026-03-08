@@ -9,16 +9,11 @@ using Microsoft.CodeAnalysis.Remote;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.Api;
 
-internal sealed class UnitTestingRemoteServiceCallbackDispatcherRegistry : IRemoteServiceCallbackDispatcherProvider
+internal sealed class UnitTestingRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, UnitTestingRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers) : IRemoteServiceCallbackDispatcherProvider
 {
     public static readonly UnitTestingRemoteServiceCallbackDispatcherRegistry Empty = new([]);
 
-    private readonly ImmutableDictionary<Type, UnitTestingRemoteServiceCallbackDispatcher> _lazyDispatchers;
-
-    public UnitTestingRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, UnitTestingRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers)
-    {
-        _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
-    }
+    private readonly ImmutableDictionary<Type, UnitTestingRemoteServiceCallbackDispatcher> _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
 
     IRemoteServiceCallbackDispatcher IRemoteServiceCallbackDispatcherProvider.GetDispatcher(Type serviceType)
         => _lazyDispatchers[serviceType];

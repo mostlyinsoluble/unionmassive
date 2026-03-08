@@ -7,13 +7,10 @@ using System.Runtime.Serialization;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 
 [DataContract]
-internal readonly struct PythiaPinnedSolutionInfoWrapper
+internal readonly struct PythiaPinnedSolutionInfoWrapper(Checksum underlyingObject)
 {
     [DataMember(Order = 0)]
-    internal readonly Checksum UnderlyingObject;
-
-    public PythiaPinnedSolutionInfoWrapper(Checksum underlyingObject)
-        => UnderlyingObject = underlyingObject;
+    internal readonly Checksum UnderlyingObject = underlyingObject;
 
     public static implicit operator PythiaPinnedSolutionInfoWrapper(Checksum info)
         => new(info);

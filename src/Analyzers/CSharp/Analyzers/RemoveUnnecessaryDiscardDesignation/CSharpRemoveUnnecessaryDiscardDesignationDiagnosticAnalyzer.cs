@@ -34,9 +34,6 @@ internal sealed class CSharpRemoveUnnecessaryDiscardDesignationDiagnosticAnalyze
     {
         context.RegisterCompilationStartAction(context =>
         {
-            if (context.Compilation.LanguageVersion() < LanguageVersion.CSharp9)
-                return;
-
             context.RegisterSyntaxNodeAction(AnalyzeDiscardDesignation, SyntaxKind.DiscardDesignation);
         });
     }

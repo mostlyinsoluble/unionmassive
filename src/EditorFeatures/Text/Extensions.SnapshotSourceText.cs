@@ -136,12 +136,9 @@ public static partial class Extensions
         protected override TextLineCollection GetLinesCore()
             => new LineInfo(this);
 
-        private sealed class LineInfo : TextLineCollection
+        private sealed class LineInfo(Extensions.SnapshotSourceText text) : TextLineCollection
         {
-            private readonly SnapshotSourceText _text;
-
-            public LineInfo(SnapshotSourceText text)
-                => _text = text;
+            private readonly SnapshotSourceText _text = text;
 
             public override int Count
             {
@@ -261,28 +258,17 @@ public static partial class Extensions
         /// <summary>
         /// Use a separate class for closed files to simplify memory leak investigations
         /// </summary>
-        internal sealed class ClosedSnapshotSourceText : SnapshotSourceText
+        internal sealed class ClosedSnapshotSourceText(ITextBufferCloneService? textBufferCloneService, ITextImage textImage, Encoding? encoding, SourceHashAlgorithm checksumAlgorithm) : SnapshotSourceText(textBufferCloneService, textImage, encoding, checksumAlgorithm, container: null)
         {
-            public ClosedSnapshotSourceText(ITextBufferCloneService? textBufferCloneService, ITextImage textImage, Encoding? encoding, SourceHashAlgorithm checksumAlgorithm)
-                : base(textBufferCloneService, textImage, encoding, checksumAlgorithm, container: null)
-            {
-            }
         }
 
         /// <summary>
         /// Perf: Optimize calls to GetChangeRanges after WithChanges by using editor snapshots
         /// </summary>
-        private sealed class ChangedSourceText : SnapshotSourceText
+        private sealed class ChangedSourceText(ITextBufferCloneService? textBufferCloneService, Extensions.SnapshotSourceText baseText, ITextSnapshot baseSnapshot, ITextSnapshot currentSnapshot) : SnapshotSourceText(textBufferCloneService, currentSnapshot, baseText.Encoding, baseText.ChecksumAlgorithm, container: TextBufferContainer.From(currentSnapshot.TextBuffer))
         {
-            private readonly SnapshotSourceText _baseText;
-            private readonly ITextImage _baseTextImage;
-
-            public ChangedSourceText(ITextBufferCloneService? textBufferCloneService, SnapshotSourceText baseText, ITextSnapshot baseSnapshot, ITextSnapshot currentSnapshot)
-                : base(textBufferCloneService, currentSnapshot, baseText.Encoding, baseText.ChecksumAlgorithm, container: TextBufferContainer.From(currentSnapshot.TextBuffer))
-            {
-                _baseText = baseText;
-                _baseTextImage = ((ITextSnapshot2)baseSnapshot).TextImage;
-            }
+            private readonly SnapshotSourceText _baseText = baseText;
+            private readonly ITextImage _baseTextImage = ((ITextSnapshot2)baseSnapshot).TextImage;
 
             public override IReadOnlyList<TextChangeRange> GetChangeRanges(SourceText oldText)
             {

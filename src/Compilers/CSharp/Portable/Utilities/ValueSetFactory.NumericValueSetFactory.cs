@@ -16,15 +16,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// parameterized by a type class
         /// <see cref="INumericTC{T}"/> that provides the primitives for that type.
         /// </summary>
-        private struct NumericValueSetFactory<T> : IValueSetFactory<T>
+        private struct NumericValueSetFactory<T>(ValueSetFactory.INumericTC<T> tc) : IValueSetFactory<T>
         {
-            private readonly INumericTC<T> _tc;
+            private readonly INumericTC<T> _tc = tc;
 
             IValueSet IValueSetFactory.AllValues => NumericValueSet<T>.AllValues(_tc);
 
             IValueSet IValueSetFactory.NoValues => NumericValueSet<T>.NoValues(_tc);
-
-            public NumericValueSetFactory(INumericTC<T> tc) { this._tc = tc; }
 
             public IValueSet<T> Related(BinaryOperatorKind relation, T value)
             {

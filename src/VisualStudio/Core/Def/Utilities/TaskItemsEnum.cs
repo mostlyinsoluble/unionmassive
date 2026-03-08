@@ -6,16 +6,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
-internal sealed class TaskItemsEnum<T> : IVsEnumTaskItems where T : IVsTaskItem
+internal sealed class TaskItemsEnum<T>(T[] immutableItems) : IVsEnumTaskItems where T : IVsTaskItem
 {
-    private readonly T[] _items;
-    private int _next;
-
-    public TaskItemsEnum(T[] immutableItems)
-    {
-        _items = immutableItems;
-        _next = 0;
-    }
+    private readonly T[] _items = immutableItems;
+    private int _next = 0;
 
     int IVsEnumTaskItems.Next(uint celt, IVsTaskItem[] rgelt, uint[] pceltFetched)
     {

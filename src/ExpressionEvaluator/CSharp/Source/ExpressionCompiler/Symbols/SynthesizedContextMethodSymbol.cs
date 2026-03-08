@@ -16,14 +16,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
     /// expressions outside of a method - specifically, binding
     /// DebuggerDisplayAttribute expressions.
     /// </summary>
-    internal sealed class SynthesizedContextMethodSymbol : SynthesizedMethodSymbol
+    internal sealed class SynthesizedContextMethodSymbol(NamedTypeSymbol container) : SynthesizedMethodSymbol
     {
-        private readonly NamedTypeSymbol _container;
-
-        public SynthesizedContextMethodSymbol(NamedTypeSymbol container)
-        {
-            _container = container;
-        }
+        private readonly NamedTypeSymbol _container = container;
 
         public override int Arity
         {

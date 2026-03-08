@@ -15,12 +15,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly ImmutableArray<ParameterSymbol> _parameters;
 
         public SynthesizedDelegateConstructor(NamedTypeSymbol containingType, TypeSymbol objectType, TypeSymbol intPtrType)
-            : base(containingType)
-        {
-            _parameters = ImmutableArray.Create<ParameterSymbol>(
+            : base(containingType) => _parameters = ImmutableArray.Create<ParameterSymbol>(
                SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(objectType), 0, RefKind.None, "object"),
                SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(intPtrType), 1, RefKind.None, "method"));
-        }
 
         public override ImmutableArray<ParameterSymbol> Parameters
         {

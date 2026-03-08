@@ -15,14 +15,10 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Options;
 /// Enables legacy APIs to access global options from workspace.
 /// </summary>
 [ExportWorkspaceService(typeof(ILegacyGlobalOptionsWorkspaceService)), Shared]
-internal sealed class OmnisharpLegacyGlobalOptionsWorkspaceService : ILegacyGlobalOptionsWorkspaceService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OmnisharpLegacyGlobalOptionsWorkspaceService() : ILegacyGlobalOptionsWorkspaceService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OmnisharpLegacyGlobalOptionsWorkspaceService()
-    {
-    }
-
     public bool RazorUseTabs
         => LineFormattingOptions.Default.UseTabs;
 

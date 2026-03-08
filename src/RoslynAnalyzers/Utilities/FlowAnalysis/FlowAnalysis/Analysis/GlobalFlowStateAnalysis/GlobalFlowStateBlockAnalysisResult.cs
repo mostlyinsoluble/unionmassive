@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     internal sealed class GlobalFlowStateBlockAnalysisResult : AbstractBlockAnalysisResult
     {
         internal GlobalFlowStateBlockAnalysisResult(BasicBlock basicBlock, GlobalFlowStateAnalysisData blockAnalysisData)
-            : base(basicBlock)
-        {
-            Data = blockAnalysisData?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, GlobalFlowStateAnalysisValueSet>.Empty;
-        }
+            : base(basicBlock) => Data = blockAnalysisData?.ToImmutableDictionary() ?? ImmutableDictionary<AnalysisEntity, GlobalFlowStateAnalysisValueSet>.Empty;
 
         public ImmutableDictionary<AnalysisEntity, GlobalFlowStateAnalysisValueSet> Data { get; }
     }

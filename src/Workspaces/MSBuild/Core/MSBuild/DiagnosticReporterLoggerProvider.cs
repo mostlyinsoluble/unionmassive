@@ -7,14 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class DiagnosticReporterLoggerProvider : ILoggerProvider
+internal sealed class DiagnosticReporterLoggerProvider(DiagnosticReporter reporter) : ILoggerProvider
 {
-    private readonly DiagnosticReporter _reporter;
-
-    public DiagnosticReporterLoggerProvider(DiagnosticReporter reporter)
-    {
-        _reporter = reporter;
-    }
+    private readonly DiagnosticReporter _reporter = reporter;
 
     public ILogger CreateLogger(string categoryName)
     {

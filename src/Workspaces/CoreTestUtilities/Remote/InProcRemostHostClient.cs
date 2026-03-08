@@ -76,16 +76,10 @@ internal sealed partial class InProcRemoteHostClient : RemoteHostClient
         _inprocServices.Dispose();
     }
 
-    public sealed class ServiceProvider : IServiceProvider
+    public sealed class ServiceProvider(TraceSource traceSource, RemoteHostTestData testData) : IServiceProvider
     {
-        public readonly TraceSource TraceSource;
-        public readonly RemoteHostTestData TestData;
-
-        public ServiceProvider(TraceSource traceSource, RemoteHostTestData testData)
-        {
-            TraceSource = traceSource;
-            TestData = testData;
-        }
+        public readonly TraceSource TraceSource = traceSource;
+        public readonly RemoteHostTestData TestData = testData;
 
         public object GetService(Type serviceType)
         {
@@ -103,14 +97,9 @@ internal sealed partial class InProcRemoteHostClient : RemoteHostClient
         }
     }
 
-    private sealed class InProcServiceBroker : IServiceBroker
+    private sealed class InProcServiceBroker(InProcRemoteHostClient.InProcRemoteServices services) : IServiceBroker
     {
-        private readonly InProcRemoteServices _services;
-
-        public InProcServiceBroker(InProcRemoteServices services)
-        {
-            _services = services;
-        }
+        private readonly InProcRemoteServices _services = services;
 
         public event EventHandler<BrokeredServicesChangedEventArgs>? AvailabilityChanged { add { } remove { } }
 
@@ -256,17 +245,10 @@ internal sealed partial class InProcRemoteHostClient : RemoteHostClient
             throw ExceptionUtilities.UnexpectedValue(descriptor.Moniker);
         }
 
-        private sealed class WrappedStream : Stream
+        private sealed class WrappedStream(IDisposable service, Stream stream) : Stream
         {
-            private readonly IDisposable _service;
-            private readonly Stream _stream;
-
-            public WrappedStream(IDisposable service, Stream stream)
-            {
-                // tie service's lifetime with that of stream
-                _service = service;
-                _stream = stream;
-            }
+            private readonly IDisposable _service = service;
+            private readonly Stream _stream = stream;
 
             public override long Position
             {

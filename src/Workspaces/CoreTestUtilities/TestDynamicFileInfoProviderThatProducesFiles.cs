@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.Test.Utilities;
 [ExportDynamicFileInfoProvider("cshtml", "vbhtml")]
 [Shared]
 [PartNotDiscoverable]
-internal sealed class TestDynamicFileInfoProviderThatProducesFiles : IDynamicFileInfoProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestDynamicFileInfoProviderThatProducesFiles() : IDynamicFileInfoProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestDynamicFileInfoProviderThatProducesFiles()
-    {
-    }
-
     event EventHandler<string> IDynamicFileInfoProvider.Updated { add { } remove { } }
 
     public async Task<DynamicFileInfo> GetDynamicFileInfoAsync(ProjectId projectId, string projectFilePath, string filePath, CancellationToken cancellationToken)

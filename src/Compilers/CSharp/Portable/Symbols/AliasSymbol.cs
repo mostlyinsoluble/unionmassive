@@ -293,10 +293,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         internal AliasSymbolFromSyntax(SourceNamespaceSymbol containingSymbol, ExternAliasDirectiveSyntax syntax)
-            : base(syntax.Identifier.ValueText, containingSymbol, ImmutableArray.Create(syntax.Identifier.GetLocation()), isExtern: true)
-        {
-            _directive = syntax.GetReference();
-        }
+            : base(syntax.Identifier.ValueText, containingSymbol, ImmutableArray.Create(syntax.Identifier.GetLocation()), isExtern: true) => _directive = syntax.GetReference();
 
         /// <summary>
         /// Gets the <see cref="NamespaceOrTypeSymbol"/> for the
@@ -410,10 +407,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly NamespaceOrTypeSymbol _aliasTarget;
 
         internal AliasSymbolFromResolvedTarget(NamespaceOrTypeSymbol target, string aliasName, Symbol containingSymbol, ImmutableArray<Location> locations, bool isExtern)
-            : base(aliasName, containingSymbol, locations, isExtern)
-        {
-            _aliasTarget = target;
-        }
+            : base(aliasName, containingSymbol, locations, isExtern) => _aliasTarget = target;
 
         /// <summary>
         /// Gets the <see cref="NamespaceOrTypeSymbol"/> for the

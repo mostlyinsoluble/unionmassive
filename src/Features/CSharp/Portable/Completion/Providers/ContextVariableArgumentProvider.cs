@@ -15,14 +15,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportArgumentProvider(nameof(ContextVariableArgumentProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(FirstBuiltInArgumentProvider))]
 [Shared]
-internal sealed class ContextVariableArgumentProvider : AbstractContextVariableArgumentProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ContextVariableArgumentProvider() : AbstractContextVariableArgumentProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ContextVariableArgumentProvider()
-    {
-    }
-
     protected override string ThisOrMeKeyword => SyntaxFacts.GetText(SyntaxKind.ThisKeyword);
 
     protected override bool IsInstanceContext(SyntaxTree syntaxTree, SyntaxToken targetToken, SemanticModel semanticModel, CancellationToken cancellationToken)

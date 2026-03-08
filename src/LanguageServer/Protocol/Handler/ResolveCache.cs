@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// This cache is generally only written to as part of the initial request to store data for later resolution.
 /// It is only read from as part of a resolve request for some data sent in the initial request to restore state.
 /// </summary>
-internal abstract class ResolveCache<TCacheEntry> : ILspService where TCacheEntry : class
+internal abstract class ResolveCache<TCacheEntry>(int maxCacheSize) : ILspService where TCacheEntry : class
 {
     /// <summary>
     /// Maximum number of cache entries allowed in cache. Must be >= 1.
@@ -24,7 +24,7 @@ internal abstract class ResolveCache<TCacheEntry> : ILspService where TCacheEntr
     /// it is not important to cache a lot of entries.  If there are document changes
     /// the client is responsible for not asking to resolve invalid items.
     /// </summary>
-    private readonly int _maxCacheSize;
+    private readonly int _maxCacheSize = maxCacheSize;
 
     /// <summary>
     /// Multiple cache requests or updates may be received concurrently.
@@ -45,11 +45,6 @@ internal abstract class ResolveCache<TCacheEntry> : ILspService where TCacheEntr
     private readonly List<(long ResultId, TCacheEntry CacheEntry)> _resultIdToCachedItem = [];
 
     #endregion
-
-    public ResolveCache(int maxCacheSize)
-    {
-        _maxCacheSize = maxCacheSize;
-    }
 
     /// <summary>
     /// Adds a completion list to the cache. If the cache reaches its maximum size, the oldest completion
@@ -103,14 +98,11 @@ internal abstract class ResolveCache<TCacheEntry> : ILspService where TCacheEntr
 
     internal TestAccessor GetTestAccessor() => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(ResolveCache<TCacheEntry> resolveCache)
     {
-        private readonly ResolveCache<TCacheEntry> _resolveCache;
+        private readonly ResolveCache<TCacheEntry> _resolveCache = resolveCache;
 
         public int MaximumCacheSize => _resolveCache._maxCacheSize;
-
-        public TestAccessor(ResolveCache<TCacheEntry> resolveCache)
-            => _resolveCache = resolveCache;
 
         public List<(long ResultId, TCacheEntry CacheEntry)> GetCacheContents()
             => _resolveCache._resultIdToCachedItem;

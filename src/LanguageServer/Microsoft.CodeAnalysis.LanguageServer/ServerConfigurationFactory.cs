@@ -11,18 +11,13 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.CodeAnalysis.LanguageServer;
 
 [Export, Shared]
-internal sealed class ServerConfigurationFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ServerConfigurationFactory(IGlobalOptionService globalOptionService)
 {
-    private readonly IGlobalOptionService _globalOptionService;
+    private readonly IGlobalOptionService _globalOptionService = globalOptionService;
 
     private ServerConfiguration? _serverConfiguration;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ServerConfigurationFactory(IGlobalOptionService globalOptionService)
-    {
-        _globalOptionService = globalOptionService;
-    }
 
     [Export(typeof(ServerConfiguration))]
     public ServerConfiguration ServerConfiguration => _serverConfiguration ?? throw new InvalidOperationException($"{nameof(ServerConfiguration)} has not been initialized");
@@ -57,14 +52,9 @@ internal sealed record class ServerConfiguration(
     SourceGeneratorExecutionPreference SourceGeneratorExecutionPreference,
     int? ClientProcessId);
 
-internal sealed class LogConfiguration
+internal sealed class LogConfiguration(LogLevel initialLogLevel)
 {
-    private int _currentLogLevel;
-
-    public LogConfiguration(LogLevel initialLogLevel)
-    {
-        _currentLogLevel = (int)(initialLogLevel);
-    }
+    private int _currentLogLevel = (int)(initialLogLevel);
 
     public void UpdateLogLevel(LogLevel level)
     {

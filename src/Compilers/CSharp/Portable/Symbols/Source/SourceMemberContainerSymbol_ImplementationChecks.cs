@@ -259,7 +259,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 // (though we'd have to be careful about losing diagnostics and we might produce fewer bridge methods).
                                 // However, this approach has the advantage that there is no cost unless we encounter a base type that
                                 // claims to implement an interface, but we can't figure out how (i.e. free in nearly all cases).
-                                hasBaseClassDeclaringInterface = hasBaseClassDeclaringInterface ?? HasBaseClassDeclaringInterface(@interface);
+                                hasBaseClassDeclaringInterface ??= HasBaseClassDeclaringInterface(@interface);
 
                                 HasBaseTypeDeclaringInterfaceResult matchResult = hasBaseClassDeclaringInterface.GetValueOrDefault();
 

@@ -49,10 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                   node,
                   EmptyStructTypeCache.CreateNeverEmpty(),
                   trackUnassignments: true,
-                  initiallyAssignedVariables: initiallyAssignedVariables)
-        {
-            _isRuntimeAsync = isRuntimeAsync;
-        }
+                  initiallyAssignedVariables: initiallyAssignedVariables) => _isRuntimeAsync = isRuntimeAsync;
 
         // Returns deterministically ordered list of variables that ought to be hoisted.
         public static OrderedSet<Symbol> Analyze(CSharpCompilation compilation, MethodSymbol method, BoundNode node, bool isRuntimeAsync, DiagnosticBag diagnostics)
@@ -364,21 +361,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
-        private sealed class OutsideVariablesUsedInside : BoundTreeWalkerWithStackGuardWithoutRecursionOnTheLeftOfBinaryOperator
+        private sealed class OutsideVariablesUsedInside(IteratorAndAsyncCaptureWalker analyzer, MethodSymbol topLevelMethod, IteratorAndAsyncCaptureWalker parent) : BoundTreeWalkerWithStackGuardWithoutRecursionOnTheLeftOfBinaryOperator(parent._recursionDepth)
         {
-            private readonly HashSet<Symbol> _localsInScope;
-            private readonly IteratorAndAsyncCaptureWalker _analyzer;
-            private readonly MethodSymbol _topLevelMethod;
-            private readonly IteratorAndAsyncCaptureWalker _parent;
-
-            public OutsideVariablesUsedInside(IteratorAndAsyncCaptureWalker analyzer, MethodSymbol topLevelMethod, IteratorAndAsyncCaptureWalker parent)
-                : base(parent._recursionDepth)
-            {
-                _analyzer = analyzer;
-                _topLevelMethod = topLevelMethod;
-                _localsInScope = new HashSet<Symbol>();
-                _parent = parent;
-            }
+            private readonly HashSet<Symbol> _localsInScope = new HashSet<Symbol>();
+            private readonly IteratorAndAsyncCaptureWalker _analyzer = analyzer;
+            private readonly MethodSymbol _topLevelMethod = topLevelMethod;
+            private readonly IteratorAndAsyncCaptureWalker _parent = parent;
 
             protected override bool ConvertInsufficientExecutionStackExceptionToCancelledByStackGuardException()
             {

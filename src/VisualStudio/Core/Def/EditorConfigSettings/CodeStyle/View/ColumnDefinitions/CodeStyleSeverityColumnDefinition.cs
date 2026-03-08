@@ -17,14 +17,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Severity)]
-internal sealed class CodeStyleSeverityColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleSeverityColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleSeverityColumnDefinition()
-    {
-    }
-
     public override string Name => Severity;
     public override string DisplayName => ServicesVSResources.Severity;
     public override double MinWidth => 120;

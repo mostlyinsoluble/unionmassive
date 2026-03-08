@@ -13,28 +13,19 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class TransformNode<TInput, TOutput> : IIncrementalGeneratorNode<TOutput>
+    internal sealed class TransformNode<TInput, TOutput>(IIncrementalGeneratorNode<TInput> sourceNode, Func<TInput, CancellationToken, ImmutableArray<TOutput>> userFunc, bool wrapUserFunc = false, IEqualityComparer<TOutput>? comparer = null, string? name = null) : IIncrementalGeneratorNode<TOutput>
     {
         private static readonly string? s_tableType = typeof(TOutput).FullName;
 
-        private readonly Func<TInput, CancellationToken, ImmutableArray<TOutput>> _func;
-        private readonly IEqualityComparer<TOutput>? _comparer;
-        private readonly IIncrementalGeneratorNode<TInput> _sourceNode;
-        private readonly string? _name;
-        private readonly bool _wrapUserFunc;
+        private readonly Func<TInput, CancellationToken, ImmutableArray<TOutput>> _func = userFunc;
+        private readonly IEqualityComparer<TOutput>? _comparer = comparer;
+        private readonly IIncrementalGeneratorNode<TInput> _sourceNode = sourceNode;
+        private readonly string? _name = name;
+        private readonly bool _wrapUserFunc = wrapUserFunc;
 
         public TransformNode(IIncrementalGeneratorNode<TInput> sourceNode, Func<TInput, CancellationToken, TOutput> userFunc, bool wrapUserFunc = false, IEqualityComparer<TOutput>? comparer = null, string? name = null)
             : this(sourceNode, userFunc: (i, token) => ImmutableArray.Create(userFunc(i, token)), wrapUserFunc, comparer, name)
         {
-        }
-
-        public TransformNode(IIncrementalGeneratorNode<TInput> sourceNode, Func<TInput, CancellationToken, ImmutableArray<TOutput>> userFunc, bool wrapUserFunc = false, IEqualityComparer<TOutput>? comparer = null, string? name = null)
-        {
-            _sourceNode = sourceNode;
-            _func = userFunc;
-            _wrapUserFunc = wrapUserFunc;
-            _comparer = comparer;
-            _name = name;
         }
 
         public IIncrementalGeneratorNode<TOutput> WithComparer(IEqualityComparer<TOutput> comparer)

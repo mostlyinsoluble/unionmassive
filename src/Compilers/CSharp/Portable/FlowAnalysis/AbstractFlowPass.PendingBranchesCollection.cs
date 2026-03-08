@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             private ArrayBuilder<PendingBranch> _unlabeledBranches;
             private PooledDictionary<LabelSymbol, ArrayBuilder<PendingBranch>>? _labeledBranches;
 
-            internal PendingBranchesCollection()
-            {
-                _unlabeledBranches = ArrayBuilder<PendingBranch>.GetInstance();
-            }
+            internal PendingBranchesCollection() => _unlabeledBranches = ArrayBuilder<PendingBranch>.GetInstance();
 
             internal void Free()
             {

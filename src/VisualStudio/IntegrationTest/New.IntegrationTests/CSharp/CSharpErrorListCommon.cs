@@ -14,13 +14,8 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.NewIntegrationTests.CSharp;
 
-public abstract class CSharpErrorListCommon : AbstractEditorTest
+public abstract class CSharpErrorListCommon(string templateName) : AbstractEditorTest(nameof(CSharpErrorListCommon), templateName)
 {
-    protected CSharpErrorListCommon(string templateName)
-        : base(nameof(CSharpErrorListCommon), templateName)
-    {
-    }
-
     protected override string LanguageName => LanguageNames.CSharp;
 
     [IdeFact(Skip = "https://github.com/dotnet/roslyn/issues/61367")]

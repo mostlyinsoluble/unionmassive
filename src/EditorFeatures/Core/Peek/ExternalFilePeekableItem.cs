@@ -10,20 +10,13 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 
-internal sealed class ExternalFilePeekableItem : PeekableItem
+internal sealed class ExternalFilePeekableItem(
+    FileLinePositionSpan span,
+    IPeekRelationship relationship,
+    IPeekResultFactory peekResultFactory) : PeekableItem(peekResultFactory)
 {
-    private readonly FileLinePositionSpan _span;
-    private readonly IPeekRelationship _relationship;
-
-    public ExternalFilePeekableItem(
-        FileLinePositionSpan span,
-        IPeekRelationship relationship,
-        IPeekResultFactory peekResultFactory)
-        : base(peekResultFactory)
-    {
-        _span = span;
-        _relationship = relationship;
-    }
+    private readonly FileLinePositionSpan _span = span;
+    private readonly IPeekRelationship _relationship = relationship;
 
     public override IEnumerable<IPeekRelationship> Relationships
         => [_relationship];
@@ -31,12 +24,9 @@ internal sealed class ExternalFilePeekableItem : PeekableItem
     public override IPeekResultSource GetOrCreateResultSource(string relationshipName)
         => new ResultSource(this);
 
-    private sealed class ResultSource : IPeekResultSource
+    private sealed class ResultSource(ExternalFilePeekableItem peekableItem) : IPeekResultSource
     {
-        private readonly ExternalFilePeekableItem _peekableItem;
-
-        public ResultSource(ExternalFilePeekableItem peekableItem)
-            => _peekableItem = peekableItem;
+        private readonly ExternalFilePeekableItem _peekableItem = peekableItem;
 
         public void FindResults(string relationshipName, IPeekResultCollection resultCollection, CancellationToken cancellationToken, IFindPeekResultsCallback callback)
         {

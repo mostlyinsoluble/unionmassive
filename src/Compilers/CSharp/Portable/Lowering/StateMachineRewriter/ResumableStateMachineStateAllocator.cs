@@ -16,16 +16,16 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// Allocates resumable states, i.e. states that resume execution of the state machine after await expression or yield return.
     /// </summary>
-    internal sealed class ResumableStateMachineStateAllocator
+    internal sealed class ResumableStateMachineStateAllocator(VariableSlotAllocator? slotAllocator, StateMachineState firstState, bool increasing)
     {
-        private readonly VariableSlotAllocator? _slotAllocator;
-        private readonly bool _increasing;
-        private readonly StateMachineState _firstState;
+        private readonly VariableSlotAllocator? _slotAllocator = slotAllocator;
+        private readonly bool _increasing = increasing;
+        private readonly StateMachineState _firstState = firstState;
 
         /// <summary>
         /// The number of the next generated resumable state (i.e. state that resumes execution of the state machine after await expression or yield return).
         /// </summary>
-        private StateMachineState _nextState;
+        private StateMachineState _nextState = slotAllocator?.GetFirstUnusedStateMachineState(increasing) ?? firstState;
 
 #if DEBUG
         /// <summary>
@@ -36,16 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// EnC support: number of states in this state machine that match states of the previous generation state machine.
         /// </summary>
-        private int _matchedStateCount;
-
-        public ResumableStateMachineStateAllocator(VariableSlotAllocator? slotAllocator, StateMachineState firstState, bool increasing)
-        {
-            _increasing = increasing;
-            _slotAllocator = slotAllocator;
-            _matchedStateCount = 0;
-            _firstState = firstState;
-            _nextState = slotAllocator?.GetFirstUnusedStateMachineState(increasing) ?? firstState;
-        }
+        private int _matchedStateCount = 0;
 
         public StateMachineState AllocateState(SyntaxNode awaitOrYieldReturnSyntax, AwaitDebugId awaitId)
         {

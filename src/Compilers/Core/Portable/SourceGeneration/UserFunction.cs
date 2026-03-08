@@ -11,26 +11,16 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class UserFunctionException : Exception
+    internal sealed class UserFunctionException(Exception innerException) : Exception("User provided code threw an exception", innerException)
     {
         public new Exception InnerException => base.InnerException!;
-
-        public UserFunctionException(Exception innerException)
-            : base("User provided code threw an exception", innerException)
-        {
-        }
     }
 
-    internal sealed class WrappedUserComparer<T> : IEqualityComparer<T>
+    internal sealed class WrappedUserComparer<T>(IEqualityComparer<T> inner) : IEqualityComparer<T>
     {
-        private readonly IEqualityComparer<T> _inner;
+        private readonly IEqualityComparer<T> _inner = inner;
 
         public static WrappedUserComparer<T> Default { get; } = new WrappedUserComparer<T>(EqualityComparer<T>.Default);
-
-        public WrappedUserComparer(IEqualityComparer<T> inner)
-        {
-            _inner = inner;
-        }
 
         public bool Equals(T? x, T? y)
         {

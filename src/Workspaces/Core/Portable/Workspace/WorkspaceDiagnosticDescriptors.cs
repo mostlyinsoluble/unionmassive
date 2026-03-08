@@ -10,9 +10,7 @@ internal sealed class WorkspaceDiagnosticDescriptors
 
     internal const string ErrorReadingFileContentId = "IDE1100";
 
-    static WorkspaceDiagnosticDescriptors()
-    {
-        ErrorReadingFileContent = new DiagnosticDescriptor(
+    static WorkspaceDiagnosticDescriptors() => ErrorReadingFileContent = new DiagnosticDescriptor(
             id: ErrorReadingFileContentId,
             title: new LocalizableResourceString(nameof(WorkspacesResources.Workspace_error), WorkspacesResources.ResourceManager, typeof(WorkspacesResources)),
             messageFormat: new LocalizableResourceString(nameof(WorkspacesResources.Error_reading_content_of_source_file_0_1), WorkspacesResources.ResourceManager, typeof(WorkspacesResources)),
@@ -20,5 +18,4 @@ internal sealed class WorkspaceDiagnosticDescriptors
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             customTags: [WellKnownDiagnosticTags.NotConfigurable]);
-    }
 }

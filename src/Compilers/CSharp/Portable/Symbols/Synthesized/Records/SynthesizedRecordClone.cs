@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public SynthesizedRecordClone(
             SourceMemberContainerTypeSymbol containingType,
             int memberOffset)
-            : base(containingType, WellKnownMemberNames.CloneMethodName, memberOffset, MakeDeclarationModifiers(containingType))
-        {
-            Debug.Assert(!containingType.IsRecordStruct);
-        }
+            : base(containingType, WellKnownMemberNames.CloneMethodName, memberOffset, MakeDeclarationModifiers(containingType)) => Debug.Assert(!containingType.IsRecordStruct);
 
         private static DeclarationModifiers MakeDeclarationModifiers(SourceMemberContainerTypeSymbol containingType)
         {

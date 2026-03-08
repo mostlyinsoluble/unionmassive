@@ -22,10 +22,7 @@ internal sealed class ClassificationFormatDefinitions
     {
         [ImportingConstructor]
         [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public ReducedEmphasisTextFormat()
-        {
-            this.ForegroundOpacity = 0.65f;
-        }
+        public ReducedEmphasisTextFormat() => this.ForegroundOpacity = 0.65f;
     }
 }
 

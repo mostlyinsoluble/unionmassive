@@ -154,16 +154,10 @@ internal sealed class NamingStyleViewModel : AbstractNotifyPropertyChanged, INam
     // For screen readers
     public override string ToString() => ItemName;
 
-    public sealed class CapitalizationDisplay
+    public sealed class CapitalizationDisplay(Capitalization capitalization, string name)
     {
-        public Capitalization Capitalization { get; set; }
-        public string Name { get; set; }
-
-        public CapitalizationDisplay(Capitalization capitalization, string name)
-        {
-            Capitalization = capitalization;
-            Name = name;
-        }
+        public Capitalization Capitalization { get; set; } = capitalization;
+        public string Name { get; set; } = name;
 
         // For screen readers
         public override string ToString()

@@ -17,10 +17,7 @@ internal sealed partial class CSharpDefaultExpressionReducer
     private sealed class Rewriter : AbstractReductionRewriter
     {
         public Rewriter(ObjectPool<IReductionRewriter> pool)
-            : base(pool)
-        {
-            _simplifyDefaultExpression = SimplifyDefaultExpression;
-        }
+            : base(pool) => _simplifyDefaultExpression = SimplifyDefaultExpression;
 
         private readonly Func<DefaultExpressionSyntax, SemanticModel, CSharpSimplifierOptions, CancellationToken, SyntaxNode> _simplifyDefaultExpression;
 
@@ -32,7 +29,7 @@ internal sealed partial class CSharpDefaultExpressionReducer
         {
             var preferSimpleDefaultExpression = options.PreferSimpleDefaultExpression.Value;
 
-            if (node.CanReplaceWithDefaultLiteral(ParseOptions, preferSimpleDefaultExpression, semanticModel, cancellationToken))
+            if (node.CanReplaceWithDefaultLiteral(preferSimpleDefaultExpression, semanticModel, cancellationToken))
             {
                 return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression)
                                     .WithTriviaFrom(node);

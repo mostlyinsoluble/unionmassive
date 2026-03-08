@@ -10,11 +10,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
 [ExportLanguageService(typeof(IFormattingService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpFormattingService : AbstractFormattingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpFormattingService() : AbstractFormattingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpFormattingService()
-    {
-    }
 }

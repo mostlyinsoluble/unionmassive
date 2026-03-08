@@ -199,10 +199,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class EventSymbolAdapter
     {
-        internal EventSymbolAdapter(EventSymbol underlyingEventSymbol)
-        {
-            AdaptedEventSymbol = underlyingEventSymbol;
-        }
+        internal EventSymbolAdapter(EventSymbol underlyingEventSymbol) => AdaptedEventSymbol = underlyingEventSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedEventSymbol;
         internal EventSymbol AdaptedEventSymbol { get; }

@@ -9,14 +9,9 @@ using Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespace.ViewModel;
 
-internal sealed class TabSizeViewModel : EnumSettingViewModel<TabSizeSettings>
+internal sealed class TabSizeViewModel(Setting setting) : EnumSettingViewModel<TabSizeSettings>
 {
-    private readonly Setting _setting;
-
-    public TabSizeViewModel(Setting setting)
-    {
-        _setting = setting;
-    }
+    private readonly Setting _setting = setting;
 
     protected override void ChangePropertyTo(TabSizeSettings newValue)
         => _setting.SetValue((int)newValue);

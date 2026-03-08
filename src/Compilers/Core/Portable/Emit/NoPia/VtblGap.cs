@@ -9,16 +9,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Emit.NoPia
 {
-    internal sealed class VtblGap : Cci.IEmbeddedDefinition, Cci.IMethodDefinition
+    internal sealed class VtblGap(Cci.ITypeDefinition containingType, string name) : Cci.IEmbeddedDefinition, Cci.IMethodDefinition
     {
-        public readonly Cci.ITypeDefinition ContainingType;
-        private readonly string _name;
-
-        public VtblGap(Cci.ITypeDefinition containingType, string name)
-        {
-            this.ContainingType = containingType;
-            _name = name;
-        }
+        public readonly Cci.ITypeDefinition ContainingType = containingType;
+        private readonly string _name = name;
 
         bool Cci.IDefinition.IsEncDeleted
             => false;

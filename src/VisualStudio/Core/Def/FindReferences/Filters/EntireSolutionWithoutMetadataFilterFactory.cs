@@ -17,14 +17,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.FindReferences.
 [Replaces(PredefinedScopeFilterNames.EntireSolutionScopeFilter)]
 [Name(nameof(EntireSolutionWithoutMetadataFilterFactory))]
 [Order(After = PredefinedScopeFilterNames.EntireSolutionScopeFilter)]
-internal sealed class EntireSolutionWithoutMetadataFilterFactory : IReplacingScopeFilterFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EntireSolutionWithoutMetadataFilterFactory() : IReplacingScopeFilterFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EntireSolutionWithoutMetadataFilterFactory()
-    {
-    }
-
     public IErrorListFilterHandler? CreateFilter(IWpfTableControl tableControl)
     {
         // We're only replacing the "Entire Solution" filter, and not creating a new one.

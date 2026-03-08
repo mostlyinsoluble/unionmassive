@@ -10,15 +10,9 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 {
     public sealed partial class CompilationVerifier
     {
-        public sealed class EmitException : Exception
+        public sealed class EmitException(ImmutableArray<Diagnostic> diagnostics, string? directory) : Exception(ExceptionHelper.GetMessageFromResult(diagnostics, directory))
         {
-            public ImmutableArray<Diagnostic> Diagnostics { get; }
-
-            public EmitException(ImmutableArray<Diagnostic> diagnostics, string? directory)
-                : base(ExceptionHelper.GetMessageFromResult(diagnostics, directory))
-            {
-                this.Diagnostics = diagnostics;
-            }
+            public ImmutableArray<Diagnostic> Diagnostics { get; } = diagnostics;
         }
     }
 }

@@ -383,10 +383,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class TypeParameterSymbolAdapter
     {
-        internal TypeParameterSymbolAdapter(TypeParameterSymbol underlyingTypeParameterSymbol)
-        {
-            AdaptedTypeParameterSymbol = underlyingTypeParameterSymbol;
-        }
+        internal TypeParameterSymbolAdapter(TypeParameterSymbol underlyingTypeParameterSymbol) => AdaptedTypeParameterSymbol = underlyingTypeParameterSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedTypeParameterSymbol;
         internal TypeParameterSymbol AdaptedTypeParameterSymbol { get; }

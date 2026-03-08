@@ -18,10 +18,12 @@ namespace Microsoft.VisualStudio.LanguageServices.DocumentOutline;
 /// INotifyPropertyChanged notifications being marshalled to the correct thread by WPF if there needs to be a change
 /// to the visual presentation.
 /// </summary>
-internal sealed class DocumentSymbolDataViewModel : INotifyPropertyChanged, IEquatable<DocumentSymbolDataViewModel>
+internal sealed class DocumentSymbolDataViewModel(
+    DocumentSymbolData data,
+    ImmutableArray<DocumentSymbolDataViewModel> children) : INotifyPropertyChanged, IEquatable<DocumentSymbolDataViewModel>
 {
-    public DocumentSymbolData Data { get; }
-    public ImmutableArray<DocumentSymbolDataViewModel> Children { get; }
+    public DocumentSymbolData Data { get; } = data;
+    public ImmutableArray<DocumentSymbolDataViewModel> Children { get; } = children;
 
     /// <summary>
     /// Necessary because we cannot convert to this type dynamically in WPF.
@@ -39,14 +41,6 @@ internal sealed class DocumentSymbolDataViewModel : INotifyPropertyChanged, IEqu
         get;
         set => SetProperty(ref field, value);
     } = false;
-
-    public DocumentSymbolDataViewModel(
-        DocumentSymbolData data,
-        ImmutableArray<DocumentSymbolDataViewModel> children)
-    {
-        Data = data;
-        Children = children;
-    }
 
     private static readonly PropertyChangedEventArgs _isExpandedPropertyChangedEventArgs = new(nameof(IsExpanded));
     private static readonly PropertyChangedEventArgs _isSelectedPropertyChangedEventArgs = new(nameof(IsSelected));

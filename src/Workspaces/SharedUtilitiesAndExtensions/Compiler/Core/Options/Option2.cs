@@ -52,10 +52,7 @@ internal sealed partial class Option2<T> : ISingleValuedOption<T>
         string? languageName = null,
         bool isEditorConfigOption = false,
         EditorConfigValueSerializer<T>? serializer = null)
-        : this(new OptionDefinition<T>(defaultValue, serializer, group, name, storageMapping: null, isEditorConfigOption), languageName, publicOptionFactory: null)
-    {
-        VerifyNamingConvention();
-    }
+        : this(new OptionDefinition<T>(defaultValue, serializer, group, name, storageMapping: null, isEditorConfigOption), languageName, publicOptionFactory: null) => VerifyNamingConvention();
 
     [Conditional("DEBUG")]
     private void VerifyNamingConvention()

@@ -12,15 +12,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// It is an error if the override is declared explicitly. The synthesized override
     /// returns Equals(other as R) where R is the record type.
     /// </summary>
-    internal sealed class SynthesizedRecordObjEquals : SynthesizedRecordObjectMethod
+    internal sealed class SynthesizedRecordObjEquals(SourceMemberContainerTypeSymbol containingType, MethodSymbol typedRecordEquals, int memberOffset) : SynthesizedRecordObjectMethod(containingType, WellKnownMemberNames.ObjectEquals, memberOffset, isReadOnly: containingType.IsRecordStruct)
     {
-        private readonly MethodSymbol _typedRecordEquals;
-
-        public SynthesizedRecordObjEquals(SourceMemberContainerTypeSymbol containingType, MethodSymbol typedRecordEquals, int memberOffset)
-            : base(containingType, WellKnownMemberNames.ObjectEquals, memberOffset, isReadOnly: containingType.IsRecordStruct)
-        {
-            _typedRecordEquals = typedRecordEquals;
-        }
+        private readonly MethodSymbol _typedRecordEquals = typedRecordEquals;
 
         protected override SpecialMember OverriddenSpecialMember => SpecialMember.System_Object__Equals;
 

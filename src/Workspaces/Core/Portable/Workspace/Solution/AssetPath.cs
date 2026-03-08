@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Serialization;
 /// having to search the entire solution.
 /// </summary>
 [DataContract]
-internal readonly struct AssetPath
+internal readonly struct AssetPath(AssetPathKind kind, ProjectId? projectId = null, DocumentId? documentId = null)
 {
     /// <summary>
     /// Special instance, allowed only in tests/debug-asserts, that can do a full lookup across the entire checksum
@@ -22,26 +22,19 @@ internal readonly struct AssetPath
     public static readonly AssetPath FullLookupForTesting = AssetPathKind.SolutionCompilationState | AssetPathKind.SolutionState | AssetPathKind.Projects | AssetPathKind.Documents;
 
     [DataMember(Order = 0)]
-    private readonly AssetPathKind _kind;
+    private readonly AssetPathKind _kind = kind;
 
     /// <summary>
     /// If not null, the search should only descend into the single project with this id.
     /// </summary>
     [DataMember(Order = 1)]
-    public readonly ProjectId? ProjectId;
+    public readonly ProjectId? ProjectId = projectId;
 
     /// <summary>
     /// If not null, the search should only descend into the single document with this id.
     /// </summary>
     [DataMember(Order = 2)]
-    public readonly DocumentId? DocumentId;
-
-    public AssetPath(AssetPathKind kind, ProjectId? projectId = null, DocumentId? documentId = null)
-    {
-        _kind = kind;
-        ProjectId = projectId;
-        DocumentId = documentId;
-    }
+    public readonly DocumentId? DocumentId = documentId;
 
     public AssetPath(AssetPathKind kind, ProjectId? projectId)
         : this(kind, projectId, documentId: null)

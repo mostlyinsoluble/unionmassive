@@ -9,19 +9,11 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library;
 
-internal abstract partial class AbstractLibraryManager : IVsCoTaskMemFreeMyStrings
+internal abstract partial class AbstractLibraryManager(Guid libraryGuid, IComponentModel componentModel, IServiceProvider serviceProvider) : IVsCoTaskMemFreeMyStrings
 {
-    internal readonly Guid LibraryGuid;
+    internal readonly Guid LibraryGuid = libraryGuid;
 
-    public readonly IThreadingContext ThreadingContext;
-    public readonly IComponentModel ComponentModel;
-    public readonly IServiceProvider ServiceProvider;
-
-    protected AbstractLibraryManager(Guid libraryGuid, IComponentModel componentModel, IServiceProvider serviceProvider)
-    {
-        LibraryGuid = libraryGuid;
-        ComponentModel = componentModel;
-        ServiceProvider = serviceProvider;
-        ThreadingContext = componentModel.GetService<IThreadingContext>();
-    }
+    public readonly IThreadingContext ThreadingContext = componentModel.GetService<IThreadingContext>();
+    public readonly IComponentModel ComponentModel = componentModel;
+    public readonly IServiceProvider ServiceProvider = serviceProvider;
 }

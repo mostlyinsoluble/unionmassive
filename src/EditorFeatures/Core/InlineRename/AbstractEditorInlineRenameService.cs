@@ -11,14 +11,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename;
 
-internal abstract partial class AbstractEditorInlineRenameService : IEditorInlineRenameService
+internal abstract partial class AbstractEditorInlineRenameService(IEnumerable<IRefactorNotifyService> refactorNotifyServices) : IEditorInlineRenameService
 {
-    private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices;
-
-    protected AbstractEditorInlineRenameService(IEnumerable<IRefactorNotifyService> refactorNotifyServices)
-    {
-        _refactorNotifyServices = refactorNotifyServices;
-    }
+    private readonly IEnumerable<IRefactorNotifyService> _refactorNotifyServices = refactorNotifyServices;
 
     public bool IsEnabled => true;
 

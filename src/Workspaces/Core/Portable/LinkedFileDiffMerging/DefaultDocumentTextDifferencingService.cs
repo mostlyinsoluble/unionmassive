@@ -13,14 +13,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis;
 
 [ExportWorkspaceService(typeof(IDocumentTextDifferencingService), ServiceLayer.Default), Shared]
-internal sealed class DefaultDocumentTextDifferencingService : IDocumentTextDifferencingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultDocumentTextDifferencingService() : IDocumentTextDifferencingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultDocumentTextDifferencingService()
-    {
-    }
-
     public Task<ImmutableArray<TextChange>> GetTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)
         => GetTextChangesAsync(oldDocument, newDocument, TextDifferenceTypes.Word, cancellationToken);
 

@@ -14,23 +14,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectB
 
 using Workspace = Microsoft.CodeAnalysis.Workspace;
 
-internal abstract class ObjectListItem
+internal abstract class ObjectListItem(
+    ProjectId projectId,
+    StandardGlyphGroup glyphGroup,
+    StandardGlyphItem glyphItem = StandardGlyphItem.GlyphItemPublic,
+    bool isHidden = false)
 {
-    protected ObjectListItem(
-        ProjectId projectId,
-        StandardGlyphGroup glyphGroup,
-        StandardGlyphItem glyphItem = StandardGlyphItem.GlyphItemPublic,
-        bool isHidden = false)
-    {
-        ProjectId = projectId;
-
-        GlyphIndex = glyphGroup < StandardGlyphGroup.GlyphGroupError
-            ? (ushort)((int)glyphGroup + (int)glyphItem)
-            : (ushort)glyphGroup;
-
-        IsHidden = isHidden;
-    }
-
     internal void SetParentList(ObjectList parentList)
     {
         Debug.Assert(ParentList == null);
@@ -68,7 +57,7 @@ internal abstract class ObjectListItem
         }
     }
 
-    public ProjectId ProjectId { get; }
+    public ProjectId ProjectId { get; } = projectId;
 
     public async Task<Compilation> GetCompilationAsync(Workspace workspace, CancellationToken cancellationToken)
     {
@@ -79,7 +68,9 @@ internal abstract class ObjectListItem
         return await project.GetCompilationAsync(cancellationToken).ConfigureAwait(true);
     }
 
-    public ushort GlyphIndex { get; }
+    public ushort GlyphIndex { get; } = glyphGroup < StandardGlyphGroup.GlyphGroupError
+            ? (ushort)((int)glyphGroup + (int)glyphItem)
+            : (ushort)glyphGroup;
 
-    public bool IsHidden { get; }
+    public bool IsHidden { get; } = isHidden;
 }

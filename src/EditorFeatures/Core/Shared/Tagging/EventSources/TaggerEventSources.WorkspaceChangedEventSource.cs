@@ -21,8 +21,7 @@ internal partial class TaggerEventSources
         public WorkspaceChangedEventSource(
             ITextBuffer subjectBuffer,
             IAsynchronousOperationListener asyncListener)
-            : base(subjectBuffer)
-        {
+            : base(subjectBuffer) =>
             // That will ensure that even if we get a flurry of workspace events that we
             // only process a tag change once.
             _asyncDelay = new AsyncBatchingWorkQueue(
@@ -33,7 +32,6 @@ internal partial class TaggerEventSources
                 },
                 asyncListener,
                 CancellationToken.None);
-        }
 
         protected override void ConnectToWorkspace(Workspace workspace)
         {

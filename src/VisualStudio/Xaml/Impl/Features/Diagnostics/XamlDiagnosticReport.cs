@@ -6,14 +6,8 @@ using System.Collections.Immutable;
 
 namespace Microsoft.VisualStudio.LanguageServices.Xaml.Features.Diagnostics;
 
-internal sealed class XamlDiagnosticReport
+internal sealed class XamlDiagnosticReport(string? resultId = null, ImmutableArray<XamlDiagnostic>? diagnostics = null)
 {
-    public string? ResultId { get; set; }
-    public ImmutableArray<XamlDiagnostic>? Diagnostics { get; set; }
-
-    public XamlDiagnosticReport(string? resultId = null, ImmutableArray<XamlDiagnostic>? diagnostics = null)
-    {
-        this.ResultId = resultId;
-        this.Diagnostics = diagnostics;
-    }
+    public string? ResultId { get; set; } = resultId;
+    public ImmutableArray<XamlDiagnostic>? Diagnostics { get; set; } = diagnostics;
 }

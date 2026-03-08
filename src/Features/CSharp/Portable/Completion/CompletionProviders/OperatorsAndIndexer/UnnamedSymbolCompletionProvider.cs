@@ -27,7 +27,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 /// </summary>
 [ExportCompletionProvider(nameof(UnnamedSymbolCompletionProvider), LanguageNames.CSharp), Shared]
 [ExtensionOrder(After = nameof(SymbolCompletionProvider))]
-internal sealed partial class UnnamedSymbolCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class UnnamedSymbolCompletionProvider() : LSPCompletionProvider
 {
     /// <summary>
     /// CompletionItems for indexers/operators should be sorted below other suggestions like methods or properties
@@ -50,12 +52,6 @@ internal sealed partial class UnnamedSymbolCompletionProvider : LSPCompletionPro
     /// synthesized, so there will be no symbol we can recover after the fact in <see cref="GetDescriptionAsync"/>.
     /// </summary>
     private const string DocumentationCommentXmlName = "DocumentationCommentXml";
-
-    [ImportingConstructor]
-    [System.Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public UnnamedSymbolCompletionProvider()
-    {
-    }
 
     internal override string Language => LanguageNames.CSharp;
 

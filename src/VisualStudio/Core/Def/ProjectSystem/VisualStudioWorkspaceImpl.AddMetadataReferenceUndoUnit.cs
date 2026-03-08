@@ -13,18 +13,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class AddMetadataReferenceUndoUnit : AbstractAddRemoveUndoUnit
+    private sealed class AddMetadataReferenceUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        ProjectId fromProjectId,
+        string filePath) : AbstractAddRemoveUndoUnit(workspace, fromProjectId)
     {
-        private readonly string _filePath;
-
-        public AddMetadataReferenceUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            ProjectId fromProjectId,
-            string filePath)
-            : base(workspace, fromProjectId)
-        {
-            _filePath = filePath;
-        }
+        private readonly string _filePath = filePath;
 
         public override void Do(IOleUndoManager pUndoManager)
         {

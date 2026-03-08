@@ -23,22 +23,16 @@ namespace Microsoft.CodeAnalysis.MSBuild;
 /// scenarios, we are limited to using only what is either in .NET or can be easily made buildable in Source Build. Thus existing solutions like StreamJsonRpc 
 /// are out. If at some point there is a standard RPC mechanism exposed in .NET or Source Build, we should delete this and use that instead.
 /// </remarks>
-internal sealed class RpcServer
+internal sealed class RpcServer(PipeStream stream)
 {
-    private readonly TextWriter _streamWriter;
+    private readonly TextWriter _streamWriter = new StreamWriter(stream, JsonSettings.StreamEncoding);
     private readonly SemaphoreSlim _sendingStreamSemaphore = new(initialCount: 1);
-    private readonly TextReader _streamReader;
+    private readonly TextReader _streamReader = new StreamReader(stream, JsonSettings.StreamEncoding);
 
     private readonly ConcurrentDictionary<int, object> _rpcTargets = [];
     private volatile int _nextRpcTargetIndex = -1; // We'll start at -1 so the first value becomes zero
 
     private readonly CancellationTokenSource _shutdownTokenSource = new();
-
-    public RpcServer(PipeStream stream)
-    {
-        _streamWriter = new StreamWriter(stream, JsonSettings.StreamEncoding);
-        _streamReader = new StreamReader(stream, JsonSettings.StreamEncoding);
-    }
 
     public int AddTarget(object rpcTarget)
     {

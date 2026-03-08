@@ -8,13 +8,10 @@ using Microsoft.CodeAnalysis.Remote;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
     [DataContract]
-    internal readonly struct RazorRemoteServiceCallbackIdWrapper
+    internal readonly struct RazorRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
     {
         [DataMember(Order = 0)]
-        internal RemoteServiceCallbackId UnderlyingObject { get; }
-
-        public RazorRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
-            => UnderlyingObject = underlyingObject;
+        internal RemoteServiceCallbackId UnderlyingObject { get; } = underlyingObject;
 
         public static implicit operator RazorRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId id)
             => new(id);

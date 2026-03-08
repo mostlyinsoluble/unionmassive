@@ -44,10 +44,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
         /// Initializes a <see cref="ConstructorMapper"/> using constant <see cref="PropertySetAbstractValueKind"/>s whenever the type being tracked by PropertySetAnalysis is instantiated.
         /// </summary>
         /// <param name="propertyAbstractValues">Constant <see cref="PropertySetAbstractValueKind"/>s, in the same order that the corresponding <see cref="PropertyMapperCollection"/> was initialized with.</param>
-        public ConstructorMapper(ImmutableArray<PropertySetAbstractValueKind> propertyAbstractValues)
-        {
-            this.PropertyAbstractValues = propertyAbstractValues;
-        }
+        public ConstructorMapper(ImmutableArray<PropertySetAbstractValueKind> propertyAbstractValues) => this.PropertyAbstractValues = propertyAbstractValues;
 
         /// <summary>
         /// Initializes a <see cref="ConstructorMapper"/> that maps a constructor invocation's arguments' <see cref="ValueContentAbstractValue"/>s to <see cref="PropertySetAbstractValueKind"/>s for the properties being tracked by PropertySetAnalysis.

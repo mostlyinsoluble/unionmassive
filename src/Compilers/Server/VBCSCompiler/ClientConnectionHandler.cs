@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
         internal ICompilerServerHost CompilerServerHost { get; }
         internal ICompilerServerLogger Logger => CompilerServerHost.Logger;
 
-        internal ClientConnectionHandler(ICompilerServerHost compilerServerHost)
-        {
-            CompilerServerHost = compilerServerHost;
-        }
+        internal ClientConnectionHandler(ICompilerServerHost compilerServerHost) => CompilerServerHost = compilerServerHost;
 
         /// <summary>
         /// Handles a client connection. The returned task here will never fail. Instead all exceptions will be wrapped

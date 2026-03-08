@@ -8,27 +8,21 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeAnalysis.CodeGeneration;
 
-internal abstract class CodeGenerationAbstractMethodSymbol : CodeGenerationSymbol, IMethodSymbol
+internal abstract class CodeGenerationAbstractMethodSymbol(
+    INamedTypeSymbol containingType,
+    ImmutableArray<AttributeData> attributes,
+    Accessibility declaredAccessibility,
+    DeclarationModifiers modifiers,
+    string name,
+    ImmutableArray<AttributeData> returnTypeAttributes,
+    string documentationCommentXml = null) : CodeGenerationSymbol(containingType?.ContainingAssembly, containingType, attributes, declaredAccessibility, modifiers, name, documentationCommentXml), IMethodSymbol
 {
     public new IMethodSymbol OriginalDefinition { get; protected set; }
 
-    private readonly ImmutableArray<AttributeData> _returnTypeAttributes;
+    private readonly ImmutableArray<AttributeData> _returnTypeAttributes = returnTypeAttributes.NullToEmpty();
 
     public virtual ImmutableArray<AttributeData> GetReturnTypeAttributes()
         => _returnTypeAttributes;
-
-    protected CodeGenerationAbstractMethodSymbol(
-        INamedTypeSymbol containingType,
-        ImmutableArray<AttributeData> attributes,
-        Accessibility declaredAccessibility,
-        DeclarationModifiers modifiers,
-        string name,
-        ImmutableArray<AttributeData> returnTypeAttributes,
-        string documentationCommentXml = null)
-        : base(containingType?.ContainingAssembly, containingType, attributes, declaredAccessibility, modifiers, name, documentationCommentXml)
-    {
-        _returnTypeAttributes = returnTypeAttributes.NullToEmpty();
-    }
 
     public abstract int Arity { get; }
     public abstract System.Reflection.MethodImplAttributes MethodImplementationFlags { get; }

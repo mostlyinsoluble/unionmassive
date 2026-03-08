@@ -242,14 +242,10 @@ public abstract partial class AbstractNavigateToTests
             => [_workspace.CurrentSolution.Projects.First().DocumentIds.First()];
 
         [ExportWorkspaceServiceFactory(typeof(IDocumentTrackingService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-        public sealed class Factory : IWorkspaceServiceFactory
+        [method: ImportingConstructor]
+        [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+        public sealed class Factory() : IWorkspaceServiceFactory
         {
-            [ImportingConstructor]
-            [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-            public Factory()
-            {
-            }
-
             [Obsolete(MefConstruction.FactoryMethodMessage, error: true)]
             public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
                 => new FirstDocIsVisibleDocumentTrackingService(workspaceServices.Workspace);

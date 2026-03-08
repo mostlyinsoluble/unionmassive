@@ -10,12 +10,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
 {
-    internal sealed class RazorDocumentExcerptServiceWrapper : IDocumentExcerptService
+    internal sealed class RazorDocumentExcerptServiceWrapper(IRazorDocumentExcerptServiceImplementation impl) : IDocumentExcerptService
     {
-        private readonly IRazorDocumentExcerptServiceImplementation _impl;
-
-        public RazorDocumentExcerptServiceWrapper(IRazorDocumentExcerptServiceImplementation impl)
-            => _impl = impl;
+        private readonly IRazorDocumentExcerptServiceImplementation _impl = impl;
 
         public async Task<ExcerptResult?> TryExcerptAsync(Document document, TextSpan span, ExcerptMode mode, ClassificationOptions classificationOptions, CancellationToken cancellationToken)
         {

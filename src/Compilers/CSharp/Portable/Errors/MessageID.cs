@@ -315,10 +315,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private readonly MessageID _id;
 
-        internal LocalizableErrorArgument(MessageID id)
-        {
-            _id = id;
-        }
+        internal LocalizableErrorArgument(MessageID id) => _id = id;
 
         public override string ToString()
         {

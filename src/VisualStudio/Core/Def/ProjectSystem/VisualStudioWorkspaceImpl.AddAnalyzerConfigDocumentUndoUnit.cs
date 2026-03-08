@@ -9,16 +9,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class AddAnalyzerConfigDocumentUndoUnit : AbstractAddDocumentUndoUnit
+    private sealed class AddAnalyzerConfigDocumentUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        DocumentInfo docInfo,
+        SourceText text) : AbstractAddDocumentUndoUnit(workspace, docInfo, text)
     {
-        public AddAnalyzerConfigDocumentUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            DocumentInfo docInfo,
-            SourceText text)
-            : base(workspace, docInfo, text)
-        {
-        }
-
         protected override Project AddDocument(Project fromProject)
             => fromProject.AddAnalyzerConfigDocument(DocumentInfo.Name, Text, DocumentInfo.Folders, DocumentInfo.FilePath).Project;
     }

@@ -7,15 +7,9 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser.Lists;
 
-internal sealed class FolderListItem : ObjectListItem
+internal sealed class FolderListItem(ProjectId projectId, string displayText) : ObjectListItem(projectId, StandardGlyphGroup.GlyphClosedFolder)
 {
-    private readonly string _displayText;
-
-    public FolderListItem(ProjectId projectId, string displayText)
-        : base(projectId, StandardGlyphGroup.GlyphClosedFolder)
-    {
-        _displayText = displayText;
-    }
+    private readonly string _displayText = displayText;
 
     public override string DisplayText
     {

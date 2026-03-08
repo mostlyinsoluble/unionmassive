@@ -14,10 +14,7 @@ internal sealed partial class VisualStudioDiagnosticAnalyzerProvider
     {
         private readonly IAnalyzerAssemblyLoader _fallbackLoader;
 
-        public Loader()
-        {
-            _fallbackLoader = new AnalyzerAssemblyLoader();
-        }
+        public Loader() => _fallbackLoader = new AnalyzerAssemblyLoader();
 
         public void AddDependencyLocation(string fullPath)
         {

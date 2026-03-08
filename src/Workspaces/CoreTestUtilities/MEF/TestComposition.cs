@@ -26,18 +26,11 @@ public sealed class TestComposition
 
     private static readonly Dictionary<CacheKey, IExportProviderFactory> s_factoryCache = [];
 
-    private readonly struct CacheKey : IEquatable<CacheKey>
+    private readonly struct CacheKey(ImmutableHashSet<Assembly> assemblies, ImmutableHashSet<Type> parts, ImmutableHashSet<Type> excludedPartTypes) : IEquatable<CacheKey>
     {
-        private readonly ImmutableArray<Assembly> _assemblies;
-        private readonly ImmutableArray<Type> _parts;
-        private readonly ImmutableArray<Type> _excludedPartTypes;
-
-        public CacheKey(ImmutableHashSet<Assembly> assemblies, ImmutableHashSet<Type> parts, ImmutableHashSet<Type> excludedPartTypes)
-        {
-            _assemblies = [.. assemblies.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
-            _parts = [.. parts.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
-            _excludedPartTypes = [.. excludedPartTypes.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
-        }
+        private readonly ImmutableArray<Assembly> _assemblies = [.. assemblies.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
+        private readonly ImmutableArray<Type> _parts = [.. parts.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
+        private readonly ImmutableArray<Type> _excludedPartTypes = [.. excludedPartTypes.OrderBy((a, b) => string.CompareOrdinal(a.FullName, b.FullName))];
 
         public override bool Equals(object? obj)
             => obj is CacheKey key && Equals(key);

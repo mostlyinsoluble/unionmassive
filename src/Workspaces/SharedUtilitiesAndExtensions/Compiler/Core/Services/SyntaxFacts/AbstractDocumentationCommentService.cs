@@ -19,7 +19,7 @@ internal abstract class AbstractDocumentationCommentService<
     TXmlEmptyElementSyntax,
     TXmlCrefAttributeSyntax,
     TXmlNameAttributeSyntax,
-    TXmlTextAttributeSyntax> : IDocumentationCommentService
+    TXmlTextAttributeSyntax>(ISyntaxFacts syntaxFacts) : IDocumentationCommentService
     where TDocumentationCommentTriviaSyntax : SyntaxNode
     where TXmlNodeSyntax : SyntaxNode
     where TXmlAttributeSyntax : SyntaxNode
@@ -33,10 +33,7 @@ internal abstract class AbstractDocumentationCommentService<
 {
     public const string Ellipsis = "...";
 
-    private readonly ISyntaxFacts _syntaxFacts;
-
-    protected AbstractDocumentationCommentService(ISyntaxFacts syntaxFacts)
-        => _syntaxFacts = syntaxFacts;
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
 
     private static void AddSpaceIfNotAlreadyThere(StringBuilder sb)
     {

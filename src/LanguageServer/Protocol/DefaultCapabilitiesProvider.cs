@@ -24,23 +24,16 @@ namespace Microsoft.CodeAnalysis.LanguageServer;
 /// </summary>
 [Export(typeof(DefaultCapabilitiesProvider)), Shared]
 [ExportCSharpVisualBasicStatelessLspService(typeof(ICapabilitiesProvider), WellKnownLspServerKinds.Any)]
-internal sealed class DefaultCapabilitiesProvider : ICapabilitiesProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultCapabilitiesProvider(
+    [ImportMany] IEnumerable<Lazy<CompletionProvider, CompletionProviderMetadata>> completionProviders,
+    [ImportMany] IEnumerable<Lazy<ISignatureHelpProvider, OrderableLanguageMetadata>> signatureHelpProviders,
+    [ImportMany] IEnumerable<Lazy<ILspWillRenameListener, ILspWillRenameListenerMetadata>> renameListeners) : ICapabilitiesProvider
 {
-    private readonly ImmutableArray<Lazy<CompletionProvider, CompletionProviderMetadata>> _completionProviders;
-    private readonly ImmutableArray<Lazy<ISignatureHelpProvider, OrderableLanguageMetadata>> _signatureHelpProviders;
-    private readonly IEnumerable<Lazy<ILspWillRenameListener, ILspWillRenameListenerMetadata>> _renameListeners;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultCapabilitiesProvider(
-        [ImportMany] IEnumerable<Lazy<CompletionProvider, CompletionProviderMetadata>> completionProviders,
-        [ImportMany] IEnumerable<Lazy<ISignatureHelpProvider, OrderableLanguageMetadata>> signatureHelpProviders,
-        [ImportMany] IEnumerable<Lazy<ILspWillRenameListener, ILspWillRenameListenerMetadata>> renameListeners)
-    {
-        _completionProviders = [.. completionProviders.Where(lz => lz.Metadata.Language is LanguageNames.CSharp or LanguageNames.VisualBasic)];
-        _signatureHelpProviders = [.. signatureHelpProviders.Where(lz => lz.Metadata.Language is LanguageNames.CSharp or LanguageNames.VisualBasic)];
-        _renameListeners = renameListeners;
-    }
+    private readonly ImmutableArray<Lazy<CompletionProvider, CompletionProviderMetadata>> _completionProviders = [.. completionProviders.Where(lz => lz.Metadata.Language is LanguageNames.CSharp or LanguageNames.VisualBasic)];
+    private readonly ImmutableArray<Lazy<ISignatureHelpProvider, OrderableLanguageMetadata>> _signatureHelpProviders = [.. signatureHelpProviders.Where(lz => lz.Metadata.Language is LanguageNames.CSharp or LanguageNames.VisualBasic)];
+    private readonly IEnumerable<Lazy<ILspWillRenameListener, ILspWillRenameListenerMetadata>> _renameListeners = renameListeners;
 
     public ServerCapabilities GetCapabilities(ClientCapabilities clientCapabilities)
     {

@@ -14,10 +14,7 @@ internal abstract partial class AbstractTriviaDataFactory
         private readonly Whitespace? _original;
 
         public ModifiedWhitespace(LineFormattingOptions options, int lineBreaks, int indentation, bool elastic)
-            : base(options, lineBreaks, indentation, elastic)
-        {
-            _original = null;
-        }
+            : base(options, lineBreaks, indentation, elastic) => _original = null;
 
         public ModifiedWhitespace(LineFormattingOptions options, Whitespace original, int lineBreaks, int indentation, bool elastic)
             : base(options, lineBreaks, indentation, elastic)

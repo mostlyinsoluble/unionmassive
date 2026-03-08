@@ -14,14 +14,10 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Venus;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.Venus;
 
 [ExportLanguageService(typeof(IVenusBraceMatchingService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpVenusBraceMatchingService : IVenusBraceMatchingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVenusBraceMatchingService() : IVenusBraceMatchingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVenusBraceMatchingService()
-    {
-    }
-
     public bool TryGetCorrespondingOpenBrace(SyntaxToken token, out SyntaxToken openBrace)
     {
         if (token.Kind() == SyntaxKind.CloseBraceToken)

@@ -15,7 +15,9 @@ namespace Microsoft.CodeAnalysis.Remote;
 /// Manages remote workspaces. Currently supports only a single, primary workspace of kind <see
 /// cref="WorkspaceKind.RemoteWorkspace"/>. In future it should support workspaces of all kinds.
 /// </summary>
-internal class RemoteWorkspaceManager
+internal class RemoteWorkspaceManager(
+    Func<RemoteWorkspace, SolutionAssetCache> createAssetCache,
+    RemoteWorkspace workspace)
 {
     /// <summary>
     /// Default workspace manager used by the product. Tests may specify a custom <see
@@ -55,20 +57,12 @@ internal class RemoteWorkspaceManager
 
     internal static RemoteWorkspaceManager Default => s_default.Value;
 
-    private readonly RemoteWorkspace _workspace;
-    internal readonly SolutionAssetCache SolutionAssetCache;
+    private readonly RemoteWorkspace _workspace = workspace;
+    internal readonly SolutionAssetCache SolutionAssetCache = createAssetCache(workspace);
 
     public RemoteWorkspaceManager(Func<RemoteWorkspace, SolutionAssetCache> createAssetCache)
         : this(createAssetCache, CreatePrimaryWorkspace())
     {
-    }
-
-    public RemoteWorkspaceManager(
-        Func<RemoteWorkspace, SolutionAssetCache> createAssetCache,
-        RemoteWorkspace workspace)
-    {
-        _workspace = workspace;
-        SolutionAssetCache = createAssetCache(workspace);
     }
 
     private static RemoteWorkspace CreatePrimaryWorkspace()

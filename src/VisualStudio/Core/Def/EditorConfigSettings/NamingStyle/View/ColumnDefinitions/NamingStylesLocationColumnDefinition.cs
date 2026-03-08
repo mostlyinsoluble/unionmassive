@@ -19,14 +19,10 @@ using static Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Location)]
-internal sealed class NamingStylesLocationColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NamingStylesLocationColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NamingStylesLocationColumnDefinition()
-    {
-    }
-
     public override string Name => Location;
     public override string DisplayName => ServicesVSResources.Location;
     public override double MinWidth => 350;

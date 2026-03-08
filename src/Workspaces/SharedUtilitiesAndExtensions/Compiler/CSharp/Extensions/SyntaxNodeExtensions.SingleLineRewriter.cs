@@ -11,15 +11,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions;
 
 internal partial class SyntaxNodeExtensions
 {
-    internal sealed class SingleLineRewriter : CSharpSyntaxRewriter
+    internal sealed class SingleLineRewriter(bool useElasticTrivia) : CSharpSyntaxRewriter
     {
         private static readonly Regex s_newlinePattern = new(@"[\r\n]+");
 
-        private readonly bool _useElasticTrivia;
+        private readonly bool _useElasticTrivia = useElasticTrivia;
         private bool _lastTokenEndedInWhitespace;
-
-        public SingleLineRewriter(bool useElasticTrivia)
-            => _useElasticTrivia = useElasticTrivia;
 
         public override SyntaxToken VisitToken(SyntaxToken token)
         {

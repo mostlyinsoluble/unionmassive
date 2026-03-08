@@ -20,16 +20,10 @@ using Cci = Microsoft.Cci;
 
 namespace Roslyn.Test.Utilities
 {
-    internal sealed class ILBuilderVisualizer : ILVisualizer
+    internal sealed class ILBuilderVisualizer(CommonPEModuleBuilder module, SymbolDisplayFormat? symbolDisplayFormat = null) : ILVisualizer
     {
-        private readonly CommonPEModuleBuilder _module;
-        private readonly SymbolDisplayFormat _symbolDisplayFormat;
-
-        public ILBuilderVisualizer(CommonPEModuleBuilder module, SymbolDisplayFormat? symbolDisplayFormat = null)
-        {
-            _module = module;
-            _symbolDisplayFormat = symbolDisplayFormat ?? SymbolDisplayFormat.ILVisualizationFormat;
-        }
+        private readonly CommonPEModuleBuilder _module = module;
+        private readonly SymbolDisplayFormat _symbolDisplayFormat = symbolDisplayFormat ?? SymbolDisplayFormat.ILVisualizationFormat;
 
         public override string VisualizeUserString(uint token)
         {

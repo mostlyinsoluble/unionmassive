@@ -12,10 +12,7 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.FindUsages;
 
 internal class FSharpDefinitionItem
 {
-    private FSharpDefinitionItem(DefinitionItem roslynDefinitionItem)
-    {
-        RoslynDefinitionItem = roslynDefinitionItem;
-    }
+    private FSharpDefinitionItem(DefinitionItem roslynDefinitionItem) => RoslynDefinitionItem = roslynDefinitionItem;
 
     internal DefinitionItem RoslynDefinitionItem { get; }
 

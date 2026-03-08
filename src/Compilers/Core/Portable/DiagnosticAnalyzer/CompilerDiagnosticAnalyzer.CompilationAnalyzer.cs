@@ -20,14 +20,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         /// <summary>
         /// Per-compilation DiagnosticAnalyzer for compiler's syntax/semantic/compilation diagnostics.
         /// </summary>
-        private class CompilationAnalyzer
+        private class CompilationAnalyzer(Compilation compilation)
         {
-            private readonly Compilation _compilation;
-
-            public CompilationAnalyzer(Compilation compilation)
-            {
-                _compilation = compilation;
-            }
+            private readonly Compilation _compilation = compilation;
 
             public void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
             {
@@ -73,16 +68,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                 }
             }
 
-            private sealed class CompilerDiagnostic : Diagnostic
+            private sealed class CompilerDiagnostic(Diagnostic original, ImmutableDictionary<string, string?> properties) : Diagnostic
             {
-                private readonly Diagnostic _original;
-                private readonly ImmutableDictionary<string, string?> _properties;
-
-                public CompilerDiagnostic(Diagnostic original, ImmutableDictionary<string, string?> properties)
-                {
-                    _original = original;
-                    _properties = properties;
-                }
+                private readonly Diagnostic _original = original;
+                private readonly ImmutableDictionary<string, string?> _properties = properties;
 
 #pragma warning disable RS0013 // we are delegating so it is okay here
                 public override DiagnosticDescriptor Descriptor => _original.Descriptor;

@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis.Text
 
             ValidateChecksumAlgorithm(checksumAlgorithm);
 
-            encoding = encoding ?? s_utf8EncodingWithNoBOM;
+            encoding ??= s_utf8EncodingWithNoBOM;
 
             if (stream.CanSeek)
             {
@@ -981,17 +981,11 @@ namespace Microsoft.CodeAnalysis.Text
             return new LineInfo(this, ParseLineStarts());
         }
 
-        internal sealed class LineInfo : TextLineCollection
+        internal sealed class LineInfo(SourceText text, SegmentedList<int> lineStarts) : TextLineCollection
         {
-            private readonly SourceText _text;
-            private readonly SegmentedList<int> _lineStarts;
+            private readonly SourceText _text = text;
+            private readonly SegmentedList<int> _lineStarts = lineStarts;
             private int _lastLineNumber;
-
-            public LineInfo(SourceText text, SegmentedList<int> lineStarts)
-            {
-                _text = text;
-                _lineStarts = lineStarts;
-            }
 
             public override int Count => _lineStarts.Count;
 
@@ -1279,14 +1273,9 @@ namespace Microsoft.CodeAnalysis.Text
             return null;
         }
 
-        private class StaticContainer : SourceTextContainer
+        private class StaticContainer(SourceText text) : SourceTextContainer
         {
-            private readonly SourceText _text;
-
-            public StaticContainer(SourceText text)
-            {
-                _text = text;
-            }
+            private readonly SourceText _text = text;
 
             public override SourceText CurrentText => _text;
 

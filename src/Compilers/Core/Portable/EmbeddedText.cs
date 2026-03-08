@@ -345,13 +345,8 @@ namespace Microsoft.CodeAnalysis
             return new Cci.DebugSourceInfo(Checksum, ChecksumAlgorithm, Blob);
         }
 
-        private sealed class CountingDeflateStream : DeflateStream
+        private sealed class CountingDeflateStream(Stream stream, CompressionLevel compressionLevel, bool leaveOpen) : DeflateStream(stream, compressionLevel, leaveOpen)
         {
-            public CountingDeflateStream(Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
-                : base(stream, compressionLevel, leaveOpen)
-            {
-            }
-
             public int BytesWritten { get; private set; }
 
             public override void Write(byte[] array, int offset, int count)

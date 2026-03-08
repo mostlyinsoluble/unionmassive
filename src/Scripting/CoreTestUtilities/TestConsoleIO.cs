@@ -34,14 +34,9 @@ namespace Microsoft.CodeAnalysis.Scripting.Test
 
         public override void ResetColor() => SetForegroundColor(InitialColor);
 
-        private sealed class Reader : StringReader
+        private sealed class Reader(string input) : StringReader(input)
         {
             public readonly StringBuilder ContentRead = new StringBuilder();
-
-            public Reader(string input)
-                : base(input)
-            {
-            }
 
             public override string ReadLine()
             {
@@ -51,17 +46,12 @@ namespace Microsoft.CodeAnalysis.Scripting.Test
             }
         }
 
-        private sealed class Writer : StringWriter
+        private sealed class Writer(TestConsoleIO.Reader reader) : StringWriter
         {
             private ConsoleColor _lastColor = InitialColor;
             public ConsoleColor CurrentColor = InitialColor;
             public override Encoding Encoding => Encoding.UTF8;
-            private readonly Reader _reader;
-
-            public Writer(Reader reader)
-            {
-                _reader = reader;
-            }
+            private readonly Reader _reader = reader;
 
             private void OnBeforeWrite()
             {
@@ -103,15 +93,10 @@ namespace Microsoft.CodeAnalysis.Scripting.Test
             }
         }
 
-        private sealed class TeeWriter : StringWriter
+        private sealed class TeeWriter(TextWriter other) : StringWriter
         {
             public override Encoding Encoding => Encoding.UTF8;
-            private readonly TextWriter _other;
-
-            public TeeWriter(TextWriter other)
-            {
-                _other = other;
-            }
+            private readonly TextWriter _other = other;
 
             public override void Write(char value)
             {

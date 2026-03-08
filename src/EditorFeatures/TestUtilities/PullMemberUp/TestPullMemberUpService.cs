@@ -14,17 +14,11 @@ using Microsoft.CodeAnalysis.PullMemberUp;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities.PullMemberUp;
 
-internal sealed class TestPullMemberUpService : IPullMemberUpOptionsService
+internal sealed class TestPullMemberUpService(IEnumerable<(string member, bool makeAbstract)> selectedMembers, string destinationName) : IPullMemberUpOptionsService
 {
-    private readonly IEnumerable<(string member, bool makeAbstract)> _selectedMembers;
+    private readonly IEnumerable<(string member, bool makeAbstract)> _selectedMembers = selectedMembers;
 
-    private string DestinationName { get; }
-
-    public TestPullMemberUpService(IEnumerable<(string member, bool makeAbstract)> selectedMembers, string destinationName)
-    {
-        _selectedMembers = selectedMembers;
-        DestinationName = destinationName;
-    }
+    private string DestinationName { get; } = destinationName;
 
     public PullMembersUpOptions GetPullMemberUpOptions(Document document, ImmutableArray<ISymbol> selectedNodeSymbols)
     {

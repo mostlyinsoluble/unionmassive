@@ -20,14 +20,9 @@ namespace Microsoft.CodeAnalysis
     /// Represents a logical location of the image, not the content of the image. 
     /// The content might change in time. A snapshot is taken when the compiler queries the reference for its metadata.
     /// </remarks>
-    public abstract class MetadataReference
+    public abstract class MetadataReference(MetadataReferenceProperties properties)
     {
-        public MetadataReferenceProperties Properties { get; }
-
-        protected MetadataReference(MetadataReferenceProperties properties)
-        {
-            this.Properties = properties;
-        }
+        public MetadataReferenceProperties Properties { get; } = properties;
 
         /// <summary>
         /// Path or name used in error messages to identity the reference.

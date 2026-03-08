@@ -9,23 +9,16 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
 [DataContract]
-internal readonly struct RazorMappedSpanResult
+internal readonly struct RazorMappedSpanResult(string filePath, LinePositionSpan linePositionSpan, TextSpan span)
 {
     [DataMember(Order = 0)]
-    public readonly string FilePath;
+    public readonly string FilePath = filePath;
 
     [DataMember(Order = 1)]
-    public readonly LinePositionSpan LinePositionSpan;
+    public readonly LinePositionSpan LinePositionSpan = linePositionSpan;
 
     [DataMember(Order = 2)]
-    public readonly TextSpan Span;
-
-    public RazorMappedSpanResult(string filePath, LinePositionSpan linePositionSpan, TextSpan span)
-    {
-        FilePath = filePath;
-        LinePositionSpan = linePositionSpan;
-        Span = span;
-    }
+    public readonly TextSpan Span = span;
 
     public bool IsDefault => FilePath == null;
 }

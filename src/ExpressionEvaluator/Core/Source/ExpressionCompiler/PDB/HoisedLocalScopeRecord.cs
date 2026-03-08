@@ -4,15 +4,9 @@
 
 namespace Microsoft.CodeAnalysis.ExpressionEvaluator
 {
-    internal readonly struct HoistedLocalScopeRecord
+    internal readonly struct HoistedLocalScopeRecord(int startOffset, int length)
     {
-        public readonly int StartOffset;
-        public readonly int Length;
-
-        public HoistedLocalScopeRecord(int startOffset, int length)
-        {
-            StartOffset = startOffset;
-            Length = length;
-        }
+        public readonly int StartOffset = startOffset;
+        public readonly int Length = length;
     }
 }

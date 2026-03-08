@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                      Binder rootBinder,
                                      PublicSemanticModel containingPublicSemanticModel,
                                      ImmutableDictionary<Symbol, Symbol> parentRemappedSymbolsOpt = null) :
-            base(syntax, symbol, rootBinder, containingPublicSemanticModel, parentRemappedSymbolsOpt)
-        {
-            Debug.Assert(!(syntax is ConstructorInitializerSyntax || syntax is PrimaryConstructorBaseTypeSyntax));
-        }
+            base(syntax, symbol, rootBinder, containingPublicSemanticModel, parentRemappedSymbolsOpt) => Debug.Assert(!(syntax is ConstructorInitializerSyntax || syntax is PrimaryConstructorBaseTypeSyntax));
 
         /// <summary>
         /// Creates a SemanticModel for a true field initializer (field = value) of a named type (incl. Enums).

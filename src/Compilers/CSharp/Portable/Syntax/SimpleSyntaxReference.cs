@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private readonly SyntaxNode _node;
 
-        internal SimpleSyntaxReference(SyntaxNode node)
-        {
-            _node = node;
-        }
+        internal SimpleSyntaxReference(SyntaxNode node) => _node = node;
 
         public override SyntaxTree SyntaxTree
         {

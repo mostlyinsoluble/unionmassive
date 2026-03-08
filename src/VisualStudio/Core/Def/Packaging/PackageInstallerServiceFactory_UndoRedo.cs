@@ -56,39 +56,26 @@ internal sealed partial class PackageInstallerService
         return uninstalled;
     }
 
-    private abstract class BaseUndoUnit : IOleUndoUnit
+    private abstract class BaseUndoUnit(
+        PackageInstallerService packageInstallerService,
+        string? source,
+        string packageName,
+        string? version,
+        bool includePrerelease,
+        Guid projectGuid,
+        EnvDTE.DTE dte,
+        EnvDTE.Project dteProject,
+        IOleUndoManager undoManager) : IOleUndoUnit
     {
-        protected readonly Guid projectGuid;
-        protected readonly EnvDTE.DTE dte;
-        protected readonly EnvDTE.Project dteProject;
-        protected readonly PackageInstallerService packageInstallerService;
-        protected readonly string? source;
-        protected readonly string packageName;
-        protected readonly IOleUndoManager undoManager;
-        protected readonly string? version;
-        protected readonly bool includePrerelease;
-
-        protected BaseUndoUnit(
-            PackageInstallerService packageInstallerService,
-            string? source,
-            string packageName,
-            string? version,
-            bool includePrerelease,
-            Guid projectGuid,
-            EnvDTE.DTE dte,
-            EnvDTE.Project dteProject,
-            IOleUndoManager undoManager)
-        {
-            this.packageInstallerService = packageInstallerService;
-            this.source = source;
-            this.packageName = packageName;
-            this.version = version;
-            this.includePrerelease = includePrerelease;
-            this.projectGuid = projectGuid;
-            this.dte = dte;
-            this.dteProject = dteProject;
-            this.undoManager = undoManager;
-        }
+        protected readonly Guid projectGuid = projectGuid;
+        protected readonly EnvDTE.DTE dte = dte;
+        protected readonly EnvDTE.Project dteProject = dteProject;
+        protected readonly PackageInstallerService packageInstallerService = packageInstallerService;
+        protected readonly string? source = source;
+        protected readonly string packageName = packageName;
+        protected readonly IOleUndoManager undoManager = undoManager;
+        protected readonly string? version = version;
+        protected readonly bool includePrerelease = includePrerelease;
 
         protected abstract Task DoWorkerAsync(IOleUndoManager pUndoManager);
         public abstract void GetDescription(out string pBstr);
@@ -122,24 +109,19 @@ internal sealed partial class PackageInstallerService
         }
     }
 
-    private sealed class UninstallPackageUndoUnit : BaseUndoUnit
+    private sealed class UninstallPackageUndoUnit(
+        PackageInstallerService packageInstallerService,
+        string? source,
+        string packageName,
+        string? version,
+        bool includePrerelease,
+        Guid projectGuid,
+        EnvDTE.DTE dte,
+        EnvDTE.Project dteProject,
+        IOleUndoManager undoManager) : BaseUndoUnit(packageInstallerService, source, packageName,
+               version, includePrerelease,
+               projectGuid, dte, dteProject, undoManager)
     {
-        public UninstallPackageUndoUnit(
-            PackageInstallerService packageInstallerService,
-            string? source,
-            string packageName,
-            string? version,
-            bool includePrerelease,
-            Guid projectGuid,
-            EnvDTE.DTE dte,
-            EnvDTE.Project dteProject,
-            IOleUndoManager undoManager)
-            : base(packageInstallerService, source, packageName,
-                   version, includePrerelease,
-                   projectGuid, dte, dteProject, undoManager)
-        {
-        }
-
         protected override async Task DoWorkerAsync(IOleUndoManager pUndoManager)
         {
             var description = string.Format(ServicesVSResources.Uninstalling_0, packageName);
@@ -157,24 +139,19 @@ internal sealed partial class PackageInstallerService
             => pBstr = string.Format(ServicesVSResources.Uninstall_0, packageName);
     }
 
-    private sealed class InstallPackageUndoUnit : BaseUndoUnit
+    private sealed class InstallPackageUndoUnit(
+        PackageInstallerService packageInstallerService,
+        string? source,
+        string packageName,
+        string? version,
+        bool includePrerelease,
+        Guid projectGuid,
+        EnvDTE.DTE dte,
+        EnvDTE.Project dteProject,
+        IOleUndoManager undoManager) : BaseUndoUnit(packageInstallerService, source, packageName,
+               version, includePrerelease,
+               projectGuid, dte, dteProject, undoManager)
     {
-        public InstallPackageUndoUnit(
-            PackageInstallerService packageInstallerService,
-            string? source,
-            string packageName,
-            string? version,
-            bool includePrerelease,
-            Guid projectGuid,
-            EnvDTE.DTE dte,
-            EnvDTE.Project dteProject,
-            IOleUndoManager undoManager)
-            : base(packageInstallerService, source, packageName,
-                   version, includePrerelease,
-                   projectGuid, dte, dteProject, undoManager)
-        {
-        }
-
         public override void GetDescription(out string pBstr)
             => pBstr = string.Format(ServicesVSResources.Install_0, packageName);
 

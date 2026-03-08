@@ -754,14 +754,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <summary> 
         /// Comparator being used for stable ordering in anonymous type or delegate indices.
         /// </summary>
-        private sealed class AnonymousTypeOrDelegateComparer : IComparer<AnonymousTypeOrDelegateTemplateSymbol>
+        private sealed class AnonymousTypeOrDelegateComparer(CSharpCompilation compilation) : IComparer<AnonymousTypeOrDelegateTemplateSymbol>
         {
-            private readonly CSharpCompilation _compilation;
-
-            public AnonymousTypeOrDelegateComparer(CSharpCompilation compilation)
-            {
-                _compilation = compilation;
-            }
+            private readonly CSharpCompilation _compilation = compilation;
 
             public int Compare(AnonymousTypeOrDelegateTemplateSymbol x, AnonymousTypeOrDelegateTemplateSymbol y)
             {

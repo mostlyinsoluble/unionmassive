@@ -101,10 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class ArrayTypeSymbolAdapter
     {
-        internal ArrayTypeSymbolAdapter(ArrayTypeSymbol underlyingArrayTypeSymbol)
-        {
-            AdaptedArrayTypeSymbol = underlyingArrayTypeSymbol;
-        }
+        internal ArrayTypeSymbolAdapter(ArrayTypeSymbol underlyingArrayTypeSymbol) => AdaptedArrayTypeSymbol = underlyingArrayTypeSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedArrayTypeSymbol;
         internal ArrayTypeSymbol AdaptedArrayTypeSymbol { get; }

@@ -12,14 +12,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.CommentSelection;
 
 [ExportLanguageService(typeof(ICommentSelectionService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCommentSelectionService : AbstractCommentSelectionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCommentSelectionService() : AbstractCommentSelectionService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCommentSelectionService()
-    {
-    }
-
     public override string SingleLineCommentString => "//";
     public override bool SupportsBlockComment => true;
     public override string BlockCommentStartString => "/*";

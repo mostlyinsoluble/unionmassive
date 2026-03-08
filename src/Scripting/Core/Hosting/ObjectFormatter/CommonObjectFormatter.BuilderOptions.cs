@@ -14,23 +14,14 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
         /// <remarks>
         /// Internal for testing.
         /// </remarks>
-        internal readonly struct BuilderOptions
+        internal readonly struct BuilderOptions(string indentation, string newLine, string ellipsis, int maximumLineLength, int maximumOutputLength)
         {
-            public readonly string Indentation;
-            public readonly string NewLine;
-            public readonly string Ellipsis;
+            public readonly string Indentation = indentation;
+            public readonly string NewLine = newLine;
+            public readonly string Ellipsis = ellipsis;
 
-            public readonly int MaximumLineLength;
-            public readonly int MaximumOutputLength;
-
-            public BuilderOptions(string indentation, string newLine, string ellipsis, int maximumLineLength, int maximumOutputLength)
-            {
-                Indentation = indentation;
-                NewLine = newLine;
-                Ellipsis = ellipsis;
-                MaximumLineLength = maximumLineLength;
-                MaximumOutputLength = maximumOutputLength;
-            }
+            public readonly int MaximumLineLength = maximumLineLength;
+            public readonly int MaximumOutputLength = maximumOutputLength;
 
             public BuilderOptions WithMaximumOutputLength(int maximumOutputLength)
             {

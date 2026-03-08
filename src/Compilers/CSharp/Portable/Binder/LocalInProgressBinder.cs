@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private LocalSymbol? _localSymbol;
 
         internal LocalInProgressBinder(EqualsValueClauseSyntax initializerSyntax, Binder next)
-            : base(next)
-        {
-            InitializerSyntax = initializerSyntax;
-        }
+            : base(next) => InitializerSyntax = initializerSyntax;
 
         internal override LocalSymbol LocalInProgress
         {

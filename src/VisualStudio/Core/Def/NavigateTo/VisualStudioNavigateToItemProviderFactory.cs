@@ -16,26 +16,18 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.NavigateTo;
 // Used to indicate that this type should be ignored if the platform uses the new ISearchItemsSourceProvider system instead.
 [OnlyNavigateToSupport]
 [Export(typeof(INavigateToItemProviderFactory))]
-internal sealed class VisualStudioNavigateToItemProviderFactory : INavigateToItemProviderFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioNavigateToItemProviderFactory(
+    VisualStudioWorkspace workspace,
+    IThreadingContext threadingContext,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    IAsynchronousOperationListenerProvider listenerProvider) : INavigateToItemProviderFactory
 {
-    private readonly VisualStudioWorkspace _workspace;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
-    private readonly IAsynchronousOperationListener _asyncListener;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioNavigateToItemProviderFactory(
-        VisualStudioWorkspace workspace,
-        IThreadingContext threadingContext,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _workspace = workspace;
-        _threadingContext = threadingContext;
-        _threadOperationExecutor = threadOperationExecutor;
-        _asyncListener = listenerProvider.GetListener(FeatureAttribute.NavigateTo);
-    }
+    private readonly VisualStudioWorkspace _workspace = workspace;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
+    private readonly IAsynchronousOperationListener _asyncListener = listenerProvider.GetListener(FeatureAttribute.NavigateTo);
 
     public bool TryCreateNavigateToItemProvider(IServiceProvider serviceProvider, out INavigateToItemProvider? provider)
     {

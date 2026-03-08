@@ -10,14 +10,9 @@ using LSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
-internal class ClientCapabilityProvider : IClientCapabilityProvider
+internal class ClientCapabilityProvider(LSP.ClientCapabilities clientCapabilities) : IClientCapabilityProvider
 {
-    private readonly LSP.ClientCapabilities _clientCapabilities;
-
-    public ClientCapabilityProvider(LSP.ClientCapabilities clientCapabilities)
-    {
-        _clientCapabilities = clientCapabilities;
-    }
+    private readonly LSP.ClientCapabilities _clientCapabilities = clientCapabilities;
 
     public bool SupportsMarkdownDocumentation
         => _clientCapabilities.TextDocument?.Completion?.CompletionItem?.DocumentationFormat?.Contains(MarkupKind.Markdown) == true;

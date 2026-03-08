@@ -8,20 +8,12 @@ using System.Xml.Linq;
 
 namespace BuildBoss
 {
-    internal readonly struct InternalsVisibleTo
+    internal readonly struct InternalsVisibleTo(string targetAssembly, string publicKey, string loadsWithinVisualStudio, string workItem)
     {
-        public InternalsVisibleTo(string targetAssembly, string publicKey, string loadsWithinVisualStudio, string workItem)
-        {
-            TargetAssembly = targetAssembly;
-            PublicKey = publicKey;
-            LoadsWithinVisualStudio = loadsWithinVisualStudio;
-            WorkItem = workItem;
-        }
-
-        public string TargetAssembly { get; }
-        public string PublicKey { get; }
-        public string LoadsWithinVisualStudio { get; }
-        public string WorkItem { get; }
+        public string TargetAssembly { get; } = targetAssembly;
+        public string PublicKey { get; } = publicKey;
+        public string LoadsWithinVisualStudio { get; } = loadsWithinVisualStudio;
+        public string WorkItem { get; } = workItem;
 
         public override string ToString()
         {

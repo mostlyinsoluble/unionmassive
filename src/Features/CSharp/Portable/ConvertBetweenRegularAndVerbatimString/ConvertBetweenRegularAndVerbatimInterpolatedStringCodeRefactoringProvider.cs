@@ -15,15 +15,11 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertBetweenRegularAndVerbatimString;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString), Shared]
 [ExtensionOrder(Before = PredefinedCodeRefactoringProviderNames.ConvertToInterpolatedString)]
-internal sealed class ConvertBetweenRegularAndVerbatimInterpolatedStringCodeRefactoringProvider
-    : AbstractConvertBetweenRegularAndVerbatimStringCodeRefactoringProvider<InterpolatedStringExpressionSyntax>
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class ConvertBetweenRegularAndVerbatimInterpolatedStringCodeRefactoringProvider()
+        : AbstractConvertBetweenRegularAndVerbatimStringCodeRefactoringProvider<InterpolatedStringExpressionSyntax>
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public ConvertBetweenRegularAndVerbatimInterpolatedStringCodeRefactoringProvider()
-    {
-    }
-
     protected override bool IsInterpolation { get; } = true;
 
     protected override bool IsAppropriateLiteralKind(InterpolatedStringExpressionSyntax literalExpression)

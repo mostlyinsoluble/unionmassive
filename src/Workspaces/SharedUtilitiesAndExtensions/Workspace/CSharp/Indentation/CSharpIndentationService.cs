@@ -21,15 +21,11 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.CSharp.Indentation;
 
 [ExportLanguageService(typeof(IIndentationService), LanguageNames.CSharp), Shared]
-internal sealed partial class CSharpIndentationService : AbstractIndentationService<CompilationUnitSyntax>
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Incorrectly used in production code: https://github.com/dotnet/roslyn/issues/42839")]
+internal sealed partial class CSharpIndentationService() : AbstractIndentationService<CompilationUnitSyntax>
 {
     public static readonly CSharpIndentationService Instance = new();
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Incorrectly used in production code: https://github.com/dotnet/roslyn/issues/42839")]
-    public CSharpIndentationService()
-    {
-    }
 
     protected override ISyntaxFacts SyntaxFacts
         => CSharpSyntaxFacts.Instance;

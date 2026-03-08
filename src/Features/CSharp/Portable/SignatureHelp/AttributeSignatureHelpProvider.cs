@@ -24,14 +24,10 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 
 [ExportSignatureHelpProvider("AttributeSignatureHelpProvider", LanguageNames.CSharp), Shared]
-internal sealed partial class AttributeSignatureHelpProvider : AbstractCSharpSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class AttributeSignatureHelpProvider() : AbstractCSharpSignatureHelpProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AttributeSignatureHelpProvider()
-    {
-    }
-
     public override ImmutableArray<char> TriggerCharacters => ['(', ','];
 
     public override ImmutableArray<char> RetriggerCharacters => [')'];

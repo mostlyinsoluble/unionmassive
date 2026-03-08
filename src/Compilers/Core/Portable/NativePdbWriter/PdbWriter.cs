@@ -22,32 +22,23 @@ using Roslyn.Utilities;
 
 namespace Microsoft.Cci
 {
-    internal sealed class PdbWriter : IDisposable
+    internal sealed class PdbWriter(string fileName, Func<ISymWriterMetadataProvider, SymUnmanagedWriter> symWriterFactory, HashAlgorithmName hashAlgorithmNameOpt) : IDisposable
     {
         internal const uint Age = 1;
 
-        private readonly HashAlgorithmName _hashAlgorithmNameOpt;
-        private readonly string _fileName;
-        private readonly Func<ISymWriterMetadataProvider, SymUnmanagedWriter> _symWriterFactory;
-        private readonly Dictionary<DebugSourceDocument, int> _documentIndex;
+        private readonly HashAlgorithmName _hashAlgorithmNameOpt = hashAlgorithmNameOpt;
+        private readonly string _fileName = fileName;
+        private readonly Func<ISymWriterMetadataProvider, SymUnmanagedWriter> _symWriterFactory = symWriterFactory;
+        private readonly Dictionary<DebugSourceDocument, int> _documentIndex = new Dictionary<DebugSourceDocument, int>();
         private MetadataWriter _metadataWriter;
         private SymUnmanagedWriter _symWriter;
         private SymUnmanagedSequencePointsWriter _sequencePointsWriter;
 
         // { INamespace or ITypeReference -> qualified name }
-        private readonly Dictionary<object, string> _qualifiedNameCache;
+        private readonly Dictionary<object, string> _qualifiedNameCache = new Dictionary<object, string>(ReferenceEqualityComparer.Instance);
 
         // in support of determinism
         private bool IsDeterministic { get => _hashAlgorithmNameOpt.Name != null; }
-
-        public PdbWriter(string fileName, Func<ISymWriterMetadataProvider, SymUnmanagedWriter> symWriterFactory, HashAlgorithmName hashAlgorithmNameOpt)
-        {
-            _fileName = fileName;
-            _symWriterFactory = symWriterFactory;
-            _hashAlgorithmNameOpt = hashAlgorithmNameOpt;
-            _documentIndex = new Dictionary<DebugSourceDocument, int>();
-            _qualifiedNameCache = new Dictionary<object, string>(ReferenceEqualityComparer.Instance);
-        }
 
         public void WriteTo(Stream stream)
         {

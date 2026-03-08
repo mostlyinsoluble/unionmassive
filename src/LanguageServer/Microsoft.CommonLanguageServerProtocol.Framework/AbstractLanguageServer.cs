@@ -194,14 +194,9 @@ internal abstract class AbstractLanguageServer<TRequestContext>
 
     public abstract TRequest DeserializeRequest<TRequest>(object? serializedRequest, RequestHandlerMetadata metadata);
 
-    protected abstract class DelegatingEntryPoint
+    protected abstract class DelegatingEntryPoint(string method)
     {
-        protected readonly string _method;
-
-        public DelegatingEntryPoint(string method)
-        {
-            _method = method;
-        }
+        protected readonly string _method = method;
 
         public abstract MethodInfo GetEntryPoint(bool hasParameter);
 
@@ -388,10 +383,7 @@ internal abstract class AbstractLanguageServer<TRequestContext>
     {
         private readonly AbstractLanguageServer<TRequestContext> _server;
 
-        internal TestAccessor(AbstractLanguageServer<TRequestContext> server)
-        {
-            _server = server;
-        }
+        internal TestAccessor(AbstractLanguageServer<TRequestContext> server) => _server = server;
 
         public T GetRequiredLspService<T>() where T : class => _server.GetLspServices().GetRequiredService<T>();
 

@@ -13,12 +13,8 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 internal partial class PreviewUpdater
 {
     // internal for testing
-    internal sealed class PreviewDialogWorkspace : PreviewWorkspace
+    internal sealed class PreviewDialogWorkspace(Solution solution) : PreviewWorkspace(solution)
     {
-        public PreviewDialogWorkspace(Solution solution) : base(solution)
-        {
-        }
-
         public void CloseDocument(TextDocument document, SourceText text)
         {
             switch (document.Kind)

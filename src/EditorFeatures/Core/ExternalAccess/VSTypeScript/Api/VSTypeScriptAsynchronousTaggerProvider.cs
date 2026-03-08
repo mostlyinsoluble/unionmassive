@@ -30,14 +30,9 @@ internal abstract class VSTypeScriptAsynchronousTaggerProvider<TTag> : Asynchron
     }
 }
 
-internal abstract class VSTypeScriptAsynchronousTaggerProvider2<TTag> : AsynchronousViewTaggerProvider<TTag>
+internal abstract class VSTypeScriptAsynchronousTaggerProvider2<TTag>(VSTypeScriptTaggerHost taggerHost) : AsynchronousViewTaggerProvider<TTag>(taggerHost.UnderlyingObject, FeatureAttribute.Classification)
     where TTag : ITag
 {
-    protected VSTypeScriptAsynchronousTaggerProvider2(VSTypeScriptTaggerHost taggerHost)
-        : base(taggerHost.UnderlyingObject, FeatureAttribute.Classification)
-    {
-    }
-
     protected sealed override bool TryAddSpansToTag(ITextView? textView, ITextBuffer subjectBuffer, ref TemporaryArray<SnapshotSpan> result)
     {
         using var _ = ArrayBuilder<SnapshotSpan>.GetInstance(out var builder);

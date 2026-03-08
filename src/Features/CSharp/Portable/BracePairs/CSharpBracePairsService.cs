@@ -11,12 +11,8 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.BracePairs;
 
 [ExportLanguageService(typeof(IBracePairsService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpBracePairsService : AbstractBracePairsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpBracePairsService() : AbstractBracePairsService(CSharpSyntaxKinds.Instance)
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpBracePairsService()
-        : base(CSharpSyntaxKinds.Instance)
-    {
-    }
 }

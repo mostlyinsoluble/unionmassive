@@ -9,12 +9,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Xaml.Features.Definitions;
 /// <summary>
 /// XamlDefinition with symbol.
 /// </summary>
-internal sealed class XamlSymbolDefinition : XamlDefinition
+internal sealed class XamlSymbolDefinition(ISymbol symbol) : XamlDefinition
 {
-    public ISymbol Symbol { get; }
-
-    public XamlSymbolDefinition(ISymbol symbol)
-    {
-        Symbol = symbol;
-    }
+    public ISymbol Symbol { get; } = symbol;
 }

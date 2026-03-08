@@ -16,19 +16,11 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private delegate BoundBlock LambdaBodyFactory(LambdaSymbol lambdaSymbol, Binder lambdaBodyBinder, BindingDiagnosticBag diagnostics);
 
-        private sealed class QueryUnboundLambdaState : UnboundLambdaState
+        private sealed class QueryUnboundLambdaState(Binder binder, Binder.RangeVariableMap rangeVariableMap, ImmutableArray<RangeVariableSymbol> parameters, Binder.LambdaBodyFactory bodyFactory, bool includeCache = true) : UnboundLambdaState(binder, includeCache)
         {
-            private readonly ImmutableArray<RangeVariableSymbol> _parameters;
-            private readonly LambdaBodyFactory _bodyFactory;
-            private readonly RangeVariableMap _rangeVariableMap;
-
-            public QueryUnboundLambdaState(Binder binder, RangeVariableMap rangeVariableMap, ImmutableArray<RangeVariableSymbol> parameters, LambdaBodyFactory bodyFactory, bool includeCache = true)
-                : base(binder, includeCache)
-            {
-                _parameters = parameters;
-                _rangeVariableMap = rangeVariableMap;
-                _bodyFactory = bodyFactory;
-            }
+            private readonly ImmutableArray<RangeVariableSymbol> _parameters = parameters;
+            private readonly LambdaBodyFactory _bodyFactory = bodyFactory;
+            private readonly RangeVariableMap _rangeVariableMap = rangeVariableMap;
 
             public override string ParameterName(int index) { return _parameters[index].Name; }
             public override bool ParameterIsDiscard(int index) { return false; }

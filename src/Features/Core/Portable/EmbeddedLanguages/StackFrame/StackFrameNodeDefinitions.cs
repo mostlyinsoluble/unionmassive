@@ -14,20 +14,13 @@ namespace Microsoft.CodeAnalysis.EmbeddedLanguages.StackFrame;
 using StackFrameNodeOrToken = EmbeddedSyntaxNodeOrToken<StackFrameKind, StackFrameNode>;
 using StackFrameToken = EmbeddedSyntaxToken<StackFrameKind>;
 
-internal abstract class StackFrameNode : EmbeddedSyntaxNode<StackFrameKind, StackFrameNode>
+internal abstract class StackFrameNode(StackFrameKind kind) : EmbeddedSyntaxNode<StackFrameKind, StackFrameNode>(kind)
 {
-    protected StackFrameNode(StackFrameKind kind) : base(kind)
-    {
-    }
-
     public abstract void Accept(IStackFrameNodeVisitor visitor);
 }
 
-internal abstract class StackFrameDeclarationNode : StackFrameNode
+internal abstract class StackFrameDeclarationNode(StackFrameKind kind) : StackFrameNode(kind)
 {
-    protected StackFrameDeclarationNode(StackFrameKind kind) : base(kind)
-    {
-    }
 }
 
 internal sealed class StackFrameMethodDeclarationNode(
@@ -57,11 +50,8 @@ internal sealed class StackFrameMethodDeclarationNode(
 /// <summary>
 /// Base class for all type nodes
 /// </summary>
-internal abstract class StackFrameTypeNode : StackFrameNode
+internal abstract class StackFrameTypeNode(StackFrameKind kind) : StackFrameNode(kind)
 {
-    protected StackFrameTypeNode(StackFrameKind kind) : base(kind)
-    {
-    }
 }
 
 /// <summary>
@@ -72,11 +62,8 @@ internal abstract class StackFrameTypeNode : StackFrameNode
 /// is not a type then it should use <see cref="StackFrameToken"/> with <see cref="StackFrameKind.IdentifierToken"/>
 /// directly.
 /// </remarks>
-internal abstract class StackFrameNameNode : StackFrameTypeNode
+internal abstract class StackFrameNameNode(StackFrameKind kind) : StackFrameTypeNode(kind)
 {
-    protected StackFrameNameNode(StackFrameKind kind) : base(kind)
-    {
-    }
 }
 
 /// <summary>
@@ -197,11 +184,8 @@ internal sealed class StackFrameGenericNameNode : StackFrameSimpleNameNode
         };
 }
 
-internal abstract class StackFrameGeneratedNameNode : StackFrameSimpleNameNode
+internal abstract class StackFrameGeneratedNameNode(StackFrameToken identifier, StackFrameKind kind) : StackFrameSimpleNameNode(identifier, kind)
 {
-    protected StackFrameGeneratedNameNode(StackFrameToken identifier, StackFrameKind kind) : base(identifier, kind)
-    {
-    }
 }
 
 /// <summary>

@@ -1711,16 +1711,10 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         // this OperationWalker collect:
         // 1. all the operation with null Syntax property
         // 2. all the params array argument operations
-        private sealed class Walker : OperationWalker
+        private sealed class Walker(List<IOperation> nullList, List<IOperation> paramsList) : OperationWalker
         {
-            private readonly List<IOperation> _nullList;
-            private readonly List<IOperation> _paramsList;
-
-            public Walker(List<IOperation> nullList, List<IOperation> paramsList)
-            {
-                _nullList = nullList;
-                _paramsList = paramsList;
-            }
+            private readonly List<IOperation> _nullList = nullList;
+            private readonly List<IOperation> _paramsList = paramsList;
 
             public override void Visit(IOperation operation)
             {

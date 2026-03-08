@@ -25,19 +25,15 @@ using static CSharpSyntaxTokens;
 using static SyntaxFactory;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.IntroduceLocalForExpression), Shared]
-internal sealed class CSharpIntroduceLocalForExpressionCodeRefactoringProvider :
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpIntroduceLocalForExpressionCodeRefactoringProvider() :
     AbstractIntroduceLocalForExpressionCodeRefactoringProvider<
         ExpressionSyntax,
         StatementSyntax,
         ExpressionStatementSyntax,
         LocalDeclarationStatementSyntax>
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpIntroduceLocalForExpressionCodeRefactoringProvider()
-    {
-    }
-
     protected override bool IsValid(ExpressionStatementSyntax expressionStatement, TextSpan span)
     {
         // Expression is likely too simple to want to offer to generate a local for.

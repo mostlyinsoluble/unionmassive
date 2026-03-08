@@ -13,27 +13,18 @@ using Microsoft.VisualStudio.LanguageServices.Implementation.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel.Collections;
 
-internal sealed class NodeSnapshot : Snapshot
+internal sealed class NodeSnapshot(
+    CodeModelState state,
+    ComHandle<EnvDTE.FileCodeModel, FileCodeModel> fileCodeModel,
+    SyntaxNode parentNode,
+    AbstractCodeElement parentElement,
+    ImmutableArray<SyntaxNode> nodes) : Snapshot
 {
-    private readonly CodeModelState _state;
-    private readonly ComHandle<EnvDTE.FileCodeModel, FileCodeModel> _fileCodeModel;
-    private readonly SyntaxNode _parentNode;
-    private readonly AbstractCodeElement _parentElement;
-    private readonly ImmutableArray<SyntaxNode> _nodes;
-
-    public NodeSnapshot(
-        CodeModelState state,
-        ComHandle<EnvDTE.FileCodeModel, FileCodeModel> fileCodeModel,
-        SyntaxNode parentNode,
-        AbstractCodeElement parentElement,
-        ImmutableArray<SyntaxNode> nodes)
-    {
-        _state = state;
-        _fileCodeModel = fileCodeModel;
-        _parentNode = parentNode;
-        _parentElement = parentElement;
-        _nodes = nodes;
-    }
+    private readonly CodeModelState _state = state;
+    private readonly ComHandle<EnvDTE.FileCodeModel, FileCodeModel> _fileCodeModel = fileCodeModel;
+    private readonly SyntaxNode _parentNode = parentNode;
+    private readonly AbstractCodeElement _parentElement = parentElement;
+    private readonly ImmutableArray<SyntaxNode> _nodes = nodes;
 
     private ICodeModelService CodeModelService
     {

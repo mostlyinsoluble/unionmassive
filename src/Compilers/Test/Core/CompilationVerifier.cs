@@ -407,10 +407,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         {
             private readonly Dictionary<string, PEReader> _readersByName;
 
-            internal Resolver(Dictionary<string, PEReader> readersByName)
-            {
-                _readersByName = readersByName;
-            }
+            internal Resolver(Dictionary<string, PEReader> readersByName) => _readersByName = readersByName;
 
             public PEReader ResolveAssembly(AssemblyNameInfo assemblyName)
             {

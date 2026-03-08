@@ -93,16 +93,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
         protected abstract void GetCodeBlockStartedAnalyzer(CompilationStartAnalysisContext context, INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol);
 
-        protected abstract class AbstractCodeBlockStartedAnalyzer<TLanguageKindEnum> where TLanguageKindEnum : struct
+        protected abstract class AbstractCodeBlockStartedAnalyzer<TLanguageKindEnum>(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol) where TLanguageKindEnum : struct
         {
-            private readonly INamedTypeSymbol _genericEnumerableSymbol;
-            private readonly IMethodSymbol _genericEmptyEnumerableSymbol;
-
-            protected AbstractCodeBlockStartedAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol)
-            {
-                _genericEnumerableSymbol = genericEnumerableSymbol;
-                _genericEmptyEnumerableSymbol = genericEmptyEnumerableSymbol;
-            }
+            private readonly INamedTypeSymbol _genericEnumerableSymbol = genericEnumerableSymbol;
+            private readonly IMethodSymbol _genericEmptyEnumerableSymbol = genericEmptyEnumerableSymbol;
 
             protected abstract void GetSyntaxAnalyzer(CodeBlockStartAnalysisContext<TLanguageKindEnum> context, INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol);
 
@@ -116,16 +110,10 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        protected abstract class AbstractSyntaxAnalyzer
+        protected abstract class AbstractSyntaxAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol)
         {
-            protected INamedTypeSymbol GenericEnumerableSymbol { get; }
-            private readonly IMethodSymbol _genericEmptyEnumerableSymbol;
-
-            protected AbstractSyntaxAnalyzer(INamedTypeSymbol genericEnumerableSymbol, IMethodSymbol genericEmptyEnumerableSymbol)
-            {
-                this.GenericEnumerableSymbol = genericEnumerableSymbol;
-                _genericEmptyEnumerableSymbol = genericEmptyEnumerableSymbol;
-            }
+            protected INamedTypeSymbol GenericEnumerableSymbol { get; } = genericEnumerableSymbol;
+            private readonly IMethodSymbol _genericEmptyEnumerableSymbol = genericEmptyEnumerableSymbol;
 
             public static ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UseEmptyEnumerableRule, UseSingletonEnumerableRule);
 

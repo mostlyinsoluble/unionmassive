@@ -15,17 +15,13 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.BraceMatching;
 
 [ExportBraceMatcher(LanguageNames.CSharp), Shared]
-internal sealed class CSharpDirectiveTriviaBraceMatcher : AbstractDirectiveTriviaBraceMatcher<DirectiveTriviaSyntax,
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpDirectiveTriviaBraceMatcher() : AbstractDirectiveTriviaBraceMatcher<DirectiveTriviaSyntax,
     IfDirectiveTriviaSyntax, ElifDirectiveTriviaSyntax,
     ElseDirectiveTriviaSyntax, EndIfDirectiveTriviaSyntax,
     RegionDirectiveTriviaSyntax, EndRegionDirectiveTriviaSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpDirectiveTriviaBraceMatcher()
-    {
-    }
-
     protected override ImmutableArray<DirectiveTriviaSyntax> GetMatchingConditionalDirectives(DirectiveTriviaSyntax directive, CancellationToken cancellationToken)
         => directive.GetMatchingConditionalDirectives(cancellationToken);
 

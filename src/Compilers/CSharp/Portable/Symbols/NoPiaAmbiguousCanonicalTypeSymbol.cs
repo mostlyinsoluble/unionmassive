@@ -17,23 +17,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// embedded type symbol that was attempted to be substituted with canonical type, but the
     /// canonical type was ambiguous.
     /// </summary>
-    internal class NoPiaAmbiguousCanonicalTypeSymbol : ErrorTypeSymbol
+    internal class NoPiaAmbiguousCanonicalTypeSymbol(
+        AssemblySymbol embeddingAssembly,
+        NamedTypeSymbol firstCandidate,
+        NamedTypeSymbol secondCandidate,
+NamedTypeSymbol.TupleExtraData? tupleData = null) : ErrorTypeSymbol(tupleData)
     {
-        private readonly AssemblySymbol _embeddingAssembly;
-        private readonly NamedTypeSymbol _firstCandidate;
-        private readonly NamedTypeSymbol _secondCandidate;
-
-        public NoPiaAmbiguousCanonicalTypeSymbol(
-            AssemblySymbol embeddingAssembly,
-            NamedTypeSymbol firstCandidate,
-            NamedTypeSymbol secondCandidate,
-            TupleExtraData? tupleData = null)
-            : base(tupleData)
-        {
-            _embeddingAssembly = embeddingAssembly;
-            _firstCandidate = firstCandidate;
-            _secondCandidate = secondCandidate;
-        }
+        private readonly AssemblySymbol _embeddingAssembly = embeddingAssembly;
+        private readonly NamedTypeSymbol _firstCandidate = firstCandidate;
+        private readonly NamedTypeSymbol _secondCandidate = secondCandidate;
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {

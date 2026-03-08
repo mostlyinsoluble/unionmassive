@@ -37,12 +37,11 @@ public abstract class HostLanguageServices : IDisposable
     /// </summary>
     public LanguageServices LanguageServices { get; }
 
-    protected HostLanguageServices()
-    {
+    protected HostLanguageServices() =>
 #pragma warning disable 618 // 'HostProjectServices.HostProjectServices(HostLanguageServices)' is obsolete: 'Do not call directly.
         LanguageServices = new LanguageServices(this);
 #pragma warning restore
-    }
+
 
     /// <summary>
     /// Gets a language specific service provided by the host identified by the service type. 

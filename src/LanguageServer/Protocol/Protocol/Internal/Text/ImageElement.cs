@@ -9,21 +9,15 @@ using Roslyn.LanguageServer.Protocol;
 namespace Roslyn.Text.Adornments;
 
 [JsonConverter(typeof(ImageElementConverter))]
-internal sealed class ImageElement
+[method: JsonConstructor]
+internal sealed class ImageElement(ImageId imageId, string? automationName)
 {
     public static readonly ImageElement Empty = new(default, string.Empty);
 
-    public ImageId ImageId { get; }
-    public string? AutomationName { get; }
+    public ImageId ImageId { get; } = imageId;
+    public string? AutomationName { get; } = automationName;
 
     public ImageElement(ImageId imageId) : this(imageId, null)
     {
-    }
-
-    [JsonConstructor]
-    public ImageElement(ImageId imageId, string? automationName)
-    {
-        ImageId = imageId;
-        AutomationName = automationName;
     }
 }

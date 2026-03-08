@@ -21,51 +21,45 @@ namespace Microsoft.CodeAnalysis.LanguageServer.FileBasedPrograms;
 /// Handles loading miscellaneous files that are not file-based programs.
 /// These files are loaded into a canonical project backed by an empty .cs file in temp.
 /// </summary>
-internal sealed class CanonicalMiscFilesProjectLoader : LanguageServerProjectLoader, IDisposable
+internal sealed class CanonicalMiscFilesProjectLoader(
+    LanguageServerWorkspaceFactory workspaceFactory,
+    IFileChangeWatcher fileChangeWatcher,
+    IGlobalOptionService globalOptionService,
+    ILoggerFactory loggerFactory,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    ProjectLoadTelemetryReporter projectLoadTelemetry,
+    ServerConfigurationFactory serverConfigurationFactory,
+    IBinLogPathProvider binLogPathProvider,
+    DotnetCliHelper dotnetCliHelper) : LanguageServerProjectLoader(
+            workspaceFactory,
+            fileChangeWatcher,
+            globalOptionService,
+            loggerFactory,
+            listenerProvider,
+            projectLoadTelemetry,
+            serverConfigurationFactory,
+            binLogPathProvider,
+            dotnetCliHelper), IDisposable
 {
-    private readonly Lazy<string> _canonicalDocumentPath;
+    private readonly Lazy<string> _canonicalDocumentPath = new Lazy<string>(() =>
+                                         {
+                                             // Create a temp directory for the canonical project
+                                             var tempDirectory = Path.Combine(Path.GetTempPath(), "roslyn-canonical-misc", Guid.NewGuid().ToString());
+                                             Directory.CreateDirectory(tempDirectory);
+
+                                             var documentPath = Path.Combine(tempDirectory, "Canonical.cs");
+
+                                             // Create the empty canonical document
+                                             File.WriteAllText(documentPath, string.Empty);
+
+                                             return documentPath;
+                                         });
 
     /// <summary>
     /// Avoid showing restore notifications for misc files - it ends up being noisy and confusing
     /// as every file is a misc file on first open until we detect a project for it.
     /// </summary>
     protected override bool EnableProgressReporting => false;
-
-    public CanonicalMiscFilesProjectLoader(
-        LanguageServerWorkspaceFactory workspaceFactory,
-        IFileChangeWatcher fileChangeWatcher,
-        IGlobalOptionService globalOptionService,
-        ILoggerFactory loggerFactory,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        ProjectLoadTelemetryReporter projectLoadTelemetry,
-        ServerConfigurationFactory serverConfigurationFactory,
-        IBinLogPathProvider binLogPathProvider,
-        DotnetCliHelper dotnetCliHelper)
-            : base(
-                workspaceFactory,
-                fileChangeWatcher,
-                globalOptionService,
-                loggerFactory,
-                listenerProvider,
-                projectLoadTelemetry,
-                serverConfigurationFactory,
-                binLogPathProvider,
-                dotnetCliHelper)
-    {
-        _canonicalDocumentPath = new Lazy<string>(() =>
-        {
-            // Create a temp directory for the canonical project
-            var tempDirectory = Path.Combine(Path.GetTempPath(), "roslyn-canonical-misc", Guid.NewGuid().ToString());
-            Directory.CreateDirectory(tempDirectory);
-
-            var documentPath = Path.Combine(tempDirectory, "Canonical.cs");
-
-            // Create the empty canonical document
-            File.WriteAllText(documentPath, string.Empty);
-
-            return documentPath;
-        });
-    }
 
     public async ValueTask<TextDocument> AddMiscellaneousDocumentAsync(string documentPath, SourceText documentText, CancellationToken cancellationToken)
     {

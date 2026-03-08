@@ -12,18 +12,11 @@ using Microsoft.CodeAnalysis.Symbols;
 
 namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 {
-    internal sealed class CSharpEESymbolProvider : EESymbolProvider<TypeSymbol, LocalSymbol>
+    internal sealed class CSharpEESymbolProvider(SourceAssemblySymbol sourceAssembly, PEModuleSymbol module, PEMethodSymbol method) : EESymbolProvider<TypeSymbol, LocalSymbol>
     {
-        private readonly MetadataDecoder _metadataDecoder;
-        private readonly SourceAssemblySymbol _sourceAssembly;
-        private readonly PEMethodSymbol _method;
-
-        public CSharpEESymbolProvider(SourceAssemblySymbol sourceAssembly, PEModuleSymbol module, PEMethodSymbol method)
-        {
-            _metadataDecoder = new MetadataDecoder(module, method);
-            _sourceAssembly = sourceAssembly;
-            _method = method;
-        }
+        private readonly MetadataDecoder _metadataDecoder = new MetadataDecoder(module, method);
+        private readonly SourceAssemblySymbol _sourceAssembly = sourceAssembly;
+        private readonly PEMethodSymbol _method = method;
 
         public override LocalSymbol GetLocalVariable(
             string? name,

@@ -7,16 +7,10 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
-internal sealed class VsEnumDebugName : IVsEnumDebugName
+internal sealed class VsEnumDebugName(IList<IVsDebugName> values) : IVsEnumDebugName
 {
-    private readonly IList<IVsDebugName> _values;
-    private int _currentIndex;
-
-    public VsEnumDebugName(IList<IVsDebugName> values)
-    {
-        _values = values;
-        _currentIndex = 0;
-    }
+    private readonly IList<IVsDebugName> _values = values;
+    private int _currentIndex = 0;
 
     public int Clone(out IVsEnumDebugName ppEnum)
     {

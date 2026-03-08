@@ -25,10 +25,7 @@ internal abstract partial class AbstractAddImportFeatureService<TSimpleNameSynta
         public AssemblyReferenceCodeAction(
             Document originalDocument,
             AddImportFixData fixData)
-            : base(originalDocument, fixData, RequiresNonDocumentChangeTags)
-        {
-            Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.ReferenceAssemblySymbol);
-        }
+            : base(originalDocument, fixData, RequiresNonDocumentChangeTags) => Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.ReferenceAssemblySymbol);
 
         protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
             => await ComputeOperationsAsync(isPreview: true, cancellationToken).ConfigureAwait(false);

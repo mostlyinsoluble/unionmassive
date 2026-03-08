@@ -31,18 +31,11 @@ internal abstract class ExternalSourcesFilterHandlerBase : FilterHandlerBase
         return new EntryFilter(IncludeExact, IncludeExactMetadata, IncludeOther);
     }
 
-    private sealed class EntryFilter : IEntryFilter
+    private sealed class EntryFilter(bool includeExact, bool includeExactMetadata, bool includeOther) : IEntryFilter
     {
-        private readonly bool _includeExact;
-        private readonly bool _includeExactMetadata;
-        private readonly bool _includeOther;
-
-        public EntryFilter(bool includeExact, bool includeExactMetadata, bool includeOther)
-        {
-            _includeExact = includeExact;
-            _includeExactMetadata = includeExactMetadata;
-            _includeOther = includeOther;
-        }
+        private readonly bool _includeExact = includeExact;
+        private readonly bool _includeExactMetadata = includeExactMetadata;
+        private readonly bool _includeOther = includeOther;
 
         public bool Match(ITableEntryHandle entry)
         {

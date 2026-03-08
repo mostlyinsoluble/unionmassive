@@ -11,16 +11,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 {
     internal partial class DefiniteAssignmentPass
     {
-        internal sealed class LocalFunctionState : AbstractLocalFunctionState
+        internal sealed class LocalFunctionState(DefiniteAssignmentPass.LocalState stateFromBottom, DefiniteAssignmentPass.LocalState stateFromTop) : AbstractLocalFunctionState(stateFromBottom, stateFromTop)
         {
             public BitVector ReadVars = BitVector.Empty;
 
             public BitVector CapturedMask = BitVector.Null;
             public BitVector InvertedCapturedMask = BitVector.Null;
-
-            public LocalFunctionState(LocalState stateFromBottom, LocalState stateFromTop)
-                : base(stateFromBottom, stateFromTop)
-            { }
         }
 
         protected override LocalFunctionState CreateLocalFunctionState(LocalFunctionSymbol symbol)

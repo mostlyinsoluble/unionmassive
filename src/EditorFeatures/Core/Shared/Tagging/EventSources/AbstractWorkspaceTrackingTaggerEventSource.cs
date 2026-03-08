@@ -12,18 +12,12 @@ namespace Microsoft.CodeAnalysis.Editor.Shared.Tagging;
 /// An abstract implementation of a tagger event source that takes a buffer and tracks
 /// the workspace that it's attached to.
 /// </summary>
-internal abstract class AbstractWorkspaceTrackingTaggerEventSource : AbstractTaggerEventSource
+internal abstract class AbstractWorkspaceTrackingTaggerEventSource(ITextBuffer subjectBuffer) : AbstractTaggerEventSource
 {
-    private readonly WorkspaceRegistration _workspaceRegistration;
+    private readonly WorkspaceRegistration _workspaceRegistration = Workspace.GetWorkspaceRegistration(subjectBuffer.AsTextContainer());
 
-    protected ITextBuffer SubjectBuffer { get; }
+    protected ITextBuffer SubjectBuffer { get; } = subjectBuffer;
     protected Workspace? CurrentWorkspace { get; private set; }
-
-    protected AbstractWorkspaceTrackingTaggerEventSource(ITextBuffer subjectBuffer)
-    {
-        this.SubjectBuffer = subjectBuffer;
-        _workspaceRegistration = Workspace.GetWorkspaceRegistration(subjectBuffer.AsTextContainer());
-    }
 
     protected abstract void ConnectToWorkspace(Workspace workspace);
     protected abstract void DisconnectFromWorkspace(Workspace workspace);

@@ -37,19 +37,13 @@ namespace Roslyn.Utilities
         /// <summary>
         /// Construct a concurrent set with the default concurrency level.
         /// </summary>
-        public ConcurrentSet()
-        {
-            _dictionary = new ConcurrentDictionary<T, byte>(DefaultConcurrencyLevel, DefaultCapacity);
-        }
+        public ConcurrentSet() => _dictionary = new ConcurrentDictionary<T, byte>(DefaultConcurrencyLevel, DefaultCapacity);
 
         /// <summary>
         /// Construct a concurrent set using the specified equality comparer.
         /// </summary>
         /// <param name="equalityComparer">The equality comparer for values in the set.</param>
-        public ConcurrentSet(IEqualityComparer<T> equalityComparer)
-        {
-            _dictionary = new ConcurrentDictionary<T, byte>(DefaultConcurrencyLevel, DefaultCapacity, equalityComparer);
-        }
+        public ConcurrentSet(IEqualityComparer<T> equalityComparer) => _dictionary = new ConcurrentDictionary<T, byte>(DefaultConcurrencyLevel, DefaultCapacity, equalityComparer);
 
         /// <summary>
         /// Obtain the number of elements in the set.
@@ -117,10 +111,7 @@ namespace Roslyn.Utilities
         {
             private readonly IEnumerator<KeyValuePair<T, byte>> _kvpEnumerator;
 
-            internal KeyEnumerator(IEnumerable<KeyValuePair<T, byte>> data)
-            {
-                _kvpEnumerator = data.GetEnumerator();
-            }
+            internal KeyEnumerator(IEnumerable<KeyValuePair<T, byte>> data) => _kvpEnumerator = data.GetEnumerator();
 
             public T Current => _kvpEnumerator.Current.Key;
 

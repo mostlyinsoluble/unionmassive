@@ -12,18 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace BuildValidator
 {
-    internal class LocalSourceResolver
+    internal class LocalSourceResolver(Options options, ImmutableArray<SourceLinkEntry> sourceLinkEntries, ILogger logger)
     {
-        internal Options Options { get; }
-        internal ImmutableArray<SourceLinkEntry> SourceLinkEntries { get; }
-        internal ILogger Logger { get; }
-
-        public LocalSourceResolver(Options options, ImmutableArray<SourceLinkEntry> sourceLinkEntries, ILogger logger)
-        {
-            Options = options;
-            SourceLinkEntries = sourceLinkEntries;
-            Logger = logger;
-        }
+        internal Options Options { get; } = options;
+        internal ImmutableArray<SourceLinkEntry> SourceLinkEntries { get; } = sourceLinkEntries;
+        internal ILogger Logger { get; } = logger;
 
         public SourceText ResolveSource(SourceTextInfo sourceTextInfo)
         {

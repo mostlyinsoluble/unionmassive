@@ -23,10 +23,7 @@ internal struct JsonLexer
     public readonly VirtualCharSequence Text;
     public int Position;
 
-    public JsonLexer(VirtualCharSequence text) : this()
-    {
-        Text = text;
-    }
+    public JsonLexer(VirtualCharSequence text) : this() => Text = text;
 
     public readonly VirtualChar CurrentChar => Text[Position];
 

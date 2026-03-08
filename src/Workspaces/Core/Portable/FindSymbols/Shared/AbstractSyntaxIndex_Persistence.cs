@@ -32,7 +32,7 @@ internal abstract partial class AbstractSyntaxIndex<TIndex>
     /// </summary>
     private static readonly ConditionalWeakTable<ParseOptions, StrongBox<Checksum>> s_ppDirectivesToChecksum = new();
 
-    public readonly Checksum? Checksum;
+    public readonly Checksum? Checksum = checksum;
 
     protected static async Task<TIndex?> LoadAsync(
         SolutionKey solutionKey,

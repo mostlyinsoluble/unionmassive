@@ -12,17 +12,11 @@ namespace Microsoft.CodeAnalysis.EmbeddedLanguages.VirtualChars;
 /// Trivial implementation of a <see cref="SourceText"/> that directly maps over a <see
 /// cref="VirtualCharSequence"/>.
 /// </summary>
-internal sealed class VirtualCharSequenceSourceText : SourceText
+internal sealed class VirtualCharSequenceSourceText(ImmutableSegmentedList<VirtualChar> virtualChars, Encoding? encoding) : SourceText
 {
-    private readonly ImmutableSegmentedList<VirtualChar> _virtualChars;
+    private readonly ImmutableSegmentedList<VirtualChar> _virtualChars = virtualChars;
 
-    public override Encoding? Encoding { get; }
-
-    public VirtualCharSequenceSourceText(ImmutableSegmentedList<VirtualChar> virtualChars, Encoding? encoding)
-    {
-        _virtualChars = virtualChars;
-        Encoding = encoding;
-    }
+    public override Encoding? Encoding { get; } = encoding;
 
     public override int Length => _virtualChars.Count;
 

@@ -14,14 +14,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.CaseCorrection;
 
 [ExportLanguageService(typeof(ICaseCorrectionService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCaseCorrectionService : AbstractCaseCorrectionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCaseCorrectionService() : AbstractCaseCorrectionService
 {
     public static int I { get; }
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCaseCorrectionService()
-    {
-    }
 
     protected override void AddReplacements(
         SemanticModel? semanticModel,

@@ -25,9 +25,11 @@ internal sealed partial class SolutionCompilationState
     /// want to still let the user work with that doc effectively up until the point that new generated documents are
     /// produced and replace it in the host view.
     /// </summary>
-    private sealed class WithFrozenSourceGeneratedDocumentsCompilationTracker : ICompilationTracker
+    private sealed class WithFrozenSourceGeneratedDocumentsCompilationTracker(
+SolutionCompilationState.RegularCompilationTracker underlyingTracker,
+        TextDocumentStates<SourceGeneratedDocumentState> replacementDocumentStates) : ICompilationTracker
     {
-        private readonly TextDocumentStates<SourceGeneratedDocumentState> _replacementDocumentStates;
+        private readonly TextDocumentStates<SourceGeneratedDocumentState> _replacementDocumentStates = replacementDocumentStates;
 
         /// <summary>
         /// The lazily-produced compilation that has the generated document updated. This is initialized by call to
@@ -36,7 +38,7 @@ internal sealed partial class SolutionCompilationState
         [DisallowNull]
         private Compilation? _compilationWithReplacements;
 
-        public RegularCompilationTracker UnderlyingTracker { get; }
+        public RegularCompilationTracker UnderlyingTracker { get; } = underlyingTracker;
         public ProjectState ProjectState => UnderlyingTracker.ProjectState;
 
         public GeneratorDriver? GeneratorDriver => UnderlyingTracker.GeneratorDriver;
@@ -44,16 +46,7 @@ internal sealed partial class SolutionCompilationState
         /// <summary>
         /// Intentionally not readonly as this is a mutable struct.
         /// </summary>
-        private SkeletonReferenceCache _skeletonReferenceCache;
-
-        public WithFrozenSourceGeneratedDocumentsCompilationTracker(
-            RegularCompilationTracker underlyingTracker,
-            TextDocumentStates<SourceGeneratedDocumentState> replacementDocumentStates)
-        {
-            this.UnderlyingTracker = underlyingTracker;
-            _replacementDocumentStates = replacementDocumentStates;
-            _skeletonReferenceCache = underlyingTracker.GetClonedSkeletonReferenceCache();
-        }
+        private SkeletonReferenceCache _skeletonReferenceCache = underlyingTracker.GetClonedSkeletonReferenceCache();
 
         public bool ContainsAssemblyOrModuleOrDynamic(
             ISymbol symbol, bool primary,

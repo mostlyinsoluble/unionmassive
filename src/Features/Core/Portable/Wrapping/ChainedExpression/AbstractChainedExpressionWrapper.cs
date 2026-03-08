@@ -46,22 +46,15 @@ namespace Microsoft.CodeAnalysis.Wrapping.ChainedExpression;
 /// </summary>
 internal abstract partial class AbstractChainedExpressionWrapper<
     TNameSyntax,
-    TBaseArgumentListSyntax> : AbstractSyntaxWrapper
+    TBaseArgumentListSyntax>(
+    Indentation.IIndentationService indentationService,
+    ISyntaxFacts syntaxFacts) : AbstractSyntaxWrapper(indentationService)
     where TNameSyntax : SyntaxNode
     where TBaseArgumentListSyntax : SyntaxNode
 {
-    private readonly ISyntaxFacts _syntaxFacts;
-    private readonly int _dotToken;
-    private readonly int _questionToken;
-
-    protected AbstractChainedExpressionWrapper(
-        Indentation.IIndentationService indentationService,
-        ISyntaxFacts syntaxFacts) : base(indentationService)
-    {
-        _syntaxFacts = syntaxFacts;
-        _dotToken = syntaxFacts.SyntaxKinds.DotToken;
-        _questionToken = syntaxFacts.SyntaxKinds.QuestionToken;
-    }
+    private readonly ISyntaxFacts _syntaxFacts = syntaxFacts;
+    private readonly int _dotToken = syntaxFacts.SyntaxKinds.DotToken;
+    private readonly int _questionToken = syntaxFacts.SyntaxKinds.QuestionToken;
 
     /// <summary>
     /// Gets the language specific trivia that should be inserted before an operator if the

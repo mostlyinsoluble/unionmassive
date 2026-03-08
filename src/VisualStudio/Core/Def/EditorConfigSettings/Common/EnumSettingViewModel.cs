@@ -34,10 +34,7 @@ internal abstract class EnumSettingViewModel<T> : IEnumSettingViewModel
         set;
     }
 
-    protected EnumSettingViewModel()
-    {
-        _mapping = GetValuesAndDescriptions();
-    }
+    protected EnumSettingViewModel() => _mapping = GetValuesAndDescriptions();
 
     public void ChangeProperty(string propertyDescription)
     {

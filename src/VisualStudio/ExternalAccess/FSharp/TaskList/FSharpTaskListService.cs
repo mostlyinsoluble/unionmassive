@@ -14,16 +14,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.TaskList;
 
 [Shared]
 [ExportLanguageService(typeof(ITaskListService), LanguageNames.FSharp)]
-internal sealed class FSharpTaskListService : ITaskListService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FSharpTaskListService([Import(AllowDefault = true)] IFSharpTaskListService impl) : ITaskListService
 {
-    private readonly IFSharpTaskListService? _impl;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpTaskListService([Import(AllowDefault = true)] IFSharpTaskListService impl)
-    {
-        _impl = impl;
-    }
+    private readonly IFSharpTaskListService? _impl = impl;
 
     public async Task<ImmutableArray<TaskListItem>> GetTaskListItemsAsync(Document document, ImmutableArray<TaskListItemDescriptor> descriptors, CancellationToken cancellationToken)
     {

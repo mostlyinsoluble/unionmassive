@@ -482,7 +482,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                     }
 
-                    sourceName = sourceName ?? DefaultIndexerName;
+                    sourceName ??= DefaultIndexerName;
 
                     InterlockedOperations.Initialize(ref _lazySourceName, sourceName);
                 }

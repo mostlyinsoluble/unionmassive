@@ -14,11 +14,8 @@ internal sealed class EditorAnalyzerConfigOptions : AnalyzerConfigOptions
 {
     private readonly IDictionary<string, object> _configOptions;
 
-    internal EditorAnalyzerConfigOptions(IEditorOptions editorOptions)
-    {
-        _configOptions = (editorOptions.GetOptionValue(DefaultOptions.RawCodingConventionsSnapshotOptionName) as IDictionary<string, object>) ??
+    internal EditorAnalyzerConfigOptions(IEditorOptions editorOptions) => _configOptions = (editorOptions.GetOptionValue(DefaultOptions.RawCodingConventionsSnapshotOptionName) as IDictionary<string, object>) ??
             SpecializedCollections.EmptyDictionary<string, object>();
-    }
 
     public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
     {

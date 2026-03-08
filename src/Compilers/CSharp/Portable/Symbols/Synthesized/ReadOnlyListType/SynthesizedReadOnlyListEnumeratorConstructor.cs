@@ -9,11 +9,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     internal sealed class SynthesizedReadOnlyListEnumeratorConstructor : SynthesizedInstanceConstructor
     {
-        internal SynthesizedReadOnlyListEnumeratorConstructor(SynthesizedReadOnlyListEnumeratorTypeSymbol containingType, TypeSymbol parameterType) : base(containingType)
-        {
-            Parameters = ImmutableArray.Create(
+        internal SynthesizedReadOnlyListEnumeratorConstructor(SynthesizedReadOnlyListEnumeratorTypeSymbol containingType, TypeSymbol parameterType) : base(containingType) => Parameters = ImmutableArray.Create(
                 SynthesizedParameterSymbol.Create(this, TypeWithAnnotations.Create(parameterType), ordinal: 0, RefKind.None, "item"));
-        }
 
         public override ImmutableArray<ParameterSymbol> Parameters { get; }
 

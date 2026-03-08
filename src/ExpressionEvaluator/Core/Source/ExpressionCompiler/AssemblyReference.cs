@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         private readonly AssemblyIdentity _identity;
 
-        internal AssemblyReference(AssemblyIdentity identity)
-        {
-            _identity = identity;
-        }
+        internal AssemblyReference(AssemblyIdentity identity) => _identity = identity;
 
         AssemblyIdentity IAssemblyReference.Identity => _identity;
         Version? IAssemblyReference.AssemblyVersionPattern => null;

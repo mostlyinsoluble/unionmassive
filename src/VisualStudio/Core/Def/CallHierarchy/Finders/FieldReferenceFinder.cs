@@ -12,13 +12,8 @@ using Microsoft.CodeAnalysis.Shared.TestHooks;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy.Finders;
 
-internal sealed class FieldReferenceFinder : AbstractCallFinder
+internal sealed class FieldReferenceFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider) : AbstractCallFinder(symbol, projectId, asyncListener, provider)
 {
-    public FieldReferenceFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider)
-        : base(symbol, projectId, asyncListener, provider)
-    {
-    }
-
     public override string DisplayName
     {
         get

@@ -12,10 +12,7 @@ internal readonly struct VSTypeScriptCommentSelectionInfo
 {
     internal readonly CommentSelectionInfo UnderlyingObject;
 
-    internal VSTypeScriptCommentSelectionInfo(CommentSelectionInfo underlyingObject)
-    {
-        UnderlyingObject = underlyingObject;
-    }
+    internal VSTypeScriptCommentSelectionInfo(CommentSelectionInfo underlyingObject) => UnderlyingObject = underlyingObject;
 
     public VSTypeScriptCommentSelectionInfo(
         bool supportsSingleLineComment,

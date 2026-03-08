@@ -1792,25 +1792,15 @@ endRegion:
             }
         }
 
-        private sealed class OperationTreeSerializer : OperationTreeVerifier
+        private sealed class OperationTreeSerializer(ControlFlowGraph graph, ControlFlowRegion region, string idSuffix,
+                                       Dictionary<IFlowAnonymousFunctionOperation, ControlFlowGraph> anonymousFunctionsMap,
+                                       Compilation compilation, IOperation root, int initialIndent, ISymbol associatedSymbol) : OperationTreeVerifier(compilation, root, initialIndent)
         {
-            private readonly ControlFlowGraph _graph;
-            private readonly ControlFlowRegion _region;
-            private readonly string _idSuffix;
-            private readonly Dictionary<IFlowAnonymousFunctionOperation, ControlFlowGraph> _anonymousFunctionsMap;
-            private readonly ISymbol _associatedSymbol;
-
-            public OperationTreeSerializer(ControlFlowGraph graph, ControlFlowRegion region, string idSuffix,
-                                           Dictionary<IFlowAnonymousFunctionOperation, ControlFlowGraph> anonymousFunctionsMap,
-                                           Compilation compilation, IOperation root, int initialIndent, ISymbol associatedSymbol) :
-                base(compilation, root, initialIndent)
-            {
-                _graph = graph;
-                _region = region;
-                _idSuffix = idSuffix;
-                _anonymousFunctionsMap = anonymousFunctionsMap;
-                _associatedSymbol = associatedSymbol;
-            }
+            private readonly ControlFlowGraph _graph = graph;
+            private readonly ControlFlowRegion _region = region;
+            private readonly string _idSuffix = idSuffix;
+            private readonly Dictionary<IFlowAnonymousFunctionOperation, ControlFlowGraph> _anonymousFunctionsMap = anonymousFunctionsMap;
+            private readonly ISymbol _associatedSymbol = associatedSymbol;
 
             public System.Text.StringBuilder Builder => _builder;
 

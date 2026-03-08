@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable IDE2001, IDE0011
+#pragma warning disable format, IDE2001, IDE0011
 
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -51,11 +51,9 @@ internal sealed class CSharpUseSystemThreadingLockDiagnosticAnalyzer()
         context.RegisterCompilationStartAction(compilationContext =>
         {
             if (compilationContext.Compilation.GetBestTypeByMetadataName("System.Threading.Lock")
-            is not INamedTypeSymbol { DeclaredAccessibility: Accessibility.Public } lockType) return;
-
+            is INamedTypeSymbol { DeclaredAccessibility: Accessibility.Public } lockType)
             if (lockType.GetTypeMembers("Scope").FirstOrDefault()
-            is not { TypeKind: TypeKind.Struct, IsRefLikeType: true, DeclaredAccessibility: Accessibility.Public }) return;
-
+            is { TypeKind: TypeKind.Struct, IsRefLikeType: true, DeclaredAccessibility: Accessibility.Public })
             context.RegisterSymbolStartAction(AnalyzeNamedType, SymbolKind.NamedType);
         });
     }
@@ -210,7 +208,7 @@ internal sealed class CSharpUseSystemThreadingLockDiagnosticAnalyzer()
         {
             var cancellationToken = context.CancellationToken;
 
-            foreach (var (lockField, (declarator, option, canUse, wasLocked)) in potentialLockFields)
+            foreach (var (declarator, option, canUse, wasLocked) in potentialLockFields.Values)
             {
                 // If we blocked this field in our analysis pass, can immediately skip.
                 if (!canUse)

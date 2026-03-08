@@ -12,13 +12,8 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 {
     [TraitDiscoverer("Microsoft.CodeAnalysis.Test.Utilities.CompilerTraitDiscoverer", assemblyName: "Microsoft.CodeAnalysis.Test.Utilities")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-    public sealed class CompilerTraitAttribute : Attribute, ITraitAttribute
+    public sealed class CompilerTraitAttribute(params CompilerFeature[] features) : Attribute, ITraitAttribute
     {
-        public CompilerFeature[] Features { get; }
-
-        public CompilerTraitAttribute(params CompilerFeature[] features)
-        {
-            Features = features;
-        }
+        public CompilerFeature[] Features { get; } = features;
     }
 }

@@ -18,10 +18,7 @@ internal sealed class SimpleTreeAndVersionSource : ITreeAndVersionSource
 {
     private readonly AsyncLazy<TreeAndVersion> _source;
 
-    private SimpleTreeAndVersionSource(AsyncLazy<TreeAndVersion> source)
-    {
-        _source = source;
-    }
+    private SimpleTreeAndVersionSource(AsyncLazy<TreeAndVersion> source) => _source = source;
 
     public Task<TreeAndVersion> GetValueAsync(CancellationToken cancellationToken)
         => _source.GetValueAsync(cancellationToken);

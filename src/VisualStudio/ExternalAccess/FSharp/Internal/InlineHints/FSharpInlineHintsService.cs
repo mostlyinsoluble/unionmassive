@@ -15,20 +15,14 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.InlineHints;
 
 [ExportLanguageService(typeof(IInlineHintsService), LanguageNames.FSharp), Shared]
-internal class FSharpInlineHintsService : IInlineHintsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpInlineHintsService(
+    [Import(AllowDefault = true)] IFSharpInlineHintsService2? service2,
+    [Import(AllowDefault = true)] IFSharpInlineHintsService? service) : IInlineHintsService
 {
-    private readonly IFSharpInlineHintsService2? _service2;
-    private readonly IFSharpInlineHintsService? _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpInlineHintsService(
-        [Import(AllowDefault = true)] IFSharpInlineHintsService2? service2,
-        [Import(AllowDefault = true)] IFSharpInlineHintsService? service)
-    {
-        _service2 = service2;
-        _service = service;
-    }
+    private readonly IFSharpInlineHintsService2? _service2 = service2;
+    private readonly IFSharpInlineHintsService? _service = service;
 
     public async Task<ImmutableArray<InlineHint>> GetInlineHintsAsync(
         Document document, TextSpan textSpan, InlineHintsOptions options, bool displayAllOverride, CancellationToken cancellationToken)

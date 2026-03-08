@@ -28,14 +28,10 @@ internal sealed class FirstDocumentIsActiveAndVisibleDocumentTrackingService : I
         => [TryGetActiveDocument()];
 
     [ExportWorkspaceServiceFactory(typeof(IDocumentTrackingService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-    public sealed class Factory : IWorkspaceServiceFactory
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    public sealed class Factory() : IWorkspaceServiceFactory
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public Factory()
-        {
-        }
-
         [Obsolete(MefConstruction.FactoryMethodMessage, error: true)]
         public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
             => new FirstDocumentIsActiveAndVisibleDocumentTrackingService(workspaceServices.Workspace);

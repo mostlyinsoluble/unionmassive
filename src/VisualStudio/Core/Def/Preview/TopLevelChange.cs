@@ -17,23 +17,15 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
-internal sealed class TopLevelChange : AbstractChange
+internal sealed class TopLevelChange(
+    string name,
+    Glyph glyph,
+    Solution newSolution,
+    PreviewEngine engine) : AbstractChange(engine)
 {
-    private readonly string _name;
-    private readonly Solution _newSolution;
-    private readonly Glyph _glyph;
-
-    public TopLevelChange(
-        string name,
-        Glyph glyph,
-        Solution newSolution,
-        PreviewEngine engine)
-        : base(engine)
-    {
-        _name = name;
-        _glyph = glyph;
-        _newSolution = newSolution;
-    }
+    private readonly string _name = name;
+    private readonly Solution _newSolution = newSolution;
+    private readonly Glyph _glyph = glyph;
 
     public override int GetText(out VSTREETEXTOPTIONS tto, out string pbstrText)
     {

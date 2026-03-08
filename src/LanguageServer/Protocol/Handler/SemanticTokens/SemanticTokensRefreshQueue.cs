@@ -15,7 +15,12 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.SemanticTokens;
 /// <summary>
 /// Batches requests to refresh the semantic tokens to optimize user experience.
 /// </summary>
-internal sealed class SemanticTokensRefreshQueue : AbstractRefreshQueue
+internal sealed class SemanticTokensRefreshQueue(
+    IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
+    LspWorkspaceRegistrationService lspWorkspaceRegistrationService,
+    LspWorkspaceManager lspWorkspaceManager,
+    IClientLanguageServerManager notificationManager,
+    FeatureProviderRefresher providerRefresher) : AbstractRefreshQueue(asynchronousOperationListenerProvider, lspWorkspaceRegistrationService, lspWorkspaceManager, notificationManager, providerRefresher)
 {
     /// <summary>
     /// Lock over the mutable state that follows.
@@ -29,15 +34,6 @@ internal sealed class SemanticTokensRefreshQueue : AbstractRefreshQueue
     private readonly Dictionary<ProjectId, Checksum> _projectIdToLastComputedChecksum = [];
 
     public bool AllowRazorRefresh { get; set; }
-
-    public SemanticTokensRefreshQueue(
-        IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
-        LspWorkspaceRegistrationService lspWorkspaceRegistrationService,
-        LspWorkspaceManager lspWorkspaceManager,
-        IClientLanguageServerManager notificationManager,
-        FeatureProviderRefresher providerRefresher) : base(asynchronousOperationListenerProvider, lspWorkspaceRegistrationService, lspWorkspaceManager, notificationManager, providerRefresher)
-    {
-    }
 
     public async Task TryEnqueueRefreshComputationAsync(Project project, CancellationToken cancellationToken)
     {

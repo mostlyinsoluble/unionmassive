@@ -13,14 +13,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.ExtractMethod;
 
 [ExportLanguageServiceFactory(typeof(ISyntaxTriviaService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpSyntaxTriviaServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSyntaxTriviaServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSyntaxTriviaServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices provider)
         => CSharpSyntaxTriviaService.Instance;
 }

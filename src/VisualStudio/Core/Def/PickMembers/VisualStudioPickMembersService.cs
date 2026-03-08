@@ -14,14 +14,11 @@ using Roslyn.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.PickMembers;
 
 [ExportWorkspaceService(typeof(IPickMembersService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioPickMembersService : IPickMembersService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioPickMembersService(IGlyphService glyphService) : IPickMembersService
 {
-    private readonly IGlyphService _glyphService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioPickMembersService(IGlyphService glyphService)
-        => _glyphService = glyphService;
+    private readonly IGlyphService _glyphService = glyphService;
 
     public PickMembersResult PickMembers(
         string title,

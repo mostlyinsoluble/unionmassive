@@ -14,27 +14,21 @@ using Microsoft.VisualStudio.Text.Operations;
 namespace Microsoft.CodeAnalysis.Interactive;
 
 [ExportWorkspaceServiceFactory(typeof(IGlobalUndoService), [WorkspaceKind.Interactive]), Shared]
-internal sealed class InteractiveGlobalUndoServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InteractiveGlobalUndoServiceFactory(ITextUndoHistoryRegistry undoHistoryRegistry) : IWorkspaceServiceFactory
 {
-    private readonly GlobalUndoService _singleton;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InteractiveGlobalUndoServiceFactory(ITextUndoHistoryRegistry undoHistoryRegistry)
-        => _singleton = new GlobalUndoService(undoHistoryRegistry);
+    private readonly GlobalUndoService _singleton = new GlobalUndoService(undoHistoryRegistry);
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => _singleton;
 
-    private sealed class GlobalUndoService : IGlobalUndoService
+    private sealed class GlobalUndoService(ITextUndoHistoryRegistry undoHistoryRegistry) : IGlobalUndoService
     {
-        private readonly ITextUndoHistoryRegistry _undoHistoryRegistry;
+        private readonly ITextUndoHistoryRegistry _undoHistoryRegistry = undoHistoryRegistry;
 
         public bool IsGlobalTransactionOpen(Workspace workspace)
             => GetHistory(workspace).CurrentTransaction != null;
-
-        public GlobalUndoService(ITextUndoHistoryRegistry undoHistoryRegistry)
-            => _undoHistoryRegistry = undoHistoryRegistry;
 
         public bool CanUndo(Workspace workspace)
         {
@@ -66,12 +60,9 @@ internal sealed class InteractiveGlobalUndoServiceFactory : IWorkspaceServiceFac
             return textUndoHistory;
         }
 
-        private sealed class InteractiveGlobalUndoTransaction : IWorkspaceGlobalUndoTransaction
+        private sealed class InteractiveGlobalUndoTransaction(ITextUndoTransaction transaction) : IWorkspaceGlobalUndoTransaction
         {
-            private readonly ITextUndoTransaction _transaction;
-
-            public InteractiveGlobalUndoTransaction(ITextUndoTransaction transaction)
-                => _transaction = transaction;
+            private readonly ITextUndoTransaction _transaction = transaction;
 
             public void AddDocument(DocumentId id)
             {

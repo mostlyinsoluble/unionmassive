@@ -351,10 +351,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             internal readonly TMetadataContext MetadataContext;
 
-            internal MetadataContextItem(TMetadataContext metadataContext)
-            {
-                this.MetadataContext = metadataContext;
-            }
+            internal MetadataContextItem(TMetadataContext metadataContext) => this.MetadataContext = metadataContext;
         }
 
         private sealed class AppDomainLifetimeDataItem : DkmDataItem { }

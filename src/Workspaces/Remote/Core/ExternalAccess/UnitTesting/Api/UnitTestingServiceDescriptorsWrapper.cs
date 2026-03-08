@@ -12,17 +12,14 @@ using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.Api;
 
-internal readonly struct UnitTestingServiceDescriptorsWrapper
+internal readonly struct UnitTestingServiceDescriptorsWrapper(
+    string componentName,
+    Func<string, string> featureDisplayNameProvider,
+    ImmutableArray<IMessagePackFormatter> additionalFormatters,
+    ImmutableArray<IFormatterResolver> additionalResolvers,
+    IEnumerable<(Type serviceInterface, Type? callbackInterface)> interfaces)
 {
-    internal readonly ServiceDescriptors UnderlyingObject;
-
-    public UnitTestingServiceDescriptorsWrapper(
-        string componentName,
-        Func<string, string> featureDisplayNameProvider,
-        ImmutableArray<IMessagePackFormatter> additionalFormatters,
-        ImmutableArray<IFormatterResolver> additionalResolvers,
-        IEnumerable<(Type serviceInterface, Type? callbackInterface)> interfaces)
-        => UnderlyingObject = new ServiceDescriptors(componentName, featureDisplayNameProvider, new RemoteSerializationOptions(additionalFormatters, additionalResolvers), interfaces);
+    internal readonly ServiceDescriptors UnderlyingObject = new ServiceDescriptors(componentName, featureDisplayNameProvider, new RemoteSerializationOptions(additionalFormatters, additionalResolvers), interfaces);
 
     /// <summary>
     /// To be called from a service factory in OOP.

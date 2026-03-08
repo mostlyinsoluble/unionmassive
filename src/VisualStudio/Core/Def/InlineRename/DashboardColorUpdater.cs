@@ -12,14 +12,10 @@ using Microsoft.VisualStudio.Shell;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.InlineRename;
 
 [Export(typeof(IInlineRenameColorUpdater))]
-internal sealed class DashboardColorUpdater : IInlineRenameColorUpdater
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DashboardColorUpdater() : IInlineRenameColorUpdater
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DashboardColorUpdater()
-    {
-    }
-
     public void UpdateColors()
     {
         InlineRenameColors.SystemCaptionTextColorKey = EnvironmentColors.SystemWindowTextColorKey;

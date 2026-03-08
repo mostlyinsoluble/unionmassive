@@ -16,22 +16,16 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.SignatureHelp;
 
 [Shared]
 [ExportSignatureHelpProvider(nameof(FSharpSignatureHelpProvider), LanguageNames.FSharp)]
-internal class FSharpSignatureHelpProvider : ISignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpSignatureHelpProvider(
+    [Import(AllowDefault = true)] IFSharpSignatureHelpProvider? legacyProvider,
+    [Import(AllowDefault = true)] AbstractFSharpSignatureHelpProvider? newProvider) : ISignatureHelpProvider
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-    private readonly IFSharpSignatureHelpProvider? _legacyProvider;
+    private readonly IFSharpSignatureHelpProvider? _legacyProvider = legacyProvider;
 #pragma warning restore CS0618 // Type or member is obsolete
-    private readonly AbstractFSharpSignatureHelpProvider? _newProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpSignatureHelpProvider(
-        [Import(AllowDefault = true)] IFSharpSignatureHelpProvider? legacyProvider,
-        [Import(AllowDefault = true)] AbstractFSharpSignatureHelpProvider? newProvider)
-    {
-        _legacyProvider = legacyProvider;
-        _newProvider = newProvider;
-    }
+    private readonly AbstractFSharpSignatureHelpProvider? _newProvider = newProvider;
 
     /// <summary>
     /// Hard coded from https://github.com/dotnet/fsharp/blob/main/vsintegration/src/FSharp.Editor/Completion/SignatureHelp.fs#L708

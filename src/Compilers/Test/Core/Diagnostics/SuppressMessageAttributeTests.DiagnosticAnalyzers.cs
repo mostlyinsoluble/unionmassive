@@ -47,17 +47,12 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         }
 
         // Produces a warning on the declaration of any symbol whose name starts with a specified prefix
-        protected class WarningOnNamePrefixDeclarationAnalyzer : DiagnosticAnalyzer
+        protected class WarningOnNamePrefixDeclarationAnalyzer(string errorSymbolPrefix) : DiagnosticAnalyzer
         {
             public const string Id = "Declaration";
             private static readonly DiagnosticDescriptor s_rule = GetRule(Id);
 
-            private readonly string _errorSymbolPrefix;
-
-            public WarningOnNamePrefixDeclarationAnalyzer(string errorSymbolPrefix)
-            {
-                _errorSymbolPrefix = errorSymbolPrefix;
-            }
+            private readonly string _errorSymbolPrefix = errorSymbolPrefix;
 
             public override void Initialize(AnalysisContext analysisContext)
             {
@@ -112,17 +107,12 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         }
 
         // Produces a warning for the end of every code body and every invocation expression within that code body
-        protected class WarningOnCodeBodyAnalyzer : DiagnosticAnalyzer
+        protected class WarningOnCodeBodyAnalyzer(string language) : DiagnosticAnalyzer
         {
             public const string Id = "CodeBody";
             private static readonly DiagnosticDescriptor s_rule = GetRule(Id);
 
-            private readonly string _language;
-
-            public WarningOnCodeBodyAnalyzer(string language)
-            {
-                _language = language;
-            }
+            private readonly string _language = language;
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -217,16 +207,11 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         }
 
         // Produces a warning for each token overlapping the given span in a syntax tree
-        protected class WarningOnTokenAnalyzer : DiagnosticAnalyzer
+        protected class WarningOnTokenAnalyzer(IList<TextSpan> spans) : DiagnosticAnalyzer
         {
             public const string Id = "Token";
             private static readonly DiagnosticDescriptor s_rule = GetRule(Id);
-            private readonly IList<TextSpan> _spans;
-
-            public WarningOnTokenAnalyzer(IList<TextSpan> spans)
-            {
-                _spans = spans;
-            }
+            private readonly IList<TextSpan> _spans = spans;
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -253,16 +238,11 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         }
 
         // Throws an exception on every AnalyzeSymbol on named types
-        protected class ThrowExceptionForEachNamedTypeAnalyzer : DiagnosticAnalyzer
+        protected class ThrowExceptionForEachNamedTypeAnalyzer(ExceptionDispatchInfo exceptionDispatchInfo) : DiagnosticAnalyzer
         {
             public const string Id = "ThrowException";
             private static readonly DiagnosticDescriptor s_rule = GetRule(Id);
-            private readonly ExceptionDispatchInfo _exceptionDispatchInfo;
-
-            public ThrowExceptionForEachNamedTypeAnalyzer(ExceptionDispatchInfo exceptionDispatchInfo)
-            {
-                _exceptionDispatchInfo = exceptionDispatchInfo;
-            }
+            private readonly ExceptionDispatchInfo _exceptionDispatchInfo = exceptionDispatchInfo;
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -287,14 +267,9 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
             }
         }
 
-        protected class ThrowExceptionFromSupportedDiagnostics : DiagnosticAnalyzer
+        protected class ThrowExceptionFromSupportedDiagnostics(Exception exception) : DiagnosticAnalyzer
         {
-            private readonly Exception _exception;
-
-            public ThrowExceptionFromSupportedDiagnostics(Exception exception)
-            {
-                _exception = exception;
-            }
+            private readonly Exception _exception = exception;
 
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {

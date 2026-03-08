@@ -15,15 +15,11 @@ namespace Microsoft.CodeAnalysis.Test.Utilities.MoveToNamespace;
 
 [Export(typeof(IMoveToNamespaceOptionsService)), Shared]
 [PartNotDiscoverable]
-internal sealed class TestMoveToNamespaceOptionsService : IMoveToNamespaceOptionsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestMoveToNamespaceOptionsService() : IMoveToNamespaceOptionsService
 {
     private MoveToNamespaceOptionsResult OptionsResult { get; set; }
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestMoveToNamespaceOptionsService()
-    {
-    }
 
     public MoveToNamespaceOptionsResult GetChangeNamespaceOptions(string defaultNamespace, ImmutableArray<string> availableNamespaces, ISyntaxFacts syntaxFactsService)
         => OptionsResult;

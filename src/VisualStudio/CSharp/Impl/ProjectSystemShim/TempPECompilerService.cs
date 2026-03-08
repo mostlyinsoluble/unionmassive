@@ -22,12 +22,9 @@ namespace Microsoft.VisualStudio.LanguageServices.CSharp.ProjectSystemShim;
 ///
 /// This class is free-threaded.
 /// </summary>
-internal sealed class TempPECompilerService : ICSharpTempPECompilerService
+internal sealed class TempPECompilerService(IMetadataService metadataService) : ICSharpTempPECompilerService
 {
-    private readonly IMetadataService _metadataService;
-
-    public TempPECompilerService(IMetadataService metadataService)
-        => _metadataService = metadataService;
+    private readonly IMetadataService _metadataService = metadataService;
 
     public int CompileTempPE(string pszOutputFileName, int sourceCount, string[] fileNames, string[] fileContents, int optionCount, string[] optionNames, object[] optionValues)
     {

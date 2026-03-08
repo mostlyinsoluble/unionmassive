@@ -10,15 +10,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Emit.EditAndContinue
 {
-    internal sealed class DeletedSourceGenericParameter : DeletedSourceDefinition<IGenericMethodParameter>, IGenericMethodParameter
+    internal sealed class DeletedSourceGenericParameter(IGenericMethodParameter oldParameter, DeletedSourceMethodDefinition method, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers) : DeletedSourceDefinition<IGenericMethodParameter>(oldParameter, typesUsedByDeletedMembers, deletedAttribute: null), IGenericMethodParameter
     {
-        private readonly DeletedSourceMethodDefinition _method;
-
-        public DeletedSourceGenericParameter(IGenericMethodParameter oldParameter, DeletedSourceMethodDefinition method, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers)
-            : base(oldParameter, typesUsedByDeletedMembers, deletedAttribute: null)
-        {
-            _method = method;
-        }
+        private readonly DeletedSourceMethodDefinition _method = method;
 
         public IMethodDefinition DefiningMethod => _method;
 

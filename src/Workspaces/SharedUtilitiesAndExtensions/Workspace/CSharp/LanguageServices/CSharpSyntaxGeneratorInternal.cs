@@ -203,9 +203,6 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
 
     #region Patterns
 
-    public override bool SupportsPatterns(ParseOptions options)
-        => ((CSharpParseOptions)options).LanguageVersion >= LanguageVersion.CSharp7;
-
     public override SyntaxNode IsPatternExpression(SyntaxNode expression, SyntaxToken isKeyword, SyntaxNode pattern)
         => SyntaxFactory.IsPatternExpression(
             (ExpressionSyntax)expression,

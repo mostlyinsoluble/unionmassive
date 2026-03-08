@@ -10,25 +10,14 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.UnitTests.Logging;
 
-internal sealed class TestTelemetryLogger : TelemetryLogger
+internal sealed class TestTelemetryLogger(bool logDelta = false) : TelemetryLogger
 {
-    public TestTelemetryLogger(bool logDelta = false)
+    protected override bool LogDelta { get; } = logDelta;
+
+    public sealed class TestScope(TelemetryEvent endEvent, LogType type)
     {
-        LogDelta = logDelta;
-    }
-
-    protected override bool LogDelta { get; }
-
-    public sealed class TestScope
-    {
-        public readonly TelemetryEvent EndEvent;
-        public readonly LogType Type;
-
-        public TestScope(TelemetryEvent endEvent, LogType type)
-        {
-            EndEvent = endEvent;
-            Type = type;
-        }
+        public readonly TelemetryEvent EndEvent = endEvent;
+        public readonly LogType Type = type;
     }
 
     public List<TelemetryEvent> PostedEvents = [];

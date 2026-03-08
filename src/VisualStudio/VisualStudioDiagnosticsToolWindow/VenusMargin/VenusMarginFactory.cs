@@ -20,16 +20,11 @@ namespace Roslyn.Hosting.Diagnostics.VenusMargin;
 [MarginContainer(PredefinedMarginNames.Bottom)]
 [ContentType("text")]
 [TextViewRole(PredefinedTextViewRoles.Interactive)]
-internal sealed class MarginFactory : IWpfTextViewMarginProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MarginFactory(ITextEditorFactoryService textEditorFactory) : IWpfTextViewMarginProvider
 {
-    private readonly ITextEditorFactoryService _textEditorFactory;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MarginFactory(ITextEditorFactoryService textEditorFactory)
-    {
-        _textEditorFactory = textEditorFactory;
-    }
+    private readonly ITextEditorFactoryService _textEditorFactory = textEditorFactory;
 
     public IWpfTextViewMargin CreateMargin(IWpfTextViewHost textViewHost, IWpfTextViewMargin containerMargin)
     {

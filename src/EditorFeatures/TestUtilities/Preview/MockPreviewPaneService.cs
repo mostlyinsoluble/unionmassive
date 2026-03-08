@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.Preview;
 
 [ExportWorkspaceService(typeof(IPreviewPaneService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-internal sealed class MockPreviewPaneService : IPreviewPaneService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MockPreviewPaneService() : IPreviewPaneService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MockPreviewPaneService()
-    {
-    }
-
     public object GetPreviewPane(DiagnosticData diagnostic, IReadOnlyList<object> previewContents)
     {
         var contents = previewContents ?? [];

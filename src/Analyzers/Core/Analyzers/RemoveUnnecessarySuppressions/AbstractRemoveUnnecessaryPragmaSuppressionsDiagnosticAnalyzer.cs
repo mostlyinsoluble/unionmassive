@@ -36,10 +36,7 @@ internal abstract class AbstractRemoveUnnecessaryInlineSuppressionsDiagnosticAna
     private readonly Lazy<ImmutableHashSet<int>> _lazySupportedCompilerErrorCodes;
 
     protected AbstractRemoveUnnecessaryInlineSuppressionsDiagnosticAnalyzer()
-        : base([s_removeUnnecessarySuppressionDescriptor], GeneratedCodeAnalysisFlags.None)
-    {
-        _lazySupportedCompilerErrorCodes = new Lazy<ImmutableHashSet<int>>(GetSupportedCompilerErrorCodes);
-    }
+        : base([s_removeUnnecessarySuppressionDescriptor], GeneratedCodeAnalysisFlags.None) => _lazySupportedCompilerErrorCodes = new Lazy<ImmutableHashSet<int>>(GetSupportedCompilerErrorCodes);
 
     protected abstract string CompilerErrorCodePrefix { get; }
     protected abstract int CompilerErrorCodeDigitCount { get; }

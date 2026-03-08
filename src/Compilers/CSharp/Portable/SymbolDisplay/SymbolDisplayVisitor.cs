@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool _escapeKeywordIdentifiers;
         private IDictionary<INamespaceOrTypeSymbol, IAliasSymbol>? _lazyAliasMap;
 
-        private SymbolDisplayVisitor(ObjectPool<SymbolDisplayVisitor> pool)
-        {
-            _pool = pool;
-        }
+        private SymbolDisplayVisitor(ObjectPool<SymbolDisplayVisitor> pool) => _pool = pool;
 
         public static SymbolDisplayVisitor GetInstance(
             ArrayBuilder<SymbolDisplayPart> builder,

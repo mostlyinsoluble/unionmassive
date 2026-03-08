@@ -11,7 +11,9 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.AsyncCompletion;
 
 [Export]
-internal sealed class RecentItemsManager
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RecentItemsManager()
 {
     private const int MaxMRUSize = 10;
 
@@ -19,12 +21,6 @@ internal sealed class RecentItemsManager
     /// Guard for <see cref="RecentItems"/>
     /// </summary>
     private readonly object _mruUpdateLock = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RecentItemsManager()
-    {
-    }
 
     private ImmutableArray<string> RecentItems { get; set; } = [];
 

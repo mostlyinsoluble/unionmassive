@@ -27,12 +27,9 @@ internal sealed partial class FindReferencesSearchEngine
     /// option.</item>
     /// </list>
     /// </summary>
-    private abstract class SymbolSet
+    private abstract class SymbolSet(FindReferencesSearchEngine engine)
     {
-        protected readonly FindReferencesSearchEngine Engine;
-
-        protected SymbolSet(FindReferencesSearchEngine engine)
-            => Engine = engine;
+        protected readonly FindReferencesSearchEngine Engine = engine;
 
         protected Solution Solution => Engine._solution;
 

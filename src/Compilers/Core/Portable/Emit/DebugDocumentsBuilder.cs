@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.Emit
 {
-    internal sealed class DebugDocumentsBuilder
+    internal sealed class DebugDocumentsBuilder(SourceReferenceResolver? resolver, bool isDocumentNameCaseSensitive)
     {
         // This is a map from the document "name" to the document.
         // Document "name" is typically a file path like "C:\Abc\Def.cs". However, that is not guaranteed.
@@ -17,21 +17,12 @@ namespace Microsoft.CodeAnalysis.Emit
         // Neither language trims the names, so they are both sensitive to the leading and trailing whitespaces.
         // NOTE: We are not considering how filesystem or debuggers do the comparisons, but how native implementations did.
         // Deviating from that may result in unexpected warnings or different behavior (possibly without warnings).
-        private readonly ConcurrentDictionary<string, Cci.DebugSourceDocument> _debugDocuments;
-        private readonly ConcurrentCache<(string, string?), string> _normalizedPathsCache;
-        private readonly SourceReferenceResolver? _resolver;
-
-        public DebugDocumentsBuilder(SourceReferenceResolver? resolver, bool isDocumentNameCaseSensitive)
-        {
-            _resolver = resolver;
-
-            _debugDocuments = new ConcurrentDictionary<string, Cci.DebugSourceDocument>(
+        private readonly ConcurrentDictionary<string, Cci.DebugSourceDocument> _debugDocuments = new ConcurrentDictionary<string, Cci.DebugSourceDocument>(
                     isDocumentNameCaseSensitive ?
                     StringComparer.Ordinal :
                     StringComparer.OrdinalIgnoreCase);
-
-            _normalizedPathsCache = new ConcurrentCache<(string, string?), string>(16);
-        }
+        private readonly ConcurrentCache<(string, string?), string> _normalizedPathsCache = new ConcurrentCache<(string, string?), string>(16);
+        private readonly SourceReferenceResolver? _resolver = resolver;
 
         internal int DebugDocumentCount => _debugDocuments.Count;
 

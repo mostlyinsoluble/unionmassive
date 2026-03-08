@@ -12,17 +12,14 @@ using Microsoft.VisualStudio.Shell.TableManager;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.NamingStyle.ViewModel;
 
-internal sealed partial class NamingStyleSettingsViewModel : SettingsViewModelBase<
+internal sealed partial class NamingStyleSettingsViewModel(
+    ISettingsProvider<NamingStyleSetting> data,
+    IWpfTableControlProvider controlProvider,
+    ITableManagerProvider tableMangerProvider) : SettingsViewModelBase<
         NamingStyleSetting,
         NamingStyleSettingsViewModel.SettingsSnapshotFactory,
-        NamingStyleSettingsViewModel.SettingsEntriesSnapshot>
+        NamingStyleSettingsViewModel.SettingsEntriesSnapshot>(data, controlProvider, tableMangerProvider)
 {
-    public NamingStyleSettingsViewModel(
-        ISettingsProvider<NamingStyleSetting> data,
-        IWpfTableControlProvider controlProvider,
-        ITableManagerProvider tableMangerProvider)
-    : base(data, controlProvider, tableMangerProvider) { }
-
     public override string Identifier => "NamingStyleSettings";
 
     protected override SettingsSnapshotFactory CreateSnapshotFactory(ISettingsProvider<NamingStyleSetting> data)

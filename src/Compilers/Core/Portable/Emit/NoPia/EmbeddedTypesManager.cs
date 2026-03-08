@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         TEmbeddedEvent,
         TEmbeddedProperty,
         TEmbeddedParameter,
-        TEmbeddedTypeParameter> : CommonEmbeddedTypesManager
+        TEmbeddedTypeParameter>(TPEModuleBuilder moduleBeingBuilt) : CommonEmbeddedTypesManager
         where TPEModuleBuilder : CommonPEModuleBuilder
         where TModuleCompilationState : CommonModuleCompilationState
         where TEmbeddedTypesManager : EmbeddedTypesManager<TPEModuleBuilder, TModuleCompilationState, TEmbeddedTypesManager, TSyntaxNode, TAttributeData, TSymbol, TAssemblySymbol, TNamedTypeSymbol, TFieldSymbol, TMethodSymbol, TEventSymbol, TPropertySymbol, TParameterSymbol, TTypeParameterSymbol, TEmbeddedType, TEmbeddedField, TEmbeddedMethod, TEmbeddedEvent, TEmbeddedProperty, TEmbeddedParameter, TEmbeddedTypeParameter>
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         where TEmbeddedParameter : EmbeddedTypesManager<TPEModuleBuilder, TModuleCompilationState, TEmbeddedTypesManager, TSyntaxNode, TAttributeData, TSymbol, TAssemblySymbol, TNamedTypeSymbol, TFieldSymbol, TMethodSymbol, TEventSymbol, TPropertySymbol, TParameterSymbol, TTypeParameterSymbol, TEmbeddedType, TEmbeddedField, TEmbeddedMethod, TEmbeddedEvent, TEmbeddedProperty, TEmbeddedParameter, TEmbeddedTypeParameter>.CommonEmbeddedParameter
         where TEmbeddedTypeParameter : EmbeddedTypesManager<TPEModuleBuilder, TModuleCompilationState, TEmbeddedTypesManager, TSyntaxNode, TAttributeData, TSymbol, TAssemblySymbol, TNamedTypeSymbol, TFieldSymbol, TMethodSymbol, TEventSymbol, TPropertySymbol, TParameterSymbol, TTypeParameterSymbol, TEmbeddedType, TEmbeddedField, TEmbeddedMethod, TEmbeddedEvent, TEmbeddedProperty, TEmbeddedParameter, TEmbeddedTypeParameter>.CommonEmbeddedTypeParameter
     {
-        public readonly TPEModuleBuilder ModuleBeingBuilt;
+        public readonly TPEModuleBuilder ModuleBeingBuilt = moduleBeingBuilt;
 
         public readonly ConcurrentDictionary<TNamedTypeSymbol, TEmbeddedType> EmbeddedTypesMap = new ConcurrentDictionary<TNamedTypeSymbol, TEmbeddedType>(ReferenceEqualityComparer.Instance);
         public readonly ConcurrentDictionary<TFieldSymbol, TEmbeddedField> EmbeddedFieldsMap = new ConcurrentDictionary<TFieldSymbol, TEmbeddedField>(ReferenceEqualityComparer.Instance);
@@ -73,11 +73,6 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
         public readonly ConcurrentDictionary<TEventSymbol, TEmbeddedEvent> EmbeddedEventsMap = new ConcurrentDictionary<TEventSymbol, TEmbeddedEvent>(ReferenceEqualityComparer.Instance);
 
         private ImmutableArray<TEmbeddedType> _frozen;
-
-        protected EmbeddedTypesManager(TPEModuleBuilder moduleBeingBuilt)
-        {
-            this.ModuleBeingBuilt = moduleBeingBuilt;
-        }
 
         public override bool IsFrozen
         {

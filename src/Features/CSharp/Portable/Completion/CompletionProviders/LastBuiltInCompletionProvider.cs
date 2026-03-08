@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(LastBuiltInCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(ProjectAppDirectiveCompletionProvider))]
 [Shared]
-internal sealed class LastBuiltInCompletionProvider : CompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LastBuiltInCompletionProvider() : CompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LastBuiltInCompletionProvider()
-    {
-    }
-
     public override Task ProvideCompletionsAsync(CompletionContext context)
         => Task.CompletedTask;
 }

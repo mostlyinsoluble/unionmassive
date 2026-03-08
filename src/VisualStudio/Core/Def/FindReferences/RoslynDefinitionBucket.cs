@@ -22,12 +22,21 @@ namespace Microsoft.VisualStudio.LanguageServices.FindUsages;
 
 internal partial class StreamingFindUsagesPresenter
 {
-    private sealed class RoslynDefinitionBucket : DefinitionBucket, ISupportsNavigation
+    private sealed class RoslynDefinitionBucket(
+        string name,
+        bool expandedByDefault,
+        StreamingFindUsagesPresenter presenter,
+StreamingFindUsagesPresenter.AbstractTableDataSourceFindUsagesContext context,
+        DefinitionItem definitionItem,
+        IThreadingContext threadingContext) : DefinitionBucket(name,
+               sourceTypeIdentifier: context.SourceTypeIdentifier,
+               identifier: context.Identifier,
+               expandedByDefault: expandedByDefault), ISupportsNavigation
     {
-        private readonly StreamingFindUsagesPresenter _presenter;
+        private readonly StreamingFindUsagesPresenter _presenter = presenter;
 
-        public readonly DefinitionItem DefinitionItem;
-        private readonly IThreadingContext _threadingContext;
+        public readonly DefinitionItem DefinitionItem = definitionItem;
+        private readonly IThreadingContext _threadingContext = threadingContext;
 
         /// <summary>
         /// Due to linked files, we may have results for several locations that are all effectively
@@ -37,23 +46,6 @@ internal partial class StreamingFindUsagesPresenter
         private readonly Dictionary<(string? filePath, TextSpan span), DocumentSpanEntry> _locationToEntry = [];
 
         private string? _text;
-
-        public RoslynDefinitionBucket(
-            string name,
-            bool expandedByDefault,
-            StreamingFindUsagesPresenter presenter,
-            AbstractTableDataSourceFindUsagesContext context,
-            DefinitionItem definitionItem,
-            IThreadingContext threadingContext)
-            : base(name,
-                   sourceTypeIdentifier: context.SourceTypeIdentifier,
-                   identifier: context.Identifier,
-                   expandedByDefault: expandedByDefault)
-        {
-            _presenter = presenter;
-            DefinitionItem = definitionItem;
-            _threadingContext = threadingContext;
-        }
 
         public static RoslynDefinitionBucket Create(
             StreamingFindUsagesPresenter presenter,

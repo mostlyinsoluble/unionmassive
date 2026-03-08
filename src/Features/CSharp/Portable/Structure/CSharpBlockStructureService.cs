@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Structure;
 namespace Microsoft.CodeAnalysis.CSharp.Structure;
 
 [ExportLanguageServiceFactory(typeof(BlockStructureService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpBlockStructureServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpBlockStructureServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpBlockStructureServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
         => new CSharpBlockStructureService(languageServices.LanguageServices.SolutionServices);
 }

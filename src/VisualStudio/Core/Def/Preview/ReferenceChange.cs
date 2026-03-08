@@ -13,16 +13,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
-internal abstract partial class ReferenceChange : AbstractChange
+internal abstract partial class ReferenceChange(ProjectId projectId, string projectName, bool isAddedReference, PreviewEngine engine) : AbstractChange(engine)
 {
-    protected ReferenceChange(ProjectId projectId, string projectName, bool isAddedReference, PreviewEngine engine)
-        : base(engine)
-    {
-        ProjectId = projectId;
-        ProjectName = projectName;
-        IsAddedReference = isAddedReference;
-    }
-
     public static void AppendReferenceChanges(IEnumerable<ProjectChanges> projectChangesList, PreviewEngine engine, ArrayBuilder<AbstractChange> builder)
     {
         foreach (var projectChanges in projectChangesList)
@@ -67,9 +59,9 @@ internal abstract partial class ReferenceChange : AbstractChange
         }
     }
 
-    protected ProjectId ProjectId { get; }
-    internal bool IsAddedReference { get; }
-    protected string ProjectName { get; }
+    protected ProjectId ProjectId { get; } = projectId;
+    internal bool IsAddedReference { get; } = isAddedReference;
+    protected string ProjectName { get; } = projectName;
 
     protected abstract string GetDisplayText();
     internal abstract Solution AddToSolution(Solution solution);

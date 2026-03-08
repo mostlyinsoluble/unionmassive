@@ -22,10 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         private Conversions(Binder binder, int currentRecursionDepth, bool includeNullability, Conversions otherNullabilityOpt)
-            : base(binder.Compilation.Assembly.CorLibrary, currentRecursionDepth, includeNullability, otherNullabilityOpt)
-        {
-            _binder = binder;
-        }
+            : base(binder.Compilation.Assembly.CorLibrary, currentRecursionDepth, includeNullability, otherNullabilityOpt) => _binder = binder;
 
         protected override ConversionsBase CreateInstance(int currentRecursionDepth)
         {

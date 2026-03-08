@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SymbolDisplayFormat? format = null)
         {
             // null indicates the default format
-            format = format ?? SymbolDisplayFormat.CSharpErrorMessageFormat;
+            format ??= SymbolDisplayFormat.CSharpErrorMessageFormat;
             return ToDisplayString(symbol, semanticModelOpt: null, positionOpt: -1, format: format, minimal: false);
         }
 
@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SymbolDisplayFormat? format = null)
         {
             // null indicates the default format
-            format = format ?? SymbolDisplayFormat.CSharpErrorMessageFormat;
+            format ??= SymbolDisplayFormat.CSharpErrorMessageFormat;
             symbol = symbol.WithNullableAnnotation(nullableAnnotation);
             return ToDisplayString(symbol, semanticModelOpt: null, positionOpt: -1, format: format, minimal: false);
         }
@@ -137,7 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SymbolDisplayFormat? format = null)
         {
             // null indicates the default format
-            format = format ?? SymbolDisplayFormat.CSharpErrorMessageFormat;
+            format ??= SymbolDisplayFormat.CSharpErrorMessageFormat;
             return ToDisplayParts(
                 symbol, semanticModelOpt: null, positionOpt: -1, format: format, minimal: false);
         }
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SymbolDisplayFormat? format = null)
         {
             // null indicates the default format
-            format = format ?? SymbolDisplayFormat.CSharpErrorMessageFormat;
+            format ??= SymbolDisplayFormat.CSharpErrorMessageFormat;
             return ToDisplayParts(
                 symbol, nullableFlowState, semanticModelOpt: null, positionOpt: -1, format: format, minimal: false);
         }

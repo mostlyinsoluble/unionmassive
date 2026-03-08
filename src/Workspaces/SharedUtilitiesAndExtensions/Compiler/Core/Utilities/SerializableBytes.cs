@@ -92,19 +92,12 @@ internal static class SerializableBytes
     internal static ReadWriteStream CreateWritableStream()
         => new();
 
-    public abstract class PooledStream : Stream
+    public abstract class PooledStream(long length, List<byte[]> chunks) : Stream
     {
-        protected List<byte[]> chunks;
+        protected List<byte[]> chunks = chunks;
 
-        protected long position;
-        protected long length;
-
-        protected PooledStream(long length, List<byte[]> chunks)
-        {
-            this.position = 0;
-            this.length = length;
-            this.chunks = chunks;
-        }
+        protected long position = 0;
+        protected long length = length;
 
         public override long Length => this.length;
 

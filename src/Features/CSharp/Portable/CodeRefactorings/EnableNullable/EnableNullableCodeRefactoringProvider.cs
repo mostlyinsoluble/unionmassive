@@ -21,16 +21,12 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeRefactorings.EnableNullable;
 using static CSharpSyntaxTokens;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.EnableNullable), Shared]
-internal sealed partial class EnableNullableCodeRefactoringProvider : CodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed partial class EnableNullableCodeRefactoringProvider() : CodeRefactoringProvider
 {
     private static readonly Func<DirectiveTriviaSyntax, bool> s_isNullableDirectiveTriviaPredicate =
         directive => directive.IsKind(SyntaxKind.NullableDirectiveTrivia);
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public EnableNullableCodeRefactoringProvider()
-    {
-    }
 
     public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
     {

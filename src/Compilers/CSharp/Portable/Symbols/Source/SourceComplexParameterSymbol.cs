@@ -1760,10 +1760,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isParams,
             bool isExtensionMethodThis,
             ScopedKind scope)
-            : base(owner, ordinal, refKind, name, location, syntaxRef, hasParamsModifier: hasParamsModifier, isParams: isParams, isExtensionMethodThis, scope)
-        {
-            _parameterType = parameterType;
-        }
+            : base(owner, ordinal, refKind, name, location, syntaxRef, hasParamsModifier: hasParamsModifier, isParams: isParams, isExtensionMethodThis, scope) => _parameterType = parameterType;
 
         public override TypeWithAnnotations TypeWithAnnotations => _parameterType;
         public override ImmutableArray<CustomModifier> RefCustomModifiers => ImmutableArray<CustomModifier>.Empty;

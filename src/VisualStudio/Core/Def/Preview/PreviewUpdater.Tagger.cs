@@ -13,15 +13,10 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
 internal partial class PreviewUpdater
 {
-    internal sealed class PreviewTagger : ITagger<HighlightTag>
+    internal sealed class PreviewTagger(ITextBuffer textBuffer) : ITagger<HighlightTag>
     {
-        private readonly ITextBuffer _textBuffer;
+        private readonly ITextBuffer _textBuffer = textBuffer;
         private Span _span;
-
-        public PreviewTagger(ITextBuffer textBuffer)
-        {
-            _textBuffer = textBuffer;
-        }
 
         public Span Span
         {

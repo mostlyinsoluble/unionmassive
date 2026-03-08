@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         private TypeWithAnnotations.Boxed? _lazyTypeWithAnnotations;
 
         protected RetargetingParameterSymbol(ParameterSymbol underlyingParameter)
-            : base(underlyingParameter)
-        {
-            Debug.Assert(!(underlyingParameter is RetargetingParameterSymbol));
-        }
+            : base(underlyingParameter) => Debug.Assert(!(underlyingParameter is RetargetingParameterSymbol));
 
         protected abstract RetargetingModuleSymbol RetargetingModule
         {

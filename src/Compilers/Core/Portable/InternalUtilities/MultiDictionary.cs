@@ -15,7 +15,7 @@ namespace Roslyn.Utilities
     internal sealed class MultiDictionary<K, V> : IEnumerable<KeyValuePair<K, MultiDictionary<K, V>.ValueSet>>
         where K : notnull
     {
-        public readonly struct ValueSet : IEnumerable<V>
+        public readonly struct ValueSet(object? value, IEqualityComparer<V>? equalityComparer = null) : IEnumerable<V>
         {
             public struct Enumerator : IEnumerator<V>
             {
@@ -98,9 +98,9 @@ namespace Roslyn.Utilities
             }
 
             // Stores either a single V or an ImmutableHashSet<V>
-            private readonly object? _value;
+            private readonly object? _value = value;
 
-            private readonly IEqualityComparer<V> _equalityComparer;
+            private readonly IEqualityComparer<V> _equalityComparer = equalityComparer ?? ImmutableHashSet<V>.Empty.KeyComparer;
 
             public int Count
             {
@@ -126,12 +126,6 @@ namespace Roslyn.Utilities
 
                     return set.Count;
                 }
-            }
-
-            public ValueSet(object? value, IEqualityComparer<V>? equalityComparer = null)
-            {
-                _value = value;
-                _equalityComparer = equalityComparer ?? ImmutableHashSet<V>.Empty.KeyComparer;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -226,10 +220,7 @@ namespace Roslyn.Utilities
             }
         }
 
-        public MultiDictionary()
-        {
-            _dictionary = new Dictionary<K, ValueSet>();
-        }
+        public MultiDictionary() => _dictionary = new Dictionary<K, ValueSet>();
 
         public MultiDictionary(IEqualityComparer<K> comparer, IEqualityComparer<V>? valueComparer = null)
         {

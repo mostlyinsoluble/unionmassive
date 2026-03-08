@@ -133,10 +133,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// "newobj ArrayConstructor"  is equivalent of "newarr ElementType" 
         /// when working with multidimensional arrays
         /// </summary>
-        private sealed class ArrayConstructor : ArrayMethod
+        private sealed class ArrayConstructor(Cci.IArrayTypeReference arrayType) : ArrayMethod(arrayType)
         {
-            public ArrayConstructor(Cci.IArrayTypeReference arrayType) : base(arrayType) { }
-
             public override string Name => ".ctor";
 
             public override Cci.ITypeReference GetType(EmitContext context)
@@ -147,10 +145,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// "call ArrayGet"  is equivalent of "ldelem ElementType" 
         /// when working with multidimensional arrays
         /// </summary>
-        private sealed class ArrayGet : ArrayMethod
+        private sealed class ArrayGet(Cci.IArrayTypeReference arrayType) : ArrayMethod(arrayType)
         {
-            public ArrayGet(Cci.IArrayTypeReference arrayType) : base(arrayType) { }
-
             public override string Name => "Get";
 
             public override Cci.ITypeReference GetType(EmitContext context)
@@ -161,10 +157,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// "call ArrayAddress"  is equivalent of "ldelema ElementType" 
         /// when working with multidimensional arrays
         /// </summary>
-        private sealed class ArrayAddress : ArrayMethod
+        private sealed class ArrayAddress(Cci.IArrayTypeReference arrayType) : ArrayMethod(arrayType)
         {
-            public ArrayAddress(Cci.IArrayTypeReference arrayType) : base(arrayType) { }
-
             public override bool ReturnValueIsByRef => true;
 
             public override Cci.ITypeReference GetType(EmitContext context)
@@ -177,10 +171,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// "call ArraySet"  is equivalent of "stelem ElementType" 
         /// when working with multidimensional arrays
         /// </summary>
-        private sealed class ArraySet : ArrayMethod
+        private sealed class ArraySet(Cci.IArrayTypeReference arrayType) : ArrayMethod(arrayType)
         {
-            public ArraySet(Cci.IArrayTypeReference arrayType) : base(arrayType) { }
-
             public override string Name => "Set";
 
             public override Cci.ITypeReference GetType(EmitContext context)
@@ -221,10 +213,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         private static readonly ArrayMethodParameterInfo s_index2 = new ArrayMethodParameterInfo(2);
         private static readonly ArrayMethodParameterInfo s_index3 = new ArrayMethodParameterInfo(3);
 
-        protected ArrayMethodParameterInfo(ushort index)
-        {
-            _index = index;
-        }
+        protected ArrayMethodParameterInfo(ushort index) => _index = index;
 
         public static ArrayMethodParameterInfo GetIndexParameter(ushort index)
         {
@@ -263,10 +252,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         private readonly Cci.IArrayTypeReference _arrayType;
 
         internal ArraySetValueParameterInfo(ushort index, Cci.IArrayTypeReference arrayType)
-            : base(index)
-        {
-            _arrayType = arrayType;
-        }
+            : base(index) => _arrayType = arrayType;
 
         public override Cci.ITypeReference GetType(EmitContext context)
             => _arrayType.GetElementType(context);

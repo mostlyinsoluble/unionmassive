@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.CodeCleanup;
 
 [ExportLanguageServiceFactory(typeof(ICodeCleanerService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCodeCleanerServiceFactory : ILanguageServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCodeCleanerServiceFactory() : ILanguageServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCodeCleanerServiceFactory()
-    {
-    }
-
     public ILanguageService CreateLanguageService(HostLanguageServices provider)
         => new CSharpCodeCleanerService();
 }

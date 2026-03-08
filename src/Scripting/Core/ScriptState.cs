@@ -272,9 +272,6 @@ namespace Microsoft.CodeAnalysis.Scripting
         internal override object GetReturnValue() => ReturnValue;
 
         internal ScriptState(ScriptExecutionState executionState, Script script, T value, Exception exceptionOpt)
-            : base(executionState, script, exceptionOpt)
-        {
-            ReturnValue = value;
-        }
+            : base(executionState, script, exceptionOpt) => ReturnValue = value;
     }
 }

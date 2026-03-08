@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             string name,
             SyntaxReference syntax,
             TextSpan locationSpan)
-            : base(containingType, name, syntax, locationSpan)
-        {
-            _modifiers = modifiers;
-        }
+            : base(containingType, name, syntax, locationSpan) => _modifiers = modifiers;
 
         protected sealed override DeclarationModifiers Modifiers
         {

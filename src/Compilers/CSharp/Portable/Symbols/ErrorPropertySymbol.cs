@@ -22,22 +22,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// However, we can't create a BoundIndexerAccess with a null indexer symbol,
     /// so we create an ErrorPropertySymbol to fill the gap.
     /// </summary>
-    internal sealed class ErrorPropertySymbol : PropertySymbol
+    internal sealed class ErrorPropertySymbol(Symbol containingSymbol, TypeSymbol type, string name, bool isIndexer, bool isIndexedProperty) : PropertySymbol
     {
-        private readonly Symbol _containingSymbol;
-        private readonly TypeWithAnnotations _typeWithAnnotations;
-        private readonly string _name;
-        private readonly bool _isIndexer;
-        private readonly bool _isIndexedProperty;
-
-        public ErrorPropertySymbol(Symbol containingSymbol, TypeSymbol type, string name, bool isIndexer, bool isIndexedProperty)
-        {
-            _containingSymbol = containingSymbol;
-            _typeWithAnnotations = TypeWithAnnotations.Create(type);
-            _name = name;
-            _isIndexer = isIndexer;
-            _isIndexedProperty = isIndexedProperty;
-        }
+        private readonly Symbol _containingSymbol = containingSymbol;
+        private readonly TypeWithAnnotations _typeWithAnnotations = TypeWithAnnotations.Create(type);
+        private readonly string _name = name;
+        private readonly bool _isIndexer = isIndexer;
+        private readonly bool _isIndexedProperty = isIndexedProperty;
 
         public override Symbol ContainingSymbol { get { return _containingSymbol; } }
 

@@ -412,17 +412,11 @@ namespace Microsoft.Cci
             }
         }
 
-        private readonly struct DefinitionIndex<T> where T : class, IReference
+        private readonly struct DefinitionIndex<T>(int capacity) where T : class, IReference
         {
             // IReference to RowId
-            private readonly SegmentedDictionary<T, int> _index;
-            private readonly SegmentedList<T> _rows;
-
-            public DefinitionIndex(int capacity)
-            {
-                _index = new SegmentedDictionary<T, int>(capacity, ReferenceEqualityComparer.Instance);
-                _rows = new SegmentedList<T>(capacity);
-            }
+            private readonly SegmentedDictionary<T, int> _index = new SegmentedDictionary<T, int>(capacity, ReferenceEqualityComparer.Instance);
+            private readonly SegmentedList<T> _rows = new SegmentedList<T>(capacity);
 
             public bool TryGetValue(T item, out int rowId)
             {

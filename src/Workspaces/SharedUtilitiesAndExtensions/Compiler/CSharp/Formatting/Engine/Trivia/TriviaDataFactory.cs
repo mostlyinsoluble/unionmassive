@@ -16,13 +16,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 /// 
 /// it will cache some commonly used trivia to reduce memory footprint and heap allocation
 /// </summary>
-internal sealed partial class TriviaDataFactory : AbstractTriviaDataFactory
+internal sealed partial class TriviaDataFactory(TreeData treeInfo, LineFormattingOptions options) : AbstractTriviaDataFactory(treeInfo, options)
 {
-    public TriviaDataFactory(TreeData treeInfo, LineFormattingOptions options)
-        : base(treeInfo, options)
-    {
-    }
-
     private static bool IsCSharpWhitespace(char c)
         => SyntaxFacts.IsWhitespace(c) || SyntaxFacts.IsNewLine(c);
 

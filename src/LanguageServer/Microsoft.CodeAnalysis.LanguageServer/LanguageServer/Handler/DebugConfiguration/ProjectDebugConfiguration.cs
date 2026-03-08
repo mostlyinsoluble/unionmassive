@@ -6,33 +6,23 @@ using System.Text.Json.Serialization;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.DebugConfiguration;
 
-internal sealed class ProjectDebugConfiguration
+internal sealed class ProjectDebugConfiguration(string projectPath, string outputPath, string projectName, bool targetsDotnetCore, bool isExe, string? solutionPath)
 {
-    public ProjectDebugConfiguration(string projectPath, string outputPath, string projectName, bool targetsDotnetCore, bool isExe, string? solutionPath)
-    {
-        ProjectPath = projectPath;
-        OutputPath = outputPath;
-        ProjectName = projectName;
-        TargetsDotnetCore = targetsDotnetCore;
-        IsExe = isExe;
-        SolutionPath = solutionPath;
-    }
-
     [JsonPropertyName("projectPath")]
-    public string ProjectPath { get; }
+    public string ProjectPath { get; } = projectPath;
 
     [JsonPropertyName("outputPath")]
-    public string OutputPath { get; }
+    public string OutputPath { get; } = outputPath;
 
     [JsonPropertyName("projectName")]
-    public string ProjectName { get; }
+    public string ProjectName { get; } = projectName;
 
     [JsonPropertyName("targetsDotnetCore")]
-    public bool TargetsDotnetCore { get; }
+    public bool TargetsDotnetCore { get; } = targetsDotnetCore;
 
     [JsonPropertyName("isExe")]
-    public bool IsExe { get; }
+    public bool IsExe { get; } = isExe;
 
     [JsonPropertyName("solutionPath")]
-    public string? SolutionPath { get; }
+    public string? SolutionPath { get; } = solutionPath;
 }

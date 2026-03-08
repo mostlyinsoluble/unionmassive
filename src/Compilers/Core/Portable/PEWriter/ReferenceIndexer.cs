@@ -18,10 +18,7 @@ namespace Microsoft.Cci
         private readonly HashSet<IImportScope> _alreadySeenScopes = new HashSet<IImportScope>();
 
         internal ReferenceIndexer(MetadataWriter metadataWriter)
-            : base(metadataWriter.Context)
-        {
-            this.metadataWriter = metadataWriter;
-        }
+            : base(metadataWriter.Context) => this.metadataWriter = metadataWriter;
 
         public override void Visit(CommonPEModuleBuilder module)
         {

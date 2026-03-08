@@ -14,10 +14,7 @@ internal sealed class CopilotChecksumWrapper
 {
     private readonly Checksum _checksum;
 
-    private CopilotChecksumWrapper(Checksum checksum)
-    {
-        _checksum = checksum;
-    }
+    private CopilotChecksumWrapper(Checksum checksum) => _checksum = checksum;
 
     public static CopilotChecksumWrapper Create(ImmutableArray<string> values)
     {

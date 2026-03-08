@@ -14,17 +14,12 @@ using StreamJsonRpc;
 namespace Microsoft.CodeAnalysis.LanguageServer;
 
 [Export(typeof(ILanguageServerFactory)), Shared]
-internal sealed class CSharpVisualBasicLanguageServerFactory : ILanguageServerFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVisualBasicLanguageServerFactory(
+    CSharpVisualBasicLspServiceProvider lspServiceProvider) : ILanguageServerFactory
 {
-    private readonly AbstractLspServiceProvider _lspServiceProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVisualBasicLanguageServerFactory(
-        CSharpVisualBasicLspServiceProvider lspServiceProvider)
-    {
-        _lspServiceProvider = lspServiceProvider;
-    }
+    private readonly AbstractLspServiceProvider _lspServiceProvider = lspServiceProvider;
 
     public AbstractLanguageServer<RequestContext> Create(
         JsonRpc jsonRpc,

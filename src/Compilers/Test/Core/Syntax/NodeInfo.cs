@@ -10,10 +10,10 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 {
     //Contains the information about a SyntaxNode that is difficult to get from a variable
     //just typed as SyntaxNode. This is name/type/value information for all fields and children.
-    public partial class NodeInfo
+    public partial class NodeInfo(string className, NodeInfo.FieldInfo[] fieldInfos)
     {
-        private readonly string _className;
-        private readonly FieldInfo[] _fieldInfos;
+        private readonly string _className = className;
+        private readonly FieldInfo[] _fieldInfos = fieldInfos;
         private static readonly FieldInfo[] s_emptyFieldInfos = { };
 
         public string ClassName
@@ -37,12 +37,6 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                     return _fieldInfos;
                 }
             }
-        }
-
-        public NodeInfo(string className, FieldInfo[] fieldInfos)
-        {
-            _className = className;
-            _fieldInfos = fieldInfos;
         }
     }
 }

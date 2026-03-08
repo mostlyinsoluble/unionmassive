@@ -11,16 +11,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
     public abstract partial class DiagnosticAnalyzerCorrectnessAnalyzer : DiagnosticAnalyzer
     {
-        protected abstract class SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TSyntaxNodeOfInterest> : DiagnosticAnalyzerSymbolAnalyzer
+        protected abstract class SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TSyntaxNodeOfInterest>(INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute) : DiagnosticAnalyzerSymbolAnalyzer(diagnosticAnalyzer, diagnosticAnalyzerAttribute)
             where TClassDeclarationSyntax : SyntaxNode
             where TStructDeclarationSyntax : SyntaxNode
             where TSyntaxNodeOfInterest : SyntaxNode
         {
-            protected SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer(INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
-                : base(diagnosticAnalyzer, diagnosticAnalyzerAttribute)
-            {
-            }
-
             internal static IEnumerable<TClassDeclarationSyntax> GetClassDeclarationNodes(INamedTypeSymbol namedType, CancellationToken cancellationToken)
             {
                 foreach (SyntaxNode syntax in namedType.DeclaringSyntaxReferences.Select(s => s.GetSyntax(cancellationToken)))

@@ -30,28 +30,22 @@ internal static partial class TaskExtensions
     /// <summary>
     /// An awaitable that wraps a task and never throws an exception when waited on.
     /// </summary>
-    public readonly struct NoThrowTaskAwaitable
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowTaskAwaitable" /> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
+    public readonly struct NoThrowTaskAwaitable(Task task, bool captureContext)
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly Task _task;
+        private readonly Task _task = task;
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowTaskAwaitable" /> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">Whether the continuation should be scheduled on the current sync context.</param>
-        public NoThrowTaskAwaitable(Task task, bool captureContext)
-        {
-            _task = task;
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets the awaiter.
@@ -66,28 +60,22 @@ internal static partial class TaskExtensions
     /// <summary>
     /// An awaiter that wraps a task and never throws an exception when waited on.
     /// </summary>
-    public readonly struct NoThrowTaskAwaiter : ICriticalNotifyCompletion
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NoThrowTaskAwaiter"/> struct.
+    /// </remarks>
+    /// <param name="task">The task.</param>
+    /// <param name="captureContext">if set to <c>true</c> [capture context].</param>
+    public readonly struct NoThrowTaskAwaiter(Task task, bool captureContext) : ICriticalNotifyCompletion
     {
         /// <summary>
         /// The task.
         /// </summary>
-        private readonly Task _task;
+        private readonly Task _task = task;
 
         /// <summary>
         /// A value indicating whether the continuation should be scheduled on the current sync context.
         /// </summary>
-        private readonly bool _captureContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NoThrowTaskAwaiter"/> struct.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="captureContext">if set to <c>true</c> [capture context].</param>
-        public NoThrowTaskAwaiter(Task task, bool captureContext)
-        {
-            _task = task;
-            _captureContext = captureContext;
-        }
+        private readonly bool _captureContext = captureContext;
 
         /// <summary>
         /// Gets a value indicating whether the task has completed.

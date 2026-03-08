@@ -15,10 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         private readonly bool _isWritable;
 
         internal ObjectIdLocalSymbol(MethodSymbol method, TypeSymbol type, string name, string displayName, bool isWritable) :
-            base(method, name, displayName, type)
-        {
-            _isWritable = isWritable;
-        }
+            base(method, name, displayName, type) => _isWritable = isWritable;
 
         internal override bool IsWritableVariable
         {
@@ -48,10 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         {
             private readonly CSharpCompilation _compilation;
 
-            internal ObjectIdExpressions(CSharpCompilation compilation)
-            {
-                _compilation = compilation;
-            }
+            internal ObjectIdExpressions(CSharpCompilation compilation) => _compilation = compilation;
 
             internal override BoundExpression GetValue(BoundPseudoVariable variable, DiagnosticBag diagnostics)
             {

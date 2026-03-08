@@ -76,10 +76,7 @@ namespace Microsoft.CodeAnalysis.Collections
 
         private readonly SegmentedDictionary<TKey, TValue> _dictionary;
 
-        private ImmutableSegmentedDictionary(SegmentedDictionary<TKey, TValue> dictionary)
-        {
-            _dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
-        }
+        private ImmutableSegmentedDictionary(SegmentedDictionary<TKey, TValue> dictionary) => _dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
 
         public IEqualityComparer<TKey> KeyComparer => _dictionary.Comparer;
 

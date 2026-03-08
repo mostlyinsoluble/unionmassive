@@ -23,10 +23,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
     {
         public EmbeddedParameter(
             EmbeddedTypesManager.CommonEmbeddedMember containingPropertyOrMethod, ParameterSymbolAdapter underlyingParameter) :
-            base(containingPropertyOrMethod, underlyingParameter)
-        {
-            Debug.Assert(underlyingParameter.AdaptedParameterSymbol.IsDefinition);
-        }
+            base(containingPropertyOrMethod, underlyingParameter) => Debug.Assert(underlyingParameter.AdaptedParameterSymbol.IsDefinition);
 
         protected override bool HasDefaultValue
         {

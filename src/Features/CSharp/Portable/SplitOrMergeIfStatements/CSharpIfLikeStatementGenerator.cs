@@ -18,14 +18,10 @@ namespace Microsoft.CodeAnalysis.CSharp.SplitOrMergeIfStatements;
 using static SyntaxFactory;
 
 [ExportLanguageService(typeof(IIfLikeStatementGenerator), LanguageNames.CSharp), Shared]
-internal sealed class CSharpIfLikeStatementGenerator : IIfLikeStatementGenerator
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpIfLikeStatementGenerator() : IIfLikeStatementGenerator
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpIfLikeStatementGenerator()
-    {
-    }
-
     public bool IsIfOrElseIf(SyntaxNode node) => node is IfStatementSyntax;
 
     public bool IsCondition(SyntaxNode expression, out SyntaxNode ifOrElseIf)

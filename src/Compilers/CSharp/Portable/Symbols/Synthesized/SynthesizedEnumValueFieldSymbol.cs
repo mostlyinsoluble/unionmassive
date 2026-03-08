@@ -14,13 +14,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Represents __value field of an enum.
     /// </summary>
-    internal sealed class SynthesizedEnumValueFieldSymbol : SynthesizedFieldSymbolBase
+    internal sealed class SynthesizedEnumValueFieldSymbol(SourceNamedTypeSymbol containingEnum) : SynthesizedFieldSymbolBase(containingEnum, WellKnownMemberNames.EnumBackingFieldName, DeclarationModifiers.Public, isReadOnly: false, isStatic: false)
     {
-        public SynthesizedEnumValueFieldSymbol(SourceNamedTypeSymbol containingEnum)
-            : base(containingEnum, WellKnownMemberNames.EnumBackingFieldName, DeclarationModifiers.Public, isReadOnly: false, isStatic: false)
-        {
-        }
-
         internal override bool SuppressDynamicAttribute
         {
             get { return true; }

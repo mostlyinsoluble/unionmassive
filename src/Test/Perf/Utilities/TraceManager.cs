@@ -35,19 +35,13 @@ namespace Roslyn.Test.Performance.Utilities
         }
     }
 
-    public class TraceManager : ITraceManager
+    public class TraceManager(string cpcPath) : object(), ITraceManager
     {
-        private ScenarioGenerator _scenarioGenerator;
-        private readonly string _cpcPath;
+        private ScenarioGenerator _scenarioGenerator = new ScenarioGenerator();
+        private readonly string _cpcPath = cpcPath;
 
         private int _startEventAbsoluteInstance = 1;
         private int _stopEventAbsoluteInstance = 1;
-
-        public TraceManager(string cpcPath) : base()
-        {
-            _cpcPath = cpcPath;
-            _scenarioGenerator = new ScenarioGenerator();
-        }
 
         public bool HasWarmUpIteration => true;
 

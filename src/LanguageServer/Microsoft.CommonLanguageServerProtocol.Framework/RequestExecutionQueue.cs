@@ -52,14 +52,14 @@ namespace Microsoft.CommonLanguageServerProtocol.Framework;
 /// more messages, and a new queue will need to be created.
 /// </para>
 /// </remarks>
-internal class RequestExecutionQueue<TRequestContext> : IRequestExecutionQueue<TRequestContext>
+internal class RequestExecutionQueue<TRequestContext>(AbstractLanguageServer<TRequestContext> languageServer, ILspLogger logger, AbstractHandlerProvider handlerProvider) : IRequestExecutionQueue<TRequestContext>
 {
     private static readonly MethodInfo s_processQueueCoreAsync = typeof(RequestExecutionQueue<TRequestContext>)
         .GetMethod(nameof(RequestExecutionQueue<>.ProcessQueueCoreAsync), BindingFlags.NonPublic | BindingFlags.Instance)!;
 
-    protected readonly ILspLogger _logger;
-    protected readonly AbstractHandlerProvider _handlerProvider;
-    private readonly AbstractLanguageServer<TRequestContext> _languageServer;
+    protected readonly ILspLogger _logger = logger;
+    protected readonly AbstractHandlerProvider _handlerProvider = handlerProvider;
+    private readonly AbstractLanguageServer<TRequestContext> _languageServer = languageServer;
 
     /// <summary>
     /// The queue containing the ordered LSP requests along with the trace activityId (to associate logs with a request) and
@@ -73,7 +73,7 @@ internal class RequestExecutionQueue<TRequestContext> : IRequestExecutionQueue<T
     /// The handler info is created lazily to avoid instantiating any types or handlers until a request is recieved for
     /// that particular method and language.
     /// </summary>
-    private readonly FrozenDictionary<string, FrozenDictionary<string, Lazy<(RequestHandlerMetadata Metadata, IMethodHandler Handler, MethodInfo MethodInfo)>>> _handlerInfoMap;
+    private readonly FrozenDictionary<string, FrozenDictionary<string, Lazy<(RequestHandlerMetadata Metadata, IMethodHandler Handler, MethodInfo MethodInfo)>>> _handlerInfoMap = BuildHandlerMap(handlerProvider, languageServer.TypeRefResolver);
 
     /// <summary>
     /// For test purposes only.
@@ -82,14 +82,6 @@ internal class RequestExecutionQueue<TRequestContext> : IRequestExecutionQueue<T
     protected Task? _queueProcessingTask;
 
     public CancellationToken CancellationToken => _cancelSource.Token;
-
-    public RequestExecutionQueue(AbstractLanguageServer<TRequestContext> languageServer, ILspLogger logger, AbstractHandlerProvider handlerProvider)
-    {
-        _languageServer = languageServer;
-        _logger = logger;
-        _handlerProvider = handlerProvider;
-        _handlerInfoMap = BuildHandlerMap(handlerProvider, languageServer.TypeRefResolver);
-    }
 
     private static FrozenDictionary<string, FrozenDictionary<string, Lazy<(RequestHandlerMetadata, IMethodHandler, MethodInfo)>>> BuildHandlerMap(AbstractHandlerProvider handlerProvider, AbstractTypeRefResolver typeRefResolver)
     {
@@ -457,12 +449,9 @@ internal class RequestExecutionQueue<TRequestContext> : IRequestExecutionQueue<T
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(RequestExecutionQueue<TRequestContext> queue)
     {
-        private readonly RequestExecutionQueue<TRequestContext> _queue;
-
-        public TestAccessor(RequestExecutionQueue<TRequestContext> queue)
-            => _queue = queue;
+        private readonly RequestExecutionQueue<TRequestContext> _queue = queue;
 
         public AbstractHandlerProvider GetHandlerProvider() => _queue._handlerProvider;
 

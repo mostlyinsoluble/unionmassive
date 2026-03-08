@@ -24,14 +24,10 @@ using JsonToken = EmbeddedSyntaxToken<JsonKind>;
     [LanguageNames.CSharp, LanguageNames.VisualBasic],
     supportsUnannotatedAPIs: true,
     "Json"), Shared]
-internal sealed class JsonBraceMatcher : IEmbeddedLanguageBraceMatcher
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class JsonBraceMatcher() : IEmbeddedLanguageBraceMatcher
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public JsonBraceMatcher()
-    {
-    }
-
     public BraceMatchingResult? FindBraces(
         Project project,
         SemanticModel semanticModel,

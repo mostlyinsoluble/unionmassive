@@ -8,23 +8,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Simplification;
 
 internal static class CSharpInferredMemberNameSimplifier
 {
-    internal static bool CanSimplifyTupleElementName(ArgumentSyntax node, CSharpParseOptions parseOptions)
+    internal static bool CanSimplifyTupleElementName(ArgumentSyntax node)
     {
         // Tuple elements are arguments in a tuple expression
-        if (node.NameColon == null || !node.Parent.IsKind(SyntaxKind.TupleExpression))
-        {
+        if (node.NameColon == null || !node.Parent.IsKind(SyntaxKind.TupleExpression)
+        || RemovalCausesAmbiguity(((TupleExpressionSyntax)node.Parent).Arguments, node))
             return false;
-        }
-
-        if (parseOptions.LanguageVersion < LanguageVersion.CSharp7_1)
-        {
-            return false;
-        }
-
-        if (RemovalCausesAmbiguity(((TupleExpressionSyntax)node.Parent).Arguments, node))
-        {
-            return false;
-        }
 
         var inferredName = node.Expression.TryGetInferredMemberName();
         if (inferredName == null || inferredName != node.NameColon.Name.Identifier.ValueText)

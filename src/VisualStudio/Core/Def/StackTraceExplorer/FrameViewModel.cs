@@ -14,18 +14,12 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace Microsoft.VisualStudio.LanguageServices.StackTraceExplorer;
 
-internal abstract class FrameViewModel
+internal abstract class FrameViewModel(IClassificationFormatMap formatMap, ClassificationTypeMap typeMap)
 {
-    private readonly IClassificationFormatMap _formatMap;
-    private readonly ClassificationTypeMap _classificationTypeMap;
+    private readonly IClassificationFormatMap _formatMap = formatMap;
+    private readonly ClassificationTypeMap _classificationTypeMap = typeMap;
 
     public abstract bool ShowMouseOver { get; }
-
-    public FrameViewModel(IClassificationFormatMap formatMap, ClassificationTypeMap typeMap)
-    {
-        _formatMap = formatMap;
-        _classificationTypeMap = typeMap;
-    }
 
     public ImmutableArray<Inline> Inlines => [.. CreateInlines()];
 

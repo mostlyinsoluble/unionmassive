@@ -182,13 +182,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return result;
         }
 
-        private sealed class ExtensionMetadataMethodParameterSymbol : RewrittenMethodParameterSymbolBase
+        private sealed class ExtensionMetadataMethodParameterSymbol(SourceExtensionImplementationMethodSymbol containingMethod, ParameterSymbol sourceParameter) : RewrittenMethodParameterSymbolBase(containingMethod, sourceParameter)
         {
-            public ExtensionMetadataMethodParameterSymbol(SourceExtensionImplementationMethodSymbol containingMethod, ParameterSymbol sourceParameter) :
-                base(containingMethod, sourceParameter)
-            {
-            }
-
             public override bool IsImplicitlyDeclared => true;
 
             public override int Ordinal

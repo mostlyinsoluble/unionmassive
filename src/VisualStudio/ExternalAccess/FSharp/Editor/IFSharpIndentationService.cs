@@ -22,24 +22,18 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor;
 /// current line.  With this tuple, both forms can be expressed, and the implementor does not
 /// have to convert from one to the other.
 /// </summary>
-internal readonly struct FSharpIndentationResult
+internal readonly struct FSharpIndentationResult(int basePosition, int offset)
 {
     /// <summary>
     /// The base position in the document that the indent should be relative to.  This position
     /// can occur on any line (including the current line, or a previous line).
     /// </summary>
-    public int BasePosition { get; }
+    public int BasePosition { get; } = basePosition;
 
     /// <summary>
     /// The number of columns the indent should be at relative to the BasePosition's column.
     /// </summary>
-    public int Offset { get; }
-
-    public FSharpIndentationResult(int basePosition, int offset)
-    {
-        BasePosition = basePosition;
-        Offset = offset;
-    }
+    public int Offset { get; } = offset;
 }
 
 [Obsolete("Use IFSharpIndentationService instead")]

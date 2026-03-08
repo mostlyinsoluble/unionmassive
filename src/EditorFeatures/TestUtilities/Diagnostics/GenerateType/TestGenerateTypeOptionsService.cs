@@ -16,7 +16,9 @@ using Microsoft.CodeAnalysis.ProjectManagement;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics.GenerateType;
 
 [ExportWorkspaceService(typeof(IGenerateTypeOptionsService), ServiceLayer.Test), Shared, PartNotDiscoverable]
-internal sealed class TestGenerateTypeOptionsService : IGenerateTypeOptionsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestGenerateTypeOptionsService() : IGenerateTypeOptionsService
 {
     public Accessibility Accessibility = Accessibility.NotApplicable;
     public TypeKind TypeKind = TypeKind.Class;
@@ -30,12 +32,6 @@ internal sealed class TestGenerateTypeOptionsService : IGenerateTypeOptionsServi
     public bool AreFoldersValidIdentifiers = true;
     public string DefaultNamespace = null;
     public bool IsCancelled = false;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestGenerateTypeOptionsService()
-    {
-    }
 
     // Actual input
     public string ClassName { get; private set; }

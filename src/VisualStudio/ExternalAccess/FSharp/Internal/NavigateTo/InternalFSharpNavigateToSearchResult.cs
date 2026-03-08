@@ -14,22 +14,13 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.NavigateTo;
 
-internal class InternalFSharpNavigateToSearchResult : INavigateToSearchResult
+internal class InternalFSharpNavigateToSearchResult(FSharpNavigateToSearchResult result) : INavigateToSearchResult
 {
-    public string AdditionalInformation { get; }
-    public string Kind { get; }
-    public NavigateToMatchKind MatchKind { get; }
-    public string Name { get; }
-    public INavigableItem NavigableItem { get; }
-
-    public InternalFSharpNavigateToSearchResult(FSharpNavigateToSearchResult result)
-    {
-        AdditionalInformation = result.AdditionalInformation;
-        Kind = result.Kind;
-        MatchKind = FSharpNavigateToMatchKindHelpers.ConvertTo(result.MatchKind);
-        Name = result.Name;
-        NavigableItem = new InternalFSharpNavigableItem(result.NavigableItem);
-    }
+    public string AdditionalInformation { get; } = result.AdditionalInformation;
+    public string Kind { get; } = result.Kind;
+    public NavigateToMatchKind MatchKind { get; } = FSharpNavigateToMatchKindHelpers.ConvertTo(result.MatchKind);
+    public string Name { get; } = result.Name;
+    public INavigableItem NavigableItem { get; } = new InternalFSharpNavigableItem(result.NavigableItem);
 
     public bool IsCaseSensitive => false;
 

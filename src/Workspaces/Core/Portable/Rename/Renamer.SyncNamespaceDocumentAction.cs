@@ -28,10 +28,7 @@ public static partial class Renamer
         private readonly AnalysisResult _analysis;
 
         private SyncNamespaceDocumentAction(AnalysisResult analysis)
-            : base([])
-        {
-            _analysis = analysis;
-        }
+            : base([]) => _analysis = analysis;
 
         public override string GetDescription(CultureInfo? culture)
             => WorkspacesResources.ResourceManager.GetString("Sync_namespace_to_folder_structure", culture ?? WorkspacesResources.Culture)!;

@@ -22,10 +22,7 @@ namespace Roslyn.VisualStudio.DiagnosticsWindow;
 /// </summary>
 public partial class TelemetryPanel : UserControl
 {
-    public TelemetryPanel()
-    {
-        InitializeComponent();
-    }
+    public TelemetryPanel() => InitializeComponent();
 
     private void OnDump(object sender, RoutedEventArgs e)
     {
@@ -137,14 +134,10 @@ public partial class TelemetryPanel : UserControl
         return new RAII(() => control.IsEnabled = true);
     }
 
-    private sealed class RAII : IDisposable
+    private sealed class RAII(Action disposeAction) : IDisposable
     {
-        private readonly Action _action;
+        private readonly Action _action = disposeAction;
 
-        public RAII(Action disposeAction)
-        {
-            _action = disposeAction;
-        }
         public void Dispose()
         {
             _action?.Invoke();

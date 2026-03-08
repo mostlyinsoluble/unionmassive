@@ -11,34 +11,23 @@ namespace Microsoft.CodeAnalysis.NavigationBar;
 /// <summary>
 /// Base type of all C#/VB navigation bar items.  Only for use internally to roslyn.
 /// </summary>
-internal abstract partial class RoslynNavigationBarItem : IEquatable<RoslynNavigationBarItem>
+internal abstract partial class RoslynNavigationBarItem(
+    RoslynNavigationBarItemKind kind,
+    string text,
+    Glyph glyph,
+    bool bolded,
+    bool grayed,
+    int indent,
+    ImmutableArray<RoslynNavigationBarItem> childItems) : IEquatable<RoslynNavigationBarItem>
 {
-    public readonly RoslynNavigationBarItemKind Kind;
+    public readonly RoslynNavigationBarItemKind Kind = kind;
 
-    public readonly string Text;
-    public readonly Glyph Glyph;
-    public readonly bool Bolded;
-    public readonly bool Grayed;
-    public readonly int Indent;
-    public readonly ImmutableArray<RoslynNavigationBarItem> ChildItems;
-
-    protected RoslynNavigationBarItem(
-        RoslynNavigationBarItemKind kind,
-        string text,
-        Glyph glyph,
-        bool bolded,
-        bool grayed,
-        int indent,
-        ImmutableArray<RoslynNavigationBarItem> childItems)
-    {
-        Kind = kind;
-        Text = text;
-        Glyph = glyph;
-        ChildItems = childItems.NullToEmpty();
-        Indent = indent;
-        Bolded = bolded;
-        Grayed = grayed;
-    }
+    public readonly string Text = text;
+    public readonly Glyph Glyph = glyph;
+    public readonly bool Bolded = bolded;
+    public readonly bool Grayed = grayed;
+    public readonly int Indent = indent;
+    public readonly ImmutableArray<RoslynNavigationBarItem> ChildItems = childItems.NullToEmpty();
 
     protected internal abstract SerializableNavigationBarItem Dehydrate();
 

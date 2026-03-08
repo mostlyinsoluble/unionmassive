@@ -16,15 +16,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.Interactive;
 
 [Export(typeof(ISendToInteractiveSubmissionProvider))]
-internal sealed class CSharpSendToInteractiveSubmissionProvider
-    : AbstractSendToInteractiveSubmissionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpSendToInteractiveSubmissionProvider()
+        : AbstractSendToInteractiveSubmissionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpSendToInteractiveSubmissionProvider()
-    {
-    }
-
     protected override bool CanParseSubmission(string code)
     {
         var options = CSharpInteractiveEvaluatorLanguageInfoProvider.Instance.ParseOptions;

@@ -20,15 +20,11 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertCast;
 ///     var o = 1 as object;
 /// </summary>
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertDirectCastToTryCast), Shared]
-internal sealed partial class CSharpConvertDirectCastToTryCastCodeRefactoringProvider
-    : AbstractConvertCastCodeRefactoringProvider<TypeSyntax, CastExpressionSyntax, BinaryExpressionSyntax>
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed partial class CSharpConvertDirectCastToTryCastCodeRefactoringProvider()
+        : AbstractConvertCastCodeRefactoringProvider<TypeSyntax, CastExpressionSyntax, BinaryExpressionSyntax>
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpConvertDirectCastToTryCastCodeRefactoringProvider()
-    {
-    }
-
     protected override string GetTitle()
         => CSharpFeaturesResources.Change_to_as_expression;
 

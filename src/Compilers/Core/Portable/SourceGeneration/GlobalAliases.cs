@@ -22,10 +22,7 @@ internal sealed class GlobalAliases : IEquatable<GlobalAliases>
 
     private int _hashCode;
 
-    private GlobalAliases(ImmutableArray<(string aliasName, string symbolName)> aliasAndSymbolNames)
-    {
-        AliasAndSymbolNames = aliasAndSymbolNames;
-    }
+    private GlobalAliases(ImmutableArray<(string aliasName, string symbolName)> aliasAndSymbolNames) => AliasAndSymbolNames = aliasAndSymbolNames;
 
     public static GlobalAliases Create(ImmutableArray<(string aliasName, string symbolName)> aliasAndSymbolNames)
     {

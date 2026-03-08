@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace AnalyzerRunner
 {
     [ExportWorkspaceService(typeof(IWorkspaceConfigurationService), ServiceLayer.Host), Shared]
-    internal sealed class AnalyzerRunnerWorkspaceConfigurationService : IWorkspaceConfigurationService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class AnalyzerRunnerWorkspaceConfigurationService() : IWorkspaceConfigurationService
     {
         public WorkspaceConfigurationOptions Options { get; set; } = WorkspaceConfigurationOptions.Default;
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public AnalyzerRunnerWorkspaceConfigurationService()
-        {
-        }
     }
 }

@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.CodeFixes;
 /// <summary>
 /// Helper to merge many disparate text changes to a single document together into a total set of changes.
 /// </summary>
-internal sealed class TextChangeMerger
+internal sealed class TextChangeMerger(Document document)
 {
     private readonly struct IntervalIntrospector : IIntervalIntrospector<TextChange>
     {
@@ -25,17 +25,11 @@ internal sealed class TextChangeMerger
             => value.Span;
     }
 
-    private readonly Document _oldDocument;
-    private readonly IDocumentTextDifferencingService _differenceService;
+    private readonly Document _oldDocument = document;
+    private readonly IDocumentTextDifferencingService _differenceService = document.Project.Solution.Services.GetRequiredService<IDocumentTextDifferencingService>();
 
     private readonly SimpleMutableIntervalTree<TextChange, IntervalIntrospector> _totalChangesIntervalTree =
         SimpleMutableIntervalTree.Create(new IntervalIntrospector(), Array.Empty<TextChange>());
-
-    public TextChangeMerger(Document document)
-    {
-        _oldDocument = document;
-        _differenceService = document.Project.Solution.Services.GetRequiredService<IDocumentTextDifferencingService>();
-    }
 
     /// <summary>
     /// Try to merge the changes made to <paramref name="newDocument"/> into the tracked changes. If there is any

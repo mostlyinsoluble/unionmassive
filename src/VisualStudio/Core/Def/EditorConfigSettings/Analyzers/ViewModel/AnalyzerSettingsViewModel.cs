@@ -12,18 +12,13 @@ using Microsoft.VisualStudio.Shell.TableManager;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers.ViewModel;
 
-internal sealed partial class AnalyzerSettingsViewModel : SettingsViewModelBase<
+internal sealed partial class AnalyzerSettingsViewModel(ISettingsProvider<AnalyzerSetting> data,
+                                 IWpfTableControlProvider controlProvider,
+                                 ITableManagerProvider tableMangerProvider) : SettingsViewModelBase<
     AnalyzerSetting,
     AnalyzerSettingsViewModel.SettingsSnapshotFactory,
-    AnalyzerSettingsViewModel.SettingsEntriesSnapshot>
+    AnalyzerSettingsViewModel.SettingsEntriesSnapshot>(data, controlProvider, tableMangerProvider)
 {
-
-    public AnalyzerSettingsViewModel(ISettingsProvider<AnalyzerSetting> data,
-                                     IWpfTableControlProvider controlProvider,
-                                     ITableManagerProvider tableMangerProvider)
-        : base(data, controlProvider, tableMangerProvider)
-    { }
-
     public override string Identifier => "AnalyzerSettings";
 
     protected override SettingsSnapshotFactory CreateSnapshotFactory(ISettingsProvider<AnalyzerSetting> data)

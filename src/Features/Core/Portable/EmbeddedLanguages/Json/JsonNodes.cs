@@ -48,12 +48,8 @@ internal sealed class JsonCompilationUnit : JsonNode
 /// <summary>
 /// Root of all value nodes.
 /// </summary>
-internal abstract class JsonValueNode : JsonNode
+internal abstract class JsonValueNode(JsonKind kind) : JsonNode(kind)
 {
-    protected JsonValueNode(JsonKind kind)
-        : base(kind)
-    {
-    }
 }
 
 /// <summary>

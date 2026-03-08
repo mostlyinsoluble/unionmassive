@@ -42,16 +42,11 @@ namespace Microsoft.CodeAnalysis.Emit.NoPia
                 => false;
         }
 
-        internal abstract class CommonEmbeddedMember<TMember> : CommonEmbeddedMember, Cci.IReference
+        internal abstract class CommonEmbeddedMember<TMember>(TMember underlyingSymbol) : CommonEmbeddedMember, Cci.IReference
             where TMember : TSymbol, Cci.ITypeMemberReference
         {
-            protected readonly TMember UnderlyingSymbol;
+            protected readonly TMember UnderlyingSymbol = underlyingSymbol;
             private ImmutableArray<TAttributeData> _lazyAttributes;
-
-            protected CommonEmbeddedMember(TMember underlyingSymbol)
-            {
-                this.UnderlyingSymbol = underlyingSymbol;
-            }
 
             protected abstract IEnumerable<TAttributeData> GetCustomAttributesToEmit(TPEModuleBuilder moduleBuilder);
 

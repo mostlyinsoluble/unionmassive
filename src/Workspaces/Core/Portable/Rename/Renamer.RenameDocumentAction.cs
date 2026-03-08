@@ -22,10 +22,7 @@ public static partial class Renamer
     {
         private readonly ImmutableArray<ErrorResource> _errorStringKeys;
 
-        internal RenameDocumentAction(ImmutableArray<ErrorResource> errors)
-        {
-            _errorStringKeys = errors;
-        }
+        internal RenameDocumentAction(ImmutableArray<ErrorResource> errors) => _errorStringKeys = errors;
 
         /// <summary>
         /// Get any errors that have been noted for this action before it is applied.

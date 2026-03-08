@@ -13,16 +13,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.OmniSharp.Internal.CodeRefactori
 
 [Shared]
 [ExportWorkspaceService(typeof(ISymbolRenamedCodeActionOperationFactoryWorkspaceService))]
-internal sealed class OmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService : ISymbolRenamedCodeActionOperationFactoryWorkspaceService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class OmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService(IOmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService service) : ISymbolRenamedCodeActionOperationFactoryWorkspaceService
 {
-    private readonly IOmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public OmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService(IOmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService service)
-    {
-        _service = service;
-    }
+    private readonly IOmniSharpSymbolRenamedCodeActionOperationFactoryWorkspaceService _service = service;
 
     public CodeActionOperation CreateSymbolRenamedOperation(ISymbol symbol, string newName, Solution startingSolution, Solution updatedSolution)
     {

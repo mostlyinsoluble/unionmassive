@@ -333,10 +333,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         {
             private readonly Expansion _members;
 
-            internal NonPublicMembersExpansion(Expansion members)
-            {
-                _members = members;
-            }
+            internal NonPublicMembersExpansion(Expansion members) => _members = members;
 
             internal override void GetRows(
                 ResultProvider resultProvider,

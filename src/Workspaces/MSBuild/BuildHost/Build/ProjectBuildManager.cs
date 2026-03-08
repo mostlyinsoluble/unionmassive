@@ -17,7 +17,7 @@ using MSB = Microsoft.Build;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class ProjectBuildManager
+internal sealed class ProjectBuildManager(ImmutableArray<string> knownCommandLineParserLanguages, ImmutableDictionary<string, string> additionalGlobalProperties, ILogger? msbuildLogger = null)
 {
     private static readonly XmlReaderSettings s_xmlReaderSettings = new()
     {
@@ -57,10 +57,10 @@ internal sealed class ProjectBuildManager
         { PropertyNames.ShouldUnsetParentConfigurationAndPlatform, bool.FalseString }
     }.ToImmutableDictionary();
 
-    public ImmutableArray<string> KnownCommandLineParserLanguages { get; }
+    public ImmutableArray<string> KnownCommandLineParserLanguages { get; } = knownCommandLineParserLanguages;
 
-    private readonly ImmutableDictionary<string, string> _additionalGlobalProperties;
-    private readonly ILogger? _msbuildLogger;
+    private readonly ImmutableDictionary<string, string> _additionalGlobalProperties = additionalGlobalProperties ?? ImmutableDictionary<string, string>.Empty;
+    private readonly ILogger? _msbuildLogger = msbuildLogger;
     private MSB.Evaluation.ProjectCollection? _batchBuildProjectCollection;
     private MSBuildDiagnosticLogger? _batchBuildLogger;
 
@@ -70,13 +70,6 @@ internal sealed class ProjectBuildManager
         {
             throw new InvalidOperationException($"{nameof(ProjectBuildManager)}.{nameof(EndBatchBuild)} not called.");
         }
-    }
-
-    public ProjectBuildManager(ImmutableArray<string> knownCommandLineParserLanguages, ImmutableDictionary<string, string> additionalGlobalProperties, ILogger? msbuildLogger = null)
-    {
-        KnownCommandLineParserLanguages = knownCommandLineParserLanguages;
-        _additionalGlobalProperties = additionalGlobalProperties ?? ImmutableDictionary<string, string>.Empty;
-        _msbuildLogger = msbuildLogger;
     }
 
     private ImmutableDictionary<string, string> AllGlobalProperties

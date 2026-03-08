@@ -23,53 +23,38 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Preview;
 
-internal sealed class PreviewEngine : IVsPreviewChangesEngine
+internal sealed class PreviewEngine(
+    string title,
+    string helpString,
+    string description,
+    string topLevelItemName,
+    Glyph topLevelGlyph,
+    Solution newSolution,
+    Solution oldSolution,
+    IComponentModel componentModel,
+    IVsImageService2 imageService,
+    bool showCheckBoxes = true) : IVsPreviewChangesEngine
 {
-    private readonly IVsEditorAdaptersFactoryService _editorFactory;
-    private readonly Solution _newSolution;
-    private readonly Solution _oldSolution;
-    private readonly string _topLevelName;
-    private readonly Glyph _topLevelGlyph;
-    private readonly string _helpString;
-    private readonly string _description;
-    private readonly string _title;
-    private readonly IComponentModel _componentModel;
-    private readonly IVsImageService2 _imageService;
+    private readonly IVsEditorAdaptersFactoryService _editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+    private readonly Solution _newSolution = newSolution.WithMergedLinkedFileChangesAsync(oldSolution, cancellationToken: CancellationToken.None).Result;
+    private readonly Solution _oldSolution = oldSolution;
+    private readonly string _topLevelName = topLevelItemName;
+    private readonly Glyph _topLevelGlyph = topLevelGlyph;
+    private readonly string _helpString = helpString ?? throw new ArgumentNullException(nameof(helpString));
+    private readonly string _description = description ?? throw new ArgumentNullException(nameof(description));
+    private readonly string _title = title ?? throw new ArgumentNullException(nameof(title));
+    private readonly IComponentModel _componentModel = componentModel;
+    private readonly IVsImageService2 _imageService = imageService;
 
     private TopLevelChange _topLevelChange;
     private PreviewUpdater _updater;
 
     public Solution FinalSolution { get; private set; }
-    public bool ShowCheckBoxes { get; private set; }
+    public bool ShowCheckBoxes { get; private set; } = showCheckBoxes;
 
     public PreviewEngine(string title, string helpString, string description, string topLevelItemName, Glyph topLevelGlyph, Solution newSolution, Solution oldSolution, IComponentModel componentModel, bool showCheckBoxes = true)
         : this(title, helpString, description, topLevelItemName, topLevelGlyph, newSolution, oldSolution, componentModel, null, showCheckBoxes)
     {
-    }
-
-    public PreviewEngine(
-        string title,
-        string helpString,
-        string description,
-        string topLevelItemName,
-        Glyph topLevelGlyph,
-        Solution newSolution,
-        Solution oldSolution,
-        IComponentModel componentModel,
-        IVsImageService2 imageService,
-        bool showCheckBoxes = true)
-    {
-        _topLevelName = topLevelItemName;
-        _topLevelGlyph = topLevelGlyph;
-        _title = title ?? throw new ArgumentNullException(nameof(title));
-        _helpString = helpString ?? throw new ArgumentNullException(nameof(helpString));
-        _description = description ?? throw new ArgumentNullException(nameof(description));
-        _newSolution = newSolution.WithMergedLinkedFileChangesAsync(oldSolution, cancellationToken: CancellationToken.None).Result;
-        _oldSolution = oldSolution;
-        _editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
-        _componentModel = componentModel;
-        this.ShowCheckBoxes = showCheckBoxes;
-        _imageService = imageService;
     }
 
     public void CloseWorkspace()
@@ -292,12 +277,8 @@ internal sealed class PreviewEngine : IVsPreviewChangesEngine
         }
     }
 
-    private sealed class NoChange : AbstractChange
+    private sealed class NoChange(PreviewEngine engine) : AbstractChange(engine)
     {
-        public NoChange(PreviewEngine engine) : base(engine)
-        {
-        }
-
         public override int GetText(out VSTREETEXTOPTIONS tto, out string ppszText)
         {
             tto = VSTREETEXTOPTIONS.TTO_DEFAULT;

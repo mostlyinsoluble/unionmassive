@@ -245,10 +245,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             NamespaceSymbol containingNamespace,
             ModuleSymbol containingModule,
             NamedTypeSymbol baseType)
-            : base(name, containingNamespace, containingModule, baseType)
-        {
-            _constructors = ImmutableArray.Create<MethodSymbol>(new SynthesizedEmbeddedAttributeConstructorSymbol(this, m => ImmutableArray<ParameterSymbol>.Empty));
-        }
+            : base(name, containingNamespace, containingModule, baseType) => _constructors = ImmutableArray.Create<MethodSymbol>(new SynthesizedEmbeddedAttributeConstructorSymbol(this, m => ImmutableArray<ParameterSymbol>.Empty));
 
         public override ImmutableArray<MethodSymbol> Constructors => _constructors;
     }
@@ -260,10 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal SynthesizedEmbeddedAttributeConstructorSymbol(
             NamedTypeSymbol containingType,
             Func<MethodSymbol, ImmutableArray<ParameterSymbol>> getParameters) :
-            base(containingType)
-        {
-            _parameters = getParameters(this);
-        }
+            base(containingType) => _parameters = getParameters(this);
 
         public override ImmutableArray<ParameterSymbol> Parameters => _parameters;
 

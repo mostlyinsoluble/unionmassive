@@ -20,17 +20,12 @@ namespace Microsoft.VisualStudio.LanguageServices.CSharp.Interactive;
 [Export(typeof(IVsInteractiveWindowOleCommandTargetProvider))]
 [ContentType(ContentTypeNames.CSharpContentType)]
 [ContentType(PredefinedInteractiveCommandsContentTypes.InteractiveCommandContentTypeName)]
-internal sealed class CSharpVsInteractiveWindowCommandProvider : IVsInteractiveWindowOleCommandTargetProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVsInteractiveWindowCommandProvider(
+    SVsServiceProvider serviceProvider) : IVsInteractiveWindowOleCommandTargetProvider
 {
-    private readonly System.IServiceProvider _serviceProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVsInteractiveWindowCommandProvider(
-        SVsServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private readonly System.IServiceProvider _serviceProvider = serviceProvider;
 
     public IOleCommandTarget GetCommandTarget(IWpfTextView textView, IOleCommandTarget nextTarget)
     {

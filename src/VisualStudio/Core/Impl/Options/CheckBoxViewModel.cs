@@ -16,10 +16,7 @@ internal sealed class CheckBoxOptionViewModel : AbstractCheckBoxViewModel
     }
 
     public CheckBoxOptionViewModel(IOption2 option, string description, string truePreview, string falsePreview, AbstractOptionPreviewViewModel info, OptionStore optionStore)
-        : base(option, description, truePreview, falsePreview, info)
-    {
-        SetProperty(ref _isChecked, optionStore.GetOption<bool>(option, option.IsPerLanguage ? info.Language : null));
-    }
+        : base(option, description, truePreview, falsePreview, info) => SetProperty(ref _isChecked, optionStore.GetOption<bool>(option, option.IsPerLanguage ? info.Language : null));
 
     public override bool IsChecked
     {

@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(InternalsVisibleToCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(DeclarationNameCompletionProvider))]
 [Shared]
-internal sealed class InternalsVisibleToCompletionProvider : AbstractInternalsVisibleToCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InternalsVisibleToCompletionProvider() : AbstractInternalsVisibleToCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InternalsVisibleToCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     protected override IImmutableList<SyntaxNode> GetAssemblyScopedAttributeSyntaxNodesOfDocument(SyntaxNode documentRoot)

@@ -16,14 +16,9 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Collections.Internal
 {
-    internal sealed class ICollectionDebugView<T>
+    internal sealed class ICollectionDebugView<T>(ICollection<T> collection)
     {
-        private readonly ICollection<T> _collection;
-
-        public ICollectionDebugView(ICollection<T> collection)
-        {
-            _collection = collection ?? throw new ArgumentNullException(nameof(collection));
-        }
+        private readonly ICollection<T> _collection = collection ?? throw new ArgumentNullException(nameof(collection));
 
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         public T[] Items

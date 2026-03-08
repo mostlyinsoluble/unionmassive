@@ -12,10 +12,7 @@ internal static partial class ProtocolConversions
     {
         private readonly ArrayBuilder<string> _linesBuilder;
 
-        public MarkdownContentBuilder()
-        {
-            _linesBuilder = ArrayBuilder<string>.GetInstance();
-        }
+        public MarkdownContentBuilder() => _linesBuilder = ArrayBuilder<string>.GetInstance();
 
         public void Append(string text)
         {

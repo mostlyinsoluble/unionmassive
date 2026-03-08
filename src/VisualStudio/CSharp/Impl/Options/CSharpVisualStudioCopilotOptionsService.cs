@@ -16,7 +16,11 @@ using Microsoft.VisualStudio.Utilities.UnifiedSettings;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.Options;
 
 [ExportLanguageService(typeof(ICopilotOptionsService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpVisualStudioCopilotOptionsService : ICopilotOptionsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpVisualStudioCopilotOptionsService(
+    IVsService<SVsUnifiedSettingsManager, ISettingsManager> settingsManagerService,
+    IThreadingContext threadingContext) : ICopilotOptionsService
 {
     /// <summary>
     /// Guid for UI context that is set from Copilot when the package is initialized
@@ -51,7 +55,7 @@ internal sealed class CSharpVisualStudioCopilotOptionsService : ICopilotOptionsS
     private static readonly UIContext s_gitHubAccountStatusIsCopilotEntitledUIContext = UIContext.FromUIContextGuid(new Guid(GitHubAccountStatusIsCopilotEntitled));
     private static readonly UIContext s_gitHubAccountStatusSignedInUIContext = UIContext.FromUIContextGuid(new Guid(GitHubAccountStatusSignedIn));
 
-    private readonly Task<ISettingsManager> _settingsManagerTask;
+    private readonly Task<ISettingsManager> _settingsManagerTask = settingsManagerService.GetValueAsync(threadingContext.DisposalToken);
     private ISettingsReader? _settingsReader;
 
     /// <summary>
@@ -62,15 +66,6 @@ internal sealed class CSharpVisualStudioCopilotOptionsService : ICopilotOptionsS
         && s_gitHubAccountStatusDeterminedContext.IsActive
         && s_gitHubAccountStatusSignedInUIContext.IsActive
         && s_gitHubAccountStatusIsCopilotEntitledUIContext.IsActive;
-
-    [method: ImportingConstructor]
-    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpVisualStudioCopilotOptionsService(
-        IVsService<SVsUnifiedSettingsManager, ISettingsManager> settingsManagerService,
-        IThreadingContext threadingContext)
-    {
-        _settingsManagerTask = settingsManagerService.GetValueAsync(threadingContext.DisposalToken);
-    }
 
     private async Task<bool> IsCopilotOptionEnabledAsync(CopilotOption option)
     {

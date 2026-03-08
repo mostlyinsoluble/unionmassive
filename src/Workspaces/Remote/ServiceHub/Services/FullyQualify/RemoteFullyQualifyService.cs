@@ -10,17 +10,12 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteFullyQualifyService : BrokeredServiceBase, IRemoteFullyQualifyService
+internal sealed class RemoteFullyQualifyService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteFullyQualifyService
 {
     internal sealed class Factory : FactoryBase<IRemoteFullyQualifyService>
     {
         protected override IRemoteFullyQualifyService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteFullyQualifyService(arguments);
-    }
-
-    public RemoteFullyQualifyService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<FullyQualifyFixData?> GetFixDataAsync(Checksum solutionChecksum, DocumentId documentId, TextSpan span, CancellationToken cancellationToken)

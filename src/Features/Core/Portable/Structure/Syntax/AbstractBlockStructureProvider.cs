@@ -14,20 +14,14 @@ namespace Microsoft.CodeAnalysis.Structure;
 /// Note: this type is for subclassing by the VB and C# provider only.
 /// It presumes that the language supports Syntax Trees.
 /// </summary>
-internal abstract class AbstractBlockStructureProvider : BlockStructureProvider
+internal abstract class AbstractBlockStructureProvider(
+    ImmutableDictionary<Type, ImmutableArray<AbstractSyntaxStructureProvider>> defaultNodeOutlinerMap,
+    ImmutableDictionary<int, ImmutableArray<AbstractSyntaxStructureProvider>> defaultTriviaOutlinerMap) : BlockStructureProvider
 {
     private static readonly IComparer<BlockSpan> s_blockSpanComparer = Comparer<BlockSpan>.Create(static (x, y) => y.TextSpan.Start.CompareTo(x.TextSpan.Start));
 
-    private readonly ImmutableDictionary<Type, ImmutableArray<AbstractSyntaxStructureProvider>> _nodeProviderMap;
-    private readonly ImmutableDictionary<int, ImmutableArray<AbstractSyntaxStructureProvider>> _triviaProviderMap;
-
-    protected AbstractBlockStructureProvider(
-        ImmutableDictionary<Type, ImmutableArray<AbstractSyntaxStructureProvider>> defaultNodeOutlinerMap,
-        ImmutableDictionary<int, ImmutableArray<AbstractSyntaxStructureProvider>> defaultTriviaOutlinerMap)
-    {
-        _nodeProviderMap = defaultNodeOutlinerMap;
-        _triviaProviderMap = defaultTriviaOutlinerMap;
-    }
+    private readonly ImmutableDictionary<Type, ImmutableArray<AbstractSyntaxStructureProvider>> _nodeProviderMap = defaultNodeOutlinerMap;
+    private readonly ImmutableDictionary<int, ImmutableArray<AbstractSyntaxStructureProvider>> _triviaProviderMap = defaultTriviaOutlinerMap;
 
     public override void ProvideBlockStructure(in BlockStructureContext context)
     {

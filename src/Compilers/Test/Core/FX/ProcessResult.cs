@@ -12,18 +12,11 @@ namespace Roslyn.Test.Utilities
     /// <summary>
     /// Encapsulates exit code and output/error streams of a process.
     /// </summary>
-    public sealed class ProcessResult
+    public sealed class ProcessResult(int exitCode, string output, string errors)
     {
-        public int ExitCode { get; }
-        public string Output { get; }
-        public string Errors { get; }
-
-        public ProcessResult(int exitCode, string output, string errors)
-        {
-            ExitCode = exitCode;
-            Output = output;
-            Errors = errors;
-        }
+        public int ExitCode { get; } = exitCode;
+        public string Output { get; } = output;
+        public string Errors { get; } = errors;
 
         public override string ToString()
         {

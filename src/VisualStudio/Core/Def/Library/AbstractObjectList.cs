@@ -15,13 +15,10 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library;
 
-internal abstract class AbstractObjectList<TLibraryManager> : IVsCoTaskMemFreeMyStrings, IVsSimpleObjectList2, IVsBrowseContainersList
+internal abstract class AbstractObjectList<TLibraryManager>(TLibraryManager libraryManager) : IVsCoTaskMemFreeMyStrings, IVsSimpleObjectList2, IVsBrowseContainersList
     where TLibraryManager : AbstractLibraryManager
 {
-    protected readonly TLibraryManager LibraryManager;
-
-    protected AbstractObjectList(TLibraryManager libraryManager)
-        => this.LibraryManager = libraryManager;
+    protected readonly TLibraryManager LibraryManager = libraryManager;
 
     protected abstract bool CanGoToSource(uint index, VSOBJGOTOSRCTYPE srcType);
     protected abstract bool TryGetCategoryField(uint index, int category, out uint categoryField);

@@ -666,15 +666,10 @@ namespace Microsoft.CodeAnalysis
             public Enumerator GetEnumerator()
                 => new(this);
 
-            public struct Enumerator
+            public struct Enumerator(NodeStateTable<T>.TableEntry tableEntry)
             {
-                private readonly TableEntry _entry;
+                private readonly TableEntry _entry = tableEntry;
                 private int _index = -1;
-
-                public Enumerator(TableEntry tableEntry)
-                {
-                    _entry = tableEntry;
-                }
 
                 public bool MoveNext()
                 {
@@ -716,21 +711,15 @@ namespace Microsoft.CodeAnalysis
             }
 #endif
 
-            public sealed class Builder
+            public sealed class Builder(int capacity)
             {
-                private readonly ArrayBuilder<T> _items;
+                private readonly ArrayBuilder<T> _items = ArrayBuilder<T>.GetInstance(capacity);
 
                 private ArrayBuilder<EntryState>? _states;
                 private EntryState? _currentState;
                 private bool _anyRemoved;
 
-                private readonly int _requestedCapacity;
-
-                public Builder(int capacity)
-                {
-                    _items = ArrayBuilder<T>.GetInstance(capacity);
-                    _requestedCapacity = capacity;
-                }
+                private readonly int _requestedCapacity = capacity;
 
                 public void Add(T item, EntryState state)
                 {

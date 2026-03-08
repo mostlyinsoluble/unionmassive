@@ -15,15 +15,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.SplitOrMergeIfStatements;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.MergeConsecutiveIfStatements), Shared]
-internal sealed class CSharpMergeConsecutiveIfStatementsCodeRefactoringProvider
-    : AbstractMergeConsecutiveIfStatementsCodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpMergeConsecutiveIfStatementsCodeRefactoringProvider()
+        : AbstractMergeConsecutiveIfStatementsCodeRefactoringProvider
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpMergeConsecutiveIfStatementsCodeRefactoringProvider()
-    {
-    }
-
     protected override bool IsApplicableSpan(SyntaxNode node, TextSpan span, out SyntaxNode ifOrElseIf)
     {
         if (node is IfStatementSyntax ifStatement)

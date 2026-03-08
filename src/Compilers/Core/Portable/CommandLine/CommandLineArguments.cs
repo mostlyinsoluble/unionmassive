@@ -302,11 +302,8 @@ namespace Microsoft.CodeAnalysis
         internal StrongNameProvider GetStrongNameProvider(StrongNameFileSystem fileSystem)
             => new DesktopStrongNameProvider(KeyFileSearchPaths, fileSystem);
 
-        internal CommandLineArguments()
-        {
-            _lazyManifestResources = new Lazy<ImmutableArray<ResourceDescription>>(
+        internal CommandLineArguments() => _lazyManifestResources = new Lazy<ImmutableArray<ResourceDescription>>(
                 () => ManifestResourceArguments.SelectAsArray(static r => r.ToDescription()));
-        }
 
         /// <summary>
         /// Resources specified as arguments to the compilation.

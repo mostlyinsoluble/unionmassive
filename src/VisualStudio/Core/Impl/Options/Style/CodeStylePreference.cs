@@ -10,14 +10,8 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Options;
 /// Represents a single code style choice.
 /// Typically, a code style offers a list of choices to choose from.
 /// </summary>
-internal sealed class CodeStylePreference
+internal sealed class CodeStylePreference(string name, bool isChecked)
 {
-    public CodeStylePreference(string name, bool isChecked)
-    {
-        Name = name;
-        IsChecked = isChecked;
-    }
-
-    public string Name { get; set; }
-    public bool IsChecked { get; set; }
+    public string Name { get; set; } = name;
+    public bool IsChecked { get; set; } = isChecked;
 }

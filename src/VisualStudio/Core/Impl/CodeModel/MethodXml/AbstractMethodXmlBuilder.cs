@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeModel.MethodXml;
 
-internal abstract partial class AbstractMethodXmlBuilder
+internal abstract partial class AbstractMethodXmlBuilder(IMethodSymbol symbol, SemanticModel semanticModel)
 {
     private const string ArgumentElementName = "Argument";
     private const string ArrayElementName = "Array";
@@ -62,16 +62,9 @@ internal abstract partial class AbstractMethodXmlBuilder
     private static readonly ImmutableArray<string> s_encodings = ["&lt;", "&gt;", "&amp;"];
 
     private readonly StringBuilder _builder = new();
-    protected readonly IMethodSymbol Symbol;
-    protected readonly SemanticModel SemanticModel;
-    protected readonly SourceText Text;
-
-    protected AbstractMethodXmlBuilder(IMethodSymbol symbol, SemanticModel semanticModel)
-    {
-        this.Symbol = symbol;
-        this.SemanticModel = semanticModel;
-        this.Text = semanticModel.SyntaxTree.GetText();
-    }
+    protected readonly IMethodSymbol Symbol = symbol;
+    protected readonly SemanticModel SemanticModel = semanticModel;
+    protected readonly SourceText Text = semanticModel.SyntaxTree.GetText();
 
     public override string ToString()
         => _builder.ToString();

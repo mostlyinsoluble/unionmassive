@@ -11,16 +11,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
     public abstract partial class DiagnosticAnalyzerCorrectnessAnalyzer : DiagnosticAnalyzer
     {
-        protected abstract class DiagnosticAnalyzerSymbolAnalyzer
+        protected abstract class DiagnosticAnalyzerSymbolAnalyzer(INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
         {
-            protected DiagnosticAnalyzerSymbolAnalyzer(INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
-            {
-                DiagnosticAnalyzer = diagnosticAnalyzer;
-                DiagnosticAnalyzerAttribute = diagnosticAnalyzerAttribute;
-            }
-
-            protected INamedTypeSymbol DiagnosticAnalyzer { get; }
-            protected INamedTypeSymbol DiagnosticAnalyzerAttribute { get; }
+            protected INamedTypeSymbol DiagnosticAnalyzer { get; } = diagnosticAnalyzer;
+            protected INamedTypeSymbol DiagnosticAnalyzerAttribute { get; } = diagnosticAnalyzerAttribute;
 
             protected bool IsDiagnosticAnalyzer(INamedTypeSymbol type)
             {

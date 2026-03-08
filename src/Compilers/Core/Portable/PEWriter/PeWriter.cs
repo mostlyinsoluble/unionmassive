@@ -24,11 +24,8 @@ using EmitContext = Microsoft.CodeAnalysis.Emit.EmitContext;
 
 namespace Microsoft.Cci
 {
-    internal sealed class PeWritingException : Exception
+    internal sealed class PeWritingException(Exception inner) : Exception(inner.Message, inner)
     {
-        public PeWritingException(Exception inner)
-            : base(inner.Message, inner)
-        { }
     }
 
     internal static class PeWriter
@@ -425,13 +422,9 @@ namespace Microsoft.Cci
             }
         }
 
-        private sealed class ResourceSectionBuilderFromRaw : ResourceSectionBuilder
+        private sealed class ResourceSectionBuilderFromRaw(Stream resources) : ResourceSectionBuilder
         {
-            private readonly Stream _resources;
-            public ResourceSectionBuilderFromRaw(Stream resources)
-            {
-                _resources = resources;
-            }
+            private readonly Stream _resources = resources;
 
             protected override void Serialize(BlobBuilder builder, SectionLocation location)
             {

@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         where TAnalysisResult : class, IDataFlowAnalysisResult<TAbstractAnalysisValue>
     {
         protected AbstractLocationDataFlowOperationVisitor(TAnalysisContext analysisContext)
-            : base(analysisContext)
-        {
-            Debug.Assert(analysisContext.PointsToAnalysisResult != null);
-        }
+            : base(analysisContext) => Debug.Assert(analysisContext.PointsToAnalysisResult != null);
 
         protected abstract TAbstractAnalysisValue GetAbstractValue(AbstractLocation location);
         protected abstract void SetAbstractValue(AbstractLocation location, TAbstractAnalysisValue value);

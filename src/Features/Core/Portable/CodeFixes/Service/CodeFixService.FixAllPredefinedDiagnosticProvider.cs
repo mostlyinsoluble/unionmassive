@@ -12,12 +12,9 @@ namespace Microsoft.CodeAnalysis.CodeFixes;
 
 internal sealed partial class CodeFixService
 {
-    private sealed class FixAllPredefinedDiagnosticProvider : FixAllContext.DiagnosticProvider
+    private sealed class FixAllPredefinedDiagnosticProvider(ImmutableArray<Diagnostic> diagnostics) : FixAllContext.DiagnosticProvider
     {
-        private readonly ImmutableArray<Diagnostic> _diagnostics;
-
-        public FixAllPredefinedDiagnosticProvider(ImmutableArray<Diagnostic> diagnostics)
-            => _diagnostics = diagnostics;
+        private readonly ImmutableArray<Diagnostic> _diagnostics = diagnostics;
 
         public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
             => Task.FromResult<IEnumerable<Diagnostic>>(_diagnostics);

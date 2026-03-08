@@ -16,18 +16,13 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Microsoft.CodeAnalysis.Editor.StringIndentation;
 
-internal sealed partial class StringIndentationAdornmentManager : AbstractAdornmentManager<StringIndentationTag>
+internal sealed partial class StringIndentationAdornmentManager(
+    IThreadingContext threadingContext,
+    IWpfTextView textView,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService,
+    IAsynchronousOperationListener asyncListener,
+    string adornmentLayerName) : AbstractAdornmentManager<StringIndentationTag>(threadingContext, textView, tagAggregatorFactoryService, asyncListener, adornmentLayerName)
 {
-    public StringIndentationAdornmentManager(
-        IThreadingContext threadingContext,
-        IWpfTextView textView,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService,
-        IAsynchronousOperationListener asyncListener,
-        string adornmentLayerName)
-        : base(threadingContext, textView, tagAggregatorFactoryService, asyncListener, adornmentLayerName)
-    {
-    }
-
     protected override void AddAdornmentsToAdornmentLayer_CallOnlyOnUIThread(NormalizedSnapshotSpanCollection changedSpanCollection)
     {
         // this method should only run on UI thread as we do WPF here.

@@ -20,14 +20,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(TypeImportCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(PropertySubpatternCompletionProvider))]
 [Shared]
-internal sealed class TypeImportCompletionProvider : AbstractTypeImportCompletionProvider<UsingDirectiveSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TypeImportCompletionProvider() : AbstractTypeImportCompletionProvider<UsingDirectiveSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TypeImportCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     public override bool IsInsertionTrigger(SourceText text, int characterPosition, CompletionOptions options)

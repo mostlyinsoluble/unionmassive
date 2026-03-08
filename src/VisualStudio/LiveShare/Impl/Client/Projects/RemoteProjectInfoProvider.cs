@@ -18,14 +18,11 @@ namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client.Projects;
 /// Discovers project information for remote directories
 /// </summary>
 [Export(typeof(RemoteProjectInfoProvider))]
-internal sealed class RemoteProjectInfoProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RemoteProjectInfoProvider([ImportMany] IEnumerable<IRemoteProjectInfoProvider> remoteProjectInfoProviders)
 {
-    private readonly IEnumerable<IRemoteProjectInfoProvider> _remoteProjectInfoProviders;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RemoteProjectInfoProvider([ImportMany] IEnumerable<IRemoteProjectInfoProvider> remoteProjectInfoProviders)
-        => _remoteProjectInfoProviders = remoteProjectInfoProviders ?? throw new ArgumentNullException(nameof(remoteProjectInfoProviders));
+    private readonly IEnumerable<IRemoteProjectInfoProvider> _remoteProjectInfoProviders = remoteProjectInfoProviders ?? throw new ArgumentNullException(nameof(remoteProjectInfoProviders));
 
     public async Task<IReadOnlyCollection<ProjectInfo>> GetRemoteProjectInfosAsync(CancellationToken cancellationToken)
     {

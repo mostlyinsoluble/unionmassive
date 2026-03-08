@@ -7,16 +7,10 @@ using System.Threading;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class PostInitOutputNode : IIncrementalGeneratorOutputNode
+    internal sealed class PostInitOutputNode(Action<IncrementalGeneratorPostInitializationContext, CancellationToken> callback, string embeddedAttributeDefinition) : IIncrementalGeneratorOutputNode
     {
-        private readonly Action<IncrementalGeneratorPostInitializationContext, CancellationToken> _callback;
-        private readonly string _embeddedAttributeDefinition;
-
-        public PostInitOutputNode(Action<IncrementalGeneratorPostInitializationContext, CancellationToken> callback, string embeddedAttributeDefinition)
-        {
-            _callback = callback;
-            _embeddedAttributeDefinition = embeddedAttributeDefinition;
-        }
+        private readonly Action<IncrementalGeneratorPostInitializationContext, CancellationToken> _callback = callback;
+        private readonly string _embeddedAttributeDefinition = embeddedAttributeDefinition;
 
         public IncrementalGeneratorOutputKind Kind => IncrementalGeneratorOutputKind.PostInit;
 

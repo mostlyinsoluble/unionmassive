@@ -24,10 +24,7 @@ internal struct StackFrameParser
 {
     private StackFrameLexer _lexer;
 
-    private StackFrameParser(StackFrameLexer lexer)
-    {
-        _lexer = lexer;
-    }
+    private StackFrameParser(StackFrameLexer lexer) => _lexer = lexer;
 
     private readonly StackFrameToken CurrentCharAsToken() => _lexer.CurrentCharAsToken();
 

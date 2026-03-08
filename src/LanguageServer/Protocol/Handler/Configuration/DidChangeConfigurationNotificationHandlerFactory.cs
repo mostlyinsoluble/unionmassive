@@ -11,17 +11,12 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.Configuration;
 
 [ExportCSharpVisualBasicLspServiceFactory(typeof(DidChangeConfigurationNotificationHandler)), Shared]
-internal sealed class DidChangeConfigurationNotificationHandlerFactory : ILspServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DidChangeConfigurationNotificationHandlerFactory(
+    IGlobalOptionService globalOptionService) : ILspServiceFactory
 {
-    private readonly IGlobalOptionService _globalOptionService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DidChangeConfigurationNotificationHandlerFactory(
-        IGlobalOptionService globalOptionService)
-    {
-        _globalOptionService = globalOptionService;
-    }
+    private readonly IGlobalOptionService _globalOptionService = globalOptionService;
 
     public ILspService CreateILspService(LspServices lspServices, WellKnownLspServerKinds serverKind)
     {

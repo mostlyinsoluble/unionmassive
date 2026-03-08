@@ -11,14 +11,10 @@ using Xunit.Abstractions;
 namespace Microsoft.CodeAnalysis.Host;
 
 [ExportWorkspaceService(typeof(IWorkspaceTestLogger), ServiceLayer.Host), Shared, PartNotDiscoverable]
-internal sealed class WorkspaceTestLogger : IWorkspaceTestLogger
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WorkspaceTestLogger() : IWorkspaceTestLogger
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WorkspaceTestLogger()
-    {
-    }
-
     public ITestOutputHelper? OutputHelper { get; set; }
 
     public void Log(string message)

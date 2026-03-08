@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private MultiDictionary<string, ParameterSymbol>? _lazyParameterMap;
 
         internal WithPrimaryConstructorParametersBinder(NamedTypeSymbol type, Binder next)
-            : base(next)
-        {
-            _type = type;
-        }
+            : base(next) => _type = type;
 
         internal override void AddLookupSymbolsInfoInSingleBinder(LookupSymbolsInfo result, LookupOptions options, Binder originalBinder)
         {

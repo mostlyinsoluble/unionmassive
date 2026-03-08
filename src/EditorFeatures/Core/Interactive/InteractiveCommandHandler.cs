@@ -19,24 +19,17 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.CodeAnalysis.Interactive;
 
-internal abstract class InteractiveCommandHandler :
+internal abstract class InteractiveCommandHandler(
+    IContentTypeRegistryService contentTypeRegistryService,
+    EditorOptionsService editorOptionsService,
+    IEditorOperationsFactoryService editorOperationsFactoryService) :
     ICommandHandler<ExecuteInInteractiveCommandArgs>,
     ICommandHandler<CopyToInteractiveCommandArgs>
 {
-    private readonly EditorOptionsService _editorOptionsService;
-    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService;
+    private readonly EditorOptionsService _editorOptionsService = editorOptionsService;
+    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService = editorOperationsFactoryService;
 
-    protected InteractiveCommandHandler(
-        IContentTypeRegistryService contentTypeRegistryService,
-        EditorOptionsService editorOptionsService,
-        IEditorOperationsFactoryService editorOperationsFactoryService)
-    {
-        ContentTypeRegistryService = contentTypeRegistryService;
-        _editorOptionsService = editorOptionsService;
-        _editorOperationsFactoryService = editorOperationsFactoryService;
-    }
-
-    protected IContentTypeRegistryService ContentTypeRegistryService { get; }
+    protected IContentTypeRegistryService ContentTypeRegistryService { get; } = contentTypeRegistryService;
 
     protected abstract IInteractiveWindow OpenInteractiveWindow(bool focus);
 

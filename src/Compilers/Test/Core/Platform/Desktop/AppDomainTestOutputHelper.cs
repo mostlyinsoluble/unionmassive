@@ -14,14 +14,9 @@ namespace Roslyn.Test.Utilities.Desktop;
 /// Allows using an <see cref="ITestOutputHelper"/> across <see cref="AppDomain"/>
 /// instances
 /// </summary>
-public sealed class AppDomainTestOutputHelper : MarshalByRefObject, ITestOutputHelper
+public sealed class AppDomainTestOutputHelper(ITestOutputHelper testOutputHelper) : MarshalByRefObject, ITestOutputHelper
 {
-    public ITestOutputHelper TestOutputHelper { get; }
-
-    public AppDomainTestOutputHelper(ITestOutputHelper testOutputHelper)
-    {
-        TestOutputHelper = testOutputHelper;
-    }
+    public ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
 
     public void WriteLine(string message) =>
         TestOutputHelper.WriteLine(message);

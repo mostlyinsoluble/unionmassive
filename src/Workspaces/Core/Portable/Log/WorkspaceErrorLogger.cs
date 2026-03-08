@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Internal.Log;
 namespace Microsoft.CodeAnalysis.ErrorLogger;
 
 [ExportWorkspaceService(typeof(IErrorLoggerService)), Export(typeof(IErrorLoggerService)), Shared]
-internal sealed class WorkspaceErrorLogger : IErrorLoggerService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class WorkspaceErrorLogger() : IErrorLoggerService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WorkspaceErrorLogger()
-    {
-    }
-
     public void LogException(object source, Exception exception)
         => Logger.Log(FunctionId.Extension_Exception, (source, exception) => source.GetType().Name + " : " + ToLogFormat(exception), source, exception, LogLevel.Error);
 

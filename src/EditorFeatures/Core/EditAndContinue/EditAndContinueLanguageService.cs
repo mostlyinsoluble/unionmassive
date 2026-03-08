@@ -38,11 +38,9 @@ internal sealed class EditAndContinueLanguageService(
     private sealed class NoSessionException : InvalidOperationException
     {
         public NoSessionException()
-            : base("Internal error: no session.")
-        {
+            : base("Internal error: no session.") =>
             // unique enough HResult to distinguish from other exceptions
             HResult = unchecked((int)0x801315087);
-        }
     }
 
     private bool _disabled;

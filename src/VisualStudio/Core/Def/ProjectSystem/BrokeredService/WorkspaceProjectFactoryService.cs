@@ -10,16 +10,9 @@ using Microsoft.CodeAnalysis.Remote.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LanguageServices.ProjectSystem.BrokeredService;
 
-internal sealed class WorkspaceProjectFactoryService : IWorkspaceProjectFactoryService
+internal sealed class WorkspaceProjectFactoryService(IWorkspaceProjectContextFactory workspaceProjectContextFactory) : IWorkspaceProjectFactoryService
 {
-    private readonly IWorkspaceProjectContextFactory _workspaceProjectContextFactory;
-
-    // For the sake of the in-proc implementation here, we're going to build this atop IWorkspaceProjectContext so semantics are preserved
-    // for a few edge cases. Once the project system has moved onto this directly, we can flatten the implementations out.
-    public WorkspaceProjectFactoryService(IWorkspaceProjectContextFactory workspaceProjectContextFactory)
-    {
-        _workspaceProjectContextFactory = workspaceProjectContextFactory;
-    }
+    private readonly IWorkspaceProjectContextFactory _workspaceProjectContextFactory = workspaceProjectContextFactory;
 
     public async Task<IWorkspaceProject> CreateAndAddProjectAsync(WorkspaceProjectCreationInfo creationInfo, CancellationToken cancellationToken)
     {
@@ -39,14 +32,9 @@ internal sealed class WorkspaceProjectFactoryService : IWorkspaceProjectFactoryS
         return Task.FromResult((IReadOnlyCollection<string>)_workspaceProjectContextFactory.EvaluationItemNames);
     }
 
-    private sealed class EvaluationDataShim : EvaluationData
+    private sealed class EvaluationDataShim(IReadOnlyDictionary<string, string> buildSystemProperties) : EvaluationData
     {
-        private readonly IReadOnlyDictionary<string, string> _buildSystemProperties;
-
-        public EvaluationDataShim(IReadOnlyDictionary<string, string> buildSystemProperties)
-        {
-            _buildSystemProperties = buildSystemProperties;
-        }
+        private readonly IReadOnlyDictionary<string, string> _buildSystemProperties = buildSystemProperties;
 
         public override string GetPropertyValue(string name)
         {

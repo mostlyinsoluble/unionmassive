@@ -356,21 +356,15 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
             }
         }
 
-        private sealed class Impl
+        private sealed class Impl(AbstractResxGenerator.ResourceInformation resourceInformation)
         {
             private const int maxDocCommentLength = 256;
 
-            public Impl(ResourceInformation resourceInformation)
-            {
-                ResourceInformation = resourceInformation;
-                OutputText = SourceText.From("", Encoding.UTF8);
-            }
-
-            public ResourceInformation ResourceInformation { get; }
+            public ResourceInformation ResourceInformation { get; } = resourceInformation;
             public CompilationInformation CompilationInformation => ResourceInformation.CompilationInformation;
 
             public string? OutputTextHintName { get; private set; }
-            public SourceText OutputText { get; private set; }
+            public SourceText OutputText { get; private set; } = SourceText.From("", Encoding.UTF8);
 
             private enum Lang
             {
@@ -922,15 +916,10 @@ namespace Microsoft.CodeAnalysis.ResxSourceGenerator
             }
         }
 
-        private sealed class SourceTextReader : TextReader
+        private sealed class SourceTextReader(SourceText text) : TextReader
         {
-            private readonly SourceText _text;
+            private readonly SourceText _text = text;
             private int _position;
-
-            public SourceTextReader(SourceText text)
-            {
-                _text = text;
-            }
 
             public override int Read(char[] buffer, int index, int count)
             {

@@ -9,16 +9,11 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
 {
-    internal abstract class TypeSymbol : NamespaceOrTypeSymbol, ISymbol, ITypeSymbol
+    internal abstract class TypeSymbol(CodeAnalysis.NullableAnnotation nullableAnnotation) : NamespaceOrTypeSymbol, ISymbol, ITypeSymbol
     {
         private ImmutableArray<INamedTypeSymbol> _allInterfaces = default;
 
-        protected TypeSymbol(CodeAnalysis.NullableAnnotation nullableAnnotation)
-        {
-            NullableAnnotation = nullableAnnotation;
-        }
-
-        protected CodeAnalysis.NullableAnnotation NullableAnnotation { get; }
+        protected CodeAnalysis.NullableAnnotation NullableAnnotation { get; } = nullableAnnotation;
 
         protected abstract ITypeSymbol WithNullableAnnotation(CodeAnalysis.NullableAnnotation nullableAnnotation);
 

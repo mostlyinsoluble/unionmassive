@@ -46,10 +46,8 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
 
         var options = (CSharpCodeGenerationOptions)await document.GetCodeGenerationOptionsAsync(cancellationToken).ConfigureAwait(false);
         var syntaxTree = await document.GetRequiredSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var languageVersion = syntaxTree.Options.LanguageVersion();
-
+        
         return ConvertPropertyToMembers(
-            languageVersion,
             SyntaxGenerator.GetGenerator(document), property,
             propertyDeclaration, propertyBackingField,
             options.PreferExpressionBodiedMethods.Value, desiredGetMethodName, desiredSetMethodName,
@@ -57,7 +55,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
     }
 
     private static ImmutableArray<SyntaxNode> ConvertPropertyToMembers(
-        LanguageVersion languageVersion,
         SyntaxGenerator generator,
         IPropertySymbol property,
         PropertyDeclarationSyntax propertyDeclaration,
@@ -79,7 +76,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
         if (getMethod != null)
         {
             result.Add(GetGetMethod(
-                languageVersion,
                 generator, propertyDeclaration, propertyBackingField,
                 getMethod, desiredGetMethodName, expressionBodyPreference,
                 cancellationToken));
@@ -90,7 +86,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
         {
             // Only copy leading trivia to the setter if we didn't already copy it to the getter.
             result.Add(GetSetMethod(
-                languageVersion,
                 generator, propertyDeclaration, propertyBackingField,
                 setMethod, desiredSetMethodName, expressionBodyPreference,
                 copyLeadingTrivia: getMethod is null,
@@ -101,7 +96,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
     }
 
     private static SyntaxNode GetSetMethod(
-        LanguageVersion languageVersion,
         SyntaxGenerator generator,
         PropertyDeclarationSyntax propertyDeclaration,
         IFieldSymbol? propertyBackingField,
@@ -116,8 +110,7 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
         if (copyLeadingTrivia)
             methodDeclaration = CopyLeadingTrivia(propertyDeclaration, methodDeclaration, ConvertValueToParamRewriter.Instance);
 
-        return UseExpressionOrBlockBodyIfDesired(
-            languageVersion, methodDeclaration, expressionBodyPreference,
+        return UseExpressionOrBlockBodyIfDesired(methodDeclaration, expressionBodyPreference,
             createReturnStatementForExpression: false, cancellationToken);
 
         MethodDeclarationSyntax GetSetMethodWorker()
@@ -164,7 +157,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
     }
 
     private static SyntaxNode GetGetMethod(
-        LanguageVersion languageVersion,
         SyntaxGenerator generator,
         PropertyDeclarationSyntax propertyDeclaration,
         IFieldSymbol? propertyBackingField,
@@ -177,8 +169,7 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
 
         methodDeclaration = CopyLeadingTrivia(propertyDeclaration, methodDeclaration, ConvertValueToReturnsRewriter.Instance);
 
-        return UseExpressionOrBlockBodyIfDesired(
-            languageVersion, methodDeclaration, expressionBodyPreference,
+        return UseExpressionOrBlockBodyIfDesired(methodDeclaration, expressionBodyPreference,
             createReturnStatementForExpression: true, cancellationToken);
 
         MethodDeclarationSyntax GetGetMethodWorker()
@@ -257,7 +248,6 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
     }
 
     private static MethodDeclarationSyntax UseExpressionOrBlockBodyIfDesired(
-        LanguageVersion languageVersion,
         MethodDeclarationSyntax methodDeclaration,
         ExpressionBodyPreference expressionBodyPreference,
         bool createReturnStatementForExpression,
@@ -266,7 +256,7 @@ internal sealed partial class CSharpReplacePropertyWithMethodsService() :
         if (methodDeclaration.Body != null && expressionBodyPreference != ExpressionBodyPreference.Never)
         {
             if (methodDeclaration.Body.TryConvertToArrowExpressionBody(
-                    methodDeclaration.Kind(), languageVersion, expressionBodyPreference, cancellationToken,
+                    methodDeclaration.Kind(), expressionBodyPreference, cancellationToken,
                     out var arrowExpression, out var semicolonToken))
             {
                 return methodDeclaration.WithBody(null)

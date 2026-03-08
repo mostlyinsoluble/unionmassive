@@ -365,10 +365,7 @@ namespace Analyzer.Utilities
         {
             private readonly SymbolNamesWithValueOption<TValue> _symbolNamesWithValueOption;
 
-            internal TestAccessor(SymbolNamesWithValueOption<TValue> symbolNamesWithValueOption)
-            {
-                _symbolNamesWithValueOption = symbolNamesWithValueOption;
-            }
+            internal TestAccessor(SymbolNamesWithValueOption<TValue> symbolNamesWithValueOption) => _symbolNamesWithValueOption = symbolNamesWithValueOption;
 
             internal ref readonly ImmutableDictionary<string, TValue> Names => ref _symbolNamesWithValueOption._names;
 
@@ -390,17 +387,11 @@ namespace Analyzer.Utilities
         /// MyClass->Suffix or T:MyNamespace.MyClass->Suffix or N:MyNamespace->Suffix.
         /// </example>
 #pragma warning disable CA1034 // Nested types should not be visible
-        public sealed class NameParts
+        public sealed class NameParts(string symbolName, TValue associatedValue)
 #pragma warning restore CA1034 // Nested types should not be visible
         {
-            public NameParts(string symbolName, TValue associatedValue)
-            {
-                SymbolName = symbolName.Trim();
-                AssociatedValue = associatedValue;
-            }
-
-            public string SymbolName { get; }
-            public TValue AssociatedValue { get; }
+            public string SymbolName { get; } = symbolName.Trim();
+            public TValue AssociatedValue { get; } = associatedValue;
         }
     }
 }

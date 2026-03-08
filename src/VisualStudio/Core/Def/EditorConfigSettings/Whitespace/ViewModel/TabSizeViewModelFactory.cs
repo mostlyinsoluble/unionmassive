@@ -14,16 +14,11 @@ using Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Whitespace.ViewModel;
 
 [Export(typeof(IEnumSettingViewModelFactory)), Shared]
-internal sealed class TabSizeViewModelFactory : IEnumSettingViewModelFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TabSizeViewModelFactory() : IEnumSettingViewModelFactory
 {
-    private readonly OptionKey2 _key;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TabSizeViewModelFactory()
-    {
-        _key = new OptionKey2(FormattingOptions2.TabSize, LanguageNames.CSharp);
-    }
+    private readonly OptionKey2 _key = new OptionKey2(FormattingOptions2.TabSize, LanguageNames.CSharp);
 
     public IEnumSettingViewModel CreateViewModel(Setting setting)
     {

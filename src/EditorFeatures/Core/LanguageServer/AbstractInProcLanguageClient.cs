@@ -265,10 +265,7 @@ internal abstract partial class AbstractInProcLanguageClient(
     {
         private readonly AbstractInProcLanguageClient _instance;
 
-        internal TestAccessor(AbstractInProcLanguageClient instance)
-        {
-            _instance = instance;
-        }
+        internal TestAccessor(AbstractInProcLanguageClient instance) => _instance = instance;
 
         public AbstractLanguageServer<RequestContext>? LanguageServer => _instance._languageServer;
     }

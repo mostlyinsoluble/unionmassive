@@ -10,20 +10,13 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private abstract class AbstractAddDocumentUndoUnit : AbstractAddRemoveUndoUnit
+    private abstract class AbstractAddDocumentUndoUnit(
+        VisualStudioWorkspaceImpl workspace,
+        DocumentInfo docInfo,
+        SourceText text) : AbstractAddRemoveUndoUnit(workspace, docInfo.Id.ProjectId)
     {
-        protected readonly DocumentInfo DocumentInfo;
-        protected readonly SourceText Text;
-
-        protected AbstractAddDocumentUndoUnit(
-            VisualStudioWorkspaceImpl workspace,
-            DocumentInfo docInfo,
-            SourceText text)
-            : base(workspace, docInfo.Id.ProjectId)
-        {
-            DocumentInfo = docInfo;
-            Text = text;
-        }
+        protected readonly DocumentInfo DocumentInfo = docInfo;
+        protected readonly SourceText Text = text;
 
         public override void Do(IOleUndoManager pUndoManager)
         {

@@ -24,18 +24,12 @@ using Roslyn.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.PullMemberUp;
 
 [ExportWorkspaceService(typeof(IPullMemberUpOptionsService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioPullMemberUpService : IPullMemberUpOptionsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioPullMemberUpService(IGlyphService glyphService, IUIThreadOperationExecutor uiThreadOperationExecutor) : IPullMemberUpOptionsService
 {
-    private readonly IGlyphService _glyphService;
-    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioPullMemberUpService(IGlyphService glyphService, IUIThreadOperationExecutor uiThreadOperationExecutor)
-    {
-        _glyphService = glyphService;
-        _uiThreadOperationExecutor = uiThreadOperationExecutor;
-    }
+    private readonly IGlyphService _glyphService = glyphService;
+    private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor = uiThreadOperationExecutor;
 
     public PullMembersUpOptions GetPullMemberUpOptions(Document document, ImmutableArray<ISymbol> selectedMembers)
     {

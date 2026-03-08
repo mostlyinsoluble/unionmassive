@@ -8,13 +8,8 @@ namespace Xunit.Threading
     using Xunit.Abstractions;
     using Xunit.Sdk;
 
-    public class IdeTheoryDiscoverer : TheoryDiscoverer
+    public class IdeTheoryDiscoverer(IMessageSink diagnosticMessageSink) : TheoryDiscoverer(diagnosticMessageSink)
     {
-        public IdeTheoryDiscoverer(IMessageSink diagnosticMessageSink)
-            : base(diagnosticMessageSink)
-        {
-        }
-
         protected override IEnumerable<IXunitTestCase> CreateTestCasesForSkip(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute, string skipReason)
         {
             foreach (var supportedInstance in IdeFactDiscoverer.GetSupportedInstances(testMethod, theoryAttribute))

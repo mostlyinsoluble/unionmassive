@@ -9,11 +9,11 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
-internal class SymbolViewModel<T> : AbstractNotifyPropertyChanged where T : ISymbol
+internal class SymbolViewModel<T>(T symbol, IGlyphService glyphService) : AbstractNotifyPropertyChanged where T : ISymbol
 {
-    private readonly IGlyphService _glyphService;
+    private readonly IGlyphService _glyphService = glyphService;
 
-    public T Symbol { get; }
+    public T Symbol { get; } = symbol;
 
     private static readonly SymbolDisplayFormat s_symbolDisplayFormat = new(
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
@@ -27,15 +27,7 @@ internal class SymbolViewModel<T> : AbstractNotifyPropertyChanged where T : ISym
         parameterOptions: SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeParamsRefOut | SymbolDisplayParameterOptions.IncludeOptionalBrackets,
         kindOptions: SymbolDisplayKindOptions.IncludeTypeKeyword,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
-
-    public SymbolViewModel(T symbol, IGlyphService glyphService)
-    {
-        Symbol = symbol;
-        _glyphService = glyphService;
-        _isChecked = true;
-    }
-
-    private bool _isChecked;
+    private bool _isChecked = true;
     public bool IsChecked
     {
         get => _isChecked;

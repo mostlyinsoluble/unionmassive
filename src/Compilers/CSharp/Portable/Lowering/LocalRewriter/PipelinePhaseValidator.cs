@@ -30,10 +30,7 @@ internal sealed partial class PipelinePhaseValidator
 #endif
 
 #if DEBUG
-    private PipelinePhaseValidator(PipelinePhase completedPhase)
-    {
-        _completedPhase = completedPhase;
-    }
+    private PipelinePhaseValidator(PipelinePhase completedPhase) => _completedPhase = completedPhase;
 #endif
 
     [Conditional("DEBUG")]

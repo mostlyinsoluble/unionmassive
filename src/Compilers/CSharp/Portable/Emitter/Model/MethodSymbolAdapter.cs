@@ -719,10 +719,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class MethodSymbolAdapter
     {
-        internal MethodSymbolAdapter(MethodSymbol underlyingMethodSymbol)
-        {
-            AdaptedMethodSymbol = underlyingMethodSymbol;
-        }
+        internal MethodSymbolAdapter(MethodSymbol underlyingMethodSymbol) => AdaptedMethodSymbol = underlyingMethodSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedMethodSymbol;
         internal MethodSymbol AdaptedMethodSymbol { get; }

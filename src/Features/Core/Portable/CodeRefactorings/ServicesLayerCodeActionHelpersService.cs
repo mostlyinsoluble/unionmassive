@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CodeRefactorings;
 
 [ExportWorkspaceServiceFactory(typeof(ICodeRefactoringHelpersService), ServiceLayer.Default), Shared]
-internal sealed class ServicesLayerCodeActionHelpersService : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ServicesLayerCodeActionHelpersService() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ServicesLayerCodeActionHelpersService()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new CodeActionHelpersService();
 

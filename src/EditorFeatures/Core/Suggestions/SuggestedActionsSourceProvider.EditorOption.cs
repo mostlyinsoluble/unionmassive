@@ -28,16 +28,12 @@ internal sealed partial class SuggestedActionsSourceProvider
     [Export(typeof(EditorOptionDefinition))]
     [Name(OptionName)]
     [DefaultEditorOptionValue(false)]
-    private sealed class EditorOption : EditorOptionDefinition<bool>
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    private sealed class EditorOption() : EditorOptionDefinition<bool>
     {
         private static readonly EditorOptionKey<bool> s_optionKey = new(OptionName);
         public const string OptionName = $"{nameof(SuggestedActionsSourceProvider)}.{nameof(EditorOption)}";
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public EditorOption()
-        {
-        }
 
         public override bool Default => false;
 

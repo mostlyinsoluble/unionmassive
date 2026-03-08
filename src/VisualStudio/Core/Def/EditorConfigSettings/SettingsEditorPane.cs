@@ -29,39 +29,26 @@ using static Microsoft.VisualStudio.VSConstants;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings;
 
-internal sealed partial class SettingsEditorPane : WindowPane, IOleComponent, IVsDeferredDocView, IVsLinkedUndoClient
+internal sealed partial class SettingsEditorPane(IVsEditorAdaptersFactoryService vsEditorAdaptersFactoryService,
+                          IThreadingContext threadingContext,
+                          ISettingsAggregator settingsDataProviderService,
+                          IWpfTableControlProvider controlProvider,
+                          ITableManagerProvider tableMangerProvider,
+                          string fileName,
+                          IVsTextLines textBuffer,
+                          Workspace workspace) : WindowPane(null), IOleComponent, IVsDeferredDocView, IVsLinkedUndoClient
 {
-    private readonly IVsEditorAdaptersFactoryService _vsEditorAdaptersFactoryService;
-    private readonly IThreadingContext _threadingContext;
-    private readonly ISettingsAggregator _settingsDataProviderService;
-    private readonly IWpfTableControlProvider _controlProvider;
-    private readonly ITableManagerProvider _tableMangerProvider;
-    private readonly string _fileName;
-    private readonly IVsTextLines _textBuffer;
-    private readonly Workspace _workspace;
+    private readonly IVsEditorAdaptersFactoryService _vsEditorAdaptersFactoryService = vsEditorAdaptersFactoryService;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ISettingsAggregator _settingsDataProviderService = settingsDataProviderService;
+    private readonly IWpfTableControlProvider _controlProvider = controlProvider;
+    private readonly ITableManagerProvider _tableMangerProvider = tableMangerProvider;
+    private readonly string _fileName = fileName;
+    private readonly IVsTextLines _textBuffer = textBuffer;
+    private readonly Workspace _workspace = workspace;
     private uint _componentId;
     private IOleUndoManager? _undoManager;
     private SettingsEditorControl? _control;
-
-    public SettingsEditorPane(IVsEditorAdaptersFactoryService vsEditorAdaptersFactoryService,
-                              IThreadingContext threadingContext,
-                              ISettingsAggregator settingsDataProviderService,
-                              IWpfTableControlProvider controlProvider,
-                              ITableManagerProvider tableMangerProvider,
-                              string fileName,
-                              IVsTextLines textBuffer,
-                              Workspace workspace)
-        : base(null)
-    {
-        _vsEditorAdaptersFactoryService = vsEditorAdaptersFactoryService;
-        _threadingContext = threadingContext;
-        _settingsDataProviderService = settingsDataProviderService;
-        _controlProvider = controlProvider;
-        _tableMangerProvider = tableMangerProvider;
-        _fileName = fileName;
-        _textBuffer = textBuffer;
-        _workspace = workspace;
-    }
 
     protected override void Initialize()
     {

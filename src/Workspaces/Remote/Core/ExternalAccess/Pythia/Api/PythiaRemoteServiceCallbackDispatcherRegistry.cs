@@ -9,16 +9,11 @@ using Microsoft.CodeAnalysis.Remote;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 
-internal sealed class PythiaRemoteServiceCallbackDispatcherRegistry : IRemoteServiceCallbackDispatcherProvider
+internal sealed class PythiaRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, PythiaRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers) : IRemoteServiceCallbackDispatcherProvider
 {
     public static readonly PythiaRemoteServiceCallbackDispatcherRegistry Empty = new([]);
 
-    private readonly ImmutableDictionary<Type, PythiaRemoteServiceCallbackDispatcher> _lazyDispatchers;
-
-    public PythiaRemoteServiceCallbackDispatcherRegistry(IEnumerable<(Type serviceType, PythiaRemoteServiceCallbackDispatcher dispatcher)> lazyDispatchers)
-    {
-        _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
-    }
+    private readonly ImmutableDictionary<Type, PythiaRemoteServiceCallbackDispatcher> _lazyDispatchers = lazyDispatchers.ToImmutableDictionary(e => e.serviceType, e => e.dispatcher);
 
     IRemoteServiceCallbackDispatcher IRemoteServiceCallbackDispatcherProvider.GetDispatcher(Type serviceType)
         => _lazyDispatchers[serviceType];

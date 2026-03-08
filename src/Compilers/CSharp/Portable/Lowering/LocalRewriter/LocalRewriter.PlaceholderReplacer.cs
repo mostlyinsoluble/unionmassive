@@ -13,10 +13,7 @@ internal sealed partial class LocalRewriter
     {
         private readonly Dictionary<BoundEarlyValuePlaceholderBase, BoundExpression> _placeholders;
 
-        private PlaceholderReplacer(Dictionary<BoundEarlyValuePlaceholderBase, BoundExpression> placeholders)
-        {
-            _placeholders = placeholders;
-        }
+        private PlaceholderReplacer(Dictionary<BoundEarlyValuePlaceholderBase, BoundExpression> placeholders) => _placeholders = placeholders;
 
         public static BoundExpression Replace(Dictionary<BoundEarlyValuePlaceholderBase, BoundExpression> placeholders, BoundExpression expr)
         {

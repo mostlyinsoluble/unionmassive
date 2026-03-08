@@ -31,10 +31,7 @@ namespace Microsoft.CodeAnalysis
         {
         }
 
-        public IdentifierCollection(IEnumerable<string> identifiers)
-        {
-            this.AddIdentifiers(identifiers);
-        }
+        public IdentifierCollection(IEnumerable<string> identifiers) => this.AddIdentifiers(identifiers);
 
         public void AddIdentifiers(IEnumerable<string> identifiers)
         {

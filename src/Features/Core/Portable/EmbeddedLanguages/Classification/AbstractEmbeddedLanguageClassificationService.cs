@@ -16,24 +16,18 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Classification;
 
-internal abstract class AbstractEmbeddedLanguageClassificationService :
-    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageClassifier>, IEmbeddedLanguageClassificationService
+internal abstract class AbstractEmbeddedLanguageClassificationService(
+    string languageName,
+    EmbeddedLanguageInfo info,
+    ISyntaxKinds syntaxKinds,
+    IEmbeddedLanguageClassifier fallbackClassifier,
+    IEnumerable<Lazy<IEmbeddedLanguageClassifier, EmbeddedLanguageMetadata>> allClassifiers) :
+    AbstractEmbeddedLanguageFeatureService<IEmbeddedLanguageClassifier>(languageName, info, syntaxKinds, allClassifiers), IEmbeddedLanguageClassificationService
 {
     /// <summary>
     /// Finally classifier to run if there is no embedded language in a string.  It will just classify escape sequences.
     /// </summary>
-    private readonly IEmbeddedLanguageClassifier _fallbackClassifier;
-
-    protected AbstractEmbeddedLanguageClassificationService(
-        string languageName,
-        EmbeddedLanguageInfo info,
-        ISyntaxKinds syntaxKinds,
-        IEmbeddedLanguageClassifier fallbackClassifier,
-        IEnumerable<Lazy<IEmbeddedLanguageClassifier, EmbeddedLanguageMetadata>> allClassifiers)
-        : base(languageName, info, syntaxKinds, allClassifiers)
-    {
-        _fallbackClassifier = fallbackClassifier;
-    }
+    private readonly IEmbeddedLanguageClassifier _fallbackClassifier = fallbackClassifier;
 
     public async Task AddEmbeddedLanguageClassificationsAsync(
         Document document, ImmutableArray<TextSpan> textSpans, ClassificationOptions options, SegmentedList<ClassifiedSpan> result, CancellationToken cancellationToken)

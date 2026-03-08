@@ -13,21 +13,14 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings;
 
 internal sealed partial class SettingsEditorPane
 {
-    internal sealed class SearchTask : VsSearchTask
+    internal sealed class SearchTask(uint dwCookie,
+                      IVsSearchQuery pSearchQuery,
+                      IVsSearchCallback pSearchCallback,
+                      IWpfTableControl[] controls,
+                      IThreadingContext threadingContext) : VsSearchTask(dwCookie, pSearchQuery, pSearchCallback)
     {
-        private readonly IThreadingContext _threadingContext;
-        private readonly IWpfTableControl[] _controls;
-
-        public SearchTask(uint dwCookie,
-                          IVsSearchQuery pSearchQuery,
-                          IVsSearchCallback pSearchCallback,
-                          IWpfTableControl[] controls,
-                          IThreadingContext threadingContext)
-            : base(dwCookie, pSearchQuery, pSearchCallback)
-        {
-            _threadingContext = threadingContext;
-            _controls = controls;
-        }
+        private readonly IThreadingContext _threadingContext = threadingContext;
+        private readonly IWpfTableControl[] _controls = controls;
 
         protected override void OnStartSearch()
         {

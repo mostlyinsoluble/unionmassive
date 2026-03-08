@@ -26,7 +26,9 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem.L
 /// good batching concepts.
 /// </summary> 
 [Export(typeof(SolutionEventsBatchScopeCreator))]
-internal sealed class SolutionEventsBatchScopeCreator
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SolutionEventsBatchScopeCreator([Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider)
 {
     /// <summary>
     /// A lock for mutating all objects in this object. This class isn't expected to have any "interesting" locking requirements, so this should just be acquired
@@ -41,18 +43,8 @@ internal sealed class SolutionEventsBatchScopeCreator
     private uint? _runningDocumentTableEventsCookie;
     private bool _isSubscribedToSolutionEvents = false;
 
-    private readonly IVsBackgroundSolution _backgroundSolution;
-    private readonly IVsRunningDocumentTable _runningDocumentTable;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SolutionEventsBatchScopeCreator([Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider)
-    {
-        // Fetch services we're going to need later; these are all free-threaded and cacheable on creation, and since we're only going to be
-        // creating this part once we're in a solution load, the services would have already been created.
-        _backgroundSolution = (IVsBackgroundSolution)serviceProvider.GetService(typeof(SVsBackgroundSolution));
-        _runningDocumentTable = (IVsRunningDocumentTable)serviceProvider.GetService(typeof(SVsRunningDocumentTable));
-    }
+    private readonly IVsBackgroundSolution _backgroundSolution = (IVsBackgroundSolution)serviceProvider.GetService(typeof(SVsBackgroundSolution));
+    private readonly IVsRunningDocumentTable _runningDocumentTable = (IVsRunningDocumentTable)serviceProvider.GetService(typeof(SVsRunningDocumentTable));
 
     public void StartTrackingProject(ProjectSystemProject project, IVsHierarchy hierarchy)
     {
@@ -184,12 +176,9 @@ internal sealed class SolutionEventsBatchScopeCreator
         }
     }
 
-    private sealed class SolutionEventsEventListener : IVsAsyncSolutionEventListener
+    private sealed class SolutionEventsEventListener(SolutionEventsBatchScopeCreator scopeCreator) : IVsAsyncSolutionEventListener
     {
-        private readonly SolutionEventsBatchScopeCreator _scopeCreator;
-
-        public SolutionEventsEventListener(SolutionEventsBatchScopeCreator scopeCreator)
-            => _scopeCreator = scopeCreator;
+        private readonly SolutionEventsBatchScopeCreator _scopeCreator = scopeCreator;
 
         public async ValueTask OnAfterOpenSolutionAsync(AfterOpenSolutionArgs args, CancellationToken cancellationToken)
         {
@@ -228,16 +217,10 @@ internal sealed class SolutionEventsBatchScopeCreator
         #endregion
     }
 
-    private sealed class RunningDocumentTableEventSink : IVsRunningDocTableEvents
+    private sealed class RunningDocumentTableEventSink(SolutionEventsBatchScopeCreator scopeCreator, IVsRunningDocumentTable runningDocumentTable) : IVsRunningDocTableEvents
     {
-        private readonly SolutionEventsBatchScopeCreator _scopeCreator;
-        private readonly IVsRunningDocumentTable4 _runningDocumentTable;
-
-        public RunningDocumentTableEventSink(SolutionEventsBatchScopeCreator scopeCreator, IVsRunningDocumentTable runningDocumentTable)
-        {
-            _scopeCreator = scopeCreator;
-            _runningDocumentTable = (IVsRunningDocumentTable4)runningDocumentTable;
-        }
+        private readonly SolutionEventsBatchScopeCreator _scopeCreator = scopeCreator;
+        private readonly IVsRunningDocumentTable4 _runningDocumentTable = (IVsRunningDocumentTable4)runningDocumentTable;
 
         int IVsRunningDocTableEvents.OnAfterFirstDocumentLock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining, uint dwEditLocksRemaining)
         {

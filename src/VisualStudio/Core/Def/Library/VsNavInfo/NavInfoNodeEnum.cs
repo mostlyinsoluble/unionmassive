@@ -7,13 +7,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.VsNavInfo;
 
-internal sealed class NavInfoNodeEnum : IVsEnumNavInfoNodes
+internal sealed class NavInfoNodeEnum(ImmutableArray<NavInfoNode> nodes) : IVsEnumNavInfoNodes
 {
-    private readonly ImmutableArray<NavInfoNode> _nodes;
+    private readonly ImmutableArray<NavInfoNode> _nodes = nodes;
     private int _index;
-
-    public NavInfoNodeEnum(ImmutableArray<NavInfoNode> nodes)
-        => _nodes = nodes;
 
     public int Clone(out IVsEnumNavInfoNodes ppEnum)
     {

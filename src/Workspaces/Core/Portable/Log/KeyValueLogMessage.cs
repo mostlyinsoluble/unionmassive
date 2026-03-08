@@ -141,11 +141,9 @@ internal abstract class KeyValueLogMessage : LogMessage
 
     private Dictionary<string, object?>? _lazyMap;
 
-    private KeyValueLogMessage()
-    {
+    private KeyValueLogMessage() =>
         // prevent it from being created directly
         Kind = LogType.Trace;
-    }
 
     public LogType Kind { get; private set; }
 

@@ -339,10 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class PropertySymbolAdapter
     {
-        internal PropertySymbolAdapter(PropertySymbol underlyingPropertySymbol)
-        {
-            AdaptedPropertySymbol = underlyingPropertySymbol;
-        }
+        internal PropertySymbolAdapter(PropertySymbol underlyingPropertySymbol) => AdaptedPropertySymbol = underlyingPropertySymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedPropertySymbol;
         internal PropertySymbol AdaptedPropertySymbol { get; }

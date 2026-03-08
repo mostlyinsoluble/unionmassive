@@ -18,20 +18,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// It returns true if the record contains some printable members.
     /// The method is used to implement `ToString()`.
     /// </summary>
-    internal sealed class SynthesizedRecordPrintMembers : SynthesizedRecordOrdinaryMethod
+    internal sealed class SynthesizedRecordPrintMembers(
+        SourceMemberContainerTypeSymbol containingType,
+        IEnumerable<Symbol> userDefinedMembers,
+        int memberOffset) : SynthesizedRecordOrdinaryMethod(
+              containingType,
+              WellKnownMemberNames.PrintMembersMethodName,
+              memberOffset: memberOffset,
+              MakeDeclarationModifiers(containingType, userDefinedMembers))
     {
-        public SynthesizedRecordPrintMembers(
-            SourceMemberContainerTypeSymbol containingType,
-            IEnumerable<Symbol> userDefinedMembers,
-            int memberOffset)
-            : base(
-                  containingType,
-                  WellKnownMemberNames.PrintMembersMethodName,
-                  memberOffset: memberOffset,
-                  MakeDeclarationModifiers(containingType, userDefinedMembers))
-        {
-        }
-
         private static DeclarationModifiers MakeDeclarationModifiers(SourceMemberContainerTypeSymbol containingType, IEnumerable<Symbol> userDefinedMembers)
         {
             var result = (containingType.IsRecordStruct || (containingType.BaseTypeNoUseSiteDiagnostics.IsObjectType() && containingType.IsSealed)) ?

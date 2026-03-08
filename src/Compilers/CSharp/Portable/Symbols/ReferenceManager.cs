@@ -52,13 +52,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// 
         /// The only public entry point of this class is CreateSourceAssembly() method.
         /// </summary>
-        internal sealed class ReferenceManager : CommonReferenceManager<CSharpCompilation, AssemblySymbol>
+        internal sealed class ReferenceManager(string simpleAssemblyName, AssemblyIdentityComparer identityComparer, Dictionary<MetadataReference, MetadataOrDiagnostic>? observedMetadata) : CommonReferenceManager<CSharpCompilation, AssemblySymbol>(simpleAssemblyName, identityComparer, observedMetadata)
         {
-            public ReferenceManager(string simpleAssemblyName, AssemblyIdentityComparer identityComparer, Dictionary<MetadataReference, MetadataOrDiagnostic>? observedMetadata)
-                : base(simpleAssemblyName, identityComparer, observedMetadata)
-            {
-            }
-
             protected override CommonMessageProvider MessageProvider
             {
                 get { return CSharp.MessageProvider.Instance; }
@@ -1066,15 +1061,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 public override Compilation? SourceCompilation => null;
             }
 
-            private sealed class AssemblyDataForCompilation : AssemblyDataForMetadataOrCompilation
+            private sealed class AssemblyDataForCompilation(CSharpCompilation compilation, bool embedInteropTypes) : AssemblyDataForMetadataOrCompilation(compilation.Assembly.Identity, GetReferencedAssemblies(compilation), embedInteropTypes)
             {
-                public readonly CSharpCompilation Compilation;
-
-                public AssemblyDataForCompilation(CSharpCompilation compilation, bool embedInteropTypes)
-                    : base(compilation.Assembly.Identity, GetReferencedAssemblies(compilation), embedInteropTypes)
-                {
-                    Compilation = compilation;
-                }
+                public readonly CSharpCompilation Compilation = compilation;
 
                 private static ImmutableArray<AssemblyIdentity> GetReferencedAssemblies(CSharpCompilation compilation)
                 {

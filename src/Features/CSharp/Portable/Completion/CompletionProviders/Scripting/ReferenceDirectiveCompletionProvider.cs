@@ -14,14 +14,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(ReferenceDirectiveCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(LoadDirectiveCompletionProvider))]
 [Shared]
-internal sealed class ReferenceDirectiveCompletionProvider : AbstractReferenceDirectiveCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ReferenceDirectiveCompletionProvider() : AbstractReferenceDirectiveCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ReferenceDirectiveCompletionProvider()
-    {
-    }
-
     protected override string DirectiveName => "r";
 
     protected override bool TryGetStringLiteralToken(SyntaxTree tree, int position, out SyntaxToken stringLiteral, CancellationToken cancellationToken)

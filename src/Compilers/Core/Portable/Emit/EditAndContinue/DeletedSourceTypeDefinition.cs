@@ -14,13 +14,8 @@ namespace Microsoft.CodeAnalysis.Emit.EditAndContinue
     /// <summary>
     /// Represents a type referenced from a deleted member (as distinct from a type that has been deleted).
     /// </summary>
-    internal sealed class DeletedSourceTypeDefinition : DeletedSourceDefinition<ITypeDefinition>, ITypeDefinition
+    internal sealed class DeletedSourceTypeDefinition(ITypeDefinition oldDefinition, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers) : DeletedSourceDefinition<ITypeDefinition>(oldDefinition, typesUsedByDeletedMembers, deletedAttribute: null), ITypeDefinition
     {
-        public DeletedSourceTypeDefinition(ITypeDefinition oldDefinition, Dictionary<ITypeDefinition, DeletedSourceTypeDefinition> typesUsedByDeletedMembers)
-            : base(oldDefinition, typesUsedByDeletedMembers, deletedAttribute: null)
-        {
-        }
-
         public override void Dispatch(MetadataVisitor visitor)
             => visitor.Visit(this);
 

@@ -13,16 +13,10 @@ namespace Microsoft.CodeAnalysis.Collections
     {
         private static partial class Singleton
         {
-            internal class Enumerator<T> : IEnumerator<T>
+            internal class Enumerator<T>(T value) : IEnumerator<T>
             {
-                private readonly T _loneValue;
-                private bool _moveNextCalled;
-
-                public Enumerator(T value)
-                {
-                    _loneValue = value;
-                    _moveNextCalled = false;
-                }
+                private readonly T _loneValue = value;
+                private bool _moveNextCalled = false;
 
                 public T Current => _loneValue;
 

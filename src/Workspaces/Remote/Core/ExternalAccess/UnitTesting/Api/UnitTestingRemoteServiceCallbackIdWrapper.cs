@@ -8,13 +8,10 @@ using Microsoft.CodeAnalysis.Remote;
 namespace Microsoft.CodeAnalysis.ExternalAccess.UnitTesting.Api;
 
 [DataContract]
-internal readonly struct UnitTestingRemoteServiceCallbackIdWrapper
+internal readonly struct UnitTestingRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
 {
     [DataMember(Order = 0)]
-    internal RemoteServiceCallbackId UnderlyingObject { get; }
-
-    public UnitTestingRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId underlyingObject)
-        => UnderlyingObject = underlyingObject;
+    internal RemoteServiceCallbackId UnderlyingObject { get; } = underlyingObject;
 
     public static implicit operator UnitTestingRemoteServiceCallbackIdWrapper(RemoteServiceCallbackId id)
         => new(id);

@@ -13,18 +13,13 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.QuickInfo;
 
-internal abstract class AbstractEmbeddedLanguageQuickInfoProvider : CommonQuickInfoProvider
+internal abstract class AbstractEmbeddedLanguageQuickInfoProvider(
+    string languageName,
+    EmbeddedLanguageInfo info,
+    ISyntaxKinds syntaxKinds,
+    IEnumerable<Lazy<IEmbeddedLanguageQuickInfoProvider, EmbeddedLanguageMetadata>> allServices) : CommonQuickInfoProvider
 {
-    private readonly EmbeddedLanguageProviderFeatureService _embeddedLanguageProviderFeature;
-
-    public AbstractEmbeddedLanguageQuickInfoProvider(
-        string languageName,
-        EmbeddedLanguageInfo info,
-        ISyntaxKinds syntaxKinds,
-        IEnumerable<Lazy<IEmbeddedLanguageQuickInfoProvider, EmbeddedLanguageMetadata>> allServices)
-    {
-        _embeddedLanguageProviderFeature = new EmbeddedLanguageProviderFeatureService(languageName, info, syntaxKinds, allServices);
-    }
+    private readonly EmbeddedLanguageProviderFeatureService _embeddedLanguageProviderFeature = new EmbeddedLanguageProviderFeatureService(languageName, info, syntaxKinds, allServices);
 
     protected override async Task<QuickInfoItem?> BuildQuickInfoAsync(QuickInfoContext context, SyntaxToken token)
     {

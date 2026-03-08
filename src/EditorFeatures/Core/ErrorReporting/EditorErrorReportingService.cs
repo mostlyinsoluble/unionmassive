@@ -11,14 +11,10 @@ using Microsoft.CodeAnalysis.Telemetry;
 namespace Microsoft.CodeAnalysis.ErrorReporting;
 
 [ExportWorkspaceService(typeof(IErrorReportingService), ServiceLayer.Editor), Shared]
-internal sealed class EditorErrorReportingService : IErrorReportingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EditorErrorReportingService() : IErrorReportingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EditorErrorReportingService()
-    {
-    }
-
     public string HostDisplayName => "host";
 
     public void ShowDetailedErrorInfo(Exception exception)

@@ -6,12 +6,9 @@ using Microsoft.CodeAnalysis.Debugging;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Editor.Implementation.Debugging;
 
-internal readonly struct FSharpDebugLocationInfo
+internal readonly struct FSharpDebugLocationInfo(string name, int lineOffset)
 {
-    internal readonly DebugLocationInfo UnderlyingObject;
-
-    public FSharpDebugLocationInfo(string name, int lineOffset)
-        => UnderlyingObject = new DebugLocationInfo(name, lineOffset);
+    internal readonly DebugLocationInfo UnderlyingObject = new DebugLocationInfo(name, lineOffset);
 
     public readonly string Name => UnderlyingObject.Name;
     public readonly int LineOffset => UnderlyingObject.LineOffset;

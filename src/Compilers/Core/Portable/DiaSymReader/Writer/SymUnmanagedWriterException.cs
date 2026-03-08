@@ -32,10 +32,7 @@ namespace Microsoft.DiaSymReader
         }
 
         public SymUnmanagedWriterException(string message, Exception innerException, string implementationModuleName)
-            : base(message, innerException)
-        {
-            ImplementationModuleName = implementationModuleName;
-        }
+            : base(message, innerException) => ImplementationModuleName = implementationModuleName;
 
         internal SymUnmanagedWriterException(Exception innerException, string implementationModuleName)
             : this(innerException.Message, innerException, implementationModuleName)

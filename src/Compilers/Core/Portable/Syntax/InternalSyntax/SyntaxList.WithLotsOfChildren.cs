@@ -14,16 +14,10 @@ namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
             private readonly int[] _childOffsets;
 
             internal WithLotsOfChildren(ArrayElement<GreenNode>[] children)
-                : base(children)
-            {
-                _childOffsets = CalculateOffsets(children);
-            }
+                : base(children) => _childOffsets = CalculateOffsets(children);
 
             internal WithLotsOfChildren(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations, ArrayElement<GreenNode>[] children, int[] childOffsets)
-                : base(diagnostics, annotations, children)
-            {
-                _childOffsets = childOffsets;
-            }
+                : base(diagnostics, annotations, children) => _childOffsets = childOffsets;
 
             public override int GetSlotOffset(int index)
             {

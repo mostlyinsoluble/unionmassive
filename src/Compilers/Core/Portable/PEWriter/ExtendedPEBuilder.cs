@@ -17,8 +17,21 @@ namespace Microsoft.Cci
     /// <summary>
     /// This PEBuilder adds an .mvid section.
     /// </summary>
-    internal sealed class ExtendedPEBuilder
-        : ManagedPEBuilder
+    internal sealed class ExtendedPEBuilder(
+        PEHeaderBuilder header,
+        MetadataRootBuilder metadataRootBuilder,
+        BlobBuilder ilStream,
+        BlobBuilder? mappedFieldData,
+        BlobBuilder? managedResources,
+        ResourceSectionBuilder? nativeResources,
+        DebugDirectoryBuilder? debugDirectoryBuilder,
+        int strongNameSignatureSize,
+        MethodDefinitionHandle entryPoint,
+        CorFlags flags,
+        Func<IEnumerable<Blob>, BlobContentId>? deterministicIdProvider,
+        bool withMvidSection)
+                : ManagedPEBuilder(header, metadataRootBuilder, ilStream, mappedFieldData, managedResources, nativeResources,
+              debugDirectoryBuilder, strongNameSignatureSize, entryPoint, flags, deterministicIdProvider)
     {
         private const string MvidSectionName = ".mvid";
         public const int SizeOfGuid = 16;
@@ -27,26 +40,7 @@ namespace Microsoft.Cci
         private Blob _mvidSectionFixup = default;
 
         // Only include the .mvid section in ref assemblies
-        private readonly bool _withMvidSection;
-
-        public ExtendedPEBuilder(
-            PEHeaderBuilder header,
-            MetadataRootBuilder metadataRootBuilder,
-            BlobBuilder ilStream,
-            BlobBuilder? mappedFieldData,
-            BlobBuilder? managedResources,
-            ResourceSectionBuilder? nativeResources,
-            DebugDirectoryBuilder? debugDirectoryBuilder,
-            int strongNameSignatureSize,
-            MethodDefinitionHandle entryPoint,
-            CorFlags flags,
-            Func<IEnumerable<Blob>, BlobContentId>? deterministicIdProvider,
-            bool withMvidSection)
-            : base(header, metadataRootBuilder, ilStream, mappedFieldData, managedResources, nativeResources,
-                  debugDirectoryBuilder, strongNameSignatureSize, entryPoint, flags, deterministicIdProvider)
-        {
-            _withMvidSection = withMvidSection;
-        }
+        private readonly bool _withMvidSection = withMvidSection;
 
         protected override ImmutableArray<Section> CreateSections()
         {

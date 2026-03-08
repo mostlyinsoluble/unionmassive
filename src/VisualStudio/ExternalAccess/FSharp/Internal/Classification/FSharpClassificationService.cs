@@ -20,17 +20,12 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Classification;
 
 [Shared]
 [ExportLanguageService(typeof(IClassificationService), LanguageNames.FSharp)]
-internal class FSharpClassificationService : IClassificationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpClassificationService(IFSharpClassificationService service) : IClassificationService
 {
-    private readonly IFSharpClassificationService _service;
+    private readonly IFSharpClassificationService _service = service;
     private readonly ObjectPool<List<ClassifiedSpan>> s_listPool = new(() => []);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpClassificationService(IFSharpClassificationService service)
-    {
-        _service = service;
-    }
 
     public void AddLexicalClassifications(SourceText text, TextSpan textSpan, SegmentedList<ClassifiedSpan> result, CancellationToken cancellationToken)
     {

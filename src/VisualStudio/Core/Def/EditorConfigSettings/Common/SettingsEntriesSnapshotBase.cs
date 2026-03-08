@@ -8,16 +8,10 @@ using Microsoft.VisualStudio.Shell.TableControl;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 
-internal abstract class SettingsEntriesSnapshotBase<T> : WpfTableEntriesSnapshotBase
+internal abstract class SettingsEntriesSnapshotBase<T>(ImmutableArray<T> data, int currentVersionNumber) : WpfTableEntriesSnapshotBase
 {
-    private readonly ImmutableArray<T> _data;
-    private readonly int _currentVersionNumber;
-
-    public SettingsEntriesSnapshotBase(ImmutableArray<T> data, int currentVersionNumber)
-    {
-        _data = data;
-        _currentVersionNumber = currentVersionNumber;
-    }
+    private readonly ImmutableArray<T> _data = data;
+    private readonly int _currentVersionNumber = currentVersionNumber;
 
     public override int VersionNumber => _currentVersionNumber;
     public override int Count => _data.Length;

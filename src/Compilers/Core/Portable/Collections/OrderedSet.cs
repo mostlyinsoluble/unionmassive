@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.Collections
         }
 
         public OrderedSet(IEnumerable<T> items)
-            : this()
-        {
-            AddRange(items);
-        }
+            : this() => AddRange(items);
 
         public void AddRange(IEnumerable<T> items)
         {

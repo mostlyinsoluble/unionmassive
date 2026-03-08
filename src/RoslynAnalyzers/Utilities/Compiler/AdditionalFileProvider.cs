@@ -21,10 +21,7 @@ namespace Analyzer.Utilities
     {
         private readonly ImmutableArray<AdditionalText> _additionalFiles;
 
-        internal AdditionalFileProvider(ImmutableArray<AdditionalText> additionalFiles)
-        {
-            _additionalFiles = additionalFiles;
-        }
+        internal AdditionalFileProvider(ImmutableArray<AdditionalText> additionalFiles) => _additionalFiles = additionalFiles;
 
         /// <summary>
         /// Creates an instance of this provider from the specified <see cref="AnalyzerOptions"/>.

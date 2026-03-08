@@ -9,19 +9,13 @@ namespace Microsoft.CodeAnalysis
 {
     internal abstract partial class CommonCompiler
     {
-        internal sealed class LoggingSourceFileResolver : SourceFileResolver
+        internal sealed class LoggingSourceFileResolver(
+            ImmutableArray<string> searchPaths,
+            string? baseDirectory,
+            ImmutableArray<KeyValuePair<string, string>> pathMap,
+            TouchedFileLogger? logger) : SourceFileResolver(searchPaths, baseDirectory, pathMap)
         {
-            private readonly TouchedFileLogger? _logger;
-
-            public LoggingSourceFileResolver(
-                ImmutableArray<string> searchPaths,
-                string? baseDirectory,
-                ImmutableArray<KeyValuePair<string, string>> pathMap,
-                TouchedFileLogger? logger)
-                : base(searchPaths, baseDirectory, pathMap)
-            {
-                _logger = logger;
-            }
+            private readonly TouchedFileLogger? _logger = logger;
 
             protected override bool FileExists(string? fullPath)
             {

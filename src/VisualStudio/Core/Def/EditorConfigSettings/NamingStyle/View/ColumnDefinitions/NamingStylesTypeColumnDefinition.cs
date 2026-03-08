@@ -18,14 +18,10 @@ using static Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Type)]
-internal sealed class NamingStylesTypeColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class NamingStylesTypeColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public NamingStylesTypeColumnDefinition()
-    {
-    }
-
     public override string Name => Type;
     public override string DisplayName => ServicesVSResources.Type;
     public override bool IsFilterable => true;

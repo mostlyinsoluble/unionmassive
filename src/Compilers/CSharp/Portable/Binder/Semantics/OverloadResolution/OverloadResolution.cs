@@ -26,14 +26,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         Equal
     }
 
-    internal sealed partial class OverloadResolution
+    internal sealed partial class OverloadResolution(Binder binder)
     {
-        private readonly Binder _binder;
-
-        public OverloadResolution(Binder binder)
-        {
-            _binder = binder;
-        }
+        private readonly Binder _binder = binder;
 
         private CSharpCompilation Compilation
         {
@@ -2288,7 +2283,7 @@ outerDefault:
             if (allSame && m1ParametersUsedIncludingExpansionAndOptional == m2ParametersUsedIncludingExpansionAndOptional)
             {
                 // Complete comparison for the remaining parameter types
-                for (i = i + 1; i < arguments.Count; ++i)
+                for (++i; i < arguments.Count; ++i)
                 {
                     var argumentKind = arguments[i].Kind;
 
@@ -3369,14 +3364,9 @@ outerDefault:
             return true;
         }
 
-        private class ReturnStatements : BoundTreeWalker
+        private class ReturnStatements(ArrayBuilder<BoundReturnStatement> returns) : BoundTreeWalker
         {
-            private readonly ArrayBuilder<BoundReturnStatement> _returns;
-
-            public ReturnStatements(ArrayBuilder<BoundReturnStatement> returns)
-            {
-                _returns = returns;
-            }
+            private readonly ArrayBuilder<BoundReturnStatement> _returns = returns;
 
             public override BoundNode Visit(BoundNode node)
             {

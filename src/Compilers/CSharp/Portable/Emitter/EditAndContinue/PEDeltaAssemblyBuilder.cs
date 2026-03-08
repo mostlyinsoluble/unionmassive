@@ -20,12 +20,20 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit
 {
-    internal sealed class PEDeltaAssemblyBuilder : PEAssemblyBuilderBase, IPEDeltaAssemblyBuilder
+    internal sealed class PEDeltaAssemblyBuilder(
+        SourceAssemblySymbol sourceAssembly,
+        CSharpSymbolChanges changes,
+        EmitOptions emitOptions,
+        EmitDifferenceOptions options,
+        OutputKind outputKind,
+        Cci.ModulePropertiesForSerialization serializationProperties,
+        IEnumerable<ResourceDescription> manifestResources,
+        MethodSymbol? predefinedHotReloadExceptionConstructor) : PEAssemblyBuilderBase(sourceAssembly, emitOptions, outputKind, serializationProperties, manifestResources, additionalTypes: []), IPEDeltaAssemblyBuilder
     {
-        private readonly SymbolChanges _changes;
-        private readonly CSharpSymbolMatcher.DeepTranslator _deepTranslator;
-        private readonly MethodSymbol? _predefinedHotReloadExceptionConstructor;
-        private readonly EmitDifferenceOptions _options;
+        private readonly SymbolChanges _changes = changes;
+        private readonly CSharpSymbolMatcher.DeepTranslator _deepTranslator = new CSharpSymbolMatcher.DeepTranslator(sourceAssembly.GetSpecialType(SpecialType.System_Object));
+        private readonly MethodSymbol? _predefinedHotReloadExceptionConstructor = predefinedHotReloadExceptionConstructor;
+        private readonly EmitDifferenceOptions _options = options;
 
         /// <summary>
         /// HotReloadException type. May be created even if not used. We might find out
@@ -43,37 +51,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         /// True if HotReloadException type is actually used in the delta.
         /// </summary>
         private volatile bool _isHotReloadExceptionTypeUsed;
-
-        public PEDeltaAssemblyBuilder(
-            SourceAssemblySymbol sourceAssembly,
-            CSharpSymbolChanges changes,
-            EmitOptions emitOptions,
-            EmitDifferenceOptions options,
-            OutputKind outputKind,
-            Cci.ModulePropertiesForSerialization serializationProperties,
-            IEnumerable<ResourceDescription> manifestResources,
-            MethodSymbol? predefinedHotReloadExceptionConstructor)
-            : base(sourceAssembly, emitOptions, outputKind, serializationProperties, manifestResources, additionalTypes: [])
-        {
-            _changes = changes;
-            _options = options;
-
-            // Workaround for https://github.com/dotnet/roslyn/issues/3192.
-            // When compiling state machine we stash types of awaiters and state-machine hoisted variables,
-            // so that next generation can look variables up and reuse their slots if possible.
-            //
-            // When we are about to allocate a slot for a lifted variable while compiling the next generation
-            // we map its type to the previous generation and then check the slot types that we stashed earlier.
-            // If the variable type matches we reuse it. In order to compare the previous variable type with the current one
-            // both need to be completely lowered (translated). Standard translation only goes one level deep. 
-            // Generic arguments are not translated until they are needed by metadata writer. 
-            //
-            // In order to get the fully lowered form we run the type symbols of stashed variables through a deep translator
-            // that translates the symbol recursively.
-            _deepTranslator = new CSharpSymbolMatcher.DeepTranslator(sourceAssembly.GetSpecialType(SpecialType.System_Object));
-
-            _predefinedHotReloadExceptionConstructor = predefinedHotReloadExceptionConstructor;
-        }
 
         public override SymbolChanges? EncSymbolChanges => _changes;
         public override EmitBaseline PreviousGeneration => _changes.DefinitionMap.Baseline;

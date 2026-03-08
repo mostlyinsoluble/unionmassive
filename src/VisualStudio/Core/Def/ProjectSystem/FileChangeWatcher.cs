@@ -475,14 +475,9 @@ internal sealed class FileChangeWatcher : IFileChangeWatcher
         int IVsFileChangeEvents.DirectoryChanged(string pszDirectory)
             => VSConstants.E_NOTIMPL;
 
-        public sealed class RegularWatchedFile : IWatchedFile
+        public sealed class RegularWatchedFile(FileChangeWatcher.Context context) : IWatchedFile
         {
-            public RegularWatchedFile(Context context)
-            {
-                _context = context;
-            }
-
-            private readonly Context _context;
+            private readonly Context _context = context;
 
             /// <summary>
             /// The cookie we have for requesting a watch on this file. Null means we either haven't

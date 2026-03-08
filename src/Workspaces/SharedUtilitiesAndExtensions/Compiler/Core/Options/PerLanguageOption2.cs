@@ -42,10 +42,7 @@ internal sealed partial class PerLanguageOption2<T> : IPerLanguageValuedOption<T
         OptionGroup? group = null,
         bool isEditorConfigOption = false,
         EditorConfigValueSerializer<T>? serializer = null)
-        : this(new OptionDefinition<T>(defaultValue, serializer, group, name, storageMapping: null, isEditorConfigOption), publicOptionFactory: null)
-    {
-        VerifyNamingConvention();
-    }
+        : this(new OptionDefinition<T>(defaultValue, serializer, group, name, storageMapping: null, isEditorConfigOption), publicOptionFactory: null) => VerifyNamingConvention();
 
     [Conditional("DEBUG")]
     private void VerifyNamingConvention()

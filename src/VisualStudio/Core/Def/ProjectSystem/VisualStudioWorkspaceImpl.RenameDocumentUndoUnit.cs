@@ -11,20 +11,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 internal partial class VisualStudioWorkspaceImpl
 {
-    private sealed class RenameDocumentUndoUnit : IOleUndoUnit
+    private sealed class RenameDocumentUndoUnit(VisualStudioWorkspaceImpl workspace, string fromName, string toName, string filePath) : IOleUndoUnit
     {
-        private readonly VisualStudioWorkspaceImpl _workspace;
-        private readonly string _fromName;
-        private readonly string _toName;
-        private readonly string _filePath;
-
-        public RenameDocumentUndoUnit(VisualStudioWorkspaceImpl workspace, string fromName, string toName, string filePath)
-        {
-            _workspace = workspace;
-            _fromName = fromName;
-            _toName = toName;
-            _filePath = filePath;
-        }
+        private readonly VisualStudioWorkspaceImpl _workspace = workspace;
+        private readonly string _fromName = fromName;
+        private readonly string _toName = toName;
+        private readonly string _filePath = filePath;
 
         public void Do(IOleUndoManager pUndoManager)
         {

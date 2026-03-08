@@ -12,10 +12,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.InheritanceMarg
 /// 'I↓ Implementing members'
 ///       Method 'Bar'
 /// </summary>
-internal sealed class HeaderMenuItemViewModel : MenuItemViewModel
+internal sealed class HeaderMenuItemViewModel(string displayContent, ImageMoniker imageMoniker) : MenuItemViewModel(displayContent, imageMoniker)
 {
-    public HeaderMenuItemViewModel(string displayContent, ImageMoniker imageMoniker)
-        : base(displayContent, imageMoniker)
-    {
-    }
 }

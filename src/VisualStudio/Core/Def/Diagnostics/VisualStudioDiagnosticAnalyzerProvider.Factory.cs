@@ -16,20 +16,14 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.Diagnostics;
 internal sealed partial class VisualStudioDiagnosticAnalyzerProvider
 {
     [Export(typeof(IVisualStudioDiagnosticAnalyzerProviderFactory)), Shared]
-    internal sealed class Factory : IVisualStudioDiagnosticAnalyzerProviderFactory
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class Factory(IThreadingContext threadingContext, SVsServiceProvider serviceProvider) : IVisualStudioDiagnosticAnalyzerProviderFactory
     {
-        private readonly IThreadingContext _threadingContext;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IThreadingContext _threadingContext = threadingContext;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         private VisualStudioDiagnosticAnalyzerProvider? _lazyProvider;
-
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public Factory(IThreadingContext threadingContext, SVsServiceProvider serviceProvider)
-        {
-            _threadingContext = threadingContext;
-            _serviceProvider = serviceProvider;
-        }
 
         public async Task<VisualStudioDiagnosticAnalyzerProvider> GetOrCreateProviderAsync(CancellationToken cancellationToken)
         {

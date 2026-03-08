@@ -29,10 +29,7 @@ namespace Roslyn.Test.Utilities.Desktop
     {
         public ModuleDataId Id { get; }
 
-        public RuntimeModuleDataId(ModuleDataId id)
-        {
-            Id = id;
-        }
+        public RuntimeModuleDataId(ModuleDataId id) => Id = id;
 
         private RuntimeModuleDataId(SerializationInfo info, StreamingContext context)
         {
@@ -55,10 +52,7 @@ namespace Roslyn.Test.Utilities.Desktop
     {
         public ModuleData Data { get; }
 
-        public RuntimeModuleData(ModuleData data)
-        {
-            Data = data;
-        }
+        public RuntimeModuleData(ModuleData data) => Data = data;
 
         private RuntimeModuleData(SerializationInfo info, StreamingContext context)
         {

@@ -42,15 +42,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         [ThreadStatic] private static PooledHashSet<LocalTypeInferenceInProgressKey>? s_LocalTypeInferenceInProgress;
         private ConcurrentSet<SyntaxNode>? _forbiddenReferences;
 
-        private readonly struct LocalTypeInferenceInProgressKey : IEquatable<LocalTypeInferenceInProgressKey>
+        private readonly struct LocalTypeInferenceInProgressKey(SourceLocalSymbol local, SyntaxNode reference) : IEquatable<LocalTypeInferenceInProgressKey>
         {
-            public readonly SourceLocalSymbol Local;
-            public readonly SyntaxNode Reference;
-            public LocalTypeInferenceInProgressKey(SourceLocalSymbol local, SyntaxNode reference)
-            {
-                Local = local;
-                Reference = reference;
-            }
+            public readonly SourceLocalSymbol Local = local;
+            public readonly SyntaxNode Reference = reference;
 
             public bool Equals(LocalTypeInferenceInProgressKey other)
             {
@@ -745,24 +740,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// Symbol for a deconstruction local that might require type inference.
         /// For instance, local <c>x</c> in <c>var (x, y) = ...</c> or <c>(var x, int y) = ...</c>.
         /// </summary>
-        private sealed class DeconstructionLocalSymbol : SourceLocalSymbol
+        private sealed class DeconstructionLocalSymbol(
+            Symbol containingSymbol,
+            Binder scopeBinder,
+            Binder nodeBinder,
+            TypeSyntax typeSyntax,
+            SyntaxToken identifierToken,
+            LocalDeclarationKind declarationKind,
+            SyntaxNode deconstruction) : SourceLocalSymbol(containingSymbol, scopeBinder, allowRefKind: false, allowScoped: true, typeSyntax, identifierToken, declarationKind)
         {
-            private readonly SyntaxNode _deconstruction;
-            private readonly Binder _nodeBinder;
-
-            public DeconstructionLocalSymbol(
-                Symbol containingSymbol,
-                Binder scopeBinder,
-                Binder nodeBinder,
-                TypeSyntax typeSyntax,
-                SyntaxToken identifierToken,
-                LocalDeclarationKind declarationKind,
-                SyntaxNode deconstruction)
-            : base(containingSymbol, scopeBinder, allowRefKind: false, allowScoped: true, typeSyntax, identifierToken, declarationKind)
-            {
-                _deconstruction = deconstruction;
-                _nodeBinder = nodeBinder;
-            }
+            private readonly SyntaxNode _deconstruction = deconstruction;
+            private readonly Binder _nodeBinder = nodeBinder;
 
 #nullable enable
 

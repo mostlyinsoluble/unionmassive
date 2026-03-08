@@ -152,11 +152,9 @@ internal sealed class CodeMarkers
 
     // Constructor. Do not call directly. Use CodeMarkers.Instance to access the singleton
     // Checks to see if code markers are enabled by looking for a named ATOM
-    private CodeMarkers()
-    {
+    private CodeMarkers() =>
         // This ATOM will be set by the native Code Markers host
         _state = (NativeMethods.FindAtom(AtomName) != 0) ? State.Enabled : State.Disabled;
-    }
 
     /// <summary>
     /// Sends a code marker event

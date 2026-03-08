@@ -27,19 +27,14 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 /// </remarks>
 [ExportCSharpVisualBasicStatelessLspService(typeof(CompletionResolveHandler)), Shared]
 [Method(LSP.Methods.TextDocumentCompletionResolveName)]
-internal sealed class CompletionResolveHandler : ILspServiceRequestHandler<LSP.CompletionItem, LSP.CompletionItem>, ITextDocumentIdentifierHandler<LSP.CompletionItem, LSP.TextDocumentIdentifier?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CompletionResolveHandler(IGlobalOptionService globalOptions) : ILspServiceRequestHandler<LSP.CompletionItem, LSP.CompletionItem>, ITextDocumentIdentifierHandler<LSP.CompletionItem, LSP.TextDocumentIdentifier?>
 {
-    private readonly IGlobalOptionService _globalOptions;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CompletionResolveHandler(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
 
     public LSP.TextDocumentIdentifier? GetTextDocumentIdentifier(LSP.CompletionItem request)
         => GetTextDocumentCacheEntry(request);

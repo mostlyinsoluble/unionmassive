@@ -7,15 +7,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Copilot;
 
-internal sealed class CopilotDocumentationCommentProposedEditWrapper
+internal sealed class CopilotDocumentationCommentProposedEditWrapper(DocumentationCommentProposedEdit proposedEdit)
 {
 
-    private readonly DocumentationCommentProposedEdit _documentationCommentProposedEdit;
-
-    public CopilotDocumentationCommentProposedEditWrapper(DocumentationCommentProposedEdit proposedEdit)
-    {
-        _documentationCommentProposedEdit = proposedEdit;
-    }
+    private readonly DocumentationCommentProposedEdit _documentationCommentProposedEdit = proposedEdit;
 
     public TextSpan SpanToReplace => _documentationCommentProposedEdit.SpanToReplace;
 

@@ -16,25 +16,18 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers
 [Export(typeof(IDefaultColumnGroup))]
 [Name(nameof(AnalyzerCategoryGroupingSet))]    // Required, name of the default group
 [GroupColumns(Category)] // Required, the names of the columns in the grouping
-internal sealed class AnalyzerCategoryGroupingSet : IDefaultColumnGroup
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerCategoryGroupingSet() : IDefaultColumnGroup
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerCategoryGroupingSet()
-    {
-    }
 }
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Category)] // TODO(jmarolf): make sure all columns have ToString implementation
-internal sealed class AnalyzerCategoryColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerCategoryColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerCategoryColumnDefinition()
-    {
-    }
-
     public override string Name => Category;
     public override string DisplayName => ServicesVSResources.Category;
     public override double MinWidth => 80;

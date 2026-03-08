@@ -22,18 +22,12 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(DocumentHighlightsHandler)), Shared]
 [Method(Methods.TextDocumentDocumentHighlightName)]
-internal sealed class DocumentHighlightsHandler : ILspServiceDocumentRequestHandler<TextDocumentPositionParams, DocumentHighlight[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DocumentHighlightsHandler(IHighlightingService highlightingService, IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<TextDocumentPositionParams, DocumentHighlight[]?>
 {
-    private readonly IHighlightingService _highlightingService;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DocumentHighlightsHandler(IHighlightingService highlightingService, IGlobalOptionService globalOptions)
-    {
-        _highlightingService = highlightingService;
-        _globalOptions = globalOptions;
-    }
+    private readonly IHighlightingService _highlightingService = highlightingService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;

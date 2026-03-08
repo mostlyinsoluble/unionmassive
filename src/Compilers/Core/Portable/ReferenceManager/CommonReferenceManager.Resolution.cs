@@ -169,26 +169,19 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        protected readonly struct ReferencedAssemblyIdentity
+        protected readonly struct ReferencedAssemblyIdentity(AssemblyIdentity identity, MetadataReference reference, int relativeAssemblyIndex)
         {
-            public readonly AssemblyIdentity? Identity;
-            public readonly MetadataReference? Reference;
+            public readonly AssemblyIdentity? Identity = identity;
+            public readonly MetadataReference? Reference = reference;
 
             /// <summary>
             /// non-negative: Index into the array of all (explicitly and implicitly) referenced assemblies.
             /// negative: ExplicitlyReferencedAssemblies.Count + RelativeAssemblyIndex is an index into the array of assemblies.
             /// </summary>
-            public readonly int RelativeAssemblyIndex;
+            public readonly int RelativeAssemblyIndex = relativeAssemblyIndex;
 
             public int GetAssemblyIndex(int explicitlyReferencedAssemblyCount) =>
                 RelativeAssemblyIndex >= 0 ? RelativeAssemblyIndex : explicitlyReferencedAssemblyCount + RelativeAssemblyIndex;
-
-            public ReferencedAssemblyIdentity(AssemblyIdentity identity, MetadataReference reference, int relativeAssemblyIndex)
-            {
-                Identity = identity;
-                Reference = reference;
-                RelativeAssemblyIndex = relativeAssemblyIndex;
-            }
         }
 
         /// <summary>

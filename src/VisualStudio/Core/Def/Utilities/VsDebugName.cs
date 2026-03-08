@@ -6,18 +6,11 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
-internal sealed class VsDebugName : IVsDebugName
+internal sealed class VsDebugName(string? name, string document, TextSpan textSpan) : IVsDebugName
 {
-    private readonly string? _name;
-    private readonly string _document;
-    private readonly TextSpan _textSpan;
-
-    public VsDebugName(string? name, string document, TextSpan textSpan)
-    {
-        _name = name;
-        _document = document;
-        _textSpan = textSpan;
-    }
+    private readonly string? _name = name;
+    private readonly string _document = document;
+    private readonly TextSpan _textSpan = textSpan;
 
     public int GetLocation(out string pbstrMkDoc, TextSpan[] pspanLocation)
     {

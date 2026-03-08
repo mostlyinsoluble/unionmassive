@@ -18,7 +18,9 @@ using Microsoft.CodeAnalysis.Shared.Utilities;
 namespace Microsoft.CodeAnalysis.PdbSourceDocument;
 
 [Export(typeof(IImplementationAssemblyLookupService)), Shared]
-internal sealed class ImplementationAssemblyLookupService : IImplementationAssemblyLookupService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ImplementationAssemblyLookupService() : IImplementationAssemblyLookupService
 {
     // We need to generate the namespace name in the same format that is used in metadata, which
     // is SymbolDisplayFormat.QualifiedNameOnlyFormat, which this is a copy of.
@@ -32,12 +34,6 @@ internal sealed class ImplementationAssemblyLookupService : IImplementationAssem
     // of namespace and type name, to the assembly name that the type is forwarded to
     private readonly Dictionary<string, Dictionary<(string @namespace, string typeName), string>?> _typeForwardCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly object _cacheLock = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ImplementationAssemblyLookupService()
-    {
-    }
 
     public bool TryFindImplementationAssemblyPath(string referencedDllPath, [NotNullWhen(true)] out string? implementationDllPath)
     {

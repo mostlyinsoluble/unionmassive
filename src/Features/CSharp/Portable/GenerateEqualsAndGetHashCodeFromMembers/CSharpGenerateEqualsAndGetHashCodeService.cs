@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.GenerateEqualsAndGetHashCodeFromMembers;
 
 [ExportLanguageService(typeof(IGenerateEqualsAndGetHashCodeService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpGenerateEqualsAndGetHashCodeService : AbstractGenerateEqualsAndGetHashCodeService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpGenerateEqualsAndGetHashCodeService() : AbstractGenerateEqualsAndGetHashCodeService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpGenerateEqualsAndGetHashCodeService()
-    {
-    }
-
     protected override bool TryWrapWithUnchecked(ImmutableArray<SyntaxNode> statements, out ImmutableArray<SyntaxNode> wrappedStatements)
     {
         wrappedStatements = [SyntaxFactory.CheckedStatement(SyntaxKind.UncheckedStatement,

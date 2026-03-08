@@ -30,16 +30,12 @@ using static SyntaxFactory;
 using static SyntaxKind;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.UseRecursivePatterns), Shared]
-internal sealed class UseRecursivePatternsCodeRefactoringProvider : SyntaxEditorBasedCodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class UseRecursivePatternsCodeRefactoringProvider() : SyntaxEditorBasedCodeRefactoringProvider
 {
     private static readonly PatternSyntax s_trueConstantPattern = ConstantPattern(LiteralExpression(TrueLiteralExpression));
     private static readonly PatternSyntax s_falseConstantPattern = ConstantPattern(LiteralExpression(FalseLiteralExpression));
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public UseRecursivePatternsCodeRefactoringProvider()
-    {
-    }
 
     protected override ImmutableArray<RefactorAllScope> SupportedRefactorAllScopes => AllRefactorAllScopes;
 

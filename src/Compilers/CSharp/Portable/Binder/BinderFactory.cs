@@ -17,16 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         // key in the binder cache.
         // PERF: we are not using ValueTuple because its Equals is relatively slow.
-        internal readonly struct BinderCacheKey : IEquatable<BinderCacheKey>
+        internal readonly struct BinderCacheKey(CSharpSyntaxNode syntaxNode, BinderFactory.NodeUsage usage) : IEquatable<BinderCacheKey>
         {
-            public readonly CSharpSyntaxNode syntaxNode;
-            public readonly NodeUsage usage;
-
-            public BinderCacheKey(CSharpSyntaxNode syntaxNode, NodeUsage usage)
-            {
-                this.syntaxNode = syntaxNode;
-                this.usage = usage;
-            }
+            public readonly CSharpSyntaxNode syntaxNode = syntaxNode;
+            public readonly NodeUsage usage = usage;
 
             bool IEquatable<BinderCacheKey>.Equals(BinderCacheKey other)
             {

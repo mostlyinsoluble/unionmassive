@@ -36,7 +36,13 @@ using static CodeLensHelpers;
 [Export(typeof(ICodeLensCallbackListener))]
 [ContentType(ContentTypeNames.CSharpContentType)]
 [ContentType(ContentTypeNames.VisualBasicContentType)]
-internal sealed class CodeLensCallbackListener :
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeLensCallbackListener(
+    IThreadingContext threadingContext,
+    SVsServiceProvider serviceProvider,
+    VisualStudioWorkspaceImpl workspace,
+    IGlobalOptionService globalOptionService) :
     ICodeLensCallbackListener, ICodeLensContext, IUnitTestingCodeLensContext
 {
     private const int DefaultMaxSearchResultsValue = 99;
@@ -44,26 +50,12 @@ internal sealed class CodeLensCallbackListener :
     private const string CodeLensUserSettingsConfigPath = @"Text Editor\Global Options";
     private const string CodeLensMaxSearchResults = nameof(CodeLensMaxSearchResults);
 
-    private readonly VisualStudioWorkspaceImpl _workspace;
-    private readonly IGlobalOptionService _globalOptionService;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IThreadingContext _threadingContext;
+    private readonly VisualStudioWorkspaceImpl _workspace = workspace;
+    private readonly IGlobalOptionService _globalOptionService = globalOptionService;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     private int _maxSearchResults = int.MinValue;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeLensCallbackListener(
-        IThreadingContext threadingContext,
-        SVsServiceProvider serviceProvider,
-        VisualStudioWorkspaceImpl workspace,
-        IGlobalOptionService globalOptionService)
-    {
-        _threadingContext = threadingContext;
-        _serviceProvider = serviceProvider;
-        _workspace = workspace;
-        _globalOptionService = globalOptionService;
-    }
 
     public async Task<ImmutableDictionary<Guid, string>> GetProjectVersionsAsync(ImmutableArray<Guid> projectGuids, CancellationToken cancellationToken)
     {

@@ -19,16 +19,10 @@ namespace Roslyn.Test.Utilities.Desktop
         public string Output { get; }
 
         protected RuntimePeVerifyException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            Output = info.GetString(nameof(Output));
-        }
+            : base(info, context) => Output = info.GetString(nameof(Output));
 
         public RuntimePeVerifyException(string output)
-            : base(output)
-        {
-            Output = output;
-        }
+            : base(output) => Output = output;
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

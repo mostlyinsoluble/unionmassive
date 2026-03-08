@@ -33,10 +33,7 @@ public sealed class ExternalParameterCollection : AbstractCodeElementCollection
         CodeModelState state,
         AbstractExternalCodeMember parent,
         ProjectId projectId)
-        : base(state, parent)
-    {
-        _projectId = projectId;
-    }
+        : base(state, parent) => _projectId = projectId;
 
     private AbstractExternalCodeMember ParentElement
     {

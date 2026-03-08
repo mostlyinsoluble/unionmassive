@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
     {
         private readonly Func<ITypeSymbol?, bool> _isDisposable;
 
-        internal PointsToAnalysisData(Func<ITypeSymbol?, bool> isDisposable)
-        {
-            _isDisposable = isDisposable;
-        }
+        internal PointsToAnalysisData(Func<ITypeSymbol?, bool> isDisposable) => _isDisposable = isDisposable;
 
         internal PointsToAnalysisData(IDictionary<AnalysisEntity, PointsToAbstractValue> fromData, Func<ITypeSymbol?, bool> isDisposable)
             : base(fromData)

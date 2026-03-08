@@ -61,10 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected BoundTreeWalkerWithStackGuard()
         { }
 
-        protected BoundTreeWalkerWithStackGuard(int recursionDepth)
-        {
-            _recursionDepth = recursionDepth;
-        }
+        protected BoundTreeWalkerWithStackGuard(int recursionDepth) => _recursionDepth = recursionDepth;
 
         protected int RecursionDepth => _recursionDepth;
 

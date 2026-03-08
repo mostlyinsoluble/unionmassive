@@ -115,7 +115,6 @@ internal abstract class SyntaxGeneratorInternal : ILanguageService
 
     #region Patterns
 
-    public abstract bool SupportsPatterns(ParseOptions options);
     public abstract SyntaxNode IsPatternExpression(SyntaxNode expression, SyntaxToken isToken, SyntaxNode pattern);
 
     public abstract SyntaxNode AndPattern(SyntaxNode left, SyntaxNode right);

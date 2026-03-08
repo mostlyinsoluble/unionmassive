@@ -17,13 +17,8 @@ using MethodSymbolAdapter = Microsoft.CodeAnalysis.CSharp.Symbols.MethodSymbol;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 {
-    internal sealed class EmbeddedMethod : EmbeddedTypesManager.CommonEmbeddedMethod
+    internal sealed class EmbeddedMethod(EmbeddedType containingType, MethodSymbolAdapter underlyingMethod) : EmbeddedTypesManager.CommonEmbeddedMethod(containingType, underlyingMethod)
     {
-        public EmbeddedMethod(EmbeddedType containingType, MethodSymbolAdapter underlyingMethod) :
-            base(containingType, underlyingMethod)
-        {
-        }
-
         internal override EmbeddedTypesManager TypeManager
         {
             get

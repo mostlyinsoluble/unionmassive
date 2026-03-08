@@ -13,14 +13,10 @@ using VSLangProj80;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.Utilities;
 
 [ExportLanguageService(typeof(ICompilationOptionsChangingService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCompilationOptionsChangingService : ICompilationOptionsChangingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCompilationOptionsChangingService() : ICompilationOptionsChangingService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCompilationOptionsChangingService()
-    {
-    }
-
     public bool CanApplyChange(CompilationOptions oldOptions, CompilationOptions newOptions)
     {
         var oldCSharpOptions = (CSharpCompilationOptions)oldOptions;

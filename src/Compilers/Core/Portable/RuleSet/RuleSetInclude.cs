@@ -11,9 +11,12 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// Represents a Include tag in a RuleSet file.
     /// </summary>
-    public class RuleSetInclude
+    /// <remarks>
+    /// Create a RuleSetInclude given the include path and the effective action.
+    /// </remarks>
+    public class RuleSetInclude(string includePath, ReportDiagnostic action)
     {
-        private readonly string _includePath;
+        private readonly string _includePath = includePath;
         /// <summary>
         /// The path of the included file.
         /// </summary>
@@ -22,22 +25,13 @@ namespace Microsoft.CodeAnalysis
             get { return _includePath; }
         }
 
-        private readonly ReportDiagnostic _action;
+        private readonly ReportDiagnostic _action = action;
         /// <summary>
         /// The effective action to apply on this included ruleset.
         /// </summary>
         public ReportDiagnostic Action
         {
             get { return _action; }
-        }
-
-        /// <summary>
-        /// Create a RuleSetInclude given the include path and the effective action.
-        /// </summary>
-        public RuleSetInclude(string includePath, ReportDiagnostic action)
-        {
-            _includePath = includePath;
-            _action = action;
         }
 
         /// <summary>

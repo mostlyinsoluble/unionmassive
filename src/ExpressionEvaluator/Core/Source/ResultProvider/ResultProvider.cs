@@ -45,10 +45,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
         internal readonly IDkmClrFormatter2 Formatter2;
         internal readonly IDkmClrFullNameProvider FullNameProvider;
 
-        static ResultProvider()
-        {
-            FatalError.SetHandlers(FailFast.Handler, nonFatalHandler: null);
-        }
+        static ResultProvider() => FatalError.SetHandlers(FailFast.Handler, nonFatalHandler: null);
 
         internal ResultProvider(IDkmClrFormatter2 formatter2, IDkmClrFullNameProvider fullNameProvider)
         {
@@ -1104,20 +1101,12 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
             }
         }
 
-        private class NullableMemberInfo : DkmDataItem
+        private class NullableMemberInfo(DkmEvaluationResultCategory category, DkmEvaluationResultAccessType access, DkmEvaluationResultStorageType storageType, DkmEvaluationResultTypeModifierFlags typeModifierFlags) : DkmDataItem
         {
-            public readonly DkmEvaluationResultCategory Category;
-            public readonly DkmEvaluationResultAccessType Access;
-            public readonly DkmEvaluationResultStorageType StorageType;
-            public readonly DkmEvaluationResultTypeModifierFlags TypeModifierFlags;
-
-            public NullableMemberInfo(DkmEvaluationResultCategory category, DkmEvaluationResultAccessType access, DkmEvaluationResultStorageType storageType, DkmEvaluationResultTypeModifierFlags typeModifierFlags)
-            {
-                Category = category;
-                Access = access;
-                StorageType = storageType;
-                TypeModifierFlags = typeModifierFlags;
-            }
+            public readonly DkmEvaluationResultCategory Category = category;
+            public readonly DkmEvaluationResultAccessType Access = access;
+            public readonly DkmEvaluationResultStorageType StorageType = storageType;
+            public readonly DkmEvaluationResultTypeModifierFlags TypeModifierFlags = typeModifierFlags;
         }
     }
 }

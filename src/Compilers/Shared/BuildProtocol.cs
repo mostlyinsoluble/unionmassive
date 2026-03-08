@@ -203,20 +203,13 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// Strings are encoded via a length prefix as a signed
         /// 32-bit integer, followed by an array of characters.
         /// </summary>
-        public readonly struct Argument
+        public readonly struct Argument(BuildProtocolConstants.ArgumentId argumentId,
+                        int argumentIndex,
+                        string? value)
         {
-            public readonly ArgumentId ArgumentId;
-            public readonly int ArgumentIndex;
-            public readonly string? Value;
-
-            public Argument(ArgumentId argumentId,
-                            int argumentIndex,
-                            string? value)
-            {
-                ArgumentId = argumentId;
-                ArgumentIndex = argumentIndex;
-                Value = value;
-            }
+            public readonly ArgumentId ArgumentId = argumentId;
+            public readonly int ArgumentIndex = argumentIndex;
+            public readonly string? Value = value;
 
             public static Argument ReadFromBinaryReader(BinaryReader reader)
             {
@@ -363,20 +356,13 @@ namespace Microsoft.CodeAnalysis.CommandLine
     /// 32-bit integer, followed by an array of characters.
     /// 
     /// </summary>
-    internal sealed class CompletedBuildResponse : BuildResponse
+    internal sealed class CompletedBuildResponse(int returnCode,
+                                  bool utf8output,
+                                  string? output) : BuildResponse
     {
-        public readonly int ReturnCode;
-        public readonly bool Utf8Output;
-        public readonly string Output;
-
-        public CompletedBuildResponse(int returnCode,
-                                      bool utf8output,
-                                      string? output)
-        {
-            ReturnCode = returnCode;
-            Utf8Output = utf8output;
-            Output = output ?? string.Empty;
-        }
+        public readonly int ReturnCode = returnCode;
+        public readonly bool Utf8Output = utf8output;
+        public readonly string Output = output ?? string.Empty;
 
         public override ResponseType Type => ResponseType.Completed;
 
@@ -396,14 +382,9 @@ namespace Microsoft.CodeAnalysis.CommandLine
         }
     }
 
-    internal sealed class ShutdownBuildResponse : BuildResponse
+    internal sealed class ShutdownBuildResponse(int serverProcessId) : BuildResponse
     {
-        public readonly int ServerProcessId;
-
-        public ShutdownBuildResponse(int serverProcessId)
-        {
-            ServerProcessId = serverProcessId;
-        }
+        public readonly int ServerProcessId = serverProcessId;
 
         public override ResponseType Type => ResponseType.Shutdown;
 
@@ -439,16 +420,11 @@ namespace Microsoft.CodeAnalysis.CommandLine
         protected override void AddResponseBody(BinaryWriter writer) { }
     }
 
-    internal sealed class AnalyzerInconsistencyBuildResponse : BuildResponse
+    internal sealed class AnalyzerInconsistencyBuildResponse(ReadOnlyCollection<string> errorMessages) : BuildResponse
     {
         public override ResponseType Type => ResponseType.AnalyzerInconsistency;
 
-        public ReadOnlyCollection<string> ErrorMessages { get; }
-
-        public AnalyzerInconsistencyBuildResponse(ReadOnlyCollection<string> errorMessages)
-        {
-            ErrorMessages = errorMessages;
-        }
+        public ReadOnlyCollection<string> ErrorMessages { get; } = errorMessages;
 
         protected override void AddResponseBody(BinaryWriter writer)
         {
@@ -475,16 +451,11 @@ namespace Microsoft.CodeAnalysis.CommandLine
     /// <summary>
     /// The <see cref="BuildRequest"/> was rejected by the server.
     /// </summary>
-    internal sealed class RejectedBuildResponse : BuildResponse
+    internal sealed class RejectedBuildResponse(string reason) : BuildResponse
     {
-        public string Reason;
+        public string Reason = reason;
 
         public override ResponseType Type => ResponseType.Rejected;
-
-        public RejectedBuildResponse(string reason)
-        {
-            Reason = reason;
-        }
 
         protected override void AddResponseBody(BinaryWriter writer)
         {

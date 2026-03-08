@@ -7,12 +7,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.EditAndContinue.UnitTests;
 
-internal sealed class EditAndContinueTestAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider
+internal sealed class EditAndContinueTestAnalyzerConfigOptionsProvider(IEnumerable<(string, string)> options) : AnalyzerConfigOptionsProvider
 {
-    public EditAndContinueTestAnalyzerConfigOptionsProvider(IEnumerable<(string, string)> options)
-        => GlobalOptions = new EditAndContinueTestAnalyzerConfigOptions(options);
-
-    public override AnalyzerConfigOptions GlobalOptions { get; }
+    public override AnalyzerConfigOptions GlobalOptions { get; } = new EditAndContinueTestAnalyzerConfigOptions(options);
 
     public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
         => GlobalOptions;

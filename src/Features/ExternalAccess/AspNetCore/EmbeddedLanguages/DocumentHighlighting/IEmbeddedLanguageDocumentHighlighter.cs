@@ -45,12 +45,7 @@ internal readonly struct AspNetCoreHighlightSpan
     }
 }
 
-internal readonly struct AspNetCoreDocumentHighlights
+internal readonly struct AspNetCoreDocumentHighlights(ImmutableArray<AspNetCoreHighlightSpan> highlightSpans)
 {
-    public ImmutableArray<AspNetCoreHighlightSpan> HighlightSpans { get; }
-
-    public AspNetCoreDocumentHighlights(ImmutableArray<AspNetCoreHighlightSpan> highlightSpans)
-    {
-        HighlightSpans = highlightSpans;
-    }
+    public ImmutableArray<AspNetCoreHighlightSpan> HighlightSpans { get; } = highlightSpans;
 }

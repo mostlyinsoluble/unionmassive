@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis
             : base(Size,
                    key => MakeValue(resolver, key),
                    KeyHashCode,
-                   KeyValueEquality)
-        {
-            CacheMissCount = 0;
-        }
+                   KeyValueEquality) => CacheMissCount = 0;
 
         public XDocument GetOrMakeDocument(string resolvedPath)
         {

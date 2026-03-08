@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator.UnitTests
     {
         internal readonly INamespaceTypeDefinition UnderlyingType;
 
-        internal NamespaceTypeDefinitionNoBase(INamespaceTypeDefinition underlyingType)
-        {
-            UnderlyingType = underlyingType;
-        }
+        internal NamespaceTypeDefinitionNoBase(INamespaceTypeDefinition underlyingType) => UnderlyingType = underlyingType;
 
         bool IDefinition.IsEncDeleted => false;
 

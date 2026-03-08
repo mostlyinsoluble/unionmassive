@@ -55,16 +55,10 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
         private readonly Dictionary<string, List<AssemblyIdentityAndLocation>> _dependenciesWithLocationBySimpleName;
 
         [DebuggerDisplay("{GetDebuggerDisplay(),nq}")]
-        private readonly struct AssemblyIdentityAndLocation
+        private readonly struct AssemblyIdentityAndLocation(AssemblyIdentity identity, string location)
         {
-            public readonly AssemblyIdentity Identity;
-            public readonly string Location;
-
-            public AssemblyIdentityAndLocation(AssemblyIdentity identity, string location)
-            {
-                Identity = identity;
-                Location = location;
-            }
+            public readonly AssemblyIdentity Identity = identity;
+            public readonly string Location = location;
 
             private string GetDebuggerDisplay() => Identity + " @ " + Location;
         }

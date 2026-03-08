@@ -988,7 +988,6 @@ internal static class UseCollectionExpressionHelpers
                 // stack alloc to a heap alloc, which could be very bad for user perf.
 
                 if (arguments.Count == 1 &&
-                    compilation.SupportsRuntimeCapability(RuntimeCapability.InlineArrayTypes) &&
                     originalCreateMethod.Parameters is [
                         {
                             Type: INamedTypeSymbol

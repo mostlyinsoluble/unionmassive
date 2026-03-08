@@ -15,22 +15,14 @@ namespace Microsoft.VisualStudio.IntegrationTest.Setup;
 
 [Export]
 [Shared]
-internal sealed class AsyncCompletionTracker
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AsyncCompletionTracker(
+    IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
+    IAsyncCompletionBroker asyncCompletionBroker)
 {
-    private readonly IAsynchronousOperationListenerProvider _asynchronousOperationListenerProvider;
-    private readonly IAsyncCompletionBroker _asyncCompletionBroker;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AsyncCompletionTracker(
-        IAsynchronousOperationListenerProvider asynchronousOperationListenerProvider,
-        IAsyncCompletionBroker asyncCompletionBroker)
-    {
-        // Store the listener provider, but delay accessing the listener itself since tracking could still be
-        // disabled during the initialization sequence for integration tests.
-        _asynchronousOperationListenerProvider = asynchronousOperationListenerProvider;
-        _asyncCompletionBroker = asyncCompletionBroker;
-    }
+    private readonly IAsynchronousOperationListenerProvider _asynchronousOperationListenerProvider = asynchronousOperationListenerProvider;
+    private readonly IAsyncCompletionBroker _asyncCompletionBroker = asyncCompletionBroker;
 
     internal void StartListening()
     {

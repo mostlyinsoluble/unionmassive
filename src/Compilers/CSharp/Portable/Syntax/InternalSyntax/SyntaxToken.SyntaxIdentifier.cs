@@ -15,16 +15,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             protected readonly string TextField;
 
             internal SyntaxIdentifier(string text)
-                : base(SyntaxKind.IdentifierToken, text.Length)
-            {
-                this.TextField = text;
-            }
+                : base(SyntaxKind.IdentifierToken, text.Length) => this.TextField = text;
 
             internal SyntaxIdentifier(string text, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-                : base(SyntaxKind.IdentifierToken, text.Length, diagnostics, annotations)
-            {
-                this.TextField = text;
-            }
+                : base(SyntaxKind.IdentifierToken, text.Length, diagnostics, annotations) => this.TextField = text;
 
             public override string Text
             {

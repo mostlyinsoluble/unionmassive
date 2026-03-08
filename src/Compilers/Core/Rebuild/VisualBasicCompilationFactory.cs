@@ -28,10 +28,7 @@ namespace Microsoft.CodeAnalysis.Rebuild
             string assemblyFileName,
             CompilationOptionsReader optionsReader,
             VisualBasicCompilationOptions compilationOptions)
-            : base(assemblyFileName, optionsReader)
-        {
-            CompilationOptions = compilationOptions;
-        }
+            : base(assemblyFileName, optionsReader) => CompilationOptions = compilationOptions;
 
         internal static new VisualBasicCompilationFactory Create(string assemblyFileName, CompilationOptionsReader optionsReader)
         {

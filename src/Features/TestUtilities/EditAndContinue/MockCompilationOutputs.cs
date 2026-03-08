@@ -8,15 +8,12 @@ using Microsoft.CodeAnalysis.Emit;
 
 namespace Microsoft.CodeAnalysis.EditAndContinue.UnitTests;
 
-internal sealed class MockCompilationOutputs : CompilationOutputs
+internal sealed class MockCompilationOutputs(Guid mvid) : CompilationOutputs
 {
-    private readonly Guid _mvid;
+    private readonly Guid _mvid = mvid;
 
     public Func<Stream?>? OpenAssemblyStreamImpl { get; set; }
     public Func<Stream?>? OpenPdbStreamImpl { get; set; }
-
-    public MockCompilationOutputs(Guid mvid)
-        => _mvid = mvid;
 
     public override string AssemblyDisplayPath => "test-assembly";
     public override string PdbDisplayPath => "test-pdb";

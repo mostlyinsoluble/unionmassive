@@ -8,16 +8,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 {
     internal abstract partial class AnalyzerDriver : IDisposable
     {
-        internal sealed class CompilationData
+        internal sealed class CompilationData(Compilation compilation)
         {
-            public CompilationData(Compilation compilation)
-            {
-                SemanticModelProvider = (CachingSemanticModelProvider)compilation.SemanticModelProvider!;
-                SuppressMessageAttributeState = new SuppressMessageAttributeState(compilation);
-            }
-
-            public CachingSemanticModelProvider SemanticModelProvider { get; }
-            public SuppressMessageAttributeState SuppressMessageAttributeState { get; }
+            public CachingSemanticModelProvider SemanticModelProvider { get; } = (CachingSemanticModelProvider)compilation.SemanticModelProvider!;
+            public SuppressMessageAttributeState SuppressMessageAttributeState { get; } = new SuppressMessageAttributeState(compilation);
         }
     }
 }

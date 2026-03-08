@@ -10,23 +10,16 @@ using Roslyn.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
-internal sealed partial class VisualStudioRuleSetManager : IRuleSetManager
+internal sealed partial class VisualStudioRuleSetManager(
+    IThreadingContext threadingContext,
+    IFileChangeWatcher fileChangeWatcher,
+    IAsynchronousOperationListener listener) : IRuleSetManager
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IFileChangeWatcher _fileChangeWatcher;
-    private readonly IAsynchronousOperationListener _listener;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IFileChangeWatcher _fileChangeWatcher = fileChangeWatcher;
+    private readonly IAsynchronousOperationListener _listener = listener;
 
     private readonly ReferenceCountedDisposableCache<string, RuleSetFile> _ruleSetFileMap = new();
-
-    public VisualStudioRuleSetManager(
-        IThreadingContext threadingContext,
-        IFileChangeWatcher fileChangeWatcher,
-        IAsynchronousOperationListener listener)
-    {
-        _threadingContext = threadingContext;
-        _fileChangeWatcher = fileChangeWatcher;
-        _listener = listener;
-    }
 
     public IReferenceCountedDisposable<ICacheEntry<string, IRuleSetFile>> GetOrCreateRuleSet(string ruleSetFileFullPath)
     {

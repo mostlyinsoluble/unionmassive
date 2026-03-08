@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public readonly ArrayBuilder<UnaryOperatorAnalysisResult> Results;
 
-        public UnaryOperatorOverloadResolutionResult()
-        {
-            this.Results = new ArrayBuilder<UnaryOperatorAnalysisResult>(10);
-        }
+        public UnaryOperatorOverloadResolutionResult() => this.Results = new ArrayBuilder<UnaryOperatorAnalysisResult>(10);
 
         public bool AnyValid()
         {

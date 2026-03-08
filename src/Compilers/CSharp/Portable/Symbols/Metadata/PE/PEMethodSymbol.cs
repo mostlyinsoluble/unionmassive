@@ -29,18 +29,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         /// <summary>
         /// internal for testing purpose
         /// </summary>
-        internal class SignatureData
+        internal class SignatureData(SignatureHeader header, ImmutableArray<ParameterSymbol> parameters, PEParameterSymbol returnParam)
         {
-            public readonly SignatureHeader Header;
-            public readonly ImmutableArray<ParameterSymbol> Parameters;
-            public readonly PEParameterSymbol ReturnParam;
-
-            public SignatureData(SignatureHeader header, ImmutableArray<ParameterSymbol> parameters, PEParameterSymbol returnParam)
-            {
-                this.Header = header;
-                this.Parameters = parameters;
-                this.ReturnParam = returnParam;
-            }
+            public readonly SignatureHeader Header = header;
+            public readonly ImmutableArray<ParameterSymbol> Parameters = parameters;
+            public readonly PEParameterSymbol ReturnParam = returnParam;
         }
 
         // This type is used to compact many different bits of information efficiently.

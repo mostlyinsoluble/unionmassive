@@ -90,16 +90,10 @@ namespace Microsoft.Cci
     /// Each security attribute represents a serialized permission or permission set for a specified security action.
     /// The union of the security attributes with identical security action, define the permission set to which the security action applies.
     /// </summary>
-    internal readonly struct SecurityAttribute
+    internal readonly struct SecurityAttribute(DeclarativeSecurityAction action, ICustomAttribute attribute)
     {
-        public DeclarativeSecurityAction Action { get; }
-        public ICustomAttribute Attribute { get; }
-
-        public SecurityAttribute(DeclarativeSecurityAction action, ICustomAttribute attribute)
-        {
-            Action = action;
-            Attribute = attribute;
-        }
+        public DeclarativeSecurityAction Action { get; } = action;
+        public ICustomAttribute Attribute { get; } = attribute;
     }
 
     /// <summary>

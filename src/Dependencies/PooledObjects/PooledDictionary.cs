@@ -21,10 +21,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects
         private readonly ObjectPool<PooledDictionary<K, V>> _pool;
 
         private PooledDictionary(ObjectPool<PooledDictionary<K, V>> pool, IEqualityComparer<K> keyComparer)
-            : base(keyComparer)
-        {
-            _pool = pool;
-        }
+            : base(keyComparer) => _pool = pool;
 
         public ImmutableDictionary<K, V> ToImmutableDictionaryAndFree()
         {

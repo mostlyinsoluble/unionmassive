@@ -9,12 +9,16 @@ using Microsoft.CodeAnalysis.CSharp.Symbols;
 
 namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 {
-    internal sealed class EELocalConstantSymbol : EELocalSymbolBase
+    internal sealed class EELocalConstantSymbol(
+        MethodSymbol method,
+        string name,
+        TypeWithAnnotations type,
+        ConstantValue value) : EELocalSymbolBase
     {
-        private readonly MethodSymbol _method;
-        private readonly string _name;
-        private readonly TypeWithAnnotations _type;
-        private readonly ConstantValue _value;
+        private readonly MethodSymbol _method = method;
+        private readonly string _name = name;
+        private readonly TypeWithAnnotations _type = type;
+        private readonly ConstantValue _value = value;
 
         public EELocalConstantSymbol(
             MethodSymbol method,
@@ -23,18 +27,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
             ConstantValue value)
             : this(method, name, TypeWithAnnotations.Create(type), value)
         {
-        }
-
-        public EELocalConstantSymbol(
-            MethodSymbol method,
-            string name,
-            TypeWithAnnotations type,
-            ConstantValue value)
-        {
-            _method = method;
-            _name = name;
-            _type = type;
-            _value = value;
         }
 
         internal override EELocalSymbolBase ToOtherMethod(MethodSymbol method, TypeMap typeMap)

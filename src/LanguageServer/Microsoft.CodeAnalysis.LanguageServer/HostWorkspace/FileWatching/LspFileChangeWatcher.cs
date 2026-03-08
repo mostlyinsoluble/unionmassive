@@ -174,18 +174,11 @@ internal sealed class LspFileChangeWatcher : IFileChangeWatcher
             }
         }
 
-        private sealed class WatchedFile : IWatchedFile
+        private sealed class WatchedFile(string filePath, LspFileChangeWatcher.LspFileWatchRegistration fileWatchRegistration, LspFileChangeWatcher.FileChangeContext fileChangeContext) : IWatchedFile
         {
-            private readonly string _filePath;
-            private readonly LspFileWatchRegistration _fileWatchRegistration;
-            private readonly FileChangeContext _fileChangeContext;
-
-            public WatchedFile(string filePath, LspFileWatchRegistration fileWatchRegistration, FileChangeContext fileChangeContext)
-            {
-                _filePath = filePath;
-                _fileWatchRegistration = fileWatchRegistration;
-                _fileChangeContext = fileChangeContext;
-            }
+            private readonly string _filePath = filePath;
+            private readonly LspFileWatchRegistration _fileWatchRegistration = fileWatchRegistration;
+            private readonly FileChangeContext _fileChangeContext = fileChangeContext;
 
             public void Dispose()
             {

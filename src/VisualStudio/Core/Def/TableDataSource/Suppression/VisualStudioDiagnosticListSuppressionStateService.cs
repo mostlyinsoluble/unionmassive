@@ -31,10 +31,14 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.TableDataSource
 /// </summary>
 [Export(typeof(IVisualStudioDiagnosticListSuppressionStateService))]
 [Export(typeof(VisualStudioDiagnosticListSuppressionStateService))]
-internal sealed class VisualStudioDiagnosticListSuppressionStateService : IVisualStudioDiagnosticListSuppressionStateService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioDiagnosticListSuppressionStateService(
+    IThreadingContext threadingContext,
+    VisualStudioWorkspace workspace) : IVisualStudioDiagnosticListSuppressionStateService
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly VisualStudioWorkspace _workspace;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly VisualStudioWorkspace _workspace = workspace;
 
     private IVsUIShell? _shellService;
     private IWpfTableControl? _tableControl;
@@ -45,16 +49,6 @@ internal sealed class VisualStudioDiagnosticListSuppressionStateService : IVisua
     private int _selectedCompilerDiagnosticItems;
     private int _selectedNoLocationDiagnosticItems;
     private int _selectedNonSuppressionStateItems;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioDiagnosticListSuppressionStateService(
-        IThreadingContext threadingContext,
-        VisualStudioWorkspace workspace)
-    {
-        _threadingContext = threadingContext;
-        _workspace = workspace;
-    }
 
     public async Task InitializeAsync(IAsyncServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

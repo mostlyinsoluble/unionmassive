@@ -20,16 +20,11 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.InlayHint;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(InlayHintHandler)), Shared]
 [Method(Methods.TextDocumentInlayHintName)]
-internal sealed class InlayHintHandler : ILspServiceDocumentRequestHandler<InlayHintParams, LSP.InlayHint[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InlayHintHandler(IGlobalOptionService optionsService) : ILspServiceDocumentRequestHandler<InlayHintParams, LSP.InlayHint[]?>
 {
-    private readonly IGlobalOptionService _optionsService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InlayHintHandler(IGlobalOptionService optionsService)
-    {
-        _optionsService = optionsService;
-    }
+    private readonly IGlobalOptionService _optionsService = optionsService;
 
     public bool MutatesSolutionState => false;
 

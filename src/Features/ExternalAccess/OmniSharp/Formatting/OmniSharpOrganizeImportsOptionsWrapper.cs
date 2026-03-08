@@ -12,10 +12,7 @@ internal readonly struct OmniSharpOrganizeImportsOptionsWrapper
 {
     internal readonly OrganizeImportsOptions UnderlyingObject;
 
-    private OmniSharpOrganizeImportsOptionsWrapper(OrganizeImportsOptions underlyingObject)
-    {
-        UnderlyingObject = underlyingObject;
-    }
+    private OmniSharpOrganizeImportsOptionsWrapper(OrganizeImportsOptions underlyingObject) => UnderlyingObject = underlyingObject;
 
     public OmniSharpOrganizeImportsOptionsWrapper(
         bool placeSystemNamespaceFirst,

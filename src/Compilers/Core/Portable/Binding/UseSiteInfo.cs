@@ -462,10 +462,7 @@ namespace Microsoft.CodeAnalysis
 
         public static readonly CachedUseSiteInfo<TAssemblySymbol> Uninitialized = new CachedUseSiteInfo<TAssemblySymbol>(Sentinel); // Indicates unknown state.
 
-        private CachedUseSiteInfo(object info)
-        {
-            _info = info;
-        }
+        private CachedUseSiteInfo(object info) => _info = info;
 
         public bool IsInitialized => (object?)_info != Sentinel;
 

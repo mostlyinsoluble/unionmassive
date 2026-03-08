@@ -12,25 +12,19 @@ namespace Xunit.Harness
     /// <summary>
     /// Mapper for the .NetRuntime entry in the Event Log.
     /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="FeedbackItemDotNetEntry"/> class based on an
+    /// <see cref="EventRecord"/> from the Event Log.
+    /// </remarks>
     [DataContract]
-    internal class FeedbackItemDotNetEntry
+    internal class FeedbackItemDotNetEntry(EventRecord eventLogRecord)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FeedbackItemDotNetEntry"/> class based on an
-        /// <see cref="EventRecord"/> from the Event Log.
-        /// </summary>
-        public FeedbackItemDotNetEntry(EventRecord eventLogRecord)
-        {
-            EventTime = eventLogRecord.TimeCreated?.ToUniversalTime() ?? DateTime.MinValue;
-            EventId = eventLogRecord.Id;
-            Data = string.Join(";", eventLogRecord.Properties.Select(pr => pr.Value ?? string.Empty));
-        }
 
         /// <summary>
         /// Gets or sets the time the event happened (UTC).
         /// </summary>
         [DataMember(Name = "eventTime")]
-        public DateTime EventTime { get; set; }
+        public DateTime EventTime { get; set; } = eventLogRecord.TimeCreated?.ToUniversalTime() ?? DateTime.MinValue;
 
         /// <summary>
         /// Gets or sets the .NET Runtime event id (this is set by .NET and we get it from the Event Log, so we can better differentiate between them)
@@ -38,7 +32,7 @@ namespace Xunit.Harness
         /// 1023 - ERT_UnmanagedFailFast, 1025 - ERT_ManagedFailFast, 1026 - ERT_UnhandledException, 1027 - ERT_StackOverflow, 1028 - ERT_CodeContractFailed.
         /// </summary>
         [DataMember(Name = "eventId")]
-        public int EventId { get; set; }
+        public int EventId { get; set; } = eventLogRecord.Id;
 
         /// <summary>
         /// Gets or sets the event log properties to be passed as one string. E.g.
@@ -47,7 +41,7 @@ namespace Xunit.Harness
         /// Stack: at CSAv.Program.GetModuleFileName(IntPtr, Int32, Int32).
         /// </summary>
         [DataMember(Name = "data")]
-        public string Data { get; set; }
+        public string Data { get; set; } = string.Join(";", eventLogRecord.Properties.Select(pr => pr.Value ?? string.Empty));
 
         /// <summary>
         /// Used to make sure we aren't adding dupe entries to the list of Watson entries.

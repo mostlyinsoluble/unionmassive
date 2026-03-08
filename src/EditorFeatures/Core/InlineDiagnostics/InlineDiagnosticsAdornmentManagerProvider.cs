@@ -19,34 +19,26 @@ namespace Microsoft.CodeAnalysis.Editor.InlineDiagnostics;
 [Export(typeof(IWpfTextViewCreationListener))]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [TextViewRole(PredefinedTextViewRoles.Document)]
-internal sealed class InlineDiagnosticsAdornmentManagerProvider : AbstractAdornmentManagerProvider<InlineDiagnosticsTag>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InlineDiagnosticsAdornmentManagerProvider(
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    IThreadingContext threadingContext,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService,
+    IClassificationFormatMapService classificationFormatMapService,
+    IClassificationTypeRegistryService classificationTypeRegistryService,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListenerProvider listenerProvider) : AbstractAdornmentManagerProvider<InlineDiagnosticsTag>(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
 {
     private const string LayerName = "RoslynInlineDiagnostics";
-    private readonly IClassificationFormatMapService _classificationFormatMapService;
-    private readonly IClassificationTypeRegistryService _classificationTypeRegistryService;
+    private readonly IClassificationFormatMapService _classificationFormatMapService = classificationFormatMapService;
+    private readonly IClassificationTypeRegistryService _classificationTypeRegistryService = classificationTypeRegistryService;
 
     [Export]
     [Name(LayerName)]
     [ContentType(ContentTypeNames.RoslynContentType)]
     [Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Squiggle)]
     internal readonly AdornmentLayerDefinition InlineDiagnosticsLayer;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public InlineDiagnosticsAdornmentManagerProvider(
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        IThreadingContext threadingContext,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService,
-        IClassificationFormatMapService classificationFormatMapService,
-        IClassificationTypeRegistryService classificationTypeRegistryService,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListenerProvider listenerProvider)
-        : base(threadingContext, tagAggregatorFactoryService, globalOptions, listenerProvider)
-    {
-        _classificationFormatMapService = classificationFormatMapService;
-        _classificationTypeRegistryService = classificationTypeRegistryService;
-    }
 
     protected override string FeatureAttributeName => FeatureAttribute.InlineDiagnostics;
 

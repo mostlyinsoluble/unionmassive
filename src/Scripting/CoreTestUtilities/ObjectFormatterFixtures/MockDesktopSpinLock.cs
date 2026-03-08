@@ -15,14 +15,9 @@ namespace ObjectFormatterFixtures
     /// </summary>
     [DebuggerTypeProxy(typeof(SpinLockDebugView))]
     [DebuggerDisplay("IsHeld = {IsHeld}")]
-    internal readonly struct MockDesktopSpinLock
+    internal readonly struct MockDesktopSpinLock(bool enableThreadOwnerTracking)
     {
-        private readonly int m_owner;
-
-        public MockDesktopSpinLock(bool enableThreadOwnerTracking)
-        {
-            m_owner = enableThreadOwnerTracking ? 0 : int.MinValue;
-        }
+        private readonly int m_owner = enableThreadOwnerTracking ? 0 : int.MinValue;
 
         public bool IsHeld
             => false;
@@ -33,9 +28,9 @@ namespace ObjectFormatterFixtures
         public bool IsThreadOwnerTrackingEnabled
             => (m_owner & int.MinValue) == 0;
 
-        internal class SpinLockDebugView
+        internal class SpinLockDebugView(MockDesktopSpinLock spinLock)
         {
-            private readonly MockDesktopSpinLock m_spinLock;
+            private readonly MockDesktopSpinLock m_spinLock = spinLock;
 
             public bool? IsHeldByCurrentThread
                 => m_spinLock.IsHeldByCurrentThread;
@@ -44,11 +39,6 @@ namespace ObjectFormatterFixtures
                 => m_spinLock.IsThreadOwnerTrackingEnabled ? m_spinLock.m_owner : (int?)null;
 
             public bool IsHeld => m_spinLock.IsHeld;
-
-            public SpinLockDebugView(MockDesktopSpinLock spinLock)
-            {
-                m_spinLock = spinLock;
-            }
         }
     }
 }

@@ -15,18 +15,22 @@ internal sealed partial class DocumentOutlineViewModel
     /// transfer state over from the old ones, and to efficiently tell what is different between the last results
     /// and the new ones.
     /// </summary>
-    private sealed class DocumentOutlineViewState
+    private sealed class DocumentOutlineViewState(
+        ITextSnapshot textSnapshot,
+        string searchText,
+        ImmutableArray<DocumentSymbolDataViewModel> viewModelItems,
+        ImmutableIntervalTree<DocumentSymbolDataViewModel> viewModelItemsTree)
     {
         /// <summary>
         /// The snapshot of the document used to compute this state.
         /// </summary>
-        public readonly ITextSnapshot TextSnapshot;
+        public readonly ITextSnapshot TextSnapshot = textSnapshot;
 
         /// <summary>
         /// The text string that was used to filter the original LSP results down to the set of <see
         /// cref="DocumentSymbolData"/> we have.
         /// </summary>
-        public readonly string SearchText;
+        public readonly string SearchText = searchText;
 
         /// <summary>
         /// The view items we created from <see cref="DocumentSymbolData"/>.  Note: these values are a bit odd in
@@ -34,24 +38,12 @@ internal sealed partial class DocumentOutlineViewModel
         /// should be as the only mutable state is <see cref="DocumentSymbolDataViewModel.IsExpanded"/>/<see
         /// cref="DocumentSymbolDataViewModel.IsSelected"/>, both of which are threadsafe.
         /// </summary>
-        public readonly ImmutableArray<DocumentSymbolDataViewModel> ViewModelItems;
+        public readonly ImmutableArray<DocumentSymbolDataViewModel> ViewModelItems = viewModelItems;
 
         /// <summary>
         /// Interval-tree view over <see cref="ViewModelItems"/> so that we can quickly determine which of them
         /// intersect with a particular position in the document.
         /// </summary>
-        public readonly ImmutableIntervalTree<DocumentSymbolDataViewModel> ViewModelItemsTree;
-
-        public DocumentOutlineViewState(
-            ITextSnapshot textSnapshot,
-            string searchText,
-            ImmutableArray<DocumentSymbolDataViewModel> viewModelItems,
-            ImmutableIntervalTree<DocumentSymbolDataViewModel> viewModelItemsTree)
-        {
-            TextSnapshot = textSnapshot;
-            SearchText = searchText;
-            ViewModelItems = viewModelItems;
-            ViewModelItemsTree = viewModelItemsTree;
-        }
+        public readonly ImmutableIntervalTree<DocumentSymbolDataViewModel> ViewModelItemsTree = viewModelItemsTree;
     }
 }

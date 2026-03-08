@@ -160,16 +160,10 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
         public bool AllowMultiple => _sourceAttribute.AllowMultiple;
 
-        private readonly struct HexPropertyMetadataNamedArgument : Cci.IMetadataNamedArgument
+        private readonly struct HexPropertyMetadataNamedArgument(Cci.ITypeReference type, Cci.IMetadataExpression value) : Cci.IMetadataNamedArgument
         {
-            private readonly Cci.ITypeReference _type;
-            private readonly Cci.IMetadataExpression _value;
-
-            public HexPropertyMetadataNamedArgument(Cci.ITypeReference type, Cci.IMetadataExpression value)
-            {
-                _type = type;
-                _value = value;
-            }
+            private readonly Cci.ITypeReference _type = type;
+            private readonly Cci.IMetadataExpression _value = value;
 
             public string ArgumentName { get { return HexPropertyName; } }
             public Cci.IMetadataExpression ArgumentValue { get { return _value; } }
@@ -187,15 +181,9 @@ namespace Microsoft.CodeAnalysis.CodeGen
     /// <summary>
     /// Exception class to enable generating ERR_PermissionSetAttributeFileReadError while reading the file for PermissionSetAttribute fixup.
     /// </summary>
-    internal class PermissionSetFileReadException : Exception
+    internal class PermissionSetFileReadException(string message, string file) : Exception(message)
     {
-        private readonly string _file;
-
-        public PermissionSetFileReadException(string message, string file)
-            : base(message)
-        {
-            _file = file;
-        }
+        private readonly string _file = file;
 
         public string FileName => _file;
 

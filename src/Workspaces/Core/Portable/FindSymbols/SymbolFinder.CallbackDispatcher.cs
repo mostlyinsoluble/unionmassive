@@ -16,14 +16,10 @@ namespace Microsoft.CodeAnalysis.FindSymbols;
 public static partial class SymbolFinder
 {
     [ExportRemoteServiceCallbackDispatcher(typeof(IRemoteSymbolFinderService)), Shared]
-    internal sealed class CallbackDispatcher : RemoteServiceCallbackDispatcher, IRemoteSymbolFinderService.ICallback
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class CallbackDispatcher() : RemoteServiceCallbackDispatcher, IRemoteSymbolFinderService.ICallback
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public CallbackDispatcher()
-        {
-        }
-
         private FindLiteralsServerCallback GetFindLiteralsCallback(RemoteServiceCallbackId callbackId)
             => (FindLiteralsServerCallback)GetCallback(callbackId);
 

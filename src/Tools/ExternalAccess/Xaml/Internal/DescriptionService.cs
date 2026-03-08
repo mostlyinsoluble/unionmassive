@@ -20,16 +20,11 @@ using LSP = Roslyn.LanguageServer.Protocol;
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
 [Export(typeof(IDescriptionService))]
-internal sealed class DescriptionService : IDescriptionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DescriptionService(IGlobalOptionService globalOptions) : IDescriptionService
 {
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DescriptionService(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public async Task<IEnumerable<TaggedText>> GetDescriptionAsync(ISymbol symbol, Project project, CancellationToken cancellationToken)
     {

@@ -29,10 +29,7 @@ public sealed partial class LspTestWorkspace : TestWorkspace, ILspWorkspace
                solutionTelemetryId,
                disablePartialSolutions,
                ignoreUnchangeableDocumentsWhenApplyingChanges,
-               configurationOptions)
-    {
-        _supportsLspMutation = supportsLspMutation;
-    }
+               configurationOptions) => _supportsLspMutation = supportsLspMutation;
 
     bool ILspWorkspace.SupportsMutation => _supportsLspMutation;
 

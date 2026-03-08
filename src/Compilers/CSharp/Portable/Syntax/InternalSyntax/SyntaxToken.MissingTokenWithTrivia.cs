@@ -14,16 +14,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         internal sealed class MissingTokenWithTrivia : SyntaxTokenWithTrivia
         {
             internal MissingTokenWithTrivia(SyntaxKind kind, GreenNode leading, GreenNode trailing)
-                : base(kind, leading, trailing)
-            {
-                ClearFlags(NodeFlags.IsNotMissing);
-            }
+                : base(kind, leading, trailing) => ClearFlags(NodeFlags.IsNotMissing);
 
             internal MissingTokenWithTrivia(SyntaxKind kind, GreenNode leading, GreenNode trailing, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-                : base(kind, leading, trailing, diagnostics, annotations)
-            {
-                ClearFlags(NodeFlags.IsNotMissing);
-            }
+                : base(kind, leading, trailing, diagnostics, annotations) => ClearFlags(NodeFlags.IsNotMissing);
 
             public override string Text
             {

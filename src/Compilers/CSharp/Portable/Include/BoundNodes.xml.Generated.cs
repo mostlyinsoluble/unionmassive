@@ -408,16 +408,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal abstract partial class BoundExpression : BoundNode
     {
         protected BoundExpression(BoundKind kind, SyntaxNode syntax, TypeSymbol? type, bool hasErrors)
-            : base(kind, syntax, hasErrors)
-        {
-            this.Type = type;
-        }
+            : base(kind, syntax, hasErrors) => this.Type = type;
 
         protected BoundExpression(BoundKind kind, SyntaxNode syntax, TypeSymbol? type)
-            : base(kind, syntax)
-        {
-            this.Type = type;
-        }
+            : base(kind, syntax) => this.Type = type;
 
         public TypeSymbol? Type { get; }
     }
@@ -550,20 +544,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundTupleOperandPlaceholder : BoundValuePlaceholderBase
     {
         public BoundTupleOperandPlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.TupleOperandPlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.TupleOperandPlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundTupleOperandPlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.TupleOperandPlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.TupleOperandPlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -614,20 +598,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundDisposableValuePlaceholder : BoundValuePlaceholderBase
     {
         public BoundDisposableValuePlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.DisposableValuePlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.DisposableValuePlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundDisposableValuePlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.DisposableValuePlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.DisposableValuePlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -687,20 +661,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundImplicitIndexerValuePlaceholder : BoundValuePlaceholderBase
     {
         public BoundImplicitIndexerValuePlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ImplicitIndexerValuePlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ImplicitIndexerValuePlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundImplicitIndexerValuePlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ImplicitIndexerValuePlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ImplicitIndexerValuePlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -760,20 +724,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundListPatternReceiverPlaceholder : BoundEarlyValuePlaceholderBase
     {
         public BoundListPatternReceiverPlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ListPatternReceiverPlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ListPatternReceiverPlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundListPatternReceiverPlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ListPatternReceiverPlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ListPatternReceiverPlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -795,20 +749,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundListPatternIndexPlaceholder : BoundEarlyValuePlaceholderBase
     {
         public BoundListPatternIndexPlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ListPatternIndexPlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ListPatternIndexPlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundListPatternIndexPlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ListPatternIndexPlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ListPatternIndexPlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -830,20 +774,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundSlicePatternReceiverPlaceholder : BoundEarlyValuePlaceholderBase
     {
         public BoundSlicePatternReceiverPlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.SlicePatternReceiverPlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.SlicePatternReceiverPlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundSlicePatternReceiverPlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.SlicePatternReceiverPlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.SlicePatternReceiverPlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -865,20 +799,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundSlicePatternRangePlaceholder : BoundEarlyValuePlaceholderBase
     {
         public BoundSlicePatternRangePlaceholder(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.SlicePatternRangePlaceholder, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.SlicePatternRangePlaceholder, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundSlicePatternRangePlaceholder(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.SlicePatternRangePlaceholder, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.SlicePatternRangePlaceholder, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -928,16 +852,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundDup : BoundExpression
     {
         public BoundDup(SyntaxNode syntax, RefKind refKind, TypeSymbol? type, bool hasErrors)
-            : base(BoundKind.Dup, syntax, type, hasErrors)
-        {
-            this.RefKind = refKind;
-        }
+            : base(BoundKind.Dup, syntax, type, hasErrors) => this.RefKind = refKind;
 
         public BoundDup(SyntaxNode syntax, RefKind refKind, TypeSymbol? type)
-            : base(BoundKind.Dup, syntax, type)
-        {
-            this.RefKind = refKind;
-        }
+            : base(BoundKind.Dup, syntax, type) => this.RefKind = refKind;
 
         public RefKind RefKind { get; }
 
@@ -2466,20 +2384,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundStateMachineInstanceId : BoundExpression
     {
         public BoundStateMachineInstanceId(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.StateMachineInstanceId, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.StateMachineInstanceId, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundStateMachineInstanceId(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.StateMachineInstanceId, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.StateMachineInstanceId, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -2501,20 +2409,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundMaximumMethodDefIndex : BoundExpression
     {
         public BoundMaximumMethodDefIndex(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.MaximumMethodDefIndex, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.MaximumMethodDefIndex, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundMaximumMethodDefIndex(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.MaximumMethodDefIndex, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.MaximumMethodDefIndex, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -2574,20 +2472,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundThrowIfModuleCancellationRequested : BoundExpression
     {
         public BoundThrowIfModuleCancellationRequested(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ThrowIfModuleCancellationRequested, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ThrowIfModuleCancellationRequested, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundThrowIfModuleCancellationRequested(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ThrowIfModuleCancellationRequested, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ThrowIfModuleCancellationRequested, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -2609,20 +2497,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class ModuleCancellationTokenExpression : BoundExpression
     {
         public ModuleCancellationTokenExpression(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ModuleCancellationTokenExpression, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleCancellationTokenExpression, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public ModuleCancellationTokenExpression(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ModuleCancellationTokenExpression, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleCancellationTokenExpression, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -2644,20 +2522,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundModuleVersionId : BoundExpression
     {
         public BoundModuleVersionId(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ModuleVersionId, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleVersionId, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundModuleVersionId(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ModuleVersionId, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleVersionId, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -2679,20 +2547,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundModuleVersionIdString : BoundExpression
     {
         public BoundModuleVersionIdString(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ModuleVersionIdString, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleVersionIdString, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundModuleVersionIdString(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ModuleVersionIdString, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ModuleVersionIdString, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -3079,20 +2937,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundArgList : BoundExpression
     {
         public BoundArgList(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ArgList, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ArgList, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundArgList(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ArgList, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ArgList, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -3198,10 +3046,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundSequencePoint : BoundStatement
     {
         public BoundSequencePoint(SyntaxNode syntax, BoundStatement? statementOpt, bool hasErrors = false)
-            : base(BoundKind.SequencePoint, syntax, hasErrors || statementOpt.HasErrors())
-        {
-            this.StatementOpt = statementOpt;
-        }
+            : base(BoundKind.SequencePoint, syntax, hasErrors || statementOpt.HasErrors()) => this.StatementOpt = statementOpt;
 
         public BoundStatement? StatementOpt { get; }
 
@@ -3324,16 +3169,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundStepThroughSequencePoint : BoundStatement
     {
         public BoundStepThroughSequencePoint(SyntaxNode syntax, TextSpan span, bool hasErrors)
-            : base(BoundKind.StepThroughSequencePoint, syntax, hasErrors)
-        {
-            this.Span = span;
-        }
+            : base(BoundKind.StepThroughSequencePoint, syntax, hasErrors) => this.Span = span;
 
         public BoundStepThroughSequencePoint(SyntaxNode syntax, TextSpan span)
-            : base(BoundKind.StepThroughSequencePoint, syntax)
-        {
-            this.Span = span;
-        }
+            : base(BoundKind.StepThroughSequencePoint, syntax) => this.Span = span;
 
         public TextSpan Span { get; }
 
@@ -3501,12 +3340,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundMultipleLocalDeclarations : BoundMultipleLocalDeclarationsBase
     {
         public BoundMultipleLocalDeclarations(SyntaxNode syntax, ImmutableArray<BoundLocalDeclaration> localDeclarations, bool hasErrors = false)
-            : base(BoundKind.MultipleLocalDeclarations, syntax, localDeclarations, hasErrors || localDeclarations.HasErrors())
-        {
-
-            RoslynDebug.Assert(!localDeclarations.IsDefault, "Field 'localDeclarations' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.MultipleLocalDeclarations, syntax, localDeclarations, hasErrors || localDeclarations.HasErrors()) => RoslynDebug.Assert(!localDeclarations.IsDefault, "Field 'localDeclarations' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]
@@ -3589,16 +3423,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundNoOpStatement : BoundStatement
     {
         public BoundNoOpStatement(SyntaxNode syntax, NoOpStatementFlavor flavor, bool hasErrors)
-            : base(BoundKind.NoOpStatement, syntax, hasErrors)
-        {
-            this.Flavor = flavor;
-        }
+            : base(BoundKind.NoOpStatement, syntax, hasErrors) => this.Flavor = flavor;
 
         public BoundNoOpStatement(SyntaxNode syntax, NoOpStatementFlavor flavor)
-            : base(BoundKind.NoOpStatement, syntax)
-        {
-            this.Flavor = flavor;
-        }
+            : base(BoundKind.NoOpStatement, syntax) => this.Flavor = flavor;
 
         public NoOpStatementFlavor Flavor { get; }
 
@@ -3698,10 +3526,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundThrowStatement : BoundStatement
     {
         public BoundThrowStatement(SyntaxNode syntax, BoundExpression? expressionOpt, bool hasErrors = false)
-            : base(BoundKind.ThrowStatement, syntax, hasErrors || expressionOpt.HasErrors())
-        {
-            this.ExpressionOpt = expressionOpt;
-        }
+            : base(BoundKind.ThrowStatement, syntax, hasErrors || expressionOpt.HasErrors()) => this.ExpressionOpt = expressionOpt;
 
         public BoundExpression? ExpressionOpt { get; }
 
@@ -4353,16 +4178,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundLiteral : BoundExpression
     {
         public BoundLiteral(SyntaxNode syntax, ConstantValue? constantValueOpt, TypeSymbol? type, bool hasErrors)
-            : base(BoundKind.Literal, syntax, type, hasErrors)
-        {
-            this.ConstantValueOpt = constantValueOpt;
-        }
+            : base(BoundKind.Literal, syntax, type, hasErrors) => this.ConstantValueOpt = constantValueOpt;
 
         public BoundLiteral(SyntaxNode syntax, ConstantValue? constantValueOpt, TypeSymbol? type)
-            : base(BoundKind.Literal, syntax, type)
-        {
-            this.ConstantValueOpt = constantValueOpt;
-        }
+            : base(BoundKind.Literal, syntax, type) => this.ConstantValueOpt = constantValueOpt;
 
         public override ConstantValue? ConstantValueOpt { get; }
 
@@ -4424,20 +4243,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundThisReference : BoundExpression
     {
         public BoundThisReference(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ThisReference, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ThisReference, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundThisReference(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ThisReference, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ThisReference, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -4459,20 +4268,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundPreviousSubmissionReference : BoundExpression
     {
         public BoundPreviousSubmissionReference(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.PreviousSubmissionReference, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.PreviousSubmissionReference, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundPreviousSubmissionReference(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.PreviousSubmissionReference, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.PreviousSubmissionReference, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -4494,20 +4293,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundHostObjectMemberReference : BoundExpression
     {
         public BoundHostObjectMemberReference(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.HostObjectMemberReference, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.HostObjectMemberReference, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundHostObjectMemberReference(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.HostObjectMemberReference, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.HostObjectMemberReference, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -5341,12 +5130,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundDagExplicitNullTest : BoundDagTest
     {
         public BoundDagExplicitNullTest(SyntaxNode syntax, BoundDagTemp input, bool hasErrors = false)
-            : base(BoundKind.DagExplicitNullTest, syntax, input, hasErrors || input.HasErrors())
-        {
-
-            RoslynDebug.Assert(input is object, "Field 'input' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.DagExplicitNullTest, syntax, input, hasErrors || input.HasErrors()) => RoslynDebug.Assert(input is object, "Field 'input' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]
@@ -5427,12 +5211,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal abstract partial class BoundDagEvaluation : BoundDagTest
     {
         protected BoundDagEvaluation(BoundKind kind, SyntaxNode syntax, BoundDagTemp input, bool hasErrors = false)
-            : base(kind, syntax, input, hasErrors)
-        {
-
-            RoslynDebug.Assert(input is object, "Field 'input' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(kind, syntax, input, hasErrors) => RoslynDebug.Assert(input is object, "Field 'input' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
     }
 
@@ -6379,20 +6158,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal abstract partial class BoundObjectCreationExpressionBase : BoundExpression
     {
         protected BoundObjectCreationExpressionBase(BoundKind kind, SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(kind, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(kind, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         protected BoundObjectCreationExpressionBase(BoundKind kind, SyntaxNode syntax, TypeSymbol type)
-            : base(kind, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(kind, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
     }
@@ -6665,12 +6434,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundTupleLiteral : BoundTupleExpression
     {
         public BoundTupleLiteral(SyntaxNode syntax, ImmutableArray<BoundExpression> arguments, ImmutableArray<string?> argumentNamesOpt, ImmutableArray<bool> inferredNamesOpt, TypeSymbol? type, bool hasErrors = false)
-            : base(BoundKind.TupleLiteral, syntax, arguments, argumentNamesOpt, inferredNamesOpt, type, hasErrors || arguments.HasErrors())
-        {
-
-            RoslynDebug.Assert(!arguments.IsDefault, "Field 'arguments' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.TupleLiteral, syntax, arguments, argumentNamesOpt, inferredNamesOpt, type, hasErrors || arguments.HasErrors()) => RoslynDebug.Assert(!arguments.IsDefault, "Field 'arguments' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol? Type => base.Type;
 
@@ -7043,20 +6807,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundImplicitReceiver : BoundExpression
     {
         public BoundImplicitReceiver(SyntaxNode syntax, TypeSymbol type, bool hasErrors)
-            : base(BoundKind.ImplicitReceiver, syntax, type, hasErrors)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ImplicitReceiver, syntax, type, hasErrors) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public BoundImplicitReceiver(SyntaxNode syntax, TypeSymbol type)
-            : base(BoundKind.ImplicitReceiver, syntax, type)
-        {
-
-            RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.ImplicitReceiver, syntax, type) => RoslynDebug.Assert(type is object, "Field 'type' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
         public new TypeSymbol Type => base.Type!;
 
@@ -7818,12 +7572,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundTypeOrInstanceInitializers : BoundStatementList
     {
         public BoundTypeOrInstanceInitializers(SyntaxNode syntax, ImmutableArray<BoundStatement> statements, bool hasErrors = false)
-            : base(BoundKind.TypeOrInstanceInitializers, syntax, statements, hasErrors || statements.HasErrors())
-        {
-
-            RoslynDebug.Assert(!statements.IsDefault, "Field 'statements' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.TypeOrInstanceInitializers, syntax, statements, hasErrors || statements.HasErrors()) => RoslynDebug.Assert(!statements.IsDefault, "Field 'statements' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]
@@ -7897,12 +7646,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class BoundUnconvertedInterpolatedString : BoundInterpolatedStringBase
     {
         public BoundUnconvertedInterpolatedString(SyntaxNode syntax, ImmutableArray<BoundExpression> parts, ConstantValue? constantValueOpt, TypeSymbol? type, bool hasErrors = false)
-            : base(BoundKind.UnconvertedInterpolatedString, syntax, parts, constantValueOpt, type, hasErrors || parts.HasErrors())
-        {
-
-            RoslynDebug.Assert(!parts.IsDefault, "Field 'parts' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.UnconvertedInterpolatedString, syntax, parts, constantValueOpt, type, hasErrors || parts.HasErrors()) => RoslynDebug.Assert(!parts.IsDefault, "Field 'parts' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]
@@ -8748,12 +8492,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class OutVariablePendingInference : VariablePendingInference
     {
         public OutVariablePendingInference(SyntaxNode syntax, Symbol variableSymbol, BoundExpression? receiverOpt, bool hasErrors = false)
-            : base(BoundKind.OutVariablePendingInference, syntax, variableSymbol, receiverOpt, hasErrors || receiverOpt.HasErrors())
-        {
-
-            RoslynDebug.Assert(variableSymbol is object, "Field 'variableSymbol' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.OutVariablePendingInference, syntax, variableSymbol, receiverOpt, hasErrors || receiverOpt.HasErrors()) => RoslynDebug.Assert(variableSymbol is object, "Field 'variableSymbol' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]
@@ -8774,12 +8513,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     internal sealed partial class DeconstructionVariablePendingInference : VariablePendingInference
     {
         public DeconstructionVariablePendingInference(SyntaxNode syntax, Symbol variableSymbol, BoundExpression? receiverOpt, bool hasErrors = false)
-            : base(BoundKind.DeconstructionVariablePendingInference, syntax, variableSymbol, receiverOpt, hasErrors || receiverOpt.HasErrors())
-        {
-
-            RoslynDebug.Assert(variableSymbol is object, "Field 'variableSymbol' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
-
-        }
+            : base(BoundKind.DeconstructionVariablePendingInference, syntax, variableSymbol, receiverOpt, hasErrors || receiverOpt.HasErrors()) => RoslynDebug.Assert(variableSymbol is object, "Field 'variableSymbol' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
 
 
         [DebuggerStepThrough]

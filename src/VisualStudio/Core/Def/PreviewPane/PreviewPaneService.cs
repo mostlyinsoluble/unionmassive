@@ -24,16 +24,11 @@ using SVsUIShell = Microsoft.VisualStudio.Shell.Interop.SVsUIShell;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.PreviewPane;
 
 [ExportWorkspaceServiceFactory(typeof(IPreviewPaneService), ServiceLayer.Host), Shared]
-internal sealed class PreviewPaneService : IPreviewPaneService, IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class PreviewPaneService(SVsServiceProvider serviceProvider) : IPreviewPaneService, IWorkspaceServiceFactory
 {
-    private readonly IVsUIShell _uiShell;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public PreviewPaneService(SVsServiceProvider serviceProvider)
-    {
-        _uiShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
-    }
+    private readonly IVsUIShell _uiShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
 
     IWorkspaceService IWorkspaceServiceFactory.CreateService(HostWorkspaceServices workspaceServices)
         => this;

@@ -15,14 +15,10 @@ using Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 namespace Microsoft.VisualStudio.LanguageServices.CSharp.EditorConfigSettings;
 
 [Export(typeof(IEnumSettingViewModelFactory)), Shared]
-internal sealed class LabelPositionOptionsViewModelFactory : IEnumSettingViewModelFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class LabelPositionOptionsViewModelFactory() : IEnumSettingViewModelFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public LabelPositionOptionsViewModelFactory()
-    {
-    }
-
     public IEnumSettingViewModel CreateViewModel(Setting setting)
     {
         return new LabelPositionOptionsViewModel(setting);
@@ -32,14 +28,9 @@ internal sealed class LabelPositionOptionsViewModelFactory : IEnumSettingViewMod
         => key.Option.Type == typeof(LabelPositionOptions);
 }
 
-internal sealed class LabelPositionOptionsViewModel : EnumSettingViewModel<LabelPositionOptions>
+internal sealed class LabelPositionOptionsViewModel(Setting setting) : EnumSettingViewModel<LabelPositionOptions>
 {
-    private readonly Setting _setting;
-
-    public LabelPositionOptionsViewModel(Setting setting)
-    {
-        _setting = setting;
-    }
+    private readonly Setting _setting = setting;
 
     protected override void ChangePropertyTo(LabelPositionOptions newValue)
     {

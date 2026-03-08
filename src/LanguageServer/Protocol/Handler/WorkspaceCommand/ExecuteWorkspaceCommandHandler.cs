@@ -15,17 +15,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(ExecuteWorkspaceCommandHandler)), Shared]
 [Method(Methods.WorkspaceExecuteCommandName)]
-internal sealed class ExecuteWorkspaceCommandHandler : ILspServiceRequestHandler<ExecuteCommandParams, object?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ExecuteWorkspaceCommandHandler() : ILspServiceRequestHandler<ExecuteCommandParams, object?>
 {
     public bool MutatesSolutionState => false;
 
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ExecuteWorkspaceCommandHandler()
-    {
-    }
 
     public async Task<object?> HandleRequestAsync(ExecuteCommandParams request, RequestContext context, CancellationToken cancellationToken)
     {

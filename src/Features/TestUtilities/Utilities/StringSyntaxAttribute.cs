@@ -7,10 +7,9 @@
 namespace System.Diagnostics.CodeAnalysis;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
-internal sealed class StringSyntaxAttribute : Attribute
+internal sealed class StringSyntaxAttribute(string syntax) : Attribute
 {
-    public StringSyntaxAttribute(string syntax) => Syntax = syntax;
-    public string Syntax { get; }
+    public string Syntax { get; } = syntax;
 }
 
 #endif

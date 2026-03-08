@@ -29,10 +29,7 @@ internal abstract partial class AbstractAddImportFeatureService<TSimpleNameSynta
             AddImportFixData fixData)
             : base(originalDocument,
                    fixData,
-                   additionalTags: ShouldAddProjectReference(originalDocument, fixData) ? RequiresNonDocumentChangeTags : [])
-        {
-            Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.ProjectSymbol);
-        }
+                   additionalTags: ShouldAddProjectReference(originalDocument, fixData) ? RequiresNonDocumentChangeTags : []) => Contract.ThrowIfFalse(fixData.Kind == AddImportFixKind.ProjectSymbol);
 
         private static bool ShouldAddProjectReference(Document originalDocument, AddImportFixData fixData)
             => fixData.ProjectReferenceToAdd != null && fixData.ProjectReferenceToAdd != originalDocument.Project.Id;

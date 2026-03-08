@@ -16,17 +16,11 @@ using OutputType = System.Collections.Immutable.ImmutableArray<(string, object)>
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class HostOutputNode<TInput> : IIncrementalGeneratorOutputNode, IIncrementalGeneratorNode<OutputType>
+    internal sealed class HostOutputNode<TInput>(IIncrementalGeneratorNode<TInput> source, Action<HostOutputProductionContext, TInput, CancellationToken> action) : IIncrementalGeneratorOutputNode, IIncrementalGeneratorNode<OutputType>
     {
-        private readonly IIncrementalGeneratorNode<TInput> _source;
+        private readonly IIncrementalGeneratorNode<TInput> _source = source;
 
-        private readonly Action<HostOutputProductionContext, TInput, CancellationToken> _action;
-
-        public HostOutputNode(IIncrementalGeneratorNode<TInput> source, Action<HostOutputProductionContext, TInput, CancellationToken> action)
-        {
-            _source = source;
-            _action = action;
-        }
+        private readonly Action<HostOutputProductionContext, TInput, CancellationToken> _action = action;
 
         public IncrementalGeneratorOutputKind Kind => IncrementalGeneratorOutputKind.Host;
 

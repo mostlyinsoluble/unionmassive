@@ -14,14 +14,10 @@ namespace Microsoft.CodeAnalysis.MetadataAsSource;
 
 [ExportWorkspaceServiceFactory(typeof(ISymbolMappingService), [WorkspaceKind.MetadataAsSource])]
 [Shared]
-internal sealed class SymbolMappingServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SymbolMappingServiceFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SymbolMappingServiceFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new SymbolMappingService(((MetadataAsSourceWorkspace)workspaceServices.Workspace).FileService);
 

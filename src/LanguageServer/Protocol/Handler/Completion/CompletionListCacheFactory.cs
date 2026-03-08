@@ -9,13 +9,9 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.Completion;
 
 [ExportCSharpVisualBasicLspServiceFactory(typeof(CompletionListCache)), Shared]
-internal sealed class CompletionListCacheFactory : ILspServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CompletionListCacheFactory() : ILspServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CompletionListCacheFactory()
-    {
-    }
-
     public ILspService CreateILspService(LspServices lspServices, WellKnownLspServerKinds serverKind) => new CompletionListCache();
 }

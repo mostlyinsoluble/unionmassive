@@ -12,16 +12,10 @@ namespace Roslyn.Utilities
     {
         // immutable tuple - text and corresponding item
         // reference type because we want atomic assignments
-        private class SharedEntryValue
+        private class SharedEntryValue(string Text, T item)
         {
-            public readonly string Text;
-            public readonly T Item;
-
-            public SharedEntryValue(string Text, T item)
-            {
-                this.Text = Text;
-                this.Item = item;
-            }
+            public readonly string Text = Text;
+            public readonly T Item = item;
         }
 
         // TODO: Need to tweak the size with more scenarios.

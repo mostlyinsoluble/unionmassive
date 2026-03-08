@@ -32,10 +32,7 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     {
         private readonly InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> _instructionDecoder;
 
-        internal FrameDecoder(InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> instructionDecoder)
-        {
-            _instructionDecoder = instructionDecoder;
-        }
+        internal FrameDecoder(InstructionDecoder<TCompilation, TMethodSymbol, TModuleSymbol, TTypeSymbol, TTypeParameterSymbol> instructionDecoder) => _instructionDecoder = instructionDecoder;
 
         void IDkmLanguageFrameDecoder.GetFrameName(
             DkmInspectionContext inspectionContext,

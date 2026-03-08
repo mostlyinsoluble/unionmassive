@@ -11,15 +11,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces;
 
 [Export(typeof(Workspace))]
-internal sealed class MefTestWorkspace : Workspace
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MefTestWorkspace() : Workspace(Microsoft.CodeAnalysis.Host.Mef.MefHostServices.DefaultHost, "MefTest")
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MefTestWorkspace()
-        : base(Microsoft.CodeAnalysis.Host.Mef.MefHostServices.DefaultHost, "MefTest")
-    {
-    }
-
     public override bool CanApplyChange(ApplyChangesKind feature)
         => true;
 }

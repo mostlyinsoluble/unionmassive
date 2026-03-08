@@ -31,14 +31,7 @@ internal sealed class CSharpRemoveRedundantNullableDirectiveDiagnosticAnalyzer
     protected override void InitializeWorker(AnalysisContext context)
         => context.RegisterCompilationStartAction(context =>
         {
-            var compilation = (CSharpCompilation)context.Compilation;
-            if (compilation.LanguageVersion < LanguageVersion.CSharp8)
-            {
-                // Compilation does not support nullable directives
-                return;
-            }
-
-            var compilationOptions = compilation.Options;
+            var compilationOptions = ((CSharpCompilation)context.Compilation).Options;
             context.RegisterSyntaxTreeAction(context => ProcessSyntaxTree(compilationOptions, context));
         });
 

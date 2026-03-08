@@ -110,22 +110,13 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         protected abstract ReportDiagnosticCompilationAnalyzer GetAnalyzer(ImmutableHashSet<INamedTypeSymbol> contextTypes, INamedTypeSymbol diagnosticType, INamedTypeSymbol diagnosticDescriptorType, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute);
 
-        protected abstract class ReportDiagnosticCompilationAnalyzer : SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TInvocationExpressionSyntax>
+        protected abstract class ReportDiagnosticCompilationAnalyzer(ImmutableHashSet<INamedTypeSymbol> contextTypes, INamedTypeSymbol diagnosticType, INamedTypeSymbol diagnosticDescriptorType, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute) : SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TInvocationExpressionSyntax>(diagnosticAnalyzer, diagnosticAnalyzerAttribute)
         {
-            private readonly ImmutableHashSet<INamedTypeSymbol> _contextTypes;
-            private readonly INamedTypeSymbol _diagnosticType;
-            private readonly INamedTypeSymbol _diagnosticDescriptorType;
+            private readonly ImmutableHashSet<INamedTypeSymbol> _contextTypes = contextTypes;
+            private readonly INamedTypeSymbol _diagnosticType = diagnosticType;
+            private readonly INamedTypeSymbol _diagnosticDescriptorType = diagnosticDescriptorType;
 
-            private ImmutableDictionary<INamedTypeSymbol, ImmutableArray<IFieldSymbol>> _supportedDescriptorFieldsMap;
-
-            protected ReportDiagnosticCompilationAnalyzer(ImmutableHashSet<INamedTypeSymbol> contextTypes, INamedTypeSymbol diagnosticType, INamedTypeSymbol diagnosticDescriptorType, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
-                : base(diagnosticAnalyzer, diagnosticAnalyzerAttribute)
-            {
-                _contextTypes = contextTypes;
-                _diagnosticType = diagnosticType;
-                _diagnosticDescriptorType = diagnosticDescriptorType;
-                _supportedDescriptorFieldsMap = ImmutableDictionary<INamedTypeSymbol, ImmutableArray<IFieldSymbol>>.Empty;
-            }
+            private ImmutableDictionary<INamedTypeSymbol, ImmutableArray<IFieldSymbol>> _supportedDescriptorFieldsMap = ImmutableDictionary<INamedTypeSymbol, ImmutableArray<IFieldSymbol>>.Empty;
 
             protected abstract IEnumerable<SyntaxNode>? GetArgumentExpressions(TInvocationExpressionSyntax invocation);
             protected virtual SyntaxNode GetPropertyGetterBlockSyntax(SyntaxNode declaringSyntaxRefNode)

@@ -62,18 +62,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// 
     /// This class represents such an implicitly declared type parameter.  The declaring syntax is expected to be
     /// an IdentifierNameSyntax in the type argument list of a QualifiedNameSyntax.
-    internal sealed class CrefTypeParameterSymbol : TypeParameterSymbol
+    internal sealed class CrefTypeParameterSymbol(string name, int ordinal, IdentifierNameSyntax declaringSyntax) : TypeParameterSymbol
     {
-        private readonly string _name;
-        private readonly int _ordinal;
-        private readonly SyntaxReference _declaringSyntax;
-
-        public CrefTypeParameterSymbol(string name, int ordinal, IdentifierNameSyntax declaringSyntax)
-        {
-            _name = name;
-            _ordinal = ordinal;
-            _declaringSyntax = declaringSyntax.GetReference();
-        }
+        private readonly string _name = name;
+        private readonly int _ordinal = ordinal;
+        private readonly SyntaxReference _declaringSyntax = declaringSyntax.GetReference();
 
         public override TypeParameterKind TypeParameterKind
         {

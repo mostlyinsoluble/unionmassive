@@ -15,16 +15,12 @@ using Microsoft.CodeAnalysis.TaskList;
 namespace Microsoft.CodeAnalysis.CSharp.TaskList;
 
 [ExportLanguageService(typeof(ITaskListService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpTaskListService : AbstractTaskListService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpTaskListService() : AbstractTaskListService
 {
     private static readonly int s_multilineCommentPostfixLength = "*/".Length;
     private const string SingleLineCommentPrefix = "//";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpTaskListService()
-    {
-    }
 
     protected override void AppendTaskListItems(
         ImmutableArray<TaskListItemDescriptor> commentDescriptors,

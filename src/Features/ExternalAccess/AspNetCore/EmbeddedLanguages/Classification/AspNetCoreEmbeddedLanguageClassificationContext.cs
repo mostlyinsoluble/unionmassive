@@ -13,10 +13,7 @@ internal readonly struct AspNetCoreEmbeddedLanguageClassificationContext
     private readonly EmbeddedLanguageClassificationContext _context;
 
     internal AspNetCoreEmbeddedLanguageClassificationContext(
-        EmbeddedLanguageClassificationContext context)
-    {
-        _context = context;
-    }
+        EmbeddedLanguageClassificationContext context) => _context = context;
 
     /// <inheritdoc cref="EmbeddedLanguageClassificationContext.SyntaxToken"/>
     public SyntaxToken SyntaxToken => _context.SyntaxToken;

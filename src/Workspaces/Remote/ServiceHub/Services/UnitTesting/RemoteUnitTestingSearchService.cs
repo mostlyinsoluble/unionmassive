@@ -11,17 +11,12 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteUnitTestingSearchService : BrokeredServiceBase, IRemoteUnitTestingSearchService
+internal sealed class RemoteUnitTestingSearchService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteUnitTestingSearchService
 {
     internal sealed class Factory : FactoryBase<IRemoteUnitTestingSearchService>
     {
         protected override IRemoteUnitTestingSearchService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteUnitTestingSearchService(arguments);
-    }
-
-    public RemoteUnitTestingSearchService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<UnitTestingSourceLocation?> GetSourceLocationAsync(

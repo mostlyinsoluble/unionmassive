@@ -201,16 +201,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             return _lazyDescriptions[index];
         }
 
-        private sealed class Description : IFormattable
+        private sealed class Description(SymbolDistinguisher distinguisher, int index) : IFormattable
         {
-            private readonly SymbolDistinguisher _distinguisher;
-            private readonly int _index;
-
-            public Description(SymbolDistinguisher distinguisher, int index)
-            {
-                _distinguisher = distinguisher;
-                _index = index;
-            }
+            private readonly SymbolDistinguisher _distinguisher = distinguisher;
+            private readonly int _index = index;
 
             private Symbol GetSymbol()
             {

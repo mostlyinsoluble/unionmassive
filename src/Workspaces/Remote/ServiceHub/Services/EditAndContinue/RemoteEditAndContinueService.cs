@@ -16,7 +16,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.EditAndContinue;
 
-internal sealed class RemoteEditAndContinueService : BrokeredServiceBase, IRemoteEditAndContinueService
+internal sealed class RemoteEditAndContinueService(in BrokeredServiceBase.ServiceConstructionArguments arguments, RemoteCallback<IRemoteEditAndContinueService.ICallback> callback) : BrokeredServiceBase(arguments), IRemoteEditAndContinueService
 {
     internal sealed class Factory : FactoryBase<IRemoteEditAndContinueService, IRemoteEditAndContinueService.ICallback>
     {
@@ -24,16 +24,10 @@ internal sealed class RemoteEditAndContinueService : BrokeredServiceBase, IRemot
             => new RemoteEditAndContinueService(arguments, callback);
     }
 
-    private sealed class ManagedEditAndContinueDebuggerService : IManagedHotReloadService
+    private sealed class ManagedEditAndContinueDebuggerService(RemoteCallback<IRemoteEditAndContinueService.ICallback> callback, RemoteServiceCallbackId callbackId) : IManagedHotReloadService
     {
-        private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback;
-        private readonly RemoteServiceCallbackId _callbackId;
-
-        public ManagedEditAndContinueDebuggerService(RemoteCallback<IRemoteEditAndContinueService.ICallback> callback, RemoteServiceCallbackId callbackId)
-        {
-            _callback = callback;
-            _callbackId = callbackId;
-        }
+        private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback = callback;
+        private readonly RemoteServiceCallbackId _callbackId = callbackId;
 
         ValueTask<ImmutableArray<ManagedActiveStatementDebugInfo>> IManagedHotReloadService.GetActiveStatementsAsync(CancellationToken cancellationToken)
             => _callback.InvokeAsync((callback, cancellationToken) => callback.GetActiveStatementsAsync(_callbackId, cancellationToken), cancellationToken);
@@ -48,28 +42,16 @@ internal sealed class RemoteEditAndContinueService : BrokeredServiceBase, IRemot
             => _callback.InvokeAsync((callback, cancellationToken) => callback.PrepareModuleForUpdateAsync(_callbackId, moduleVersionId, cancellationToken), cancellationToken);
     }
 
-    private sealed class SourceTextProvider : IPdbMatchingSourceTextProvider
+    private sealed class SourceTextProvider(RemoteCallback<IRemoteEditAndContinueService.ICallback> callback, RemoteServiceCallbackId callbackId) : IPdbMatchingSourceTextProvider
     {
-        private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback;
-        private readonly RemoteServiceCallbackId _callbackId;
-
-        public SourceTextProvider(RemoteCallback<IRemoteEditAndContinueService.ICallback> callback, RemoteServiceCallbackId callbackId)
-        {
-            _callback = callback;
-            _callbackId = callbackId;
-        }
+        private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback = callback;
+        private readonly RemoteServiceCallbackId _callbackId = callbackId;
 
         public ValueTask<string?> TryGetMatchingSourceTextAsync(string filePath, ImmutableArray<byte> requiredChecksum, SourceHashAlgorithm checksumAlgorithm, CancellationToken cancellationToken)
             => _callback.InvokeAsync((callback, cancellationToken) => callback.TryGetMatchingSourceTextAsync(_callbackId, filePath, requiredChecksum, checksumAlgorithm, cancellationToken), cancellationToken);
     }
 
-    private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback;
-
-    public RemoteEditAndContinueService(in ServiceConstructionArguments arguments, RemoteCallback<IRemoteEditAndContinueService.ICallback> callback)
-        : base(arguments)
-    {
-        _callback = callback;
-    }
+    private readonly RemoteCallback<IRemoteEditAndContinueService.ICallback> _callback = callback;
 
     private IEditAndContinueService GetService()
         => GetWorkspace().Services.GetRequiredService<IEditAndContinueWorkspaceService>().Service;

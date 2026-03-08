@@ -35,11 +35,6 @@ internal sealed class CSharpUseImplicitObjectCreationDiagnosticAnalyzer()
     {
         var cancellationToken = context.CancellationToken;
         var semanticModel = context.SemanticModel;
-        var syntaxTree = context.Node.SyntaxTree;
-
-        // Not available prior to C# 9.
-        if (syntaxTree.Options.LanguageVersion() < LanguageVersion.CSharp9)
-            return;
 
         var styleOption = context.GetCSharpAnalyzerOptions().ImplicitObjectCreationWhenTypeIsApparent;
         if (!styleOption.Value || ShouldSkipAnalysis(context, styleOption.Notification))

@@ -102,10 +102,7 @@ namespace Microsoft.CodeAnalysis
         {
             private Enumerator _enumerator;
 
-            internal EnumeratorImpl(SyntaxNode node, int count)
-            {
-                _enumerator = new Enumerator(node, count);
-            }
+            internal EnumeratorImpl(SyntaxNode node, int count) => _enumerator = new Enumerator(node, count);
 
             /// <summary>
             /// Gets the element in the collection at the current position of the enumerator.

@@ -59,10 +59,7 @@ public sealed class CodeImplementsStatement : AbstractCodeElement
         FileCodeModel fileCodeModel,
         int nodeKind,
         string name)
-        : base(state, fileCodeModel, nodeKind)
-    {
-        _namespaceName = name;
-    }
+        : base(state, fileCodeModel, nodeKind) => _namespaceName = name;
 
     internal override bool TryLookupNode(out SyntaxNode node)
     {

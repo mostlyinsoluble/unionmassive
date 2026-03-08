@@ -9,14 +9,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.Test.Utilities;
 
-internal sealed class TestTextLoader : TextLoader
+internal sealed class TestTextLoader(string text = "test", SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default) : TextLoader
 {
-    private readonly TextAndVersion _textAndVersion;
-
-    public TestTextLoader(string text = "test", SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default)
-    {
-        _textAndVersion = TextAndVersion.Create(SourceText.From(text, encoding: null, checksumAlgorithm), VersionStamp.Create());
-    }
+    private readonly TextAndVersion _textAndVersion = TextAndVersion.Create(SourceText.From(text, encoding: null, checksumAlgorithm), VersionStamp.Create());
 
     public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         => _textAndVersion;

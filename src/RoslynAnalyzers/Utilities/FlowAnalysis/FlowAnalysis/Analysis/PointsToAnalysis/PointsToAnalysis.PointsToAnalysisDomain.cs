@@ -13,13 +13,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
         /// <summary>
         /// An abstract analysis domain implementation for <see cref="PointsToAnalysisData"/> tracked by <see cref="PointsToAnalysis"/>.
         /// </summary>
-        private sealed class PointsToAnalysisDomain : PredicatedAnalysisDataDomain<PointsToAnalysisData, PointsToAbstractValue>
+        private sealed class PointsToAnalysisDomain(DefaultPointsToValueGenerator defaultPointsToValueGenerator, Func<ITypeSymbol?, bool> isDisposable) : PredicatedAnalysisDataDomain<PointsToAnalysisData, PointsToAbstractValue>(new CorePointsToAnalysisDataDomain(defaultPointsToValueGenerator, ValueDomainInstance, isDisposable))
         {
-            public PointsToAnalysisDomain(DefaultPointsToValueGenerator defaultPointsToValueGenerator, Func<ITypeSymbol?, bool> isDisposable)
-                : base(new CorePointsToAnalysisDataDomain(defaultPointsToValueGenerator, ValueDomainInstance, isDisposable))
-            {
-            }
-
             public PointsToAnalysisData MergeAnalysisDataForBackEdge(
                 PointsToAnalysisData forwardEdgeAnalysisData,
                 PointsToAnalysisData backEdgeAnalysisData,

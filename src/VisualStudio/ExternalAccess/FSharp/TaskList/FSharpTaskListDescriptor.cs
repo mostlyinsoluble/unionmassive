@@ -12,8 +12,5 @@ internal readonly struct FSharpTaskListDescriptor
 
     public string Text => Descriptor.Text;
 
-    internal FSharpTaskListDescriptor(TaskListItemDescriptor descriptor)
-    {
-        Descriptor = descriptor;
-    }
+    internal FSharpTaskListDescriptor(TaskListItemDescriptor descriptor) => Descriptor = descriptor;
 }

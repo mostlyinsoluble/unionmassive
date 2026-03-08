@@ -14,15 +14,9 @@ using VsTextSpan = Microsoft.VisualStudio.TextManager.Interop.TextSpan;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Snippets;
 
-internal class SnippetFunctionClassName : AbstractSnippetFunction
+internal class SnippetFunctionClassName(SnippetExpansionClient snippetExpansionClient, ITextBuffer subjectBuffer, string fieldName, IThreadingContext threadingContext) : AbstractSnippetFunction(snippetExpansionClient, subjectBuffer, threadingContext)
 {
-    protected readonly string FieldName;
-
-    public SnippetFunctionClassName(SnippetExpansionClient snippetExpansionClient, ITextBuffer subjectBuffer, string fieldName, IThreadingContext threadingContext)
-        : base(snippetExpansionClient, subjectBuffer, threadingContext)
-    {
-        this.FieldName = fieldName;
-    }
+    protected readonly string FieldName = fieldName;
 
     protected override async Task<(int ExitCode, string Value, int HasDefaultValue)> GetDefaultValueAsync(CancellationToken cancellationToken)
     {

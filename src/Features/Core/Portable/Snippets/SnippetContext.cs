@@ -13,10 +13,7 @@ namespace Microsoft.CodeAnalysis.Snippets;
 /// </summary>
 internal readonly struct SnippetContext
 {
-    internal SnippetContext(SyntaxContext syntaxContext)
-    {
-        SyntaxContext = syntaxContext ?? throw new ArgumentNullException(nameof(syntaxContext));
-    }
+    internal SnippetContext(SyntaxContext syntaxContext) => SyntaxContext = syntaxContext ?? throw new ArgumentNullException(nameof(syntaxContext));
 
     /// <summary>
     /// The document that the snippet was invoked within.

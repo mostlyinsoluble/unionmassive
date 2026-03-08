@@ -114,20 +114,12 @@ public static class ExportProviderCache
         return new SingleExportProviderFactory(scope, catalog, configuration, exportProviderFactory);
     }
 
-    private sealed class SingleExportProviderFactory : IExportProviderFactory
+    private sealed class SingleExportProviderFactory(ExportProviderCache.Scope scope, ComposableCatalog catalog, CompositionConfiguration configuration, IExportProviderFactory exportProviderFactory) : IExportProviderFactory
     {
-        private readonly Scope _scope;
-        private readonly ComposableCatalog _catalog;
-        private readonly CompositionConfiguration _configuration;
-        private readonly IExportProviderFactory _exportProviderFactory;
-
-        public SingleExportProviderFactory(Scope scope, ComposableCatalog catalog, CompositionConfiguration configuration, IExportProviderFactory exportProviderFactory)
-        {
-            _scope = scope;
-            _catalog = catalog;
-            _configuration = configuration;
-            _exportProviderFactory = exportProviderFactory;
-        }
+        private readonly Scope _scope = scope;
+        private readonly ComposableCatalog _catalog = catalog;
+        private readonly CompositionConfiguration _configuration = configuration;
+        private readonly IExportProviderFactory _exportProviderFactory = exportProviderFactory;
 
         public ExportProvider GetOrCreateExportProvider()
         {
@@ -227,17 +219,12 @@ public static class ExportProviderCache
         }
     }
 
-    private sealed class Scope
+    private sealed class Scope(string name)
     {
-        public readonly string Name;
+        public readonly string Name = name;
         public ExportProvider? CurrentExportProvider;
         public ComposableCatalog? ExpectedCatalog;
         public ExportProvider? ExpectedProviderForCatalog;
-
-        public Scope(string name)
-        {
-            Name = name;
-        }
 
         public void Clear()
         {

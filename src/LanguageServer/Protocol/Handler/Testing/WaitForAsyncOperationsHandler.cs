@@ -22,18 +22,13 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.TestHooks;
 /// </summary>
 [ExportCSharpVisualBasicStatelessLspService(typeof(WaitForAsyncOperationsHandler)), Shared]
 [Method(MethodName)]
-internal class WaitForAsyncOperationsHandler : ILspServiceRequestHandler<WaitForAsyncOperationsParams, WaitForAsyncOperationsResponse>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class WaitForAsyncOperationsHandler(AsynchronousOperationListenerProvider listenerProvider) : ILspServiceRequestHandler<WaitForAsyncOperationsParams, WaitForAsyncOperationsResponse>
 {
     internal const string MethodName = "workspace/waitForAsyncOperations";
 
-    private readonly AsynchronousOperationListenerProvider _provider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public WaitForAsyncOperationsHandler(AsynchronousOperationListenerProvider listenerProvider)
-    {
-        _provider = listenerProvider;
-    }
+    private readonly AsynchronousOperationListenerProvider _provider = listenerProvider;
 
     public bool MutatesSolutionState => false;
 

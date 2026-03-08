@@ -23,10 +23,7 @@ internal sealed partial class NavigateToSearchIndex : AbstractSyntaxIndex<Naviga
     private NavigateToSearchIndex(
         Checksum? checksum,
         NavigateToSearchInfo navigateToSearchInfo)
-        : base(checksum)
-    {
-        _navigateToSearchInfo = navigateToSearchInfo;
-    }
+        : base(checksum) => _navigateToSearchInfo = navigateToSearchInfo;
 
     /// <summary>
     /// Returns the <see cref="PatternMatcherKind"/> flags indicating which matching strategies are

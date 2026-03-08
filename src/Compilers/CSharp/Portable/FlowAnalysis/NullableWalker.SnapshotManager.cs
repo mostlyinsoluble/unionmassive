@@ -251,10 +251,7 @@ Now {updatedSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}");
         {
             internal readonly VariablesSnapshot Variables;
 
-            internal SharedWalkerState(VariablesSnapshot variables)
-            {
-                Variables = variables;
-            }
+            internal SharedWalkerState(VariablesSnapshot variables) => Variables = variables;
         }
 
         /// <summary>

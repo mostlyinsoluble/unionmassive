@@ -27,12 +27,23 @@ namespace Microsoft.CodeAnalysis.Collections
     /// 
     /// Thread safe.
     /// </summary>
-    internal class CachingDictionary<TKey, TElement>
+    /// <remarks>
+    /// Create a CachingLookup.
+    /// </remarks>
+    /// <param name="getElementsOfKey">A function that takes a key, and returns an IEnumerable of values that
+    /// correspond to that key. If no values correspond, the function may either return null or an empty
+    /// IEnumerable.</param>
+    /// <param name="getKeys">A function that returns an IEnumerable of all keys that have associated values.</param>
+    /// <param name="comparer">A IEqualityComparer used to compare keys.</param>
+    internal class CachingDictionary<TKey, TElement>(
+        Func<TKey, ImmutableArray<TElement>> getElementsOfKey,
+        Func<IEqualityComparer<TKey>, SegmentedHashSet<TKey>> getKeys,
+        IEqualityComparer<TKey> comparer)
         where TKey : notnull
     {
-        private readonly Func<TKey, ImmutableArray<TElement>> _getElementsOfKey;
-        private readonly Func<IEqualityComparer<TKey>, SegmentedHashSet<TKey>> _getKeys;
-        private readonly IEqualityComparer<TKey> _comparer;
+        private readonly Func<TKey, ImmutableArray<TElement>> _getElementsOfKey = getElementsOfKey;
+        private readonly Func<IEqualityComparer<TKey>, SegmentedHashSet<TKey>> _getKeys = getKeys;
+        private readonly IEqualityComparer<TKey> _comparer = comparer;
 
         // The underlying dictionary. It may be null (indicating that nothing is cached), a ConcurrentDictionary
         // or something frozen (usually a regular Dictionary). The frozen Dictionary is used only once the collection
@@ -43,24 +54,6 @@ namespace Microsoft.CodeAnalysis.Collections
         // This is a special sentinel value that is placed inside the map to indicate that a key was looked
         // up, but not found.
         private static readonly ImmutableArray<TElement> s_emptySentinel = ImmutableArray<TElement>.Empty;
-
-        /// <summary>
-        /// Create a CachingLookup.
-        /// </summary>
-        /// <param name="getElementsOfKey">A function that takes a key, and returns an IEnumerable of values that
-        /// correspond to that key. If no values correspond, the function may either return null or an empty
-        /// IEnumerable.</param>
-        /// <param name="getKeys">A function that returns an IEnumerable of all keys that have associated values.</param>
-        /// <param name="comparer">A IEqualityComparer used to compare keys.</param>
-        public CachingDictionary(
-            Func<TKey, ImmutableArray<TElement>> getElementsOfKey,
-            Func<IEqualityComparer<TKey>, SegmentedHashSet<TKey>> getKeys,
-            IEqualityComparer<TKey> comparer)
-        {
-            _getElementsOfKey = getElementsOfKey;
-            _getKeys = getKeys;
-            _comparer = comparer;
-        }
 
         /// <summary>
         /// Does this key have one or more associated values?

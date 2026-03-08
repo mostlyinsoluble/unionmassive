@@ -16,13 +16,8 @@ namespace Xunit.Threading
     using Xunit.InProcess;
     using Xunit.Sdk;
 
-    public class InProcessIdeTestRunner : XunitTestRunner
+    public class InProcessIdeTestRunner(ITest test, IMessageBus messageBus, Type testClass, object?[] constructorArguments, MethodInfo testMethod, object?[]? testMethodArguments, string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : XunitTestRunner(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
     {
-        public InProcessIdeTestRunner(ITest test, IMessageBus messageBus, Type testClass, object?[] constructorArguments, MethodInfo testMethod, object?[]? testMethodArguments, string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
-            : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
-        {
-        }
-
         protected override async Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator)
         {
             DataCollectionService.InstallFirstChanceExceptionHandler();

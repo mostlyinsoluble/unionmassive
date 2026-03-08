@@ -20,22 +20,16 @@ using VSLangProj;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem.RuleSets;
 
 [Export(typeof(RuleSetEventHandler))]
-internal sealed class RuleSetEventHandler : IVsTrackProjectDocumentsEvents2, IVsTrackProjectDocumentsEvents3, IVsTrackProjectDocumentsEvents4
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RuleSetEventHandler(
+    IThreadingContext threadingContext,
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider) : IVsTrackProjectDocumentsEvents2, IVsTrackProjectDocumentsEvents3, IVsTrackProjectDocumentsEvents4
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private bool _eventsHookedUp = false;
     private uint _cookie = 0;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RuleSetEventHandler(
-        IThreadingContext threadingContext,
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider)
-    {
-        _threadingContext = threadingContext;
-        _serviceProvider = serviceProvider;
-    }
 
     public async Task RegisterAsync(IAsyncServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

@@ -26,24 +26,17 @@ using Roslyn.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.SyncNamespaces;
 
 [Export(typeof(SyncNamespacesCommandHandler)), Shared]
-internal sealed class SyncNamespacesCommandHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SyncNamespacesCommandHandler(
+    IUIThreadOperationExecutor threadOperationExecutor,
+    VisualStudioWorkspace workspace,
+    IThreadingContext threadingContext)
 {
-    private readonly VisualStudioWorkspace _workspace;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
-    private readonly IThreadingContext _threadingContext;
+    private readonly VisualStudioWorkspace _workspace = workspace;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
+    private readonly IThreadingContext _threadingContext = threadingContext;
     private IServiceProvider? _serviceProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SyncNamespacesCommandHandler(
-        IUIThreadOperationExecutor threadOperationExecutor,
-        VisualStudioWorkspace workspace,
-        IThreadingContext threadingContext)
-    {
-        _threadOperationExecutor = threadOperationExecutor;
-        _workspace = workspace;
-        _threadingContext = threadingContext;
-    }
 
     public async Task InitializeAsync(IAsyncServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

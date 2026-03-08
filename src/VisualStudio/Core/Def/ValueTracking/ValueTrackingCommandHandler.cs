@@ -33,44 +33,30 @@ namespace Microsoft.VisualStudio.LanguageServices.ValueTracking;
 [Export(typeof(ICommandHandler))]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [Name(PredefinedCommandHandlerNames.ShowValueTracking)]
-internal sealed class ValueTrackingCommandHandler : ICommandHandler<ValueTrackingEditorCommandArgs>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ValueTrackingCommandHandler(
+    SVsServiceProvider serviceProvider,
+    IThreadingContext threadingContext,
+    ClassificationTypeMap typeMap,
+    IClassificationFormatMapService classificationFormatMapService,
+    IGlyphService glyphService,
+    IEditorFormatMapService formatMapService,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    VisualStudioWorkspace workspace) : ICommandHandler<ValueTrackingEditorCommandArgs>
 {
-    private readonly IAsyncServiceProvider _serviceProvider;
-    private readonly IThreadingContext _threadingContext;
-    private readonly ClassificationTypeMap _typeMap;
-    private readonly IClassificationFormatMapService _classificationFormatMapService;
-    private readonly IGlyphService _glyphService;
-    private readonly IEditorFormatMapService _formatMapService;
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
-    private readonly IAsynchronousOperationListener _listener;
-    private readonly Workspace _workspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ValueTrackingCommandHandler(
-        SVsServiceProvider serviceProvider,
-        IThreadingContext threadingContext,
-        ClassificationTypeMap typeMap,
-        IClassificationFormatMapService classificationFormatMapService,
-        IGlyphService glyphService,
-        IEditorFormatMapService formatMapService,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        VisualStudioWorkspace workspace)
-    {
-        _serviceProvider = (IAsyncServiceProvider)serviceProvider;
-        _threadingContext = threadingContext;
-        _typeMap = typeMap;
-        _classificationFormatMapService = classificationFormatMapService;
-        _glyphService = glyphService;
-        _formatMapService = formatMapService;
-        _globalOptions = globalOptions;
-        _threadOperationExecutor = threadOperationExecutor;
-        _listener = listenerProvider.GetListener(FeatureAttribute.ValueTracking);
-        _workspace = workspace;
-    }
+    private readonly IAsyncServiceProvider _serviceProvider = (IAsyncServiceProvider)serviceProvider;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ClassificationTypeMap _typeMap = typeMap;
+    private readonly IClassificationFormatMapService _classificationFormatMapService = classificationFormatMapService;
+    private readonly IGlyphService _glyphService = glyphService;
+    private readonly IEditorFormatMapService _formatMapService = formatMapService;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
+    private readonly IAsynchronousOperationListener _listener = listenerProvider.GetListener(FeatureAttribute.ValueTracking);
+    private readonly Workspace _workspace = workspace;
 
     public string DisplayName => "Go to value tracking";
 

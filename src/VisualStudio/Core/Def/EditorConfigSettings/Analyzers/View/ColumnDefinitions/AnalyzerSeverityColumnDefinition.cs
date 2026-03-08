@@ -18,14 +18,10 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Analyzers
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Severity)]
-internal sealed class AnalyzerSeverityColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class AnalyzerSeverityColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public AnalyzerSeverityColumnDefinition()
-    {
-    }
-
     public override string Name => Severity;
     public override string DisplayName => ServicesVSResources.Severity;
     public override bool IsFilterable => false;

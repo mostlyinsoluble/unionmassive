@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             CSharpSyntaxNode syntax,
             bool isIterator,
             (DeclarationModifiers declarationModifiers, Flags flags) modifiersAndFlags)
-            : base(containingType, syntax.GetReference(), location, isIterator, modifiersAndFlags)
-        {
-            Debug.Assert(syntax.Kind() is SyntaxKind.ConstructorDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration);
-        }
+            : base(containingType, syntax.GetReference(), location, isIterator, modifiersAndFlags) => Debug.Assert(syntax.Kind() is SyntaxKind.ConstructorDeclaration or SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration or SyntaxKind.ClassDeclaration or SyntaxKind.StructDeclaration);
 
         protected sealed override void MethodChecks(BindingDiagnosticBag diagnostics)
         {

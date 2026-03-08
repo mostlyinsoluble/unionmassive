@@ -26,10 +26,7 @@ namespace Microsoft.CodeAnalysis
             _value = value;
         }
 
-        internal TypedConstantValue(ImmutableArray<TypedConstant> array)
-        {
-            _value = array.IsDefault ? null : (object)array;
-        }
+        internal TypedConstantValue(ImmutableArray<TypedConstant> array) => _value = array.IsDefault ? null : (object)array;
 
         /// <summary>
         /// True if the constant represents a null literal.

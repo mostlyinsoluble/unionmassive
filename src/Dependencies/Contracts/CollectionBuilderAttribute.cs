@@ -9,16 +9,10 @@
 namespace System.Runtime.CompilerServices
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
-    internal sealed class CollectionBuilderAttribute : Attribute
+    internal sealed class CollectionBuilderAttribute(Type builderType, string methodName) : Attribute
     {
-        public CollectionBuilderAttribute(Type builderType, string methodName)
-        {
-            BuilderType = builderType;
-            MethodName = methodName;
-        }
-
-        public Type BuilderType { get; }
-        public string MethodName { get; }
+        public Type BuilderType { get; } = builderType;
+        public string MethodName { get; } = methodName;
     }
 }
 

@@ -9,12 +9,7 @@ using System;
 
 namespace Microsoft.CommonLanguageServerProtocol.Framework;
 
-internal sealed class RequestShutdownEventArgs : EventArgs
+internal sealed class RequestShutdownEventArgs(string message) : EventArgs
 {
-    public string Message { get; }
-
-    public RequestShutdownEventArgs(string message)
-    {
-        Message = message;
-    }
+    public string Message { get; } = message;
 }

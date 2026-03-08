@@ -11,31 +11,22 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHelp.Presentation;
 
-internal sealed class Parameter : IParameter
+internal sealed class Parameter(
+    Signature signature,
+    SignatureHelpParameter parameter,
+    string content,
+    int index,
+    int prettyPrintedIndex) : IParameter
 {
-    private readonly SignatureHelpParameter _parameter;
+    private readonly SignatureHelpParameter _parameter = parameter;
     private string _documentation;
-    private readonly int _contentLength;
-    private readonly int _index;
-    private readonly int _prettyPrintedIndex;
+    private readonly int _contentLength = content.Length;
+    private readonly int _index = index;
+    private readonly int _prettyPrintedIndex = prettyPrintedIndex;
 
     public string Documentation => _documentation ??= _parameter.DocumentationFactory(CancellationToken.None).GetFullText();
     public string Name => _parameter.Name;
     public Span Locus => new(_index, _contentLength);
     public Span PrettyPrintedLocus => new(_prettyPrintedIndex, _contentLength);
-    public ISignature Signature { get; }
-
-    public Parameter(
-        Signature signature,
-        SignatureHelpParameter parameter,
-        string content,
-        int index,
-        int prettyPrintedIndex)
-    {
-        _parameter = parameter;
-        this.Signature = signature;
-        _contentLength = content.Length;
-        _index = index;
-        _prettyPrintedIndex = prettyPrintedIndex;
-    }
+    public ISignature Signature { get; } = signature;
 }

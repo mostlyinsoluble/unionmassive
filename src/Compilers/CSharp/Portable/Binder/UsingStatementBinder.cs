@@ -14,15 +14,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class UsingStatementBinder : LockOrUsingBinder
+    internal sealed class UsingStatementBinder(Binder enclosing, UsingStatementSyntax syntax) : LockOrUsingBinder(enclosing)
     {
-        private readonly UsingStatementSyntax _syntax;
-
-        public UsingStatementBinder(Binder enclosing, UsingStatementSyntax syntax)
-            : base(enclosing)
-        {
-            _syntax = syntax;
-        }
+        private readonly UsingStatementSyntax _syntax = syntax;
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {

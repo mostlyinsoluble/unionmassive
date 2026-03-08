@@ -32,10 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private TypeConversions _lazyTypeConversions;
 
         private MissingCorLibrarySymbol()
-            : base(new AssemblyIdentity("<Missing Core Assembly>"))
-        {
-            this.SetCorLibrary(this);
-        }
+            : base(new AssemblyIdentity("<Missing Core Assembly>")) => this.SetCorLibrary(this);
 
         internal override TypeConversions TypeConversions
         {

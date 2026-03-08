@@ -12,23 +12,16 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.AspNetCore.EmbeddedLanguages;
 /// </summary>
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-internal sealed class ExportAspNetCoreEmbeddedLanguageClassifierAttribute : ExportAttribute
+internal sealed class ExportAspNetCoreEmbeddedLanguageClassifierAttribute(
+    string name, string language) : ExportAttribute(typeof(IAspNetCoreEmbeddedLanguageClassifier))
 {
     /// <summary>
     /// Name of the classifier.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name ?? throw new ArgumentNullException(nameof(name));
 
     /// <summary>
     /// Name of the containing language hosting the embedded language.  e.g. C# or VB.
     /// </summary>
-    public string Language { get; }
-
-    public ExportAspNetCoreEmbeddedLanguageClassifierAttribute(
-        string name, string language)
-        : base(typeof(IAspNetCoreEmbeddedLanguageClassifier))
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Language = language ?? throw new ArgumentNullException(nameof(language));
-    }
+    public string Language { get; } = language ?? throw new ArgumentNullException(nameof(language));
 }

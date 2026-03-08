@@ -16,16 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// A NoPiaIllegalGenericInstantiationSymbol is a special kind of ErrorSymbol that represents a
     /// generic type instantiation that cannot cross assembly boundaries according to NoPia rules.
     /// </summary>
-    internal class NoPiaIllegalGenericInstantiationSymbol : ErrorTypeSymbol
+    internal class NoPiaIllegalGenericInstantiationSymbol(ModuleSymbol exposingModule, NamedTypeSymbol underlyingSymbol) : ErrorTypeSymbol
     {
-        private readonly ModuleSymbol _exposingModule;
-        private readonly NamedTypeSymbol _underlyingSymbol;
-
-        public NoPiaIllegalGenericInstantiationSymbol(ModuleSymbol exposingModule, NamedTypeSymbol underlyingSymbol)
-        {
-            _exposingModule = exposingModule;
-            _underlyingSymbol = underlyingSymbol;
-        }
+        private readonly ModuleSymbol _exposingModule = exposingModule;
+        private readonly NamedTypeSymbol _underlyingSymbol = underlyingSymbol;
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {

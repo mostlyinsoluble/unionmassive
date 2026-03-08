@@ -23,14 +23,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(FunctionPointerUnmanagedCallingConventionCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(AggregateEmbeddedLanguageCompletionProvider))]
 [Shared]
-internal sealed partial class FunctionPointerUnmanagedCallingConventionCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class FunctionPointerUnmanagedCallingConventionCompletionProvider() : LSPCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FunctionPointerUnmanagedCallingConventionCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     public override bool IsInsertionTrigger(SourceText text, int characterPosition, CompletionOptions options)

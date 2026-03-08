@@ -15,14 +15,9 @@ namespace ObjectFormatterFixtures
     /// </summary>
     [DebuggerTypeProxy(typeof(MockTaskProxy))]
     [DebuggerDisplay("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}")]
-    internal class MockDesktopTask
+    internal class MockDesktopTask(Action action)
     {
-        private readonly Action m_action;
-
-        public MockDesktopTask(Action action)
-        {
-            m_action = action;
-        }
+        private readonly Action m_action = action;
 
         public int Id => 1234;
         public object AsyncState => null;
@@ -34,19 +29,14 @@ namespace ObjectFormatterFixtures
             => m_action.Method.ToString();
     }
 
-    internal class MockTaskProxy
+    internal class MockTaskProxy(MockDesktopTask task)
     {
-        private readonly MockDesktopTask m_task;
+        private readonly MockDesktopTask m_task = task;
         public object AsyncState => m_task.AsyncState;
         public TaskCreationOptions CreationOptions => m_task.CreationOptions;
         public Exception Exception => m_task.Exception;
         public int Id => m_task.Id;
         public bool CancellationPending => false;
         public TaskStatus Status => m_task.Status;
-
-        public MockTaskProxy(MockDesktopTask task)
-        {
-            m_task = task;
-        }
     }
 }

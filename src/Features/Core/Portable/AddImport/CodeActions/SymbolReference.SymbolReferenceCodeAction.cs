@@ -19,16 +19,11 @@ internal abstract partial class AbstractAddImportFeatureService<TSimpleNameSynta
     /// we want to do things like show a glyph if this will do more than just add
     /// an import.
     /// </summary>
-    private abstract class SymbolReferenceCodeAction : AddImportCodeAction
+    private abstract class SymbolReferenceCodeAction(
+        Document originalDocument,
+        AddImportFixData fixData,
+        ImmutableArray<string> additionalTags) : AddImportCodeAction(originalDocument, fixData, additionalTags)
     {
-        protected SymbolReferenceCodeAction(
-            Document originalDocument,
-            AddImportFixData fixData,
-            ImmutableArray<string> additionalTags)
-            : base(originalDocument, fixData, additionalTags)
-        {
-        }
-
         protected override async Task<IEnumerable<CodeActionOperation>> ComputePreviewOperationsAsync(CancellationToken cancellationToken)
         {
             var operation = await GetChangeSolutionOperationAsync(isPreview: true, cancellationToken).ConfigureAwait(false);

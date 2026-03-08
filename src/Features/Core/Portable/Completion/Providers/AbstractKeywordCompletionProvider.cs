@@ -16,17 +16,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Completion.Providers;
 
-internal abstract partial class AbstractKeywordCompletionProvider<TContext> : LSPCompletionProvider
+internal abstract partial class AbstractKeywordCompletionProvider<TContext>(ImmutableArray<IKeywordRecommender<TContext>> keywordRecommenders) : LSPCompletionProvider
     where TContext : SyntaxContext
 {
     private static readonly EqualityComparer<CompletionItem> s_comparer = EqualityComparer<CompletionItem>.Create(
         static (x, y) => x?.DisplayText == y?.DisplayText,
         static x => x.DisplayText.GetHashCode());
 
-    private readonly ImmutableArray<IKeywordRecommender<TContext>> _keywordRecommenders;
-
-    protected AbstractKeywordCompletionProvider(ImmutableArray<IKeywordRecommender<TContext>> keywordRecommenders)
-        => _keywordRecommenders = keywordRecommenders;
+    private readonly ImmutableArray<IKeywordRecommender<TContext>> _keywordRecommenders = keywordRecommenders;
 
     protected abstract CompletionItem CreateItem(RecommendedKeyword keyword, TContext context, CancellationToken cancellationToken);
 

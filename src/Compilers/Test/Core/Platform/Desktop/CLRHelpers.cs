@@ -27,8 +27,7 @@ namespace Roslyn.Test.Utilities.Desktop
 
         public static event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
-        static CLRHelpers()
-        {
+        static CLRHelpers() =>
             // Work around CLR bug: 
             // PE Verifier adds a handler to ReflectionOnlyAssemblyResolve event in AppDomain.EnableResolveAssembliesForIntrospection
             // (called from ValidateWorker in Validator.cpp) in which it directly calls Assembly.ReflectionOnlyLoad.
@@ -40,7 +39,6 @@ namespace Roslyn.Test.Utilities.Desktop
             // As A workaround we add a single forwarding handler before any calls to Validate and then subscribe all of our true handlers 
             // to this event. 
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ReflectionOnlyAssemblyResolveHandler;
-        }
 
         private static Assembly ReflectionOnlyAssemblyResolveHandler(object sender, ResolveEventArgs args)
         {
@@ -130,17 +128,11 @@ namespace Roslyn.Test.Utilities.Desktop
             }
         }
 
-        private class ValidationErrorHandler : IVEHandler
+        private class ValidationErrorHandler(ICLRValidator validator) : IVEHandler
         {
-            private readonly ICLRValidator _validator;
-            private readonly List<string> _output;
+            private readonly ICLRValidator _validator = validator;
+            private readonly List<string> _output = new List<string>();
             private const int MessageLength = 256;
-
-            public ValidationErrorHandler(ICLRValidator validator)
-            {
-                _validator = validator;
-                _output = new List<string>();
-            }
 
             public void SetReporterFtn(long lFnPtr)
             {

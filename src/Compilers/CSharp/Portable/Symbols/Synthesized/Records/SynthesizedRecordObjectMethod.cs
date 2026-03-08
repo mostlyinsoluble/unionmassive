@@ -9,14 +9,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// Common base for ordinary methods overriding methods from object synthesized by compiler for records.
     /// </summary>
-    internal abstract class SynthesizedRecordObjectMethod : SynthesizedRecordOrdinaryMethod
+    internal abstract class SynthesizedRecordObjectMethod(SourceMemberContainerTypeSymbol containingType, string name, int memberOffset, bool isReadOnly) : SynthesizedRecordOrdinaryMethod(containingType, name, memberOffset,
+               DeclarationModifiers.Public | DeclarationModifiers.Override | (isReadOnly ? DeclarationModifiers.ReadOnly : 0))
     {
-        protected SynthesizedRecordObjectMethod(SourceMemberContainerTypeSymbol containingType, string name, int memberOffset, bool isReadOnly)
-            : base(containingType, name, memberOffset,
-                   DeclarationModifiers.Public | DeclarationModifiers.Override | (isReadOnly ? DeclarationModifiers.ReadOnly : 0))
-        {
-        }
-
         protected sealed override void MethodChecks(BindingDiagnosticBag diagnostics)
         {
             base.MethodChecks(diagnostics);

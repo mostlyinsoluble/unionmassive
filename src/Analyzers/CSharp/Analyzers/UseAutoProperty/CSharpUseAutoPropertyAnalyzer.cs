@@ -32,15 +32,6 @@ internal sealed class CSharpUseAutoPropertyAnalyzer() : AbstractUseAutoPropertyA
     protected override bool CanExplicitInterfaceImplementationsBeFixed
         => false;
 
-    protected override bool SupportsFieldAttributesOnProperties
-        => true;
-
-    protected override bool SupportsReadOnlyProperties(Compilation compilation)
-        => compilation.LanguageVersion() >= LanguageVersion.CSharp6;
-
-    protected override bool SupportsPropertyInitializer(Compilation compilation)
-        => compilation.LanguageVersion() >= LanguageVersion.CSharp6;
-
     protected override ExpressionSyntax? GetFieldInitializer(VariableDeclaratorSyntax variable, CancellationToken cancellationToken)
         => variable.Initializer?.Value;
 

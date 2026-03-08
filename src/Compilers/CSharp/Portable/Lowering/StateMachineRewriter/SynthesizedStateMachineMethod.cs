@@ -17,21 +17,15 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// <summary>
     /// State machine interface method implementation.
     /// </summary>
-    internal abstract class SynthesizedStateMachineMethod : SynthesizedImplementationMethod, ISynthesizedMethodBodyImplementationSymbol
+    internal abstract class SynthesizedStateMachineMethod(
+        string name,
+        MethodSymbol interfaceMethod,
+        StateMachineTypeSymbol stateMachineType,
+        PropertySymbol associatedProperty,
+        bool generateDebugInfo,
+        bool hasMethodBodyDependency) : SynthesizedImplementationMethod(interfaceMethod, stateMachineType, name, generateDebugInfo, associatedProperty), ISynthesizedMethodBodyImplementationSymbol
     {
-        private readonly bool _hasMethodBodyDependency;
-
-        protected SynthesizedStateMachineMethod(
-            string name,
-            MethodSymbol interfaceMethod,
-            StateMachineTypeSymbol stateMachineType,
-            PropertySymbol associatedProperty,
-            bool generateDebugInfo,
-            bool hasMethodBodyDependency)
-            : base(interfaceMethod, stateMachineType, name, generateDebugInfo, associatedProperty)
-        {
-            _hasMethodBodyDependency = hasMethodBodyDependency;
-        }
+        private readonly bool _hasMethodBodyDependency = hasMethodBodyDependency;
 
         public StateMachineTypeSymbol StateMachineType
         {
@@ -58,14 +52,9 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// Represents a state machine MoveNext method.
     /// Handles special behavior around inheriting some attributes from the original async/iterator method.
     /// </summary>
-    internal sealed class SynthesizedStateMachineMoveNextMethod : SynthesizedStateMachineMethod
+    internal sealed class SynthesizedStateMachineMoveNextMethod(MethodSymbol interfaceMethod, StateMachineTypeSymbol stateMachineType) : SynthesizedStateMachineMethod(WellKnownMemberNames.MoveNextMethodName, interfaceMethod, stateMachineType, null, generateDebugInfo: true, hasMethodBodyDependency: true)
     {
         private ImmutableArray<CSharpAttributeData> _attributes;
-
-        public SynthesizedStateMachineMoveNextMethod(MethodSymbol interfaceMethod, StateMachineTypeSymbol stateMachineType)
-            : base(WellKnownMemberNames.MoveNextMethodName, interfaceMethod, stateMachineType, null, generateDebugInfo: true, hasMethodBodyDependency: true)
-        {
-        }
 
         public override ImmutableArray<CSharpAttributeData> GetAttributes()
         {
@@ -106,18 +95,13 @@ namespace Microsoft.CodeAnalysis.CSharp
     /// Represents a state machine method other than a MoveNext method.
     /// All such methods are considered debugger hidden. 
     /// </summary>
-    internal sealed class SynthesizedStateMachineDebuggerHiddenMethod : SynthesizedStateMachineMethod
+    internal sealed class SynthesizedStateMachineDebuggerHiddenMethod(
+        string name,
+        MethodSymbol interfaceMethod,
+        StateMachineTypeSymbol stateMachineType,
+        PropertySymbol associatedProperty,
+        bool hasMethodBodyDependency) : SynthesizedStateMachineMethod(name, interfaceMethod, stateMachineType, associatedProperty, generateDebugInfo: false, hasMethodBodyDependency: hasMethodBodyDependency)
     {
-        public SynthesizedStateMachineDebuggerHiddenMethod(
-            string name,
-            MethodSymbol interfaceMethod,
-            StateMachineTypeSymbol stateMachineType,
-            PropertySymbol associatedProperty,
-            bool hasMethodBodyDependency)
-            : base(name, interfaceMethod, stateMachineType, associatedProperty, generateDebugInfo: false, hasMethodBodyDependency: hasMethodBodyDependency)
-        {
-        }
-
         internal sealed override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {
             var compilation = this.DeclaringCompilation;

@@ -27,7 +27,28 @@ namespace Microsoft.CodeAnalysis.CSharp.Utilities;
 /// It uses the original tree's semantic model to create a speculative semantic model and verifies that
 /// the syntax replacement doesn't break the semantics of any parenting nodes of the original expression.
 /// </summary>
-internal sealed class SpeculationAnalyzer : AbstractSpeculationAnalyzer<
+/// <remarks>
+/// Creates a semantic analyzer for speculative syntax replacement.
+/// </remarks>
+/// <param name="expression">Original expression to be replaced.</param>
+/// <param name="newExpression">New expression to replace the original expression.</param>
+/// <param name="semanticModel">Semantic model of <paramref name="expression"/> node's syntax tree.</param>
+/// <param name="cancellationToken">Cancellation token.</param>
+/// <param name="skipVerificationForReplacedNode">
+/// True if semantic analysis should be skipped for the replaced node and performed starting from parent of the original and replaced nodes.
+/// This could be the case when custom verifications are required to be done by the caller or
+/// semantics of the replaced expression are different from the original expression.
+/// </param>
+/// <param name="failOnOverloadResolutionFailuresInOriginalCode">
+/// True if semantic analysis should fail when any of the invocation expression ancestors of <paramref name="expression"/> in original code has overload resolution failures.
+/// </param>
+internal sealed class SpeculationAnalyzer(
+    ExpressionSyntax expression,
+    ExpressionSyntax newExpression,
+    SemanticModel semanticModel,
+    CancellationToken cancellationToken,
+    bool skipVerificationForReplacedNode = false,
+    bool failOnOverloadResolutionFailuresInOriginalCode = false) : AbstractSpeculationAnalyzer<
     ExpressionSyntax,
     TypeSyntax,
     AttributeSyntax,
@@ -35,34 +56,8 @@ internal sealed class SpeculationAnalyzer : AbstractSpeculationAnalyzer<
     CommonForEachStatementSyntax,
     ThrowStatementSyntax,
     InvocationExpressionSyntax,
-    Conversion>
+    Conversion>(expression, newExpression, semanticModel, cancellationToken, skipVerificationForReplacedNode, failOnOverloadResolutionFailuresInOriginalCode)
 {
-    /// <summary>
-    /// Creates a semantic analyzer for speculative syntax replacement.
-    /// </summary>
-    /// <param name="expression">Original expression to be replaced.</param>
-    /// <param name="newExpression">New expression to replace the original expression.</param>
-    /// <param name="semanticModel">Semantic model of <paramref name="expression"/> node's syntax tree.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <param name="skipVerificationForReplacedNode">
-    /// True if semantic analysis should be skipped for the replaced node and performed starting from parent of the original and replaced nodes.
-    /// This could be the case when custom verifications are required to be done by the caller or
-    /// semantics of the replaced expression are different from the original expression.
-    /// </param>
-    /// <param name="failOnOverloadResolutionFailuresInOriginalCode">
-    /// True if semantic analysis should fail when any of the invocation expression ancestors of <paramref name="expression"/> in original code has overload resolution failures.
-    /// </param>
-    public SpeculationAnalyzer(
-        ExpressionSyntax expression,
-        ExpressionSyntax newExpression,
-        SemanticModel semanticModel,
-        CancellationToken cancellationToken,
-        bool skipVerificationForReplacedNode = false,
-        bool failOnOverloadResolutionFailuresInOriginalCode = false)
-        : base(expression, newExpression, semanticModel, cancellationToken, skipVerificationForReplacedNode, failOnOverloadResolutionFailuresInOriginalCode)
-    {
-    }
-
     protected override CodeAnalysis.LanguageService.ISyntaxFacts SyntaxFactsService { get; } = CSharpSyntaxFacts.Instance;
 
     protected override bool CanAccessInstanceMemberThrough(ExpressionSyntax expression)
@@ -771,7 +766,6 @@ internal sealed class SpeculationAnalyzer : AbstractSpeculationAnalyzer<
             // In this case, the null type is allowed if we do have a conditional-expression-conversion *and* the
             // converted type matches the original type.
             if (newExpression.IsKind(SyntaxKind.ConditionalExpression) &&
-                ConditionalExpressionConversionsAreAllowed(newExpression) &&
                 this.SpeculativeSemanticModel.GetConversion(newExpression).IsConditionalExpression)
             {
                 return true;
@@ -820,11 +814,6 @@ internal sealed class SpeculationAnalyzer : AbstractSpeculationAnalyzer<
         {
             if (newConversion.IsConditionalExpression)
             {
-                // If we went from a non-conditional-conversion to a conditional-conversion (i.e. by removing a
-                // cast), then that is always an error before CSharp9, and should not be allowed.
-                if (!originalConversion.IsConditionalExpression && !ConditionalExpressionConversionsAreAllowed(originalExpression))
-                    return false;
-
                 // If the only change to the conversion here is the introduction of a conditional expression conversion,
                 // that means types didn't really change in a meaningful way.
                 if (originalConversion.IsIdentity)
@@ -834,9 +823,6 @@ internal sealed class SpeculationAnalyzer : AbstractSpeculationAnalyzer<
 
         return ConversionsAreCompatible(originalConversion, newConversion);
     }
-
-    private static bool ConditionalExpressionConversionsAreAllowed(ExpressionSyntax originalExpression)
-        => originalExpression.GetLanguageVersion() >= LanguageVersion.CSharp9;
 
     protected override bool ConversionsAreCompatible(ExpressionSyntax originalExpression, ITypeSymbol originalTargetType, ExpressionSyntax newExpression, ITypeSymbol newTargetType)
     {

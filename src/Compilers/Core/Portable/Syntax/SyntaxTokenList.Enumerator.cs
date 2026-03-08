@@ -133,10 +133,7 @@ namespace Microsoft.CodeAnalysis
             private Enumerator _enumerator;
 
             // SyntaxTriviaList is a relatively big struct so is passed by ref
-            internal EnumeratorImpl(in SyntaxTokenList list)
-            {
-                _enumerator = new Enumerator(in list);
-            }
+            internal EnumeratorImpl(in SyntaxTokenList list) => _enumerator = new Enumerator(in list);
 
             public SyntaxToken Current => _enumerator.Current;
 

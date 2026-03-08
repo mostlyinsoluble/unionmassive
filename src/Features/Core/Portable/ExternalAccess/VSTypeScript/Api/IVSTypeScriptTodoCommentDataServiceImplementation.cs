@@ -22,10 +22,7 @@ internal readonly struct VSTypeScriptTaskListItemDescriptorWrapper
 
     public string Text => Descriptor.Text;
 
-    internal VSTypeScriptTaskListItemDescriptorWrapper(TaskListItemDescriptor descriptor)
-    {
-        Descriptor = descriptor;
-    }
+    internal VSTypeScriptTaskListItemDescriptorWrapper(TaskListItemDescriptor descriptor) => Descriptor = descriptor;
 
     public static ImmutableArray<VSTypeScriptTaskListItemDescriptorWrapper> Parse(ImmutableArray<string> items)
         => TaskListItemDescriptor.Parse(items).SelectAsArray(d => new VSTypeScriptTaskListItemDescriptorWrapper(d));

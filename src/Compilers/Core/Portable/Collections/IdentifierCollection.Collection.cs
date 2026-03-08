@@ -12,15 +12,10 @@ namespace Microsoft.CodeAnalysis
 {
     internal partial class IdentifierCollection
     {
-        private abstract class CollectionBase : ICollection<string>
+        private abstract class CollectionBase(IdentifierCollection identifierCollection) : ICollection<string>
         {
-            protected readonly IdentifierCollection IdentifierCollection;
+            protected readonly IdentifierCollection IdentifierCollection = identifierCollection;
             private int _count = -1;
-
-            protected CollectionBase(IdentifierCollection identifierCollection)
-            {
-                this.IdentifierCollection = identifierCollection;
-            }
 
             public abstract bool Contains(string item);
 
@@ -93,21 +88,13 @@ namespace Microsoft.CodeAnalysis
             #endregion
         }
 
-        private sealed class CaseSensitiveCollection : CollectionBase
+        private sealed class CaseSensitiveCollection(IdentifierCollection identifierCollection) : CollectionBase(identifierCollection)
         {
-            public CaseSensitiveCollection(IdentifierCollection identifierCollection) : base(identifierCollection)
-            {
-            }
-
             public override bool Contains(string item) => IdentifierCollection.CaseSensitiveContains(item);
         }
 
-        private sealed class CaseInsensitiveCollection : CollectionBase
+        private sealed class CaseInsensitiveCollection(IdentifierCollection identifierCollection) : CollectionBase(identifierCollection)
         {
-            public CaseInsensitiveCollection(IdentifierCollection identifierCollection) : base(identifierCollection)
-            {
-            }
-
             public override bool Contains(string item) => IdentifierCollection.CaseInsensitiveContains(item);
         }
     }

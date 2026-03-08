@@ -8,19 +8,12 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.CodeAnalysis
 {
-    internal sealed class ReadOnlyUnmanagedMemoryStream : Stream
+    internal sealed class ReadOnlyUnmanagedMemoryStream(object memoryOwner, IntPtr data, int length) : Stream
     {
-        private readonly object _memoryOwner;
-        private readonly IntPtr _data;
-        private readonly int _length;
+        private readonly object _memoryOwner = memoryOwner;
+        private readonly IntPtr _data = data;
+        private readonly int _length = length;
         private int _position;
-
-        public ReadOnlyUnmanagedMemoryStream(object memoryOwner, IntPtr data, int length)
-        {
-            _memoryOwner = memoryOwner;
-            _data = data;
-            _length = length;
-        }
 
         public override unsafe int ReadByte()
         {

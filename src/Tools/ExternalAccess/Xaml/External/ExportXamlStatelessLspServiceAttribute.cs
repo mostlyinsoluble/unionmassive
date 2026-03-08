@@ -12,9 +12,6 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 /// Defines an easy to use subclass for <see cref="ExportStatelessLspServiceAttribute"/> with the Roslyn languages contract name.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class), MetadataAttribute]
-internal sealed class ExportXamlStatelessLspServiceAttribute : ExportStatelessLspServiceAttribute
+internal sealed class ExportXamlStatelessLspServiceAttribute(Type handlerType) : ExportStatelessLspServiceAttribute(handlerType, ProtocolConstants.RoslynLspLanguagesContract)
 {
-    public ExportXamlStatelessLspServiceAttribute(Type handlerType) : base(handlerType, ProtocolConstants.RoslynLspLanguagesContract)
-    {
-    }
 }

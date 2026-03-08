@@ -11,17 +11,11 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 
-internal sealed class EditorTextUpdater
+internal sealed class EditorTextUpdater(IVsEditorAdaptersFactoryService editorAdaptersFactoryService,
+                         IVsTextLines textLines)
 {
-    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactoryService;
-    private readonly IVsTextLines _textLines;
-
-    public EditorTextUpdater(IVsEditorAdaptersFactoryService editorAdaptersFactoryService,
-                             IVsTextLines textLines)
-    {
-        _editorAdaptersFactoryService = editorAdaptersFactoryService;
-        _textLines = textLines;
-    }
+    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactoryService = editorAdaptersFactoryService;
+    private readonly IVsTextLines _textLines = textLines;
 
     public void UpdateText(IReadOnlyList<TextChange> changes)
     {

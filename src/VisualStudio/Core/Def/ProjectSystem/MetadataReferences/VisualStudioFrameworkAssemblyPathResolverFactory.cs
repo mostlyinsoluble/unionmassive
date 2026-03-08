@@ -19,18 +19,12 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 [ExportWorkspaceServiceFactory(typeof(IFrameworkAssemblyPathResolver), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioFrameworkAssemblyPathResolverFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioFrameworkAssemblyPathResolverFactory(IThreadingContext threadingContext, SVsServiceProvider serviceProvider) : IWorkspaceServiceFactory
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IServiceProvider _serviceProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioFrameworkAssemblyPathResolverFactory(IThreadingContext threadingContext, SVsServiceProvider serviceProvider)
-    {
-        _threadingContext = threadingContext;
-        _serviceProvider = serviceProvider;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new Service(_threadingContext, workspaceServices.Workspace as VisualStudioWorkspace, _serviceProvider);

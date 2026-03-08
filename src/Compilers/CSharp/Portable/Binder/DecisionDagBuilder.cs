@@ -1870,16 +1870,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// A representation of the entire decision dag and each of its states.
         /// </summary>
-        private sealed class DecisionDag
+        private sealed class DecisionDag(DecisionDagBuilder.DagState rootNode)
         {
             /// <summary>
             /// The starting point for deciding which case matches.
             /// </summary>
-            public readonly DagState RootNode;
-            public DecisionDag(DagState rootNode)
-            {
-                this.RootNode = rootNode;
-            }
+            public readonly DagState RootNode = rootNode;
 
             /// <summary>
             /// A successor function used to topologically sort the DagState set.
@@ -2237,34 +2233,25 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// As part of the description of a node of the decision automaton, we keep track of what tests
         /// remain to be done for each case.
         /// </summary>
-        private readonly struct StateForCase
+        private readonly struct StateForCase(
+            int Index,
+            SyntaxNode Syntax,
+DecisionDagBuilder.Tests RemainingTests,
+            ImmutableArray<BoundPatternBinding> Bindings,
+            BoundExpression? WhenClause,
+            LabelSymbol CaseLabel)
         {
             /// <summary>
             /// A number that is distinct for each case and monotonically increasing from earlier to later cases.
             /// Since we always keep the cases in order, this is only used to assist with debugging (e.g.
             /// see DecisionDag.Dump()).
             /// </summary>
-            public readonly int Index;
-            public readonly SyntaxNode Syntax;
-            public readonly Tests RemainingTests;
-            public readonly ImmutableArray<BoundPatternBinding> Bindings;
-            public readonly BoundExpression? WhenClause;
-            public readonly LabelSymbol CaseLabel;
-            public StateForCase(
-                int Index,
-                SyntaxNode Syntax,
-                Tests RemainingTests,
-                ImmutableArray<BoundPatternBinding> Bindings,
-                BoundExpression? WhenClause,
-                LabelSymbol CaseLabel)
-            {
-                this.Index = Index;
-                this.Syntax = Syntax;
-                this.RemainingTests = RemainingTests;
-                this.Bindings = Bindings;
-                this.WhenClause = WhenClause;
-                this.CaseLabel = CaseLabel;
-            }
+            public readonly int Index = Index;
+            public readonly SyntaxNode Syntax = Syntax;
+            public readonly Tests RemainingTests = RemainingTests;
+            public readonly ImmutableArray<BoundPatternBinding> Bindings = Bindings;
+            public readonly BoundExpression? WhenClause = WhenClause;
+            public readonly LabelSymbol CaseLabel = CaseLabel;
 
             /// <summary>
             /// Is the pattern in a state in which it is fully matched and there is no when clause?
@@ -2513,10 +2500,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// Note that the test might be a <see cref="BoundDagEvaluation"/>, in which case it is deemed to have
             /// succeeded after being evaluated.
             /// </summary>
-            public sealed class One : Tests
+            public sealed class One(BoundDagTest test) : Tests
             {
-                public readonly BoundDagTest Test;
-                public One(BoundDagTest test) => this.Test = test;
+                public readonly BoundDagTest Test = test;
+
                 public void Deconstruct(out BoundDagTest Test) => Test = this.Test;
                 public override void Filter(
                     DecisionDagBuilder builder,
@@ -3563,10 +3550,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             public sealed class AndSequence : SequenceTests
             {
-                private AndSequence(ImmutableArray<Tests> remainingTests) : base(remainingTests)
-                {
-                    Debug.Assert(!remainingTests.Any(t => t is AndSequence));
-                }
+                private AndSequence(ImmutableArray<Tests> remainingTests) : base(remainingTests) => Debug.Assert(!remainingTests.Any(t => t is AndSequence));
                 public override Tests Update(ArrayBuilder<Tests> remainingTests) => Create(remainingTests);
                 public static Tests Create(Tests t1, Tests t2)
                 {
@@ -3645,10 +3629,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             public sealed class OrSequence : SequenceTests
             {
-                private OrSequence(ImmutableArray<Tests> remainingTests) : base(remainingTests)
-                {
-                    Debug.Assert(!remainingTests.Any(t => t is OrSequence));
-                }
+                private OrSequence(ImmutableArray<Tests> remainingTests) : base(remainingTests) => Debug.Assert(!remainingTests.Any(t => t is OrSequence));
                 public override Tests Update(ArrayBuilder<Tests> remainingTests) => Create(remainingTests);
                 public static Tests Create(Tests t1, Tests t2)
                 {

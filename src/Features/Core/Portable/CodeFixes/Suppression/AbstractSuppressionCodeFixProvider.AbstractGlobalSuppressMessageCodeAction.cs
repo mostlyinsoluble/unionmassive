@@ -20,15 +20,9 @@ namespace Microsoft.CodeAnalysis.CodeFixes.Suppression;
 
 internal abstract partial class AbstractSuppressionCodeFixProvider : IConfigurationFixProvider
 {
-    internal abstract class AbstractGlobalSuppressMessageCodeAction : AbstractSuppressionCodeAction
+    internal abstract class AbstractGlobalSuppressMessageCodeAction(AbstractSuppressionCodeFixProvider fixer, Project project) : AbstractSuppressionCodeAction(fixer, title: FeaturesResources.in_Suppression_File)
     {
-        private readonly Project _project;
-
-        protected AbstractGlobalSuppressMessageCodeAction(AbstractSuppressionCodeFixProvider fixer, Project project)
-            : base(fixer, title: FeaturesResources.in_Suppression_File)
-        {
-            _project = project;
-        }
+        private readonly Project _project = project;
 
         protected sealed override async Task<ImmutableArray<CodeActionOperation>> ComputeOperationsAsync(
             IProgress<CodeAnalysisProgress> progress, CancellationToken cancellationToken)

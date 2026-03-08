@@ -517,16 +517,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         /// <summary>
         /// Used only to point to forwarded types and implements only API surface required to emit information about them.
         /// </summary>
-        private sealed class ForwardedExtensionGroupingOrMarkerType : Cci.INestedTypeReference
+        private sealed class ForwardedExtensionGroupingOrMarkerType(Cci.ITypeReference containingType, Cci.INestedTypeReference underlying) : Cci.INestedTypeReference
         {
-            private readonly Cci.ITypeReference _containingType;
-            private readonly Cci.INestedTypeReference _underlying;
-
-            public ForwardedExtensionGroupingOrMarkerType(Cci.ITypeReference containingType, Cci.INestedTypeReference underlying)
-            {
-                _containingType = containingType;
-                _underlying = underlying;
-            }
+            private readonly Cci.ITypeReference _containingType = containingType;
+            private readonly Cci.INestedTypeReference _underlying = underlying;
 
             bool INestedTypeReference.InheritsEnclosingTypeTypeParameters => throw ExceptionUtilities.Unreachable();
 

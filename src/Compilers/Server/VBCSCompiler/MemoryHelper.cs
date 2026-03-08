@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
     [StructLayout(LayoutKind.Sequential)]
     internal sealed class MemoryHelper
     {
-        private MemoryHelper()
-        {
-            this.Length = (int)Marshal.SizeOf(this);
-        }
+        private MemoryHelper() => this.Length = (int)Marshal.SizeOf(this);
 
         // The length field must be set to the size of this data structure.
         public int Length;

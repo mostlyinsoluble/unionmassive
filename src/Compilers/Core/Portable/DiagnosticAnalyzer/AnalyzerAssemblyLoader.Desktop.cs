@@ -23,10 +23,7 @@ namespace Microsoft.CodeAnalysis
         {
         }
 
-        internal AnalyzerAssemblyLoader(ImmutableArray<IAnalyzerPathResolver> analyzerPathResolvers)
-        {
-            AnalyzerPathResolvers = analyzerPathResolvers;
-        }
+        internal AnalyzerAssemblyLoader(ImmutableArray<IAnalyzerPathResolver> analyzerPathResolvers) => AnalyzerPathResolvers = analyzerPathResolvers;
 
         private partial void DisposeWorker()
         {

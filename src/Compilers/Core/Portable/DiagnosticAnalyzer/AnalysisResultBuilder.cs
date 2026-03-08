@@ -337,7 +337,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                 return;
             }
 
-            lazyLocalDiagnostics = lazyLocalDiagnostics ?? new Dictionary<TKey, Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>>();
+            lazyLocalDiagnostics ??= new Dictionary<TKey, Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>>();
 
             foreach (var diagsByKey in diagnostics.GroupBy(getKeyFunc))
             {
@@ -370,7 +370,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                 return;
             }
 
-            _nonLocalDiagnosticsOpt = _nonLocalDiagnosticsOpt ?? new Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>();
+            _nonLocalDiagnosticsOpt ??= new Dictionary<DiagnosticAnalyzer, ImmutableArray<Diagnostic>.Builder>();
 
             if (!_nonLocalDiagnosticsOpt.TryGetValue(analyzer, out ImmutableArray<Diagnostic>.Builder? currentDiagnostics))
             {

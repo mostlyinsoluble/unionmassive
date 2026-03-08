@@ -16,13 +16,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
     /// A{int}.B
     /// A.B{int}.C.D
     /// </summary>
-    internal class SpecializedNestedTypeReference : NamedTypeReference, Cci.ISpecializedNestedTypeReference
+    internal class SpecializedNestedTypeReference(NamedTypeSymbol underlyingNamedType) : NamedTypeReference(underlyingNamedType), Cci.ISpecializedNestedTypeReference
     {
-        public SpecializedNestedTypeReference(NamedTypeSymbol underlyingNamedType)
-            : base(underlyingNamedType)
-        {
-        }
-
         Cci.INestedTypeReference Cci.ISpecializedNestedTypeReference.GetUnspecializedVersion(EmitContext context)
         {
             Debug.Assert(UnderlyingNamedType.OriginalDefinition.IsDefinition);

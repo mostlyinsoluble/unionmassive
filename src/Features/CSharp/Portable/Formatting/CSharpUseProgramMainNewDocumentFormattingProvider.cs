@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.CSharp.Formatting;
 
 [ExportNewDocumentFormattingProvider(LanguageNames.CSharp), Shared]
-internal sealed class CSharpUseProgramMainNewDocumentFormattingProvider : INewDocumentFormattingProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpUseProgramMainNewDocumentFormattingProvider() : INewDocumentFormattingProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpUseProgramMainNewDocumentFormattingProvider()
-    {
-    }
-
     public async Task<Document> FormatNewDocumentAsync(Document document, Document? hintDocument, CodeCleanupOptions options, CancellationToken cancellationToken)
     {
         // if the user prefers Program.Main style instead, then attempt to convert a template with

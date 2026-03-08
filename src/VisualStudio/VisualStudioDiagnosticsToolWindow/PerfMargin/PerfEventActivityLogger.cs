@@ -11,14 +11,9 @@ namespace Roslyn.Hosting.Diagnostics.PerfMargin;
 // This version updates the DataModel whenever an operations starts or stops.  There
 // isn't an efficient way to listen to ETW events within the same process unless
 // running as admin, so we need to add our logic to the logger instead.
-internal sealed class PerfEventActivityLogger : ILogger
+internal sealed class PerfEventActivityLogger(DataModel model) : ILogger
 {
-    private readonly DataModel _model;
-
-    public PerfEventActivityLogger(DataModel model)
-    {
-        _model = model;
-    }
+    private readonly DataModel _model = model;
 
     public bool IsEnabled(FunctionId functionId)
     {

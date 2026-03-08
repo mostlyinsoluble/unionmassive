@@ -44,7 +44,15 @@ namespace Microsoft.VisualStudio.LanguageServices.KeybindingReset;
 /// If we find other extensions that do this in the future, we'll re-use this same mechanism
 /// </para>
 [Export(typeof(KeybindingResetDetector))]
-internal sealed class KeybindingResetDetector : IOleCommandTarget
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class KeybindingResetDetector(
+    IThreadingContext threadingContext,
+    IGlobalOptionService globalOptions,
+    IVsService<SVsInfoBarUIFactory, IVsInfoBarUIFactory> vsInfoBarUIFactory,
+    IVsService<SVsShell, IVsShell> vsShell,
+    SVsServiceProvider serviceProvider,
+    IAsynchronousOperationListenerProvider listenerProvider) : IOleCommandTarget
 {
     private const string KeybindingsFwLink = "https://go.microsoft.com/fwlink/?linkid=864209";
     private const string ReSharperExtensionName = "ReSharper Ultimate";
@@ -60,10 +68,10 @@ internal sealed class KeybindingResetDetector : IOleCommandTarget
     private static readonly Guid s_resharperCommandGroup = new("47F03277-5055-4922-899C-0F7F30D26BF1");
 
     private static readonly ImmutableArray<OptionKey2> s_statusOptions = [new OptionKey2(KeybindingResetOptionsStorage.ReSharperStatus), new OptionKey2(KeybindingResetOptionsStorage.NeedsReset)];
-    private readonly IThreadingContext _threadingContext;
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly System.IServiceProvider _serviceProvider;
-    private readonly VisualStudioInfoBar _infoBar;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly System.IServiceProvider _serviceProvider = serviceProvider;
+    private readonly VisualStudioInfoBar _infoBar = new VisualStudioInfoBar(threadingContext, vsInfoBarUIFactory, vsShell, listenerProvider, windowFrame: null);
 
     // All mutable fields are UI-thread affinitized
 
@@ -84,24 +92,6 @@ internal sealed class KeybindingResetDetector : IOleCommandTarget
     /// Chain all update tasks so that task runs serially
     /// </summary>
     private Task _lastTask = Task.CompletedTask;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public KeybindingResetDetector(
-        IThreadingContext threadingContext,
-        IGlobalOptionService globalOptions,
-        IVsService<SVsInfoBarUIFactory, IVsInfoBarUIFactory> vsInfoBarUIFactory,
-        IVsService<SVsShell, IVsShell> vsShell,
-        SVsServiceProvider serviceProvider,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _threadingContext = threadingContext;
-        _globalOptions = globalOptions;
-        _serviceProvider = serviceProvider;
-
-        // Attach this info bar to the global shell location for info-bars (independent of any particular window).
-        _infoBar = new VisualStudioInfoBar(threadingContext, vsInfoBarUIFactory, vsShell, listenerProvider, windowFrame: null);
-    }
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {

@@ -60,10 +60,7 @@ namespace Microsoft.CodeAnalysis
     {
         private readonly StringBuilder _sb;
 
-        protected TreeDumper()
-        {
-            _sb = new StringBuilder();
-        }
+        protected TreeDumper() => _sb = new StringBuilder();
 
         public static string DumpCompact(TreeDumperNode root)
         {
@@ -240,19 +237,12 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// This is ONLY used for debugging purpose
     /// </summary>
-    internal sealed class TreeDumperNode
+    internal sealed class TreeDumperNode(string text, object? value, IEnumerable<TreeDumperNode>? children)
     {
-        public TreeDumperNode(string text, object? value, IEnumerable<TreeDumperNode>? children)
-        {
-            this.Text = text;
-            this.Value = value;
-            this.Children = children ?? SpecializedCollections.EmptyEnumerable<TreeDumperNode>();
-        }
-
         public TreeDumperNode(string text) : this(text, null, null) { }
-        public object? Value { get; }
-        public string Text { get; }
-        public IEnumerable<TreeDumperNode> Children { get; }
+        public object? Value { get; } = value;
+        public string Text { get; } = text;
+        public IEnumerable<TreeDumperNode> Children { get; } = children ?? SpecializedCollections.EmptyEnumerable<TreeDumperNode>();
         public TreeDumperNode? this[string child]
         {
             get

@@ -27,6 +27,11 @@ namespace System.Diagnostics.CodeAnalysis
     ///   This attribute allows call sites to be flagged with a diagnostic that indicates that an experimental
     ///   feature is used. Authors can use this attribute to ship preview features in their assemblies.
     /// </remarks>
+    /// <remarks>
+    ///  Initializes a new instance of the <see cref="ExperimentalAttribute"/> class, specifying the ID that the compiler will use
+    ///  when reporting a use of the API the attribute applies to.
+    /// </remarks>
+    /// <param name="diagnosticId">The ID that the compiler will use when reporting a use of the API the attribute applies to.</param>
     [AttributeUsage(AttributeTargets.Assembly |
                     AttributeTargets.Module |
                     AttributeTargets.Class |
@@ -39,17 +44,8 @@ namespace System.Diagnostics.CodeAnalysis
                     AttributeTargets.Event |
                     AttributeTargets.Interface |
                     AttributeTargets.Delegate, Inherited = false)]
-    internal sealed class ExperimentalAttribute : Attribute
+    internal sealed class ExperimentalAttribute(string diagnosticId) : Attribute
     {
-        /// <summary>
-        ///  Initializes a new instance of the <see cref="ExperimentalAttribute"/> class, specifying the ID that the compiler will use
-        ///  when reporting a use of the API the attribute applies to.
-        /// </summary>
-        /// <param name="diagnosticId">The ID that the compiler will use when reporting a use of the API the attribute applies to.</param>
-        public ExperimentalAttribute(string diagnosticId)
-        {
-            DiagnosticId = diagnosticId;
-        }
 
         /// <summary>
         ///  Gets the ID that the compiler will use when reporting a use of the API the attribute applies to.
@@ -59,7 +55,7 @@ namespace System.Diagnostics.CodeAnalysis
         ///  The diagnostic ID is shown in build output for warnings and errors.
         ///  <para>This property represents the unique ID that can be used to suppress the warnings or errors, if needed.</para>
         /// </remarks>
-        public string DiagnosticId { get; }
+        public string DiagnosticId { get; } = diagnosticId;
 
         /// <summary>
         ///  Gets or sets the URL for corresponding documentation.

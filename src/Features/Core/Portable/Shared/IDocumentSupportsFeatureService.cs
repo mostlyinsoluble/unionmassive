@@ -19,14 +19,10 @@ internal interface IDocumentSupportsFeatureService : IWorkspaceService
 }
 
 [ExportWorkspaceService(typeof(IDocumentSupportsFeatureService), ServiceLayer.Default), Shared]
-internal sealed class DefaultDocumentSupportsFeatureService : IDocumentSupportsFeatureService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultDocumentSupportsFeatureService() : IDocumentSupportsFeatureService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultDocumentSupportsFeatureService()
-    {
-    }
-
     public bool SupportsCodeFixes(Document document)
         => true;
 

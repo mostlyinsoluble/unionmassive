@@ -13,23 +13,16 @@ using Microsoft.CodeAnalysis.Workspaces.ProjectSystem;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.ProjectSystem;
 
 [ExportWorkspaceServiceFactory(typeof(IRuleSetManager), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioRuleSetManagerFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioRuleSetManagerFactory(
+    IThreadingContext threadingContext,
+    FileChangeWatcherProvider fileChangeWatcherProvider,
+    IAsynchronousOperationListenerProvider listenerProvider) : IWorkspaceServiceFactory
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly FileChangeWatcherProvider _fileChangeWatcherProvider;
-    private readonly IAsynchronousOperationListener _listener;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioRuleSetManagerFactory(
-        IThreadingContext threadingContext,
-        FileChangeWatcherProvider fileChangeWatcherProvider,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _threadingContext = threadingContext;
-        _fileChangeWatcherProvider = fileChangeWatcherProvider;
-        _listener = listenerProvider.GetListener(FeatureAttribute.RuleSetEditor);
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly FileChangeWatcherProvider _fileChangeWatcherProvider = fileChangeWatcherProvider;
+    private readonly IAsynchronousOperationListener _listener = listenerProvider.GetListener(FeatureAttribute.RuleSetEditor);
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new VisualStudioRuleSetManager(_threadingContext, _fileChangeWatcherProvider.Watcher, _listener);

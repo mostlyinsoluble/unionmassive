@@ -107,16 +107,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// CONSIDER: If this causes too many allocations, we could use start and end flags plus spinlocking
         /// as for completion parts.
         /// </remarks>
-        private class ExpressionAndDiagnostics
+        private class ExpressionAndDiagnostics(BoundExpression expression, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
         {
-            public readonly BoundExpression Expression;
-            public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics;
-
-            public ExpressionAndDiagnostics(BoundExpression expression, ReadOnlyBindingDiagnostic<AssemblySymbol> diagnostics)
-            {
-                this.Expression = expression;
-                this.Diagnostics = diagnostics;
-            }
+            public readonly BoundExpression Expression = expression;
+            public readonly ReadOnlyBindingDiagnostic<AssemblySymbol> Diagnostics = diagnostics;
         }
     }
 }

@@ -17,25 +17,17 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// <summary>
     /// Operation visitor to flow the GlobalFlowState values across a given statement in a basic block.
     /// </summary>
-    internal abstract class GlobalFlowStateDataFlowOperationVisitor<TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
-        : AnalysisEntityDataFlowOperationVisitor<DictionaryAnalysisData<AnalysisEntity, TAbstractAnalysisValue>, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
+    internal abstract class GlobalFlowStateDataFlowOperationVisitor<TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>(TAnalysisContext analysisContext, bool hasPredicatedGlobalState)
+        : AnalysisEntityDataFlowOperationVisitor<DictionaryAnalysisData<AnalysisEntity, TAbstractAnalysisValue>, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>(analysisContext)
         where TAnalysisContext : AbstractDataFlowAnalysisContext<DictionaryAnalysisData<AnalysisEntity, TAbstractAnalysisValue>, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisResult : class, IDataFlowAnalysisResult<TAbstractAnalysisValue>
         where TAbstractAnalysisValue : IEquatable<TAbstractAnalysisValue>
     {
         // This is the global entity storing CFG wide state, which gets updated for every visited operation in the visitor.
-        protected AnalysisEntity GlobalEntity { get; }
-        protected bool HasPredicatedGlobalState { get; }
+        protected AnalysisEntity GlobalEntity { get; } = GetGlobalEntity(analysisContext);
+        protected bool HasPredicatedGlobalState { get; } = hasPredicatedGlobalState;
 
-        private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _globalValuesMapBuilder;
-
-        protected GlobalFlowStateDataFlowOperationVisitor(TAnalysisContext analysisContext, bool hasPredicatedGlobalState)
-            : base(analysisContext)
-        {
-            GlobalEntity = GetGlobalEntity(analysisContext);
-            HasPredicatedGlobalState = hasPredicatedGlobalState;
-            _globalValuesMapBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
-        }
+        private readonly ImmutableDictionary<IOperation, TAbstractAnalysisValue>.Builder _globalValuesMapBuilder = ImmutableDictionary.CreateBuilder<IOperation, TAbstractAnalysisValue>();
 
         internal override bool SkipExceptionPathsAnalysisPostPass => true;
 

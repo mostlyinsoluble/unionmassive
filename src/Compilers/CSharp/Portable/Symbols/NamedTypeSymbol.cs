@@ -35,10 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ImmutableSegmentedDictionary<string, Symbol> _lazyRequiredMembers = default;
 
         // Only the compiler can create NamedTypeSymbols.
-        internal NamedTypeSymbol(TupleExtraData tupleData = null)
-        {
-            _lazyTupleData = tupleData;
-        }
+        internal NamedTypeSymbol(TupleExtraData tupleData = null) => _lazyTupleData = tupleData;
 
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Changes to the public interface of this class should remain synchronized with the VB version.

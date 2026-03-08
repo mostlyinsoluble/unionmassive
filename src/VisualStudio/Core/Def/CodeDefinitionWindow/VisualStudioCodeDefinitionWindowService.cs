@@ -17,18 +17,12 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.CodeDefinitionWindow;
 
 [Export(typeof(ICodeDefinitionWindowService)), Shared]
-internal sealed class VisualStudioCodeDefinitionWindowService : ICodeDefinitionWindowService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioCodeDefinitionWindowService(IVsService<SVsCodeDefView, IVsCodeDefView> codeDefView, IThreadingContext threadingContext) : ICodeDefinitionWindowService
 {
-    private readonly IVsService<IVsCodeDefView> _codeDefView;
-    private readonly IThreadingContext _threadingContext;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioCodeDefinitionWindowService(IVsService<SVsCodeDefView, IVsCodeDefView> codeDefView, IThreadingContext threadingContext)
-    {
-        _codeDefView = codeDefView;
-        _threadingContext = threadingContext;
-    }
+    private readonly IVsService<IVsCodeDefView> _codeDefView = codeDefView;
+    private readonly IThreadingContext _threadingContext = threadingContext;
 
     public async Task<bool> IsWindowOpenAsync(CancellationToken cancellationToken)
     {
@@ -58,14 +52,9 @@ internal sealed class VisualStudioCodeDefinitionWindowService : ICodeDefinitionW
         Marshal.ThrowExceptionForHR(vsCodeDefView.SetContext(new Context(locations)));
     }
 
-    private sealed class Context : IVsCodeDefViewContext
+    private sealed class Context(ImmutableArray<CodeDefinitionWindowLocation> locations) : IVsCodeDefViewContext
     {
-        private readonly ImmutableArray<CodeDefinitionWindowLocation> _locations;
-
-        public Context(ImmutableArray<CodeDefinitionWindowLocation> locations)
-        {
-            _locations = locations;
-        }
+        private readonly ImmutableArray<CodeDefinitionWindowLocation> _locations = locations;
 
         int IVsCodeDefViewContext.GetCount(out uint pcItems)
         {

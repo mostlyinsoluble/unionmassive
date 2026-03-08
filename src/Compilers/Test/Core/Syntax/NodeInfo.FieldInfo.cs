@@ -12,11 +12,11 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
     public partial class NodeInfo
     {
         //Package of information containing the name, type, and value of a field on a syntax node.
-        public class FieldInfo
+        public class FieldInfo(string propertyName, Type fieldType, object value)
         {
-            private readonly string _propertyName;
-            private readonly Type _fieldType;
-            private readonly object _value;
+            private readonly string _propertyName = propertyName;
+            private readonly Type _fieldType = fieldType;
+            private readonly object _value = value;
             public string PropertyName
             {
                 get
@@ -39,13 +39,6 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
                 {
                     return _value;
                 }
-            }
-
-            public FieldInfo(string propertyName, Type fieldType, object value)
-            {
-                _propertyName = propertyName;
-                _fieldType = fieldType;
-                _value = value;
             }
         }
     }

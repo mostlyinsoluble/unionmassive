@@ -19,10 +19,7 @@ namespace Microsoft.CodeAnalysis.Syntax
         /// </summary>
         private readonly WarningStateMapEntry[] _warningStateMapEntries;
 
-        protected AbstractWarningStateMap(SyntaxTree syntaxTree)
-        {
-            _warningStateMapEntries = CreateWarningStateMapEntries(syntaxTree);
-        }
+        protected AbstractWarningStateMap(SyntaxTree syntaxTree) => _warningStateMapEntries = CreateWarningStateMapEntries(syntaxTree);
 
         /// <summary>
         /// Returns list of entries sorted in source order, each of which captures a

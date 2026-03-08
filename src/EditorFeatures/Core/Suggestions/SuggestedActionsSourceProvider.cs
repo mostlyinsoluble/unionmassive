@@ -38,7 +38,18 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Suggestions;
 [SuggestedActionPriority(DefaultOrderings.Default)] // for any provider/item that is neither high or low pri and is not suppressions.
 [SuggestedActionPriority(DefaultOrderings.Low)]     // for providers or items explicitly marked as low pri
 [SuggestedActionPriority(DefaultOrderings.Lowest)]  // Only for suppressions
-internal sealed partial class SuggestedActionsSourceProvider : ISuggestedActionsSourceProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class SuggestedActionsSourceProvider(
+    IThreadingContext threadingContext,
+    ICodeRefactoringService codeRefactoringService,
+    ICodeFixService codeFixService,
+    ICodeActionEditHandlerService editHandler,
+    IUIThreadOperationExecutor uiThreadOperationExecutor,
+    ISuggestedActionCategoryRegistryService suggestedActionCategoryRegistry,
+    IAsynchronousOperationListenerProvider listenerProvider,
+    IGlobalOptionService globalOptions,
+    [ImportMany] IEnumerable<Lazy<IImageIdService, OrderableMetadata>> imageIdServices) : ISuggestedActionsSourceProvider
 {
     public static readonly ImmutableArray<string> Orderings = [DefaultOrderings.Highest, DefaultOrderings.Default, DefaultOrderings.Low, DefaultOrderings.Lowest];
 
@@ -46,41 +57,16 @@ internal sealed partial class SuggestedActionsSourceProvider : ISuggestedActions
     private static readonly Guid s_visualBasicSourceGuid = new("4de30e93-3e0c-40c2-a4ba-1124da4539f6");
     private static readonly Guid s_xamlSourceGuid = new("a0572245-2eab-4c39-9f61-06a6d8c5ddda");
 
-    private readonly IThreadingContext _threadingContext;
-    private readonly ICodeRefactoringService _codeRefactoringService;
-    private readonly ICodeFixService _codeFixService;
-    private readonly ISuggestedActionCategoryRegistryService _suggestedActionCategoryRegistry;
-    private readonly IGlobalOptionService _globalOptions;
-    public readonly ICodeActionEditHandlerService EditHandler;
-    public readonly IAsynchronousOperationListener OperationListener;
-    public readonly IUIThreadOperationExecutor UIThreadOperationExecutor;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ICodeRefactoringService _codeRefactoringService = codeRefactoringService;
+    private readonly ICodeFixService _codeFixService = codeFixService;
+    private readonly ISuggestedActionCategoryRegistryService _suggestedActionCategoryRegistry = suggestedActionCategoryRegistry;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    public readonly ICodeActionEditHandlerService EditHandler = editHandler;
+    public readonly IAsynchronousOperationListener OperationListener = listenerProvider.GetListener(FeatureAttribute.LightBulb);
+    public readonly IUIThreadOperationExecutor UIThreadOperationExecutor = uiThreadOperationExecutor;
 
-    public readonly ImmutableArray<Lazy<IImageIdService, OrderableMetadata>> ImageIdServices;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SuggestedActionsSourceProvider(
-        IThreadingContext threadingContext,
-        ICodeRefactoringService codeRefactoringService,
-        ICodeFixService codeFixService,
-        ICodeActionEditHandlerService editHandler,
-        IUIThreadOperationExecutor uiThreadOperationExecutor,
-        ISuggestedActionCategoryRegistryService suggestedActionCategoryRegistry,
-        IAsynchronousOperationListenerProvider listenerProvider,
-        IGlobalOptionService globalOptions,
-        [ImportMany] IEnumerable<Lazy<IImageIdService, OrderableMetadata>> imageIdServices)
-    {
-        _threadingContext = threadingContext;
-        _codeRefactoringService = codeRefactoringService;
-        _codeFixService = codeFixService;
-        _suggestedActionCategoryRegistry = suggestedActionCategoryRegistry;
-        _globalOptions = globalOptions;
-        EditHandler = editHandler;
-        UIThreadOperationExecutor = uiThreadOperationExecutor;
-        OperationListener = listenerProvider.GetListener(FeatureAttribute.LightBulb);
-
-        ImageIdServices = [.. ExtensionOrderer.Order(imageIdServices)];
-    }
+    public readonly ImmutableArray<Lazy<IImageIdService, OrderableMetadata>> ImageIdServices = [.. ExtensionOrderer.Order(imageIdServices)];
 
     public ISuggestedActionsSource? CreateSuggestedActionsSource(ITextView textView, ITextBuffer textBuffer)
     {

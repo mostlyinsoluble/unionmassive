@@ -783,7 +783,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
 
                             Debug.Assert(iteratorStateMachine is null || asyncStateMachine is null);
-                            stateMachine = stateMachine ?? asyncStateMachine;
+                            stateMachine ??= asyncStateMachine;
                         }
 
                         SetGlobalErrorIfTrue(diagnosticsThisMethod.HasAnyErrors());
@@ -1126,7 +1126,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(processedInitializers.BoundInitializers.IsDefaultOrEmpty || processedInitializers.FirstImportChain != null);
 #endif
 
-                importChain = importChain ?? processedInitializers.FirstImportChain;
+                importChain ??= processedInitializers.FirstImportChain;
 
                 // Associate these debug imports with all methods generated from this one.
                 compilationState.CurrentImportChain = importChain;
@@ -2336,10 +2336,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             private bool _found;
             private readonly IdentifierNameSyntax _id;
 
-            private UnboundLambdaFinder(IdentifierNameSyntax id)
-            {
-                _id = id;
-            }
+            private UnboundLambdaFinder(IdentifierNameSyntax id) => _id = id;
 
             public static bool FoundInUnboundLambda(BoundNode methodBody, IdentifierNameSyntax id)
             {

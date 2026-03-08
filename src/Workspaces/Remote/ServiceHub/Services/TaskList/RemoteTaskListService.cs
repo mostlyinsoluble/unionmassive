@@ -10,17 +10,12 @@ using Microsoft.CodeAnalysis.TaskList;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed partial class RemoteTaskListService : BrokeredServiceBase, IRemoteTaskListService
+internal sealed partial class RemoteTaskListService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteTaskListService
 {
     internal sealed class Factory : FactoryBase<IRemoteTaskListService>
     {
         protected override IRemoteTaskListService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteTaskListService(arguments);
-    }
-
-    public RemoteTaskListService(in ServiceConstructionArguments arguments)
-        : base(arguments)
-    {
     }
 
     public ValueTask<ImmutableArray<TaskListItem>> GetTaskListItemsAsync(

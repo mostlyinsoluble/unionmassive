@@ -10,12 +10,9 @@ using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 
-internal abstract class AbstractCodePageEditorFactory : IVsEditorFactory
+internal abstract class AbstractCodePageEditorFactory(AbstractEditorFactory editorFactory) : IVsEditorFactory
 {
-    private readonly AbstractEditorFactory _editorFactory;
-
-    protected AbstractCodePageEditorFactory(AbstractEditorFactory editorFactory)
-        => _editorFactory = editorFactory;
+    private readonly AbstractEditorFactory _editorFactory = editorFactory;
 
     int IVsEditorFactory.CreateEditorInstance(
         uint grfCreateDoc,

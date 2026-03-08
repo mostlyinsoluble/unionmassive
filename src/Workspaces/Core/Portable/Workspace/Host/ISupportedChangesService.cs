@@ -25,14 +25,10 @@ public interface ISupportedChangesService : IWorkspaceService
 }
 
 [ExportWorkspaceServiceFactory(typeof(ISupportedChangesService)), Shared]
-internal sealed class DefaultSupportedChangesServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultSupportedChangesServiceFactory() : IWorkspaceServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultSupportedChangesServiceFactory()
-    {
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new DefaultSupportedChangesService(workspaceServices.Workspace);
 

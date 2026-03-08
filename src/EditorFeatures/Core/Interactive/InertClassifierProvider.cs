@@ -22,15 +22,11 @@ namespace Microsoft.CodeAnalysis.Interactive;
 /// </summary>
 [Export(typeof(IClassifierProvider))]
 [TextViewRole(PredefinedInteractiveTextViewRoles.InteractiveTextViewRole)]
-internal sealed partial class InertClassifierProvider : IClassifierProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class InertClassifierProvider() : IClassifierProvider
 {
     private static readonly object s_classificationsKey = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InertClassifierProvider()
-    {
-    }
 
     public IClassifier GetClassifier(ITextBuffer textBuffer)
         => new InertClassifier(textBuffer);

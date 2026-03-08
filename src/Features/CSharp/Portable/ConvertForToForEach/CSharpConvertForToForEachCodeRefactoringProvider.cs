@@ -15,7 +15,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertForToForEach;
 using static CSharpSyntaxTokens;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertForToForEach), Shared]
-internal sealed class CSharpConvertForToForEachCodeRefactoringProvider :
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpConvertForToForEachCodeRefactoringProvider() :
     AbstractConvertForToForEachCodeRefactoringProvider<
         StatementSyntax,
         ForStatementSyntax,
@@ -24,12 +26,6 @@ internal sealed class CSharpConvertForToForEachCodeRefactoringProvider :
         TypeSyntax,
         VariableDeclaratorSyntax>
 {
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpConvertForToForEachCodeRefactoringProvider()
-    {
-    }
-
     protected override string GetTitle()
         => CSharpFeaturesResources.Convert_to_foreach;
 

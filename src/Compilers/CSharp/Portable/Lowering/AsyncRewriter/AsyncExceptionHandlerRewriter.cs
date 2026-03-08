@@ -924,7 +924,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
 
-                _seenAwait = _seenAwait | origSeenAwait;
+                _seenAwait |= origSeenAwait;
                 return null;
             }
 
@@ -1096,22 +1096,22 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private sealed class AwaitCatchFrame
+        private sealed class AwaitCatchFrame(SyntheticBoundNodeFactory F, TryStatementSyntax tryStatementSyntax, AsyncExceptionHandlerRewriter.AwaitCatchFrame parentOpt)
         {
             // object, stores the original caught exception
             // used to initialize the exception source inside the handler
             // also used in rethrow statements
-            public readonly SynthesizedLocal pendingCaughtException;
+            public readonly SynthesizedLocal pendingCaughtException = new SynthesizedLocal(F.CurrentFunction, TypeWithAnnotations.Create(F.SpecialType(SpecialType.System_Object)), SynthesizedLocalKind.TryAwaitPendingCaughtException, tryStatementSyntax);
 
             // int, stores the number of pending catch
             // 0 - means no catches are pending.
-            public readonly SynthesizedLocal pendingCatch;
+            public readonly SynthesizedLocal pendingCatch = new SynthesizedLocal(F.CurrentFunction, TypeWithAnnotations.Create(F.SpecialType(SpecialType.System_Int32)), SynthesizedLocalKind.TryAwaitPendingCatch, tryStatementSyntax);
 
             // synthetic handlers produced by catch rewrite.
             // they will become switch sections when pending exception is dispatched.
-            public readonly List<BoundBlock> handlers;
+            public readonly List<BoundBlock> handlers = new List<BoundBlock>();
 
-            private readonly AwaitCatchFrame _parentOpt;
+            private readonly AwaitCatchFrame _parentOpt = parentOpt;
 
             // when catch local must be used from a filter
             // we need to "hoist" it up to ensure that both the filter 
@@ -1119,19 +1119,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // NOTE: it must be the same variable, not just same value. 
             //       The difference would be observable if filter mutates the variable
             //       or/and if a variable gets lifted into a closure.
-            private readonly Dictionary<LocalSymbol, LocalSymbol> _hoistedLocals;
-            private readonly List<LocalSymbol> _orderedHoistedLocals;
-
-            public AwaitCatchFrame(SyntheticBoundNodeFactory F, TryStatementSyntax tryStatementSyntax, AwaitCatchFrame parentOpt)
-            {
-                this.pendingCaughtException = new SynthesizedLocal(F.CurrentFunction, TypeWithAnnotations.Create(F.SpecialType(SpecialType.System_Object)), SynthesizedLocalKind.TryAwaitPendingCaughtException, tryStatementSyntax);
-                this.pendingCatch = new SynthesizedLocal(F.CurrentFunction, TypeWithAnnotations.Create(F.SpecialType(SpecialType.System_Int32)), SynthesizedLocalKind.TryAwaitPendingCatch, tryStatementSyntax);
-
-                this.handlers = new List<BoundBlock>();
-                this._parentOpt = parentOpt;
-                _hoistedLocals = new Dictionary<LocalSymbol, LocalSymbol>();
-                _orderedHoistedLocals = new List<LocalSymbol>();
-            }
+            private readonly Dictionary<LocalSymbol, LocalSymbol> _hoistedLocals = new Dictionary<LocalSymbol, LocalSymbol>();
+            private readonly List<LocalSymbol> _orderedHoistedLocals = new List<LocalSymbol>();
 
             public void HoistLocal(LocalSymbol local, SyntheticBoundNodeFactory F)
             {

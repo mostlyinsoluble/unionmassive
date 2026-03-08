@@ -23,16 +23,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// This decouples constraints checking from syntax and Locations, and supports
     /// callers that may want to create Location instances lazily or not at all.
     /// </summary>
-    internal readonly struct TypeParameterDiagnosticInfo
+    internal readonly struct TypeParameterDiagnosticInfo(TypeParameterSymbol typeParameter, UseSiteInfo<AssemblySymbol> useSiteInfo)
     {
-        public readonly TypeParameterSymbol TypeParameter;
-        public readonly UseSiteInfo<AssemblySymbol> UseSiteInfo;
-
-        public TypeParameterDiagnosticInfo(TypeParameterSymbol typeParameter, UseSiteInfo<AssemblySymbol> useSiteInfo)
-        {
-            this.TypeParameter = typeParameter;
-            this.UseSiteInfo = useSiteInfo;
-        }
+        public readonly TypeParameterSymbol TypeParameter = typeParameter;
+        public readonly UseSiteInfo<AssemblySymbol> UseSiteInfo = useSiteInfo;
     }
 
     /// <summary>
@@ -493,16 +487,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             type.VisitType(s_checkConstraintsSingleTypeFunc, args);
         }
 
-        internal readonly struct CheckConstraintsArgs
+        internal readonly struct CheckConstraintsArgs(CSharpCompilation currentCompilation, ConversionsBase conversions, bool includeNullability, Location location, BindingDiagnosticBag diagnostics, CompoundUseSiteInfo<AssemblySymbol> template)
         {
 #nullable enable
-            public readonly CSharpCompilation? CurrentCompilation;
+            public readonly CSharpCompilation? CurrentCompilation = currentCompilation;
 #nullable disable
-            public readonly ConversionsBase Conversions;
-            public readonly bool IncludeNullability;
-            public readonly Location Location;
-            public readonly BindingDiagnosticBag Diagnostics;
-            public readonly CompoundUseSiteInfo<AssemblySymbol> Template;
+            public readonly ConversionsBase Conversions = conversions;
+            public readonly bool IncludeNullability = includeNullability;
+            public readonly Location Location = location;
+            public readonly BindingDiagnosticBag Diagnostics = diagnostics;
+            public readonly CompoundUseSiteInfo<AssemblySymbol> Template = template;
 
             public CheckConstraintsArgs(CSharpCompilation currentCompilation, ConversionsBase conversions, Location location, BindingDiagnosticBag diagnostics) :
                 this(currentCompilation, conversions, true, location, diagnostics)
@@ -512,16 +506,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             public CheckConstraintsArgs(CSharpCompilation currentCompilation, ConversionsBase conversions, bool includeNullability, Location location, BindingDiagnosticBag diagnostics) :
                 this(currentCompilation, conversions, includeNullability, location, diagnostics, template: new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, currentCompilation.Assembly))
             {
-            }
-
-            public CheckConstraintsArgs(CSharpCompilation currentCompilation, ConversionsBase conversions, bool includeNullability, Location location, BindingDiagnosticBag diagnostics, CompoundUseSiteInfo<AssemblySymbol> template)
-            {
-                this.CurrentCompilation = currentCompilation;
-                this.Conversions = conversions;
-                this.IncludeNullability = includeNullability;
-                this.Location = location;
-                this.Diagnostics = diagnostics;
-                this.Template = template;
             }
         }
 

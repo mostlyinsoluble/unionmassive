@@ -11,10 +11,7 @@ internal sealed class AspNetCoreCSharpVirtualCharService
 {
     private readonly IVirtualCharService _virtualCharService;
 
-    private AspNetCoreCSharpVirtualCharService(IVirtualCharService virtualCharService)
-    {
-        _virtualCharService = virtualCharService;
-    }
+    private AspNetCoreCSharpVirtualCharService(IVirtualCharService virtualCharService) => _virtualCharService = virtualCharService;
 
     /// <inheritdoc cref="CSharpVirtualCharService.Instance"/>
     public static AspNetCoreCSharpVirtualCharService Instance { get; } = new AspNetCoreCSharpVirtualCharService(CSharpVirtualCharService.Instance);

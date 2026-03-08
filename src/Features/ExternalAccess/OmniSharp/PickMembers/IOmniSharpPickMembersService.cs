@@ -19,29 +19,19 @@ internal class OmniSharpPickMembersOption
 {
     internal readonly PickMembersOption PickMembersOptionInternal;
 
-    internal OmniSharpPickMembersOption(PickMembersOption pickMembersOption)
-    {
-        PickMembersOptionInternal = pickMembersOption;
-    }
+    internal OmniSharpPickMembersOption(PickMembersOption pickMembersOption) => PickMembersOptionInternal = pickMembersOption;
 
     public string Id => PickMembersOptionInternal.Id;
     public string Title => PickMembersOptionInternal.Title;
     public bool Value { get => PickMembersOptionInternal.Value; set => PickMembersOptionInternal.Value = value; }
 }
 
-internal class OmniSharpPickMembersResult
+internal class OmniSharpPickMembersResult(
+    ImmutableArray<ISymbol> members,
+    ImmutableArray<OmniSharpPickMembersOption> options,
+    bool selectedAll)
 {
-    public readonly ImmutableArray<ISymbol> Members;
-    public readonly ImmutableArray<OmniSharpPickMembersOption> Options;
-    public readonly bool SelectedAll;
-
-    public OmniSharpPickMembersResult(
-        ImmutableArray<ISymbol> members,
-        ImmutableArray<OmniSharpPickMembersOption> options,
-        bool selectedAll)
-    {
-        Members = members;
-        Options = options;
-        SelectedAll = selectedAll;
-    }
+    public readonly ImmutableArray<ISymbol> Members = members;
+    public readonly ImmutableArray<OmniSharpPickMembersOption> Options = options;
+    public readonly bool SelectedAll = selectedAll;
 }

@@ -6311,3 +6311,4 @@ Microsoft.CodeAnalysis.CSharpExtensions.IsKind(Microsoft.CodeAnalysis.SyntaxNode
 Microsoft.CodeAnalysis.CSharpExtensions.IsKind(Microsoft.CodeAnalysis.SyntaxNodeOrToken,Microsoft.CodeAnalysis.CSharp.SyntaxKind)
 Microsoft.CodeAnalysis.CSharpExtensions.IsKind(Microsoft.CodeAnalysis.SyntaxToken,Microsoft.CodeAnalysis.CSharp.SyntaxKind)
 Microsoft.CodeAnalysis.CSharpExtensions.IsKind(Microsoft.CodeAnalysis.SyntaxTrivia,Microsoft.CodeAnalysis.CSharp.SyntaxKind)
+Microsoft.CodeAnalysis.CSharpExtensions.ParentIsKind(Microsoft.CodeAnalysis.SyntaxNode,Microsoft.CodeAnalysis.CSharp.SyntaxKind)

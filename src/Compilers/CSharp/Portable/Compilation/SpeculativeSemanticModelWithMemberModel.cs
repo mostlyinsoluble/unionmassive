@@ -92,10 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Binder rootBinder,
             ImmutableDictionary<Symbol, Symbol>? parentRemappedSymbolsOpt,
             NullableWalker.SnapshotManager? snapshotManagerOpt)
-            : this(parentModel, position, snapshotManagerOpt)
-        {
-            _memberModel = new MemberSemanticModel.SpeculativeMemberSemanticModel(this, owner, type, rootBinder, parentRemappedSymbolsOpt);
-        }
+            : this(parentModel, position, snapshotManagerOpt) => _memberModel = new MemberSemanticModel.SpeculativeMemberSemanticModel(this, owner, type, rootBinder, parentRemappedSymbolsOpt);
 
         public SpeculativeSemanticModelWithMemberModel(
             SyntaxTreeSemanticModel parentSemanticModel,

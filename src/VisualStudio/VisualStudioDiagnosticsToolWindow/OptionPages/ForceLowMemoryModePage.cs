@@ -18,13 +18,8 @@ internal sealed class ForceLowMemoryModePage : AbstractOptionPage
     protected override AbstractOptionPageControl CreateOptionPage(IServiceProvider serviceProvider, OptionStore optionStore)
         => new Control(optionStore);
 
-    internal sealed class Control : InternalOptionsControl
+    internal sealed class Control(OptionStore optionStore) : InternalOptionsControl([], optionStore)
     {
-        public Control(OptionStore optionStore)
-            : base([], optionStore)
-        {
-        }
-
         protected override void AddOptions(Panel panel)
         {
             // add force low memory mode option

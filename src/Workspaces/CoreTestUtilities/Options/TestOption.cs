@@ -20,19 +20,11 @@ internal sealed class TestOption : IOption
 
 #pragma warning disable RS0030 // Do not used banned APIs
 
-internal sealed class TestOption<T> : Option<T>
+internal sealed class TestOption<T>(string feature = "test", string name = "test", T? defaultValue = default, OptionStorageLocation[]? storageLocations = null) : Option<T>(feature, name, defaultValue!, storageLocations ?? [])
 {
-    public TestOption(string feature = "test", string name = "test", T? defaultValue = default, OptionStorageLocation[]? storageLocations = null)
-        : base(feature, name, defaultValue!, storageLocations ?? [])
-    {
-    }
 }
 
-internal sealed class PerLanguageTestOption<T> : PerLanguageOption<T>
+internal sealed class PerLanguageTestOption<T>(string feature = "test", string name = "test", T? defaultValue = default, OptionStorageLocation[]? storageLocations = null) : PerLanguageOption<T>(feature, name, defaultValue!, storageLocations ?? [])
 {
-    public PerLanguageTestOption(string feature = "test", string name = "test", T? defaultValue = default, OptionStorageLocation[]? storageLocations = null)
-        : base(feature, name, defaultValue!, storageLocations ?? [])
-    {
-    }
 }
 #pragma warning restore

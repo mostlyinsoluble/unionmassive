@@ -223,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             else
             {
                 // start cycle tracking
-                visited = visited ?? PooledHashSet<NamedTypeSymbol>.GetInstance();
+                visited ??= PooledHashSet<NamedTypeSymbol>.GetInstance();
                 visited.Add(origType);
                 if (visited.Contains(nextType.OriginalDefinition))
                 {

@@ -12,15 +12,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Navigation;
 
 [ExportWorkspaceServiceFactory(typeof(ISymbolNavigationService), ServiceLayer.Default), Shared]
-internal sealed class DefaultSymbolNavigationServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultSymbolNavigationServiceFactory() : IWorkspaceServiceFactory
 {
     private ISymbolNavigationService _singleton;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultSymbolNavigationServiceFactory()
-    {
-    }
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {

@@ -11,16 +11,10 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// A source text created by an <see cref="ISourceGenerator"/>
     /// </summary>
-    internal readonly struct GeneratedSourceText
+    internal readonly struct GeneratedSourceText(string hintName, SourceText text)
     {
-        public SourceText Text { get; }
+        public SourceText Text { get; } = text;
 
-        public string HintName { get; }
-
-        public GeneratedSourceText(string hintName, SourceText text)
-        {
-            this.Text = text;
-            this.HintName = hintName;
-        }
+        public string HintName { get; } = hintName;
     }
 }

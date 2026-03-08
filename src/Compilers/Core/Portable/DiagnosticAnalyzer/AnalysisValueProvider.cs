@@ -30,14 +30,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             _valueCacheCallback = new ConditionalWeakTable<TKey, WrappedValue>.CreateValueCallback(ComputeValue);
         }
 
-        private sealed class WrappedValue
+        private sealed class WrappedValue(TValue value)
         {
-            public WrappedValue(TValue value)
-            {
-                Value = value;
-            }
-
-            public TValue Value { get; }
+            public TValue Value { get; } = value;
         }
 
         private WrappedValue ComputeValue(TKey key)

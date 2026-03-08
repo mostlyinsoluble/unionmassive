@@ -36,13 +36,8 @@ internal sealed class AutomationDelegatingListView : ListView
     }
 }
 
-internal sealed class AutomationDelegatingListViewAutomationPeer : FrameworkElementAutomationPeer
+internal sealed class AutomationDelegatingListViewAutomationPeer(AutomationDelegatingListView listView) : FrameworkElementAutomationPeer(listView)
 {
-    public AutomationDelegatingListViewAutomationPeer(AutomationDelegatingListView listView)
-        : base(listView)
-    {
-    }
-
     protected override List<AutomationPeer>? GetChildrenCore()
     {
         List<AutomationPeer>? results = null;

@@ -18,10 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         internal override SyntaxNode ScopeDesignator { get; }
 
-        internal ExpressionVariableBinder(SyntaxNode scopeDesignator, Binder next) : base(next)
-        {
-            this.ScopeDesignator = scopeDesignator;
-        }
+        internal ExpressionVariableBinder(SyntaxNode scopeDesignator, Binder next) : base(next) => this.ScopeDesignator = scopeDesignator;
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {

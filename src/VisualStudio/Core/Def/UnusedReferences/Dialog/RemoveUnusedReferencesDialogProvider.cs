@@ -9,16 +9,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.UnusedReferences.Dialog;
 
 [Export(typeof(RemoveUnusedReferencesDialogProvider)), Shared]
-internal sealed class RemoveUnusedReferencesDialogProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RemoveUnusedReferencesDialogProvider(UnusedReferencesTableProvider tableProvider)
 {
-    private readonly UnusedReferencesTableProvider _tableProvider;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RemoveUnusedReferencesDialogProvider(UnusedReferencesTableProvider tableProvider)
-    {
-        _tableProvider = tableProvider;
-    }
+    private readonly UnusedReferencesTableProvider _tableProvider = tableProvider;
 
     public RemoveUnusedReferencesDialog CreateDialog() => new(_tableProvider);
 }

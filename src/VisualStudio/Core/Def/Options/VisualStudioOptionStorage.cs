@@ -60,10 +60,7 @@ internal abstract class VisualStudioOptionStorage
         /// </summary>
         public string? VisualBasicKey { get; }
 
-        public RoamingProfileStorage(string key)
-        {
-            Key = key;
-        }
+        public RoamingProfileStorage(string key) => Key = key;
 
         /// <summary>
         /// Backward compat only.
@@ -98,14 +95,9 @@ internal abstract class VisualStudioOptionStorage
             => persister.TryFetch(optionKey, GetKey(optionKey.Language), out value);
     }
 
-    internal sealed class FeatureFlagStorage : VisualStudioOptionStorage
+    internal sealed class FeatureFlagStorage(string flagName) : VisualStudioOptionStorage
     {
-        public string FlagName { get; }
-
-        public FeatureFlagStorage(string flagName)
-        {
-            FlagName = flagName;
-        }
+        public string FlagName { get; } = flagName;
 
         public Task PersistAsync(FeatureFlagPersister persister, object? value)
         {

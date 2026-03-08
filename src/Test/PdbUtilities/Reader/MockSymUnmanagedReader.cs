@@ -16,14 +16,9 @@ using Xunit;
 
 namespace Roslyn.Test.Utilities
 {
-    internal sealed class MockSymUnmanagedReader : ISymUnmanagedReader, ISymUnmanagedReader2, ISymUnmanagedReader3
+    internal sealed class MockSymUnmanagedReader(ImmutableDictionary<int, MethodDebugInfoBytes> methodDebugInfoMap) : ISymUnmanagedReader, ISymUnmanagedReader2, ISymUnmanagedReader3
     {
-        private readonly ImmutableDictionary<int, MethodDebugInfoBytes> _methodDebugInfoMap;
-
-        public MockSymUnmanagedReader(ImmutableDictionary<int, MethodDebugInfoBytes> methodDebugInfoMap)
-        {
-            _methodDebugInfoMap = methodDebugInfoMap;
-        }
+        private readonly ImmutableDictionary<int, MethodDebugInfoBytes> _methodDebugInfoMap = methodDebugInfoMap;
 
         public int GetMethod(int methodToken, out ISymUnmanagedMethod method)
         {
@@ -161,14 +156,9 @@ namespace Roslyn.Test.Utilities
         }
     }
 
-    internal sealed class MockSymUnmanagedMethod : ISymUnmanagedMethod
+    internal sealed class MockSymUnmanagedMethod(ISymUnmanagedScope rootScope) : ISymUnmanagedMethod
     {
-        private readonly ISymUnmanagedScope _rootScope;
-
-        public MockSymUnmanagedMethod(ISymUnmanagedScope rootScope)
-        {
-            _rootScope = rootScope;
-        }
+        private readonly ISymUnmanagedScope _rootScope = rootScope;
 
         int ISymUnmanagedMethod.GetRootScope(out ISymUnmanagedScope retVal)
         {
@@ -230,22 +220,13 @@ namespace Roslyn.Test.Utilities
         }
     }
 
-    internal sealed class MockSymUnmanagedScope : ISymUnmanagedScope, ISymUnmanagedScope2
+    internal sealed class MockSymUnmanagedScope(ImmutableArray<ISymUnmanagedScope> children, ImmutableArray<ISymUnmanagedNamespace> namespaces, ISymUnmanagedConstant[] constants = null, int startOffset = 0, int endOffset = 1) : ISymUnmanagedScope, ISymUnmanagedScope2
     {
-        private readonly ImmutableArray<ISymUnmanagedScope> _children;
-        private readonly ImmutableArray<ISymUnmanagedNamespace> _namespaces;
-        private readonly ISymUnmanagedConstant[] _constants;
-        private readonly int _startOffset;
-        private readonly int _endOffset;
-
-        public MockSymUnmanagedScope(ImmutableArray<ISymUnmanagedScope> children, ImmutableArray<ISymUnmanagedNamespace> namespaces, ISymUnmanagedConstant[] constants = null, int startOffset = 0, int endOffset = 1)
-        {
-            _children = children;
-            _namespaces = namespaces;
-            _constants = constants ?? [];
-            _startOffset = startOffset;
-            _endOffset = endOffset;
-        }
+        private readonly ImmutableArray<ISymUnmanagedScope> _children = children;
+        private readonly ImmutableArray<ISymUnmanagedNamespace> _namespaces = namespaces;
+        private readonly ISymUnmanagedConstant[] _constants = constants ?? [];
+        private readonly int _startOffset = startOffset;
+        private readonly int _endOffset = endOffset;
 
         public int GetChildren(int numDesired, out int numRead, ISymUnmanagedScope[] buffer)
         {
@@ -341,18 +322,11 @@ namespace Roslyn.Test.Utilities
 
     internal delegate int GetSignatureDelegate(int bufferLength, out int count, byte[] signature);
 
-    internal sealed class MockSymUnmanagedConstant : ISymUnmanagedConstant
+    internal sealed class MockSymUnmanagedConstant(string name, object value, GetSignatureDelegate getSignature) : ISymUnmanagedConstant
     {
-        private readonly string _name;
-        private readonly object _value;
-        private readonly GetSignatureDelegate _getSignature;
-
-        public MockSymUnmanagedConstant(string name, object value, GetSignatureDelegate getSignature)
-        {
-            _name = name;
-            _value = value;
-            _getSignature = getSignature;
-        }
+        private readonly string _name = name;
+        private readonly object _value = value;
+        private readonly GetSignatureDelegate _getSignature = getSignature;
 
         int ISymUnmanagedConstant.GetName(int bufferLength, out int count, char[] name)
         {

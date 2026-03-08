@@ -12,16 +12,12 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Editor.Implementation.NavigateTo;
 
 [ExportWorkspaceServiceFactory(typeof(INavigateToPreviewService), ServiceLayer.Editor), Shared]
-internal sealed class DefaultNavigateToPreviewServiceFactory : IWorkspaceServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultNavigateToPreviewServiceFactory() : IWorkspaceServiceFactory
 {
     private readonly Lazy<INavigateToPreviewService> _singleton =
         new(() => new DefaultNavigateToPreviewService());
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultNavigateToPreviewServiceFactory()
-    {
-    }
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => _singleton.Value;

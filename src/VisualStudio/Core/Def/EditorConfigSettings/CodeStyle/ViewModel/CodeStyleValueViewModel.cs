@@ -6,9 +6,9 @@ using Microsoft.CodeAnalysis.Editor.EditorConfigSettings.Data;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle.View;
 
-internal sealed class CodeStyleValueViewModel
+internal sealed class CodeStyleValueViewModel(CodeStyleSetting setting)
 {
-    private readonly CodeStyleSetting _setting;
+    private readonly CodeStyleSetting _setting = setting;
 
     public string[] Values => _setting.GetValueDescriptions();
 
@@ -26,9 +26,6 @@ internal sealed class CodeStyleValueViewModel
     public string ToolTip => ServicesVSResources.Value;
 
     public static string AutomationName => ServicesVSResources.Value;
-
-    public CodeStyleValueViewModel(CodeStyleSetting setting)
-        => _setting = setting;
 
     public void SelectionChanged(int selectedIndex)
         => _setting.ChangeValue(selectedIndex);

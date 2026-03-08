@@ -14,29 +14,15 @@ using Microsoft.VisualStudio.LanguageServices;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy;
 
-internal sealed class CallHierarchyDetail : ICallHierarchyItemDetails
+internal sealed class CallHierarchyDetail(
+    CallHierarchyProvider provider,
+    Location location,
+    Workspace workspace) : ICallHierarchyItemDetails
 {
-    private readonly CallHierarchyProvider _provider;
-    private readonly TextSpan _span;
-    private readonly DocumentId _documentId;
-    private readonly Workspace _workspace;
-
-    public CallHierarchyDetail(
-        CallHierarchyProvider provider,
-        Location location,
-        Workspace workspace)
-    {
-        _provider = provider;
-        _span = location.SourceSpan;
-        _documentId = workspace.CurrentSolution.GetDocumentId(location.SourceTree);
-        _workspace = workspace;
-        EndColumn = location.GetLineSpan().Span.End.Character;
-        EndLine = location.GetLineSpan().EndLinePosition.Line;
-        File = location.SourceTree.FilePath;
-        StartColumn = location.GetLineSpan().StartLinePosition.Character;
-        StartLine = location.GetLineSpan().StartLinePosition.Line;
-        Text = ComputeText(location);
-    }
+    private readonly CallHierarchyProvider _provider = provider;
+    private readonly TextSpan _span = location.SourceSpan;
+    private readonly DocumentId _documentId = workspace.CurrentSolution.GetDocumentId(location.SourceTree);
+    private readonly Workspace _workspace = workspace;
 
     private static string ComputeText(Location location)
     {
@@ -46,14 +32,14 @@ internal sealed class CallHierarchyDetail : ICallHierarchyItemDetails
         return location.SourceTree.GetText().GetSubText(TextSpan.FromBounds(start, end)).ToString();
     }
 
-    public string File { get; }
-    public string Text { get; }
+    public string File { get; } = location.SourceTree.FilePath;
+    public string Text { get; } = ComputeText(location);
     public bool SupportsNavigateTo => true;
 
-    public int EndColumn { get; }
-    public int EndLine { get; }
-    public int StartColumn { get; }
-    public int StartLine { get; }
+    public int EndColumn { get; } = location.GetLineSpan().Span.End.Character;
+    public int EndLine { get; } = location.GetLineSpan().EndLinePosition.Line;
+    public int StartColumn { get; } = location.GetLineSpan().StartLinePosition.Character;
+    public int StartLine { get; } = location.GetLineSpan().StartLinePosition.Line;
 
     public void NavigateTo()
     {

@@ -16,10 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     internal sealed class SynthesizedPrivateImplementationDetailsStaticConstructor : SynthesizedGlobalMethodSymbol
     {
         internal SynthesizedPrivateImplementationDetailsStaticConstructor(SynthesizedPrivateImplementationDetailsType privateImplementationType, NamedTypeSymbol voidType)
-            : base(privateImplementationType, voidType, WellKnownMemberNames.StaticConstructorName)
-        {
-            this.SetParameters(ImmutableArray<ParameterSymbol>.Empty);
-        }
+            : base(privateImplementationType, voidType, WellKnownMemberNames.StaticConstructorName) => this.SetParameters(ImmutableArray<ParameterSymbol>.Empty);
 
         public override MethodKind MethodKind => MethodKind.StaticConstructor;
 

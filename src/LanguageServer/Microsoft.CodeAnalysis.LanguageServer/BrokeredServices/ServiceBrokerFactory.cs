@@ -25,26 +25,18 @@ namespace Microsoft.CodeAnalysis.LanguageServer.BrokeredServices;
 /// </remarks>
 #pragma warning disable RS0030 // This is intentionally using System.ComponentModel.Composition for compatibility with MEF service broker.
 [Export]
-internal sealed class ServiceBrokerFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ServiceBrokerFactory([ImportMany] IEnumerable<IOnServiceBrokerInitialized> onServiceBrokerInitialized,
+    ExportProvider exportProvider,
+    WrappedServiceBroker wrappedServiceBroker)
 {
     private BrokeredServiceContainer? _container;
-    private readonly ExportProvider _exportProvider;
-    private readonly WrappedServiceBroker _wrappedServiceBroker;
-    private Task _bridgeCompletionTask;
+    private readonly ExportProvider _exportProvider = exportProvider;
+    private readonly WrappedServiceBroker _wrappedServiceBroker = wrappedServiceBroker;
+    private Task _bridgeCompletionTask = Task.CompletedTask;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
-    private readonly ImmutableArray<IOnServiceBrokerInitialized> _onServiceBrokerInitialized;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ServiceBrokerFactory([ImportMany] IEnumerable<IOnServiceBrokerInitialized> onServiceBrokerInitialized,
-        ExportProvider exportProvider,
-        WrappedServiceBroker wrappedServiceBroker)
-    {
-        _exportProvider = exportProvider;
-        _bridgeCompletionTask = Task.CompletedTask;
-        _onServiceBrokerInitialized = [.. onServiceBrokerInitialized];
-        _wrappedServiceBroker = wrappedServiceBroker;
-    }
+    private readonly ImmutableArray<IOnServiceBrokerInitialized> _onServiceBrokerInitialized = [.. onServiceBrokerInitialized];
 
     /// <summary>
     /// Returns a full-access service broker, but will return null if we haven't yet connected to the Dev Kit broker.

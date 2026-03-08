@@ -11,13 +11,12 @@ namespace Roslyn.Test.Performance.Utilities
     /// <summary>
     /// An abstract class that concrete perf-tests implement in order to be run.
     /// </summary>
-    public abstract class PerfTest : RelativeDirectory
+    /// <remarks>
+    /// Constructor for PerfTest that sets up the correct working path location.
+    /// </remarks>
+    /// <param name="workingFile"></param>
+    public abstract class PerfTest([CallerFilePath] string workingFile = "") : RelativeDirectory(workingFile)
     {
-        /// <summary>
-        /// Constructor for PerfTest that sets up the correct working path location.
-        /// </summary>
-        /// <param name="workingFile"></param>
-        public PerfTest([CallerFilePath] string workingFile = "") : base(workingFile) { }
 
         /// <summary>
         /// Setup is called once for every test on a run.  This is where you should do all

@@ -12,10 +12,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
 {
     internal partial class ControlFlowGraphBuilder
     {
-        internal sealed class BasicBlockBuilder
+        internal sealed class BasicBlockBuilder(BasicBlockKind kind)
         {
-            public int Ordinal;
-            public readonly BasicBlockKind Kind;
+            public int Ordinal = -1;
+            public readonly BasicBlockKind Kind = kind;
             private ArrayBuilder<IOperation>? _statements;
 
             // The most common case is that we have one, or two predecessors.
@@ -29,15 +29,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
             public Branch Conditional;
             public Branch FallThrough;
 
-            public bool IsReachable;
+            public bool IsReachable = false;
             public ControlFlowRegion? Region;
-
-            public BasicBlockBuilder(BasicBlockKind kind)
-            {
-                Kind = kind;
-                Ordinal = -1;
-                IsReachable = false;
-            }
 
             [MemberNotNullWhen(true, nameof(StatementsOpt))]
 #pragma warning disable CS8775

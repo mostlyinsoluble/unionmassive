@@ -172,8 +172,11 @@ internal interface ILanguageDetectorInfo<TDetector>
     TDetector Create(Compilation compilation, EmbeddedLanguageInfo info);
 }
 
-internal abstract class AbstractLanguageDetector<TOptions, TTree, TDetector, TDetectorInfo> :
-    AbstractLanguageDetector<TOptions>
+internal abstract class AbstractLanguageDetector<TOptions, TTree, TDetector, TDetectorInfo>(
+    EmbeddedLanguageInfo info,
+    ImmutableArray<string> languageIdentifiers,
+    EmbeddedLanguageCommentDetector commentDetector) :
+    AbstractLanguageDetector<TOptions>(info, languageIdentifiers, commentDetector)
     where TOptions : struct, Enum
     where TTree : class
     where TDetector : AbstractLanguageDetector<TOptions, TTree, TDetector, TDetectorInfo>
@@ -188,14 +191,6 @@ internal abstract class AbstractLanguageDetector<TOptions, TTree, TDetector, TDe
     /// compilation.
     /// </summary>
     private static readonly ConditionalWeakTable<Compilation, TDetector> s_compilationToDetector = new();
-
-    protected AbstractLanguageDetector(
-        EmbeddedLanguageInfo info,
-        ImmutableArray<string> languageIdentifiers,
-        EmbeddedLanguageCommentDetector commentDetector)
-        : base(info, languageIdentifiers, commentDetector)
-    {
-    }
 
     public static TDetector GetOrCreate(
         Compilation compilation, EmbeddedLanguageInfo info)

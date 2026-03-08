@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                    declaratorSyntax,
                    (associatedEvent.Modifiers & (~DeclarationModifiers.AccessibilityMask)) | DeclarationModifiers.Private,
                    modifierErrors: true,
-                   diagnostics: discardedDiagnostics)
-        {
-            _associatedEvent = associatedEvent;
-        }
+                   diagnostics: discardedDiagnostics) => _associatedEvent = associatedEvent;
 
         public override bool IsImplicitlyDeclared
         {

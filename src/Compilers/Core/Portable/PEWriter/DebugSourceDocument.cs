@@ -45,10 +45,7 @@ namespace Microsoft.Cci
         /// Use to create a document when checksum is suggested via external checksum pragma/directive
         /// </summary>
         public DebugSourceDocument(string location, Guid language, ImmutableArray<byte> checksum, Guid algorithm)
-            : this(location, language)
-        {
-            _sourceInfo = Task.FromResult(new DebugSourceInfo(checksum, algorithm));
-        }
+            : this(location, language) => _sourceInfo = Task.FromResult(new DebugSourceInfo(checksum, algorithm));
 
         public Guid DocumentType
         {

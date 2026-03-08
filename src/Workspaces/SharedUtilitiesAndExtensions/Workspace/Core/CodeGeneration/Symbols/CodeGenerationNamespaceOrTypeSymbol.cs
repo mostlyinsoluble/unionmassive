@@ -7,19 +7,14 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeAnalysis.CodeGeneration;
 
-internal abstract class CodeGenerationNamespaceOrTypeSymbol : CodeGenerationSymbol, INamespaceOrTypeSymbol
+internal abstract class CodeGenerationNamespaceOrTypeSymbol(
+    IAssemblySymbol containingAssembly,
+    INamedTypeSymbol containingType,
+    ImmutableArray<AttributeData> attributes,
+    Accessibility declaredAccessibility,
+    DeclarationModifiers modifiers,
+    string name) : CodeGenerationSymbol(containingAssembly, containingType, attributes, declaredAccessibility, modifiers, name), INamespaceOrTypeSymbol
 {
-    protected CodeGenerationNamespaceOrTypeSymbol(
-        IAssemblySymbol containingAssembly,
-        INamedTypeSymbol containingType,
-        ImmutableArray<AttributeData> attributes,
-        Accessibility declaredAccessibility,
-        DeclarationModifiers modifiers,
-        string name)
-        : base(containingAssembly, containingType, attributes, declaredAccessibility, modifiers, name)
-    {
-    }
-
     public virtual ImmutableArray<ISymbol> GetMembers()
         => [];
 

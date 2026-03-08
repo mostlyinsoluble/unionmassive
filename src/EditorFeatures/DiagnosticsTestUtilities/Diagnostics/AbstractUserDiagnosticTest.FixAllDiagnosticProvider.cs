@@ -16,16 +16,10 @@ namespace Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics;
 
 public abstract partial class AbstractUserDiagnosticTest
 {
-    private sealed class FixAllDiagnosticProvider : FixAllContext.DiagnosticProvider
+    private sealed class FixAllDiagnosticProvider(TestDiagnosticAnalyzerDriver testDriver, ImmutableHashSet<string> diagnosticIds) : FixAllContext.DiagnosticProvider
     {
-        private readonly TestDiagnosticAnalyzerDriver _testDriver;
-        private readonly ImmutableHashSet<string> _diagnosticIds;
-
-        public FixAllDiagnosticProvider(TestDiagnosticAnalyzerDriver testDriver, ImmutableHashSet<string> diagnosticIds)
-        {
-            _testDriver = testDriver;
-            _diagnosticIds = diagnosticIds;
-        }
+        private readonly TestDiagnosticAnalyzerDriver _testDriver = testDriver;
+        private readonly ImmutableHashSet<string> _diagnosticIds = diagnosticIds;
 
         public override async Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
         {

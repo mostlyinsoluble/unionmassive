@@ -129,12 +129,9 @@ internal sealed partial class TestExportJoinableTaskContext
     }
 
     // HACK: Part of ResetThreadAffinity
-    private sealed class JoinableTaskFactoryTaskScheduler : TaskScheduler
+    private sealed class JoinableTaskFactoryTaskScheduler(JoinableTaskFactory joinableTaskFactory) : TaskScheduler
     {
-        private readonly JoinableTaskFactory _joinableTaskFactory;
-
-        public JoinableTaskFactoryTaskScheduler(JoinableTaskFactory joinableTaskFactory)
-            => _joinableTaskFactory = joinableTaskFactory;
+        private readonly JoinableTaskFactory _joinableTaskFactory = joinableTaskFactory;
 
         public override int MaximumConcurrencyLevel => 1;
 

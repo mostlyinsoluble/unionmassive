@@ -14,10 +14,7 @@ internal partial class ValueTrackingRoot : UserControl
 {
     public string EmptyText => ServicesVSResources.Select_an_appropriate_symbol_to_start_value_tracking;
 
-    public ValueTrackingRoot()
-    {
-        InitializeComponent();
-    }
+    public ValueTrackingRoot() => InitializeComponent();
 
     public void SetChild(FrameworkElement? child)
     {

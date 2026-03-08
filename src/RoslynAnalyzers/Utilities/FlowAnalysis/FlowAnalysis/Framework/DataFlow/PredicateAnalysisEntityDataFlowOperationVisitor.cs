@@ -10,17 +10,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// <summary>
     /// Predicate analysis based Operation visitor to flow the abstract dataflow analysis values for <see cref="AnalysisEntity"/> instances across a given statement in a basic block.
     /// </summary>
-    public abstract class PredicateAnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
-        : AnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
+    public abstract class PredicateAnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>(TAnalysisContext analysisContext)
+        : AnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>(analysisContext)
         where TAnalysisData : AnalysisEntityBasedPredicateAnalysisData<TAbstractAnalysisValue>
         where TAnalysisContext : AbstractDataFlowAnalysisContext<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
         where TAnalysisResult : class, IDataFlowAnalysisResult<TAbstractAnalysisValue>
         where TAbstractAnalysisValue : IEquatable<TAbstractAnalysisValue>
     {
-        protected PredicateAnalysisEntityDataFlowOperationVisitor(TAnalysisContext analysisContext)
-            : base(analysisContext)
-        {
-        }
 
         #region Predicate analysis
         protected sealed override bool SupportsPredicateAnalysis => true;

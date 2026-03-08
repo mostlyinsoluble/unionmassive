@@ -10,14 +10,9 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Logging;
 /// <summary>
 /// Implements <see cref="AbstractLspLogger"/> by sending LSP log messages back to the client.
 /// </summary>
-internal sealed class LspServiceLogger : AbstractLspLogger, ILspService
+internal sealed class LspServiceLogger(ILogger hostLogger) : AbstractLspLogger, ILspService
 {
-    private readonly ILogger _hostLogger;
-
-    public LspServiceLogger(ILogger hostLogger)
-    {
-        _hostLogger = hostLogger;
-    }
+    private readonly ILogger _hostLogger = hostLogger;
 
     public override IDisposable? CreateContext(string context) => _hostLogger.BeginScope(new LspLoggingScope(context, null));
 

@@ -12,15 +12,9 @@ namespace Microsoft.CodeAnalysis.Interactive
         /// Specialize <see cref="PortableExecutableReference"/> with path being the original path of the copy.
         /// Logically this reference represents that file, the fact that we load the image from a copy is an implementation detail.
         /// </summary>
-        private sealed class ShadowCopyReference : PortableExecutableReference
+        private sealed class ShadowCopyReference(MetadataShadowCopyProvider provider, string originalPath, MetadataReferenceProperties properties) : PortableExecutableReference(properties, originalPath)
         {
-            private readonly MetadataShadowCopyProvider _provider;
-
-            public ShadowCopyReference(MetadataShadowCopyProvider provider, string originalPath, MetadataReferenceProperties properties)
-                : base(properties, originalPath)
-            {
-                _provider = provider;
-            }
+            private readonly MetadataShadowCopyProvider _provider = provider;
 
             protected override DocumentationProvider CreateDocumentationProvider()
             {

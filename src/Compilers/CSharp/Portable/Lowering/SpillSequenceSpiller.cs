@@ -1348,7 +1348,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 var whenNotNullStatement = UpdateStatement(whenNotNullBuilder, _F.Assignment(_F.Local(tmp), whenNotNull));
                 whenNotNullStatement = ConditionalReceiverReplacer.Replace(whenNotNullStatement, receiver, node.Id, RecursionDepth);
 
-                whenNullOpt = whenNullOpt ?? _F.Default(node.Type);
+                whenNullOpt ??= _F.Default(node.Type);
 
                 receiverBuilder.AddLocal(tmp);
                 receiverBuilder.AddStatement(

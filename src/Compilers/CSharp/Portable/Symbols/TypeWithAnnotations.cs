@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             internal static readonly Boxed Sentinel = new Boxed(default);
 
             internal readonly TypeWithAnnotations Value;
-            internal Boxed(TypeWithAnnotations value)
-            {
-                Value = value;
-            }
+            internal Boxed(TypeWithAnnotations value) => Value = value;
             internal string GetDebuggerDisplay() => Value.GetDebuggerDisplay();
         }
 
@@ -388,10 +385,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             private readonly TypeCompareKind _compareKind;
 
-            private EqualsComparer(TypeCompareKind compareKind)
-            {
-                _compareKind = compareKind;
-            }
+            private EqualsComparer(TypeCompareKind compareKind) => _compareKind = compareKind;
 
             public override int GetHashCode(TypeWithAnnotations obj)
             {

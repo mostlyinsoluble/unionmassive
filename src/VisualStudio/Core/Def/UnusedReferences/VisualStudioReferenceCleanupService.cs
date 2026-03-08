@@ -18,16 +18,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.UnusedReference
 /// This service forwards Reference requests from the feature layer to the ProjectSystem.
 /// </summary>
 [ExportWorkspaceService(typeof(IReferenceCleanupService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioReferenceCleanupService : IReferenceCleanupService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioReferenceCleanupService(IProjectSystemReferenceCleanupService projectSystemReferenceUpdateService) : IReferenceCleanupService
 {
-    private readonly IProjectSystemReferenceCleanupService2 _projectSystemReferenceUpdateService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioReferenceCleanupService(IProjectSystemReferenceCleanupService projectSystemReferenceUpdateService)
-    {
-        _projectSystemReferenceUpdateService = (IProjectSystemReferenceCleanupService2)projectSystemReferenceUpdateService;
-    }
+    private readonly IProjectSystemReferenceCleanupService2 _projectSystemReferenceUpdateService = (IProjectSystemReferenceCleanupService2)projectSystemReferenceUpdateService;
 
     public async Task<ImmutableArray<ReferenceInfo>> GetProjectReferencesAsync(string projectPath, CancellationToken cancellationToken)
     {

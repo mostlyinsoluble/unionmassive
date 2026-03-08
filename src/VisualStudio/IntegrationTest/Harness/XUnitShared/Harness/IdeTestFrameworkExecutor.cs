@@ -10,13 +10,8 @@ namespace Xunit.Harness
     using Xunit.Abstractions;
     using Xunit.Sdk;
 
-    public class IdeTestFrameworkExecutor : XunitTestFrameworkExecutor
+    public class IdeTestFrameworkExecutor(AssemblyName assemblyName, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink) : XunitTestFrameworkExecutor(assemblyName, sourceInformationProvider, diagnosticMessageSink)
     {
-        public IdeTestFrameworkExecutor(AssemblyName assemblyName, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink)
-            : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
-        {
-        }
-
         [SuppressMessage("Usage", "VSTHRD100:Avoid async void methods", Justification = "Follows pattern expected by Xunit framework.")]
         protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
         {

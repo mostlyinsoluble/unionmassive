@@ -15,16 +15,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     internal sealed partial class AnonymousTypeManager
     {
-        internal sealed class NameAndIndex
+        internal sealed class NameAndIndex(string name, int index)
         {
-            public NameAndIndex(string name, int index)
-            {
-                this.Name = name;
-                this.Index = index;
-            }
-
-            public readonly string Name;
-            public readonly int Index;
+            public readonly string Name = name;
+            public readonly int Index = index;
         }
 
         internal abstract class AnonymousTypeOrDelegateTemplateSymbol : NamedTypeSymbol

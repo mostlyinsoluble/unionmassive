@@ -127,10 +127,7 @@ namespace Microsoft.CodeAnalysis
         internal const SymbolKind FunctionType = (SymbolKind)255;
 
 #if DEBUG
-        static SymbolKindInternal()
-        {
-            Debug.Assert(!EnumUtilities.ContainsValue(FunctionType));
-        }
+        static SymbolKindInternal() => Debug.Assert(!EnumUtilities.ContainsValue(FunctionType));
 #endif
     }
 }

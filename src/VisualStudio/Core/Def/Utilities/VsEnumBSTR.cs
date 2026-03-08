@@ -7,16 +7,10 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;
 
-internal sealed class VsEnumBSTR : IVsEnumBSTR
+internal sealed class VsEnumBSTR(IList<string> values) : IVsEnumBSTR
 {
-    private readonly IList<string> _values;
-    private int _currentIndex;
-
-    public VsEnumBSTR(IList<string> values)
-    {
-        _values = values;
-        _currentIndex = 0;
-    }
+    private readonly IList<string> _values = values;
+    private int _currentIndex = 0;
 
     public int Clone(out IVsEnumBSTR ppEnum)
     {

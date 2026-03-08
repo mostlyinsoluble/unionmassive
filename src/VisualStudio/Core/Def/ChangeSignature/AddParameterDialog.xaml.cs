@@ -72,14 +72,9 @@ internal partial class AddParameterDialog : DialogWindow
     internal TestAccessor GetTestAccessor()
         => new(this);
 
-    internal readonly struct TestAccessor
+    internal readonly struct TestAccessor(AddParameterDialog dialog)
     {
-        private readonly AddParameterDialog _dialog;
-
-        public TestAccessor(AddParameterDialog dialog)
-        {
-            _dialog = dialog;
-        }
+        private readonly AddParameterDialog _dialog = dialog;
 
         public DialogButton OKButton => _dialog.OKButton;
 

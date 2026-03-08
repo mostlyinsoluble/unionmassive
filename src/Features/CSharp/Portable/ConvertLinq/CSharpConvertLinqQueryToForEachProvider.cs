@@ -28,15 +28,11 @@ using static CSharpSyntaxTokens;
 using static SyntaxFactory;
 
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.ConvertLinqQueryToForEach), Shared]
-internal sealed class CSharpConvertLinqQueryToForEachProvider : AbstractConvertLinqQueryToForEachProvider<QueryExpressionSyntax, StatementSyntax>
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpConvertLinqQueryToForEachProvider() : AbstractConvertLinqQueryToForEachProvider<QueryExpressionSyntax, StatementSyntax>
 {
     private static readonly TypeSyntax VarNameIdentifier = IdentifierName("var");
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpConvertLinqQueryToForEachProvider()
-    {
-    }
 
     protected override string Title => CSharpFeaturesResources.Convert_to_foreach;
 

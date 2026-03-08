@@ -111,15 +111,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
-        public class CancelledByStackGuardException : Exception
+        public class CancelledByStackGuardException(Exception inner, BoundNode node) : Exception(inner.Message, inner)
         {
-            public readonly BoundNode Node;
-
-            public CancelledByStackGuardException(Exception inner, BoundNode node)
-                : base(inner.Message, inner)
-            {
-                Node = node;
-            }
+            public readonly BoundNode Node = node;
 
             public void AddAnError(DiagnosticBag diagnostics)
             {

@@ -21,14 +21,10 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(MapCodeHandler)), Shared]
 [Method(VSInternalMethods.WorkspaceMapCodeName)]
-internal sealed class MapCodeHandler : ILspServiceRequestHandler<VSInternalMapCodeParams, LSP.WorkspaceEdit?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class MapCodeHandler() : ILspServiceRequestHandler<VSInternalMapCodeParams, LSP.WorkspaceEdit?>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public MapCodeHandler()
-    {
-    }
-
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
 

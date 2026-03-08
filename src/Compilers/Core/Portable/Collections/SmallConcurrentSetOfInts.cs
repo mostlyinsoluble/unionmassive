@@ -29,10 +29,7 @@ namespace Microsoft.CodeAnalysis.Collections
 
         private const int unoccupied = int.MinValue;
 
-        public SmallConcurrentSetOfInts()
-        {
-            _v1 = _v2 = _v3 = _v4 = unoccupied;
-        }
+        public SmallConcurrentSetOfInts() => _v1 = _v2 = _v3 = _v4 = unoccupied;
 
         private SmallConcurrentSetOfInts(int initialValue)
         {

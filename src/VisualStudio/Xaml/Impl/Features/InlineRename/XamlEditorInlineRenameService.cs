@@ -19,16 +19,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Editor.Xaml.Features.InlineRename;
 
 [ExportLanguageService(typeof(IEditorInlineRenameService), StringConstants.XamlLanguageName), Shared]
-internal sealed class XamlEditorInlineRenameService : IEditorInlineRenameService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class XamlEditorInlineRenameService(IXamlRenameInfoService renameService) : IEditorInlineRenameService
 {
-    private readonly IXamlRenameInfoService _renameService;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public XamlEditorInlineRenameService(IXamlRenameInfoService renameService)
-    {
-        _renameService = renameService;
-    }
+    private readonly IXamlRenameInfoService _renameService = renameService;
 
     public bool IsEnabled => true;
 
@@ -44,16 +39,10 @@ internal sealed class XamlEditorInlineRenameService : IEditorInlineRenameService
         return new InlineRenameInfo(document, renameInfo);
     }
 
-    private sealed class InlineRenameInfo : IInlineRenameInfo
+    private sealed class InlineRenameInfo(Document document, IXamlRenameInfo renameInfo) : IInlineRenameInfo
     {
-        private readonly Document _document;
-        private readonly IXamlRenameInfo _renameInfo;
-
-        public InlineRenameInfo(Document document, IXamlRenameInfo renameInfo)
-        {
-            _document = document;
-            _renameInfo = renameInfo;
-        }
+        private readonly Document _document = document;
+        private readonly IXamlRenameInfo _renameInfo = renameInfo;
 
         public bool CanRename => _renameInfo.CanRename;
 
@@ -142,19 +131,12 @@ internal sealed class XamlEditorInlineRenameService : IEditorInlineRenameService
         public InlineRenameFileRenameInfo GetFileRenameInfo()
             => InlineRenameFileRenameInfo.NotAllowed;
 
-        private sealed class InlineRenameLocationSet : IInlineRenameLocationSet
+        private sealed class InlineRenameLocationSet(IXamlRenameInfo renameInfo, Solution solution, ImmutableArray<InlineRenameLocation> locations) : IInlineRenameLocationSet
         {
-            private readonly IXamlRenameInfo _renameInfo;
-            private readonly Solution _oldSolution;
+            private readonly IXamlRenameInfo _renameInfo = renameInfo;
+            private readonly Solution _oldSolution = solution;
 
-            public InlineRenameLocationSet(IXamlRenameInfo renameInfo, Solution solution, ImmutableArray<InlineRenameLocation> locations)
-            {
-                _renameInfo = renameInfo;
-                _oldSolution = solution;
-                Locations = locations;
-            }
-
-            public IList<InlineRenameLocation> Locations { get; }
+            public IList<InlineRenameLocation> Locations { get; } = locations;
 
             public bool IsReplacementTextValid(string replacementText)
             {
@@ -175,19 +157,12 @@ internal sealed class XamlEditorInlineRenameService : IEditorInlineRenameService
                 return new InlineRenameReplacementInfo(this, newSolution, replacementText);
             }
 
-            private sealed class InlineRenameReplacementInfo : IInlineRenameReplacementInfo
+            private sealed class InlineRenameReplacementInfo(InlineRenameInfo.InlineRenameLocationSet inlineRenameLocationSet, Solution newSolution, string replacementText) : IInlineRenameReplacementInfo
             {
-                private readonly InlineRenameLocationSet _inlineRenameLocationSet;
-                private readonly string _replacementText;
+                private readonly InlineRenameLocationSet _inlineRenameLocationSet = inlineRenameLocationSet;
+                private readonly string _replacementText = replacementText;
 
-                public InlineRenameReplacementInfo(InlineRenameLocationSet inlineRenameLocationSet, Solution newSolution, string replacementText)
-                {
-                    NewSolution = newSolution;
-                    _inlineRenameLocationSet = inlineRenameLocationSet;
-                    _replacementText = replacementText;
-                }
-
-                public Solution NewSolution { get; }
+                public Solution NewSolution { get; } = newSolution;
 
                 public IEnumerable<DocumentId> DocumentIds => _inlineRenameLocationSet.Locations.Select(l => l.Document.Id).Distinct();
 

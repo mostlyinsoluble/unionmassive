@@ -20,19 +20,14 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 [ExportCSharpVisualBasicStatelessLspService(typeof(FoldingRangesHandler)), Shared]
 [Method(Methods.TextDocumentFoldingRangeName)]
-internal sealed class FoldingRangesHandler : ILspServiceDocumentRequestHandler<FoldingRangeParams, FoldingRange[]?>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class FoldingRangesHandler(IGlobalOptionService globalOptions) : ILspServiceDocumentRequestHandler<FoldingRangeParams, FoldingRange[]?>
 {
-    private readonly IGlobalOptionService _globalOptions;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public bool MutatesSolutionState => false;
     public bool RequiresLSPSolution => true;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FoldingRangesHandler(IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(FoldingRangeParams request) => request.TextDocument;
 

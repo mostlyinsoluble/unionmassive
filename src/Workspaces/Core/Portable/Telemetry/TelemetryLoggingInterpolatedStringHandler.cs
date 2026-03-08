@@ -8,14 +8,9 @@ using System.Text;
 namespace Microsoft.CodeAnalysis.Telemetry;
 
 [InterpolatedStringHandler]
-internal readonly struct TelemetryLoggingInterpolatedStringHandler
+internal readonly struct TelemetryLoggingInterpolatedStringHandler(int literalLength, int _)
 {
-    private readonly StringBuilder _stringBuilder;
-
-    public TelemetryLoggingInterpolatedStringHandler(int literalLength, int _)
-    {
-        _stringBuilder = new StringBuilder(capacity: literalLength);
-    }
+    private readonly StringBuilder _stringBuilder = new StringBuilder(capacity: literalLength);
 
     public void AppendLiteral(string value) => _stringBuilder.Append(value);
 

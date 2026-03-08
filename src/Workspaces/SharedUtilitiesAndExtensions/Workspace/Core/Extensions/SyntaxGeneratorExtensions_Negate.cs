@@ -175,7 +175,7 @@ internal static partial class SyntaxGeneratorExtensions
                 newToken,
                 newToken.WithTriviaFrom(operatorToken));
         }
-        else if (operation is IIsTypeOperation { TypeOperand.SpecialType: SpecialType.System_Object } && generatorInternal.SupportsPatterns(semanticModel.SyntaxTree.Options))
+        else if (operation is IIsTypeOperation { TypeOperand.SpecialType: SpecialType.System_Object })
         {
             // `is object`  ->   `is null`
             return generatorInternal.IsPatternExpression(leftOperand, operatorToken, generatorInternal.ConstantPattern(generator.NullLiteralExpression().WithTriviaFrom(rightOperand)));

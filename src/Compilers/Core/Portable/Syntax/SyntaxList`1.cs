@@ -54,10 +54,7 @@ namespace Microsoft.CodeAnalysis
     {
         private readonly SyntaxNode? _node;
 
-        internal SyntaxList(SyntaxNode? node)
-        {
-            _node = node;
-        }
+        internal SyntaxList(SyntaxNode? node) => _node = node;
 
         /// <summary>
         /// Creates a singleton list of syntax nodes.

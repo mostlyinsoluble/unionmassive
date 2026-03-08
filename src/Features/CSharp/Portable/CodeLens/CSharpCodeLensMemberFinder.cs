@@ -16,14 +16,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.CSharp.CodeLens;
 
 [ExportLanguageService(typeof(ICodeLensMemberFinder), LanguageNames.CSharp), Shared]
-internal sealed class CSharpCodeLensMemberFinder : ICodeLensMemberFinder
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpCodeLensMemberFinder() : ICodeLensMemberFinder
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpCodeLensMemberFinder()
-    {
-    }
-
     public async Task<ImmutableArray<CodeLensMember>> GetCodeLensMembersAsync(Document document, CancellationToken cancellationToken)
     {
         var root = await document.GetRequiredSyntaxRootAsync(cancellationToken).ConfigureAwait(false);

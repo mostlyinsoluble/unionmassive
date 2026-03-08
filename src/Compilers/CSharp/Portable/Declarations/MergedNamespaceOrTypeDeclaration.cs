@@ -10,11 +10,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal abstract class MergedNamespaceOrTypeDeclaration : Declaration
+    internal abstract class MergedNamespaceOrTypeDeclaration(string name) : Declaration(name)
     {
-        protected MergedNamespaceOrTypeDeclaration(string name)
-            : base(name)
-        {
-        }
     }
 }

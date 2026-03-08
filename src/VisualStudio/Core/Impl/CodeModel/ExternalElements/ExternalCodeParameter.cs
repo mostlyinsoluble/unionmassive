@@ -24,10 +24,7 @@ public sealed class ExternalCodeParameter : AbstractExternalCodeElement, EnvDTE.
     private readonly ParentHandle<AbstractExternalCodeElement> _parentHandle;
 
     private ExternalCodeParameter(CodeModelState state, ProjectId projectId, IParameterSymbol symbol, AbstractExternalCodeElement parent)
-        : base(state, projectId, symbol)
-    {
-        _parentHandle = new ParentHandle<AbstractExternalCodeElement>(parent);
-    }
+        : base(state, projectId, symbol) => _parentHandle = new ParentHandle<AbstractExternalCodeElement>(parent);
 
     private IParameterSymbol ParameterSymbol
     {

@@ -22,18 +22,14 @@ using Roslyn.Utilities;
 namespace Microsoft.CodeAnalysis.CSharp.SignatureHelp;
 
 [ExportSignatureHelpProvider("TupleSignatureHelpProvider", LanguageNames.CSharp), Shared]
-internal sealed class TupleConstructionSignatureHelpProvider : AbstractCSharpSignatureHelpProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TupleConstructionSignatureHelpProvider() : AbstractCSharpSignatureHelpProvider
 {
     private static readonly Func<TupleExpressionSyntax, SyntaxToken> s_getOpenToken = e => e.OpenParenToken;
     private static readonly Func<TupleExpressionSyntax, SyntaxToken> s_getCloseToken = e => e.CloseParenToken;
     private static readonly Func<TupleExpressionSyntax, SyntaxNodeOrTokenList> s_getArgumentsWithSeparators = e => e.Arguments.GetWithSeparators();
     private static readonly Func<TupleExpressionSyntax, IEnumerable<string>> s_getArgumentNames = e => e.Arguments.Select(a => a.NameColon?.Name.Identifier.ValueText ?? string.Empty);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TupleConstructionSignatureHelpProvider()
-    {
-    }
 
     private SignatureHelpState? GetCurrentArgumentState(SyntaxNode root, int position, ISyntaxFactsService syntaxFacts, TextSpan currentSpan, CancellationToken cancellationToken)
     {

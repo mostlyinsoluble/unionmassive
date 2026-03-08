@@ -14,17 +14,21 @@ namespace Roslyn.Utilities
     /// <see cref="HasFailedToDispose" /> after disposal to see if any
     /// exceptions were thrown during disposal.
     /// </summary>
-    internal class NoThrowStreamDisposer : IDisposable
+    internal class NoThrowStreamDisposer(
+        Stream stream,
+        string filePath,
+        DiagnosticBag diagnostics,
+        CommonMessageProvider messageProvider) : IDisposable
     {
-        private bool? _failed; // Nullable to assert that this is only checked after dispose
-        private readonly string _filePath;
-        private readonly DiagnosticBag _diagnostics;
-        private readonly CommonMessageProvider _messageProvider;
+        private bool? _failed = null; // Nullable to assert that this is only checked after dispose
+        private readonly string _filePath = filePath;
+        private readonly DiagnosticBag _diagnostics = diagnostics;
+        private readonly CommonMessageProvider _messageProvider = messageProvider;
 
         /// <summary>
         /// Underlying stream
         /// </summary>
-        public Stream Stream { get; }
+        public Stream Stream { get; } = stream;
 
         /// <summary>
         /// True if and only if an exception was thrown during a call to <see cref="Dispose"/>
@@ -36,19 +40,6 @@ namespace Roslyn.Utilities
                 RoslynDebug.Assert(_failed != null);
                 return _failed.GetValueOrDefault();
             }
-        }
-
-        public NoThrowStreamDisposer(
-            Stream stream,
-            string filePath,
-            DiagnosticBag diagnostics,
-            CommonMessageProvider messageProvider)
-        {
-            Stream = stream;
-            _failed = null;
-            _filePath = filePath;
-            _diagnostics = diagnostics;
-            _messageProvider = messageProvider;
         }
 
         public void Dispose()

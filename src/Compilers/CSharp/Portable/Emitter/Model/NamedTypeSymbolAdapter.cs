@@ -1069,10 +1069,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class NamedTypeSymbolAdapter
     {
-        internal NamedTypeSymbolAdapter(NamedTypeSymbol underlyingNamedTypeSymbol)
-        {
-            AdaptedNamedTypeSymbol = underlyingNamedTypeSymbol;
-        }
+        internal NamedTypeSymbolAdapter(NamedTypeSymbol underlyingNamedTypeSymbol) => AdaptedNamedTypeSymbol = underlyingNamedTypeSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedNamedTypeSymbol;
         internal NamedTypeSymbol AdaptedNamedTypeSymbol { get; }

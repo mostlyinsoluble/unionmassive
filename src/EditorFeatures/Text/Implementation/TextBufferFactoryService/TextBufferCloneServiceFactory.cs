@@ -12,23 +12,15 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.CodeAnalysis.Text.Implementation.TextBufferFactoryService;
 
 [Export(typeof(ITextBufferCloneService)), Shared]
-internal sealed class TextBufferCloneService : ITextBufferCloneService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TextBufferCloneService(
+    ITextBufferFactoryService3 textBufferFactoryService,
+    IContentTypeRegistryService contentTypeRegistryService) : ITextBufferCloneService
 {
-    private readonly ITextBufferFactoryService3 _textBufferFactoryService;
-    private readonly IContentType _roslynContentType;
-    private readonly IContentType _unknownContentType;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TextBufferCloneService(
-        ITextBufferFactoryService3 textBufferFactoryService,
-        IContentTypeRegistryService contentTypeRegistryService)
-    {
-        _textBufferFactoryService = textBufferFactoryService;
-
-        _roslynContentType = contentTypeRegistryService.GetContentType(ContentTypeNames.RoslynContentType);
-        _unknownContentType = contentTypeRegistryService.UnknownContentType;
-    }
+    private readonly ITextBufferFactoryService3 _textBufferFactoryService = textBufferFactoryService;
+    private readonly IContentType _roslynContentType = contentTypeRegistryService.GetContentType(ContentTypeNames.RoslynContentType);
+    private readonly IContentType _unknownContentType = contentTypeRegistryService.UnknownContentType;
 
     public ITextBuffer CloneWithUnknownContentType(SnapshotSpan span)
         => _textBufferFactoryService.CreateTextBuffer(span, _unknownContentType);

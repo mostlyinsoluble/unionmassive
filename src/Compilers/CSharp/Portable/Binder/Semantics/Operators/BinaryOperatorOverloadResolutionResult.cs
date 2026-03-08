@@ -14,10 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public readonly ArrayBuilder<BinaryOperatorAnalysisResult> Results;
 
-        private BinaryOperatorOverloadResolutionResult()
-        {
-            this.Results = new ArrayBuilder<BinaryOperatorAnalysisResult>(10);
-        }
+        private BinaryOperatorOverloadResolutionResult() => this.Results = new ArrayBuilder<BinaryOperatorAnalysisResult>(10);
 
         public bool AnyValid()
         {

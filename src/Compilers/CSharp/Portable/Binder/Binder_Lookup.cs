@@ -385,7 +385,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                     // we are now looking for any kind of member regardless of the original binding restrictions:
-                    options = options & ~(LookupOptions.MustBeInvocableIfMember | LookupOptions.NamespacesOrTypesOnly);
+                    options &= ~(LookupOptions.MustBeInvocableIfMember | LookupOptions.NamespacesOrTypesOnly);
                     lookingForOverloadsOfKind = firstSymbol.Kind;
                 }
                 else

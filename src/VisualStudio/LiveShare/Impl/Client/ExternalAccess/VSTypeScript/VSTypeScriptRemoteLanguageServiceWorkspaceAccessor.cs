@@ -12,16 +12,11 @@ using Microsoft.VisualStudio.LanguageServices.ExternalAccess.VSTypeScript.Api;
 namespace Microsoft.VisualStudio.LanguageServices.LiveShare.Client.ExternalAccess.VSTypeScript;
 
 [Export(typeof(IVsTypeScriptRemoteLanguageServiceWorkspaceAccessor))]
-internal sealed class VSTypeScriptRemoteLanguageServiceWorkspaceAccessor : IVsTypeScriptRemoteLanguageServiceWorkspaceAccessor
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VSTypeScriptRemoteLanguageServiceWorkspaceAccessor(RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace) : IVsTypeScriptRemoteLanguageServiceWorkspaceAccessor
 {
-    private readonly RemoteLanguageServiceWorkspace _remoteLanguageServiceWorkspace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VSTypeScriptRemoteLanguageServiceWorkspaceAccessor(RemoteLanguageServiceWorkspace remoteLanguageServiceWorkspace)
-    {
-        _remoteLanguageServiceWorkspace = remoteLanguageServiceWorkspace;
-    }
+    private readonly RemoteLanguageServiceWorkspace _remoteLanguageServiceWorkspace = remoteLanguageServiceWorkspace;
 
     CodeAnalysis.Workspace IVsTypeScriptRemoteLanguageServiceWorkspaceAccessor.RemoteLanguageServiceWorkspace => _remoteLanguageServiceWorkspace;
 }

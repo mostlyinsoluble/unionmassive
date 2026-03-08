@@ -11,18 +11,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// <summary>
     /// A simple method type parameter with no constraints.
     /// </summary>
-    internal sealed class SynthesizedSimpleMethodTypeParameterSymbol : TypeParameterSymbol
+    internal sealed class SynthesizedSimpleMethodTypeParameterSymbol(MethodSymbol container, int ordinal, string name) : TypeParameterSymbol
     {
-        private readonly MethodSymbol _container;
-        private readonly int _ordinal;
-        private readonly string _name;
-
-        public SynthesizedSimpleMethodTypeParameterSymbol(MethodSymbol container, int ordinal, string name)
-        {
-            _container = container;
-            _ordinal = ordinal;
-            _name = name;
-        }
+        private readonly MethodSymbol _container = container;
+        private readonly int _ordinal = ordinal;
+        private readonly string _name = name;
 
         public override string Name
         {

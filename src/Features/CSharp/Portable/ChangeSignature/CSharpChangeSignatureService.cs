@@ -33,7 +33,9 @@ namespace Microsoft.CodeAnalysis.CSharp.ChangeSignature;
 using static CSharpSyntaxTokens;
 
 [ExportLanguageService(typeof(AbstractChangeSignatureService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpChangeSignatureService : AbstractChangeSignatureService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpChangeSignatureService() : AbstractChangeSignatureService
 {
     protected override SyntaxGenerator Generator => CSharpSyntaxGenerator.Instance;
     protected override ISyntaxFacts SyntaxFacts => CSharpSyntaxFacts.Instance;
@@ -105,12 +107,6 @@ internal sealed class CSharpChangeSignatureService : AbstractChangeSignatureServ
         SyntaxKind.ClassDeclaration,
         SyntaxKind.PrimaryConstructorBaseType,
     ];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpChangeSignatureService()
-    {
-    }
 
     public override async Task<(ISymbol? symbol, int selectedIndex)> GetInvocationSymbolAsync(
         Document document, int position, bool restrictToDeclarations, CancellationToken cancellationToken)

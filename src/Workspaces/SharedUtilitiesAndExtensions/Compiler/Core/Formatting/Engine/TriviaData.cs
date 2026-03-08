@@ -12,16 +12,11 @@ namespace Microsoft.CodeAnalysis.Formatting;
 /// <summary>
 /// it holds onto trivia information between two tokens
 /// </summary>
-internal abstract class TriviaData
+internal abstract class TriviaData(LineFormattingOptions options)
 {
     protected const int TokenPairIndexNotNeeded = int.MinValue;
 
-    protected TriviaData(LineFormattingOptions options)
-    {
-        Options = options;
-    }
-
-    protected LineFormattingOptions Options { get; }
+    protected LineFormattingOptions Options { get; } = options;
 
     public int LineBreaks { get; protected set; }
     public int Spaces { get; protected set; }

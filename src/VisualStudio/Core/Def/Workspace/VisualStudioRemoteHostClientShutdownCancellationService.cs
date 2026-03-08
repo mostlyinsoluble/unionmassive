@@ -12,13 +12,9 @@ using Microsoft.VisualStudio.Shell;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 
 [ExportWorkspaceService(typeof(IRemoteHostClientShutdownCancellationService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioRemoteHostClientShutdownCancellationService : IRemoteHostClientShutdownCancellationService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioRemoteHostClientShutdownCancellationService() : IRemoteHostClientShutdownCancellationService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioRemoteHostClientShutdownCancellationService()
-    {
-    }
-
     public CancellationToken ShutdownToken => VsShellUtilities.ShutdownToken;
 }

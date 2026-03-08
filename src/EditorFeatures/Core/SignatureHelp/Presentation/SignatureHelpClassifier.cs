@@ -14,20 +14,15 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHelp.Presentation;
 
-internal sealed class SignatureHelpClassifier : IClassifier
+internal sealed class SignatureHelpClassifier(ITextBuffer subjectBuffer, ClassificationTypeMap typeMap) : IClassifier
 {
-    private readonly ITextBuffer _subjectBuffer;
-    private readonly ClassificationTypeMap _typeMap;
+    private readonly ITextBuffer _subjectBuffer = subjectBuffer;
+    private readonly ClassificationTypeMap _typeMap = typeMap;
 
 #pragma warning disable 67
     public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
-#pragma warning restore 67
 
-    public SignatureHelpClassifier(ITextBuffer subjectBuffer, ClassificationTypeMap typeMap)
-    {
-        _subjectBuffer = subjectBuffer;
-        _typeMap = typeMap;
-    }
+#pragma warning restore 67
 
     public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
     {

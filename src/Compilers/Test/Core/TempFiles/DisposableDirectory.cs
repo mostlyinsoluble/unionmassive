@@ -9,13 +9,8 @@ using System.IO;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities
 {
-    public sealed class DisposableDirectory : TempDirectory, IDisposable
+    public sealed class DisposableDirectory(TempRoot root) : TempDirectory(root), IDisposable
     {
-        public DisposableDirectory(TempRoot root)
-            : base(root)
-        {
-        }
-
         public void Dispose()
         {
             if (Path != null && Directory.Exists(Path))

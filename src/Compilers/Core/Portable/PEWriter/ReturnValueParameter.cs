@@ -10,10 +10,7 @@ namespace Microsoft.Cci
 {
     internal sealed class ReturnValueParameter : ParameterDefinitionBase
     {
-        internal ReturnValueParameter(IMethodDefinition containingMethod)
-        {
-            _containingMethod = containingMethod;
-        }
+        internal ReturnValueParameter(IMethodDefinition containingMethod) => _containingMethod = containingMethod;
 
         public override IEnumerable<ICustomAttribute> GetAttributes(EmitContext context)
         {

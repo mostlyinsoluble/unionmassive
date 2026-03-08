@@ -14,14 +14,10 @@ using Microsoft.CodeAnalysis.Organizing.Organizers;
 namespace Microsoft.CodeAnalysis.CSharp.Organizing.Organizers;
 
 [ExportSyntaxNodeOrganizer(LanguageNames.CSharp), Shared]
-internal sealed class EnumDeclarationOrganizer : AbstractSyntaxNodeOrganizer<EnumDeclarationSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class EnumDeclarationOrganizer() : AbstractSyntaxNodeOrganizer<EnumDeclarationSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public EnumDeclarationOrganizer()
-    {
-    }
-
     protected override EnumDeclarationSyntax Organize(
         EnumDeclarationSyntax syntax,
         CancellationToken cancellationToken)

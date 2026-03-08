@@ -24,14 +24,9 @@ namespace Microsoft.CodeAnalysis
         /// until they are actually needed. The <see cref="Stream"/> provided here is owned by 
         /// this type and consumers should not dispose it.
         /// </summary>
-        internal abstract class EmitStreamProvider
+        internal abstract class EmitStreamProvider(Stream? stream = null)
         {
-            private Stream? _stream;
-
-            protected EmitStreamProvider(Stream? stream = null)
-            {
-                _stream = stream;
-            }
+            private Stream? _stream = stream;
 
             /// <summary>
             /// This method will be called once during Emit at the time the Compilation needs 
@@ -58,10 +53,7 @@ namespace Microsoft.CodeAnalysis
         internal sealed class SimpleEmitStreamProvider : EmitStreamProvider
         {
             internal SimpleEmitStreamProvider(Stream stream)
-                : base(stream)
-            {
-                RoslynDebug.Assert(stream != null);
-            }
+                : base(stream) => RoslynDebug.Assert(stream != null);
 
             protected override Stream CreateStream(DiagnosticBag diagnostics)
             {

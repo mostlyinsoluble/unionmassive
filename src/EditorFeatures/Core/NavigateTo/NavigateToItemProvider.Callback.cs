@@ -17,18 +17,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.NavigateTo;
 
 internal partial class NavigateToItemProvider
 {
-    private sealed class NavigateToItemProviderCallback : INavigateToSearchCallback
+    private sealed class NavigateToItemProviderCallback(Solution solution, INavigateToItemDisplayFactory displayFactory, INavigateToCallback callback) : INavigateToSearchCallback
     {
-        private readonly Solution _solution;
-        private readonly INavigateToItemDisplayFactory _displayFactory;
-        private readonly INavigateToCallback _callback;
-
-        public NavigateToItemProviderCallback(Solution solution, INavigateToItemDisplayFactory displayFactory, INavigateToCallback callback)
-        {
-            _solution = solution;
-            _displayFactory = displayFactory;
-            _callback = callback;
-        }
+        private readonly Solution _solution = solution;
+        private readonly INavigateToItemDisplayFactory _displayFactory = displayFactory;
+        private readonly INavigateToCallback _callback = callback;
 
         public void Done(bool isFullyLoaded)
         {

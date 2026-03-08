@@ -118,10 +118,7 @@ internal sealed partial class SolutionAssetStorage
     {
         private readonly SolutionAssetStorage _solutionAssetStorage;
 
-        internal TestAccessor(SolutionAssetStorage solutionAssetStorage)
-        {
-            _solutionAssetStorage = solutionAssetStorage;
-        }
+        internal TestAccessor(SolutionAssetStorage solutionAssetStorage) => _solutionAssetStorage = solutionAssetStorage;
 
         public async ValueTask<object> GetRequiredAssetAsync(Checksum checksum, CancellationToken cancellationToken)
         {

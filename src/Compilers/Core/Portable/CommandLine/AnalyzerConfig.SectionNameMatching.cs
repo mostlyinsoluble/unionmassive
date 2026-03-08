@@ -455,17 +455,11 @@ namespace Microsoft.CodeAnalysis
             return (numStart, numEnd);
         }
 
-        private struct SectionNameLexer
+        private struct SectionNameLexer(string sectionName)
         {
-            private readonly string _sectionName;
+            private readonly string _sectionName = sectionName;
 
-            public int Position { get; set; }
-
-            public SectionNameLexer(string sectionName)
-            {
-                _sectionName = sectionName;
-                Position = 0;
-            }
+            public int Position { get; set; } = 0;
 
             public bool IsDone => Position >= _sectionName.Length;
 

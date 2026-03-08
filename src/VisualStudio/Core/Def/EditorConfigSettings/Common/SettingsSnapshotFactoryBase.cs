@@ -10,10 +10,10 @@ using Microsoft.VisualStudio.Shell.TableManager;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.Common;
 
-internal abstract class SettingsSnapshotFactoryBase<T, TEntriesSnapshot> : TableEntriesSnapshotFactoryBase
+internal abstract class SettingsSnapshotFactoryBase<T, TEntriesSnapshot>(ISettingsProvider<T> data) : TableEntriesSnapshotFactoryBase
     where TEntriesSnapshot : SettingsEntriesSnapshotBase<T>
 {
-    private readonly ISettingsProvider<T> _data;
+    private readonly ISettingsProvider<T> _data = data;
 
     // State
     private int _currentVersionNumber;
@@ -22,11 +22,6 @@ internal abstract class SettingsSnapshotFactoryBase<T, TEntriesSnapshot> : Table
 
     // Disallow concurrent modification of state
     private readonly object _gate = new();
-
-    public SettingsSnapshotFactoryBase(ISettingsProvider<T> data)
-    {
-        _data = data;
-    }
 
     public override int CurrentVersionNumber => _currentVersionNumber;
 

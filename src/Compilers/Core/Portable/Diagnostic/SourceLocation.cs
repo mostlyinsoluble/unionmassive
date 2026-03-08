@@ -12,16 +12,10 @@ namespace Microsoft.CodeAnalysis
     /// <summary>
     /// A program location in source code.
     /// </summary>
-    internal sealed class SourceLocation : Location, IEquatable<SourceLocation?>
+    internal sealed class SourceLocation(SyntaxTree syntaxTree, TextSpan span) : Location, IEquatable<SourceLocation?>
     {
-        private readonly SyntaxTree _syntaxTree;
-        private readonly TextSpan _span;
-
-        public SourceLocation(SyntaxTree syntaxTree, TextSpan span)
-        {
-            _syntaxTree = syntaxTree;
-            _span = span;
-        }
+        private readonly SyntaxTree _syntaxTree = syntaxTree;
+        private readonly TextSpan _span = span;
 
         public SourceLocation(SyntaxNode node)
             : this(node.SyntaxTree, node.Span)
@@ -34,16 +28,10 @@ namespace Microsoft.CodeAnalysis
         }
 
         public SourceLocation(in SyntaxNodeOrToken nodeOrToken)
-            : this(nodeOrToken.SyntaxTree!, nodeOrToken.Span)
-        {
-            Debug.Assert(nodeOrToken.SyntaxTree is not null);
-        }
+            : this(nodeOrToken.SyntaxTree!, nodeOrToken.Span) => Debug.Assert(nodeOrToken.SyntaxTree is not null);
 
         public SourceLocation(in SyntaxTrivia trivia)
-            : this(trivia.SyntaxTree!, trivia.Span)
-        {
-            Debug.Assert(trivia.SyntaxTree is not null);
-        }
+            : this(trivia.SyntaxTree!, trivia.Span) => Debug.Assert(trivia.SyntaxTree is not null);
 
         public SourceLocation(SyntaxReference syntaxRef)
             : this(syntaxRef.SyntaxTree, syntaxRef.Span)

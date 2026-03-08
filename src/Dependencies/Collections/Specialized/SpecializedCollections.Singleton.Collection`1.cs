@@ -14,14 +14,9 @@ namespace Microsoft.CodeAnalysis.Collections
     {
         private static partial class Singleton
         {
-            internal sealed class List<T> : IReadOnlyList<T>, IList<T>, IReadOnlyCollection<T>
+            internal sealed class List<T>(T value) : IReadOnlyList<T>, IList<T>, IReadOnlyCollection<T>
             {
-                private readonly T _loneValue;
-
-                public List(T value)
-                {
-                    _loneValue = value;
-                }
+                private readonly T _loneValue = value;
 
                 public void Add(T item)
                 {

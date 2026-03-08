@@ -7,16 +7,10 @@ namespace Microsoft.CodeAnalysis.CodeGen
     /// <summary>
     /// An expression that results in a System.Type instance.
     /// </summary>
-    internal sealed class MetadataTypeOf : Cci.IMetadataExpression
+    internal sealed class MetadataTypeOf(Cci.ITypeReference typeToGet, Cci.ITypeReference systemType) : Cci.IMetadataExpression
     {
-        private readonly Cci.ITypeReference _typeToGet;
-        private readonly Cci.ITypeReference _systemType;
-
-        public MetadataTypeOf(Cci.ITypeReference typeToGet, Cci.ITypeReference systemType)
-        {
-            _typeToGet = typeToGet;
-            _systemType = systemType;
-        }
+        private readonly Cci.ITypeReference _typeToGet = typeToGet;
+        private readonly Cci.ITypeReference _systemType = systemType;
 
         /// <summary>
         /// The type that will be represented by the System.Type instance.

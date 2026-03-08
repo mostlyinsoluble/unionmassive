@@ -19,14 +19,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.Editor.CSharp.LanguageServices;
 
 [ExportLanguageService(typeof(IStructuralTypeDisplayService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpStructuralTypeDisplayService : AbstractStructuralTypeDisplayService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpStructuralTypeDisplayService() : AbstractStructuralTypeDisplayService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpStructuralTypeDisplayService()
-    {
-    }
-
     protected override ISyntaxFacts SyntaxFactsService => CSharpSyntaxFacts.Instance;
 
     protected override ImmutableArray<SymbolDisplayPart> GetNormalAnonymousTypeParts(

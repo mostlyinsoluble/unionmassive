@@ -22,16 +22,10 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.LanguageServices.Shared;
 
-internal readonly struct CompositeImage
+internal readonly struct CompositeImage(ImmutableArray<ImageCompositionLayer> layers, IImageHandle imageHandle)
 {
-    public readonly ImmutableArray<ImageCompositionLayer> Layers;
-    public readonly IImageHandle ImageHandle;
-
-    public CompositeImage(ImmutableArray<ImageCompositionLayer> layers, IImageHandle imageHandle)
-    {
-        this.Layers = layers;
-        this.ImageHandle = imageHandle;
-    }
+    public readonly ImmutableArray<ImageCompositionLayer> Layers = layers;
+    public readonly IImageHandle ImageHandle = imageHandle;
 }
 
 [ExportImageIdService(Name = Name)]

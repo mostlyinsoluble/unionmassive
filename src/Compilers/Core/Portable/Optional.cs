@@ -11,20 +11,14 @@ namespace Microsoft.CodeAnalysis
     /// indicating whether or not that value is meaningful.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
-    public readonly struct Optional<T>
+    /// <remarks>
+    /// Constructs an <see cref="Optional{T}"/> with a meaningful value.
+    /// </remarks>
+    /// <param name="value"></param>
+    public readonly struct Optional<T>(T value)
     {
-        private readonly bool _hasValue;
-        private readonly T _value;
-
-        /// <summary>
-        /// Constructs an <see cref="Optional{T}"/> with a meaningful value.
-        /// </summary>
-        /// <param name="value"></param>
-        public Optional(T value)
-        {
-            _hasValue = true;
-            _value = value;
-        }
+        private readonly bool _hasValue = true;
+        private readonly T _value = value;
 
         /// <summary>
         /// Returns <see langword="true"/> if the <see cref="Value"/> will return a meaningful value.

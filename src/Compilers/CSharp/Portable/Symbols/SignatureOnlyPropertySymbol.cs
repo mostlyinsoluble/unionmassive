@@ -16,36 +16,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     /// A representation of a property symbol that is intended only to be used for comparison purposes
     /// (esp in PropertySignatureComparer).
     /// </summary>
-    internal sealed class SignatureOnlyPropertySymbol : PropertySymbol
+    internal sealed class SignatureOnlyPropertySymbol(
+        string name,
+        TypeSymbol containingType,
+        ImmutableArray<ParameterSymbol> parameters,
+        RefKind refKind,
+        TypeWithAnnotations type,
+        ImmutableArray<CustomModifier> refCustomModifiers,
+        bool isStatic,
+        ImmutableArray<PropertySymbol> explicitInterfaceImplementations) : PropertySymbol
     {
-        private readonly string _name;
-        private readonly TypeSymbol _containingType;
-        private readonly ImmutableArray<ParameterSymbol> _parameters;
-        private readonly RefKind _refKind;
-        private readonly TypeWithAnnotations _type;
-        private readonly ImmutableArray<CustomModifier> _refCustomModifiers;
-        private readonly bool _isStatic;
-        private readonly ImmutableArray<PropertySymbol> _explicitInterfaceImplementations;
-
-        public SignatureOnlyPropertySymbol(
-            string name,
-            TypeSymbol containingType,
-            ImmutableArray<ParameterSymbol> parameters,
-            RefKind refKind,
-            TypeWithAnnotations type,
-            ImmutableArray<CustomModifier> refCustomModifiers,
-            bool isStatic,
-            ImmutableArray<PropertySymbol> explicitInterfaceImplementations)
-        {
-            _refKind = refKind;
-            _type = type;
-            _refCustomModifiers = refCustomModifiers;
-            _isStatic = isStatic;
-            _parameters = parameters;
-            _explicitInterfaceImplementations = explicitInterfaceImplementations.NullToEmpty();
-            _containingType = containingType;
-            _name = name;
-        }
+        private readonly string _name = name;
+        private readonly TypeSymbol _containingType = containingType;
+        private readonly ImmutableArray<ParameterSymbol> _parameters = parameters;
+        private readonly RefKind _refKind = refKind;
+        private readonly TypeWithAnnotations _type = type;
+        private readonly ImmutableArray<CustomModifier> _refCustomModifiers = refCustomModifiers;
+        private readonly bool _isStatic = isStatic;
+        private readonly ImmutableArray<PropertySymbol> _explicitInterfaceImplementations = explicitInterfaceImplementations.NullToEmpty();
 
         public override RefKind RefKind { get { return _refKind; } }
 

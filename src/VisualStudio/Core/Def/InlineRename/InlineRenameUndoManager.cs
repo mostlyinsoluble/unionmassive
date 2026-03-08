@@ -41,12 +41,9 @@ internal sealed class VisualStudioInlineRenameUndoManagerServiceFactory(
 
     internal sealed class InlineRenameUndoManager(InlineRenameService inlineRenameService, IVsEditorAdaptersFactoryService editorAdaptersFactoryService) : AbstractInlineRenameUndoManager<InlineRenameUndoManager.BufferUndoState>(inlineRenameService), IInlineRenameUndoManager
     {
-        private class RenameUndoPrimitive : IOleUndoUnit
+        private class RenameUndoPrimitive(string description) : IOleUndoUnit
         {
-            private readonly string _description;
-
-            public RenameUndoPrimitive(string description)
-                => _description = description;
+            private readonly string _description = description;
 
             public virtual void Do(IOleUndoManager pUndoManager)
             {
@@ -63,12 +60,9 @@ internal sealed class VisualStudioInlineRenameUndoManagerServiceFactory(
             }
         }
 
-        private sealed class RedoPrimitive : RenameUndoPrimitive
+        private sealed class RedoPrimitive(IOleUndoManager undoManager, string replacementText) : RenameUndoPrimitive(replacementText)
         {
-            private readonly IOleUndoManager _undoManager;
-
-            public RedoPrimitive(IOleUndoManager undoManager, string replacementText) : base(replacementText)
-                => _undoManager = undoManager;
+            private readonly IOleUndoManager _undoManager = undoManager;
 
             // Undoing this instance simply adds it to the Redo stack.
             public override void Do(IOleUndoManager pUndoManager)

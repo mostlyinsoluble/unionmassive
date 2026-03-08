@@ -16,27 +16,19 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Library.ObjectBrowser;
 
-internal abstract partial class AbstractDescriptionBuilder
+internal abstract partial class AbstractDescriptionBuilder(
+    IVsObjectBrowserDescription3 description,
+    AbstractObjectBrowserLibraryManager libraryManager,
+    ObjectListItem listItem,
+    Project project)
 {
-    private readonly IVsObjectBrowserDescription3 _description;
-    private readonly AbstractObjectBrowserLibraryManager _libraryManager;
-    private readonly ObjectListItem _listItem;
-    private readonly Project _project;
+    private readonly IVsObjectBrowserDescription3 _description = description;
+    private readonly AbstractObjectBrowserLibraryManager _libraryManager = libraryManager;
+    private readonly ObjectListItem _listItem = listItem;
+    private readonly Project _project = project;
 
     private static readonly SymbolDisplayFormat s_typeDisplay = new(
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
-
-    protected AbstractDescriptionBuilder(
-        IVsObjectBrowserDescription3 description,
-        AbstractObjectBrowserLibraryManager libraryManager,
-        ObjectListItem listItem,
-        Project project)
-    {
-        _description = description;
-        _libraryManager = libraryManager;
-        _listItem = listItem;
-        _project = project;
-    }
 
     private Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken)
         => _project.GetCompilationAsync(cancellationToken);

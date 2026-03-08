@@ -58,10 +58,7 @@ internal abstract class AbstractAnalyzerAssemblyLoaderProvider : IAnalyzerAssemb
 #else
     private readonly Lazy<IAnalyzerAssemblyLoaderInternal> _shadowCopyLoader;
 
-    public AbstractAnalyzerAssemblyLoaderProvider()
-    {
-        _shadowCopyLoader = new(CreateNewShadowCopyLoader);
-    }
+    public AbstractAnalyzerAssemblyLoaderProvider() => _shadowCopyLoader = new(CreateNewShadowCopyLoader);
 
     public IAnalyzerAssemblyLoaderInternal SharedShadowCopyLoader
         => _shadowCopyLoader.Value;

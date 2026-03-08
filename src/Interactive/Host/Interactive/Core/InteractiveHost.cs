@@ -21,7 +21,11 @@ namespace Microsoft.CodeAnalysis.Interactive
     /// <remarks>
     /// Handles spawning of the host process and communication between the local callers and the remote session.
     /// </remarks>
-    internal sealed partial class InteractiveHost : IDisposable
+    internal sealed partial class InteractiveHost(
+        Type replServiceProviderType,
+        string workingDirectory,
+        int millisecondsTimeout = 5000,
+        bool joinOutputWritingThreadsOnDisposal = false) : IDisposable
     {
         internal const InteractiveHostPlatform DefaultPlatform = InteractiveHostPlatform.Core;
 
@@ -43,19 +47,19 @@ namespace Microsoft.CodeAnalysis.Interactive
             AllowNonPublicInvocation = false
         };
 
-        private readonly Type _replServiceProviderType;
-        private readonly string _initialWorkingDirectory;
+        private readonly Type _replServiceProviderType = replServiceProviderType;
+        private readonly string _initialWorkingDirectory = workingDirectory;
 
         // adjustable for testing purposes
-        private readonly int _millisecondsTimeout;
+        private readonly int _millisecondsTimeout = millisecondsTimeout;
         private const int MaxAttemptsToCreateProcess = 2;
 
         private LazyRemoteService? _lazyRemoteService;
         private int _remoteServiceInstanceId;
-        private TextWriter _output;
-        private TextWriter _errorOutput;
-        private readonly object _outputGuard;
-        private readonly object _errorOutputGuard;
+        private TextWriter _output = TextWriter.Null;
+        private TextWriter _errorOutput = TextWriter.Null;
+        private readonly object _outputGuard = new object();
+        private readonly object _errorOutputGuard = new object();
 
         /// <remarks>
         /// Test only setting.
@@ -64,25 +68,9 @@ namespace Microsoft.CodeAnalysis.Interactive
         /// WARNING: Joining the threads might deadlock if <see cref="Dispose()"/> is executing on the UI thread, 
         /// since the threads are dispatching to UI thread to write the output to the editor buffer.
         /// </remarks>
-        private readonly bool _joinOutputWritingThreadsOnDisposal;
+        private readonly bool _joinOutputWritingThreadsOnDisposal = joinOutputWritingThreadsOnDisposal;
 
         internal event Action<InteractiveHostPlatformInfo, InteractiveHostOptions, RemoteExecutionResult>? ProcessInitialized;
-
-        public InteractiveHost(
-            Type replServiceProviderType,
-            string workingDirectory,
-            int millisecondsTimeout = 5000,
-            bool joinOutputWritingThreadsOnDisposal = false)
-        {
-            _millisecondsTimeout = millisecondsTimeout;
-            _joinOutputWritingThreadsOnDisposal = joinOutputWritingThreadsOnDisposal;
-            _output = TextWriter.Null;
-            _errorOutput = TextWriter.Null;
-            _replServiceProviderType = replServiceProviderType;
-            _initialWorkingDirectory = workingDirectory;
-            _outputGuard = new object();
-            _errorOutputGuard = new object();
-        }
 
         #region Test hooks
 

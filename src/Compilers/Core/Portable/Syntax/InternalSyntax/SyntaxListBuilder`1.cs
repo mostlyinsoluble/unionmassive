@@ -20,10 +20,7 @@ namespace Microsoft.CodeAnalysis.Syntax.InternalSyntax
             return new SyntaxListBuilder<TNode>(8);
         }
 
-        internal SyntaxListBuilder(SyntaxListBuilder builder)
-        {
-            _builder = builder;
-        }
+        internal SyntaxListBuilder(SyntaxListBuilder builder) => _builder = builder;
 
         public bool IsNull
         {

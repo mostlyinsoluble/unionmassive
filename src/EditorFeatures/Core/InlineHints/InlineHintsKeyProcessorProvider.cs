@@ -23,21 +23,15 @@ namespace Microsoft.CodeAnalysis.Editor.InlineHints;
 [TextViewRole(PredefinedTextViewRoles.Interactive)]
 [ContentType(ContentTypeNames.RoslynContentType)]
 [Name(nameof(InlineHintsKeyProcessorProvider))]
-internal sealed class InlineHintsKeyProcessorProvider : IKeyProcessorProvider, IInlineHintKeyProcessor
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InlineHintsKeyProcessorProvider(
+    IGlobalOptionService globalOptions,
+    IThreadingContext threadingContext) : IKeyProcessorProvider, IInlineHintKeyProcessor
 {
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly IThreadingContext _threadingContext;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly IThreadingContext _threadingContext = threadingContext;
     private int _state;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InlineHintsKeyProcessorProvider(
-        IGlobalOptionService globalOptions,
-        IThreadingContext threadingContext)
-    {
-        _globalOptions = globalOptions;
-        _threadingContext = threadingContext;
-    }
 
     public bool State
     {

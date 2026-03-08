@@ -15,10 +15,7 @@ namespace Roslyn.Utilities
 
         private readonly TimeSpan _started;
 
-        private SharedStopwatch(TimeSpan started)
-        {
-            _started = started;
-        }
+        private SharedStopwatch(TimeSpan started) => _started = started;
 
         public TimeSpan Elapsed => s_stopwatch.Elapsed - _started;
 

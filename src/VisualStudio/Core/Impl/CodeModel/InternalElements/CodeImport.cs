@@ -59,10 +59,7 @@ public sealed class CodeImport : AbstractCodeElement, EnvDTE80.CodeImport
         FileCodeModel fileCodeModel,
         int nodeKind,
         string dottedName)
-        : base(state, fileCodeModel, nodeKind)
-    {
-        _dottedName = dottedName;
-    }
+        : base(state, fileCodeModel, nodeKind) => _dottedName = dottedName;
 
     internal override bool TryLookupNode(out SyntaxNode node)
     {

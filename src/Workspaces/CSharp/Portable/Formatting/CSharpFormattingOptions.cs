@@ -34,15 +34,9 @@ public static class CSharpFormattingOptions
             storageMapping: new SpacePlacementInternalStorageMapping(CSharpFormattingOptions2.SpaceBetweenParentheses, flag),
             isEditorConfigOption: true);
 
-    private sealed class NewLineForBracesInternalStorageMapping : OptionStorageMapping
+    private sealed class NewLineForBracesInternalStorageMapping(IOption2 internalOption, NewLineBeforeOpenBracePlacement flag) : OptionStorageMapping(internalOption)
     {
-        private readonly NewLineBeforeOpenBracePlacement _flag;
-
-        public NewLineForBracesInternalStorageMapping(IOption2 internalOption, NewLineBeforeOpenBracePlacement flag)
-            : base(internalOption)
-        {
-            _flag = flag;
-        }
+        private readonly NewLineBeforeOpenBracePlacement _flag = flag;
 
         public override object? ToPublicOptionValue(object? internalValue)
             => ((NewLineBeforeOpenBracePlacement)internalValue!).HasFlag(_flag);
@@ -51,15 +45,9 @@ public static class CSharpFormattingOptions
             => ((NewLineBeforeOpenBracePlacement)currentInternalValue!).WithFlagValue(_flag, (bool)newPublicValue!);
     }
 
-    private sealed class SpacePlacementInternalStorageMapping : OptionStorageMapping
+    private sealed class SpacePlacementInternalStorageMapping(IOption2 internalOption, SpacePlacementWithinParentheses flag) : OptionStorageMapping(internalOption)
     {
-        private readonly SpacePlacementWithinParentheses _flag;
-
-        public SpacePlacementInternalStorageMapping(IOption2 internalOption, SpacePlacementWithinParentheses flag)
-            : base(internalOption)
-        {
-            _flag = flag;
-        }
+        private readonly SpacePlacementWithinParentheses _flag = flag;
 
         public override object? ToPublicOptionValue(object? internalValue)
             => ((SpacePlacementWithinParentheses)internalValue!).HasFlag(_flag);

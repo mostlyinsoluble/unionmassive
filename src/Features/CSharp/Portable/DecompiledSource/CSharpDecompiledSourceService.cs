@@ -20,14 +20,10 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 namespace Microsoft.CodeAnalysis.CSharp.DecompiledSource;
 
 [ExportLanguageService(typeof(IDecompiledSourceService), LanguageNames.CSharp), Shared]
-internal sealed class CSharpDecompiledSourceService : IDecompiledSourceService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpDecompiledSourceService() : IDecompiledSourceService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpDecompiledSourceService()
-    {
-    }
-
     public async Task<Document?> AddSourceToAsync(Document document, Compilation symbolCompilation, ISymbol symbol, MetadataReference? metadataReference, string? assemblyLocation, SyntaxFormattingOptions? formattingOptions, CancellationToken cancellationToken)
     {
         // Get the name of the type the symbol is in

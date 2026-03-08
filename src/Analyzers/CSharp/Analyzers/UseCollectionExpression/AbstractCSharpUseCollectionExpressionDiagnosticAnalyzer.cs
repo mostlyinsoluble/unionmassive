@@ -13,22 +13,14 @@ namespace Microsoft.CodeAnalysis.CSharp.UseCollectionExpression;
 /// <summary>
 /// Base type for all analyzers that offer to update code to use a collection-expression.
 /// </summary>
-internal abstract class AbstractCSharpUseCollectionExpressionDiagnosticAnalyzer
-    : AbstractBuiltInCodeStyleDiagnosticAnalyzer
+internal abstract class AbstractCSharpUseCollectionExpressionDiagnosticAnalyzer(string diagnosticId, EnforceOnBuild enforceOnBuild)
+        : AbstractBuiltInCodeStyleDiagnosticAnalyzer(
+        [(CreateDescriptor(diagnosticId, enforceOnBuild, isUnnecessary: false), CodeStyleOptions2.PreferCollectionExpression)])
 {
     public static readonly ImmutableDictionary<string, string?> ChangesSemantics =
         ImmutableDictionary<string, string?>.Empty.Add(UseCollectionInitializerHelpers.ChangesSemanticsName, "");
 
-    protected readonly DiagnosticDescriptor UnnecessaryCodeDescriptor;
-
-    protected AbstractCSharpUseCollectionExpressionDiagnosticAnalyzer(string diagnosticId, EnforceOnBuild enforceOnBuild)
-        : base(
-            [
-                (CreateDescriptor(diagnosticId, enforceOnBuild, isUnnecessary: false), CodeStyleOptions2.PreferCollectionExpression)
-            ])
-    {
-        UnnecessaryCodeDescriptor = CreateDescriptor(diagnosticId, enforceOnBuild, isUnnecessary: true);
-    }
+    protected readonly DiagnosticDescriptor UnnecessaryCodeDescriptor = CreateDescriptor(diagnosticId, enforceOnBuild, isUnnecessary: true);
 
     private static DiagnosticDescriptor CreateDescriptor(string diagnosticId, EnforceOnBuild enforceOnBuild, bool isUnnecessary)
         => CreateDescriptorWithId(

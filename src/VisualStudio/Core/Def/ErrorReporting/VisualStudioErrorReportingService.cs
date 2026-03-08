@@ -17,29 +17,19 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.CodeAnalysis.ErrorReporting;
 
 [ExportWorkspaceService(typeof(IErrorReportingService), ServiceLayer.Host), Shared]
-internal sealed partial class VisualStudioErrorReportingService : IErrorReportingService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class VisualStudioErrorReportingService(
+    IThreadingContext threadingContext,
+    IVsService<SVsActivityLog, IVsActivityLog> activityLog,
+    IVsService<SVsInfoBarUIFactory, IVsInfoBarUIFactory> vsInfoBarUIFactory,
+    IVsService<SVsShell, IVsShell> vsShell,
+    IAsynchronousOperationListenerProvider listenerProvider) : IErrorReportingService
 {
-    private readonly IThreadingContext _threadingContext;
-    private readonly IVsService<IVsActivityLog> _activityLog;
-    private readonly IAsynchronousOperationListener _listener;
-    private readonly VisualStudioInfoBar _infoBar;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioErrorReportingService(
-        IThreadingContext threadingContext,
-        IVsService<SVsActivityLog, IVsActivityLog> activityLog,
-        IVsService<SVsInfoBarUIFactory, IVsInfoBarUIFactory> vsInfoBarUIFactory,
-        IVsService<SVsShell, IVsShell> vsShell,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _threadingContext = threadingContext;
-        _activityLog = activityLog;
-        _listener = listenerProvider.GetListener(FeatureAttribute.Workspace);
-
-        // Attach this info bar to the global shell location for info-bars (independent of any particular window).
-        _infoBar = new VisualStudioInfoBar(threadingContext, vsInfoBarUIFactory, vsShell, listenerProvider, windowFrame: null);
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IVsService<IVsActivityLog> _activityLog = activityLog;
+    private readonly IAsynchronousOperationListener _listener = listenerProvider.GetListener(FeatureAttribute.Workspace);
+    private readonly VisualStudioInfoBar _infoBar = new VisualStudioInfoBar(threadingContext, vsInfoBarUIFactory, vsShell, listenerProvider, windowFrame: null);
 
     public string HostDisplayName => "Visual Studio";
 

@@ -10,17 +10,12 @@ using Microsoft.CodeAnalysis.Options;
 namespace Microsoft.CodeAnalysis.LanguageServer.Handler.SemanticTokens;
 
 [ExportCSharpVisualBasicLspServiceFactory(typeof(SemanticTokensRangeHandler)), Shared]
-internal sealed class SemanticTokensRangeHandlerFactory : ILspServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SemanticTokensRangeHandlerFactory(
+    IGlobalOptionService globalOptions) : ILspServiceFactory
 {
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SemanticTokensRangeHandlerFactory(
-        IGlobalOptionService globalOptions)
-    {
-        _globalOptions = globalOptions;
-    }
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public ILspService CreateILspService(LspServices lspServices, WellKnownLspServerKinds serverKind)
     {

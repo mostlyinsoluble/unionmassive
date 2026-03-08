@@ -7,10 +7,7 @@ using InteractiveHost::Microsoft.CodeAnalysis.Interactive;
 
 namespace Microsoft.CodeAnalysis.Interactive;
 
-internal sealed class InteractiveEvaluatorResetOptions
+internal sealed class InteractiveEvaluatorResetOptions(InteractiveHostPlatform? platform)
 {
-    public readonly InteractiveHostPlatform? Platform;
-
-    public InteractiveEvaluatorResetOptions(InteractiveHostPlatform? platform)
-        => Platform = platform;
+    public readonly InteractiveHostPlatform? Platform = platform;
 }

@@ -10,20 +10,14 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.CodeAnalysis.LanguageServer;
 
-internal sealed class RoslynRequestExecutionQueue : RequestExecutionQueue<RequestContext>
+internal sealed class RoslynRequestExecutionQueue(AbstractLanguageServer<RequestContext> languageServer, ILspLogger logger, AbstractHandlerProvider handlerProvider) : RequestExecutionQueue<RequestContext>(languageServer, logger, handlerProvider)
 {
-    private readonly IInitializeManager _initializeManager;
+    private readonly IInitializeManager _initializeManager = languageServer.GetLspServices().GetRequiredService<IInitializeManager>();
 
     /// <summary>
     /// Serial access is guaranteed by the queue.
     /// </summary>
     private CultureInfo? _cultureInfo;
-
-    public RoslynRequestExecutionQueue(AbstractLanguageServer<RequestContext> languageServer, ILspLogger logger, AbstractHandlerProvider handlerProvider)
-        : base(languageServer, logger, handlerProvider)
-    {
-        _initializeManager = languageServer.GetLspServices().GetRequiredService<IInitializeManager>();
-    }
 
     public override async Task WrapStartRequestTaskAsync(Task requestTask, bool rethrowExceptions)
     {

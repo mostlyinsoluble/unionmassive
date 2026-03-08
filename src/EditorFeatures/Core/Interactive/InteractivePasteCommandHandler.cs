@@ -34,7 +34,9 @@ namespace Microsoft.CodeAnalysis.Interactive;
 [Order(After = PredefinedCommandHandlerNames.FormatDocument)]
 [Order(After = PredefinedCommandHandlerNames.Commit)]
 [Order(After = PredefinedCompletionNames.CompletionCommandHandler)]
-internal sealed class InteractivePasteCommandHandler : ICommandHandler<PasteCommandArgs>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InteractivePasteCommandHandler(IEditorOperationsFactoryService editorOperationsFactoryService, ITextUndoHistoryRegistry textUndoHistoryRegistry) : ICommandHandler<PasteCommandArgs>
 {
     // The following two field definitions have to stay in sync with VS editor implementation
 
@@ -50,22 +52,13 @@ internal sealed class InteractivePasteCommandHandler : ICommandHandler<PasteComm
     /// </summary>
     internal const string BoxSelectionCutCopyTag = "MSDEVColumnSelect";
 
-    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService;
-    private readonly ITextUndoHistoryRegistry _textUndoHistoryRegistry;
+    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService = editorOperationsFactoryService;
+    private readonly ITextUndoHistoryRegistry _textUndoHistoryRegistry = textUndoHistoryRegistry;
 
     // This is for unit test purpose only, do not explicitly set this field otherwise.
-    internal IRoslynClipboard RoslynClipboard;
+    internal IRoslynClipboard RoslynClipboard = new SystemClipboardWrapper();
 
     public string DisplayName => EditorFeaturesResources.Paste_in_Interactive;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InteractivePasteCommandHandler(IEditorOperationsFactoryService editorOperationsFactoryService, ITextUndoHistoryRegistry textUndoHistoryRegistry)
-    {
-        _editorOperationsFactoryService = editorOperationsFactoryService;
-        _textUndoHistoryRegistry = textUndoHistoryRegistry;
-        RoslynClipboard = new SystemClipboardWrapper();
-    }
 
     public bool ExecuteCommand(PasteCommandArgs args, CommandExecutionContext context)
     {

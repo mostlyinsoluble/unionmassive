@@ -16,20 +16,14 @@ using Nerdbank.Streams;
 namespace Microsoft.CodeAnalysis.LanguageServer.BrokeredServices;
 
 [Export, Shared]
-internal sealed class BrokeredServiceBridgeProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class BrokeredServiceBridgeProvider(ILoggerFactory loggerFactory, BrokeredServiceTraceListener brokeredServiceTraceListener)
 {
     private const string ServiceBrokerChannelName = "serviceBroker";
 
-    private readonly ILogger _logger;
-    private readonly TraceSource _brokeredServiceTraceSource;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public BrokeredServiceBridgeProvider(ILoggerFactory loggerFactory, BrokeredServiceTraceListener brokeredServiceTraceListener)
-    {
-        _logger = loggerFactory.CreateLogger<BrokeredServiceBridgeProvider>();
-        _brokeredServiceTraceSource = brokeredServiceTraceListener.Source;
-    }
+    private readonly ILogger _logger = loggerFactory.CreateLogger<BrokeredServiceBridgeProvider>();
+    private readonly TraceSource _brokeredServiceTraceSource = brokeredServiceTraceListener.Source;
 
     /// <summary>
     /// Creates the brokered service bridge to the remote process.

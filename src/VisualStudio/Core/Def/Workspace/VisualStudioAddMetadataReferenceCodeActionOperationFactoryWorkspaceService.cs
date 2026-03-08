@@ -16,14 +16,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 
 [ExportWorkspaceService(typeof(IAddMetadataReferenceCodeActionOperationFactoryWorkspaceService), ServiceLayer.Host), Shared]
-internal sealed class VisualStudioAddMetadataReferenceCodeActionOperationFactoryWorkspaceService : IAddMetadataReferenceCodeActionOperationFactoryWorkspaceService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualStudioAddMetadataReferenceCodeActionOperationFactoryWorkspaceService() : IAddMetadataReferenceCodeActionOperationFactoryWorkspaceService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualStudioAddMetadataReferenceCodeActionOperationFactoryWorkspaceService()
-    {
-    }
-
     public CodeActionOperation CreateAddMetadataReferenceOperation(ProjectId projectId, AssemblyIdentity assemblyIdentity)
     {
         if (projectId == null)
@@ -39,16 +35,10 @@ internal sealed class VisualStudioAddMetadataReferenceCodeActionOperationFactory
         return new AddMetadataReferenceOperation(projectId, assemblyIdentity);
     }
 
-    private sealed class AddMetadataReferenceOperation : CodeActionOperation
+    private sealed class AddMetadataReferenceOperation(ProjectId projectId, AssemblyIdentity assemblyIdentity) : CodeActionOperation
     {
-        private readonly AssemblyIdentity _assemblyIdentity;
-        private readonly ProjectId _projectId;
-
-        public AddMetadataReferenceOperation(ProjectId projectId, AssemblyIdentity assemblyIdentity)
-        {
-            _projectId = projectId;
-            _assemblyIdentity = assemblyIdentity;
-        }
+        private readonly AssemblyIdentity _assemblyIdentity = assemblyIdentity;
+        private readonly ProjectId _projectId = projectId;
 
         public override void Apply(Workspace workspace, CancellationToken cancellationToken = default)
         {

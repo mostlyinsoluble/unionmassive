@@ -19,14 +19,10 @@ internal sealed partial class UnitTestingSolutionCrawlerRegistrationService : IU
     /// more than one <see cref="IWorkspaceService"/>.
     /// </summary>
     [ExportWorkspaceService(typeof(IUnitTestingSolutionCrawlerService), ServiceLayer.Default), Shared]
-    internal sealed class UnitTestingSolutionCrawlerService : IUnitTestingSolutionCrawlerService
+    [method: ImportingConstructor]
+    [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+    internal sealed class UnitTestingSolutionCrawlerService() : IUnitTestingSolutionCrawlerService
     {
-        [ImportingConstructor]
-        [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-        public UnitTestingSolutionCrawlerService()
-        {
-        }
-
         public void Reanalyze(string? workspaceKind, SolutionServices services, IUnitTestingIncrementalAnalyzer analyzer, IEnumerable<ProjectId>? projectIds = null, IEnumerable<DocumentId>? documentIds = null)
         {
             // if solution crawler doesn't exist for the given workspace. don't do anything

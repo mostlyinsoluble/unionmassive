@@ -31,10 +31,7 @@ namespace Microsoft.CodeAnalysis
             return builder;
         }
 
-        internal ArrayBuilder()
-        {
-            _items = [];
-        }
+        internal ArrayBuilder() => _items = [];
 
         public int Count
         {

@@ -31,19 +31,13 @@ internal struct SumType<T1, T2> : ISumType, IEquatable<SumType<T1, T2>>
     /// Initializes a new instance of the <see cref="SumType{T1, T2}"/> struct containing a <typeparamref name="T1"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2}"/>.</param>
-    public SumType(T1 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T1 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2}"/> struct containing a <typeparamref name="T2"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2}"/>.</param>
-    public SumType(T2 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T2 val) => this.Value = val;
 
     /// <inheritdoc/>
     public object? Value { get; }
@@ -225,28 +219,19 @@ internal struct SumType<T1, T2, T3> : ISumType, IEquatable<SumType<T1, T2, T3>>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3}"/> struct containing a <typeparamref name="T1"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3}"/>.</param>
-    public SumType(T1 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T1 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3}"/> struct containing a <typeparamref name="T2"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3}"/>.</param>
-    public SumType(T2 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T2 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3}"/> struct containing a <typeparamref name="T3"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3}"/>.</param>
-    public SumType(T3 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T3 val) => this.Value = val;
 
     /// <inheritdoc/>
     public object? Value { get; }
@@ -511,37 +496,25 @@ internal struct SumType<T1, T2, T3, T4> : ISumType, IEquatable<SumType<T1, T2, T
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3, T4}"/> struct containing a <typeparamref name="T1"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3, T4}"/>.</param>
-    public SumType(T1 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T1 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3, T4}"/> struct containing a <typeparamref name="T2"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3, T4}"/>.</param>
-    public SumType(T2 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T2 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3, T4}"/> struct containing a <typeparamref name="T3"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3, T4}"/>.</param>
-    public SumType(T3 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T3 val) => this.Value = val;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SumType{T1, T2, T3, T4}"/> struct containing a <typeparamref name="T4"/>.
     /// </summary>
     /// <param name="val">The value to store in the <see cref="SumType{T1, T2, T3, T4}"/>.</param>
-    public SumType(T4 val)
-    {
-        this.Value = val;
-    }
+    public SumType(T4 val) => this.Value = val;
 
     /// <inheritdoc/>
     public object? Value { get; }

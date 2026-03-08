@@ -9,13 +9,8 @@ using Microsoft.DiaSymReader;
 
 namespace Roslyn.Test.PdbUtilities
 {
-    internal class SymUnmanagedWriterWithoutSourceLinkSupport : DelegatingSymUnmanagedWriter
+    internal class SymUnmanagedWriterWithoutSourceLinkSupport(ISymWriterMetadataProvider metadataProvider) : DelegatingSymUnmanagedWriter(SymUnmanagedWriterFactory.CreateWriter(metadataProvider))
     {
-        public SymUnmanagedWriterWithoutSourceLinkSupport(ISymWriterMetadataProvider metadataProvider)
-            : base(SymUnmanagedWriterFactory.CreateWriter(metadataProvider))
-        {
-        }
-
         public override void SetSourceLinkData(byte[] data)
             => throw new SymUnmanagedWriterException("xxx", new NotSupportedException(), "<lib name>");
     }

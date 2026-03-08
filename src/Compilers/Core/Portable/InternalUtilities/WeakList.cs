@@ -17,10 +17,7 @@ namespace Roslyn.Utilities
         private WeakReference<T>[] _items;
         private int _size;
 
-        public WeakList()
-        {
-            _items = Array.Empty<WeakReference<T>>();
-        }
+        public WeakList() => _items = Array.Empty<WeakReference<T>>();
 
         private void Resize()
         {
@@ -158,24 +155,14 @@ namespace Roslyn.Utilities
             _items[_size++] = new WeakReference<T>(item);
         }
 
-        public struct Enumerator
+        public struct Enumerator(WeakList<T> weakList)
         {
-            private readonly WeakList<T> _weakList;
-            private readonly int _count;
-            private int _nextIndex;
-            private int _alive;
-            private int _firstDead;
-            private T? _current;
-
-            public Enumerator(WeakList<T> weakList)
-            {
-                _weakList = weakList;
-                _nextIndex = 0;
-                _count = weakList._size;
-                _alive = weakList._size;
-                _firstDead = -1;
-                _current = null;
-            }
+            private readonly WeakList<T> _weakList = weakList;
+            private readonly int _count = weakList._size;
+            private int _nextIndex = 0;
+            private int _alive = weakList._size;
+            private int _firstDead = -1;
+            private T? _current = null;
 
             public T Current => _current!;
 

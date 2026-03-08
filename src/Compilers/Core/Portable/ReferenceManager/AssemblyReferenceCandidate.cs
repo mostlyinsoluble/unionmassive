@@ -10,28 +10,22 @@ namespace Microsoft.CodeAnalysis
         /// Private helper class to capture information about AssemblySymbol instance we 
         /// should check for suitability. Used by the Bind method.
         /// </summary>
-        private readonly struct AssemblyReferenceCandidate
+        /// <remarks>
+        /// Convenience constructor to initialize fields of this structure.
+        /// </remarks>
+        private readonly struct AssemblyReferenceCandidate(int definitionIndex, TAssemblySymbol symbol)
         {
             /// <summary>
             /// An index of the AssemblyData object in the input array. AssemblySymbol instance should 
             /// be checked for suitability against assembly described by that object, taking into account 
             /// assemblies described by other AssemblyData objects in the input array.
             /// </summary>
-            public readonly int DefinitionIndex;
+            public readonly int DefinitionIndex = definitionIndex;
 
             /// <summary>
             /// AssemblySymbol instance to check for suitability.
             /// </summary>
-            public readonly TAssemblySymbol? AssemblySymbol;
-
-            /// <summary>
-            /// Convenience constructor to initialize fields of this structure.
-            /// </summary>
-            public AssemblyReferenceCandidate(int definitionIndex, TAssemblySymbol symbol)
-            {
-                DefinitionIndex = definitionIndex;
-                AssemblySymbol = symbol;
-            }
+            public readonly TAssemblySymbol? AssemblySymbol = symbol;
         }
     }
 }

@@ -10,14 +10,10 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.ExternalAccess.VSTypeScript;
 
 [ExportLanguageService(typeof(ICommentSelectionService), InternalLanguageNames.TypeScript), Shared]
-internal sealed class VSTypeScriptCommentSelectionService : ICommentSelectionService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VSTypeScriptCommentSelectionService() : ICommentSelectionService
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VSTypeScriptCommentSelectionService()
-    {
-    }
-
     public CommentSelectionInfo GetInfo()
         => new(
             supportsSingleLineComment: true,

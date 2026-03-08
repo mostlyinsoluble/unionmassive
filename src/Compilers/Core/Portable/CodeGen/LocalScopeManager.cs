@@ -662,18 +662,11 @@ namespace Microsoft.CodeAnalysis.CodeGen
         /// nested scopes only, no IL blocks (although nested ExceptionHandlerScopes
         /// for the clauses will contain IL blocks).
         /// </summary>
-        internal sealed class ExceptionHandlerContainerScope : ScopeInfo
+        internal sealed class ExceptionHandlerContainerScope(ILBuilder.ExceptionHandlerScope containingHandler) : ScopeInfo
         {
-            private readonly ImmutableArray<ExceptionHandlerScope>.Builder _handlers;
-            private readonly object _endLabel;
-            private readonly ExceptionHandlerScope _containingHandler;
-
-            public ExceptionHandlerContainerScope(ExceptionHandlerScope containingHandler)
-            {
-                _handlers = ImmutableArray.CreateBuilder<ExceptionHandlerScope>(2);
-                _containingHandler = containingHandler;
-                _endLabel = new object();
-            }
+            private readonly ImmutableArray<ExceptionHandlerScope>.Builder _handlers = ImmutableArray.CreateBuilder<ExceptionHandlerScope>(2);
+            private readonly object _endLabel = new object();
+            private readonly ExceptionHandlerScope _containingHandler = containingHandler;
 
             public ExceptionHandlerScope ContainingHandler => _containingHandler;
 

@@ -40,10 +40,7 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler
     {
         internal readonly ArrayBuilder<(string, string)> Outputs;
 
-        internal HostProductionContext(ArrayBuilder<(string, string)> outputs)
-        {
-            Outputs = outputs;
-        }
+        internal HostProductionContext(ArrayBuilder<(string, string)> outputs) => Outputs = outputs;
 
         public void AddOutput(string name, string value) => Outputs.Add((name, value));
     }

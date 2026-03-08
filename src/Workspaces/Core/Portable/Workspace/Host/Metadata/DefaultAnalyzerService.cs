@@ -9,15 +9,11 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Host;
 
 [ExportWorkspaceService(typeof(IAnalyzerService)), Shared]
-internal sealed class DefaultAnalyzerService : IAnalyzerService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class DefaultAnalyzerService() : IAnalyzerService
 {
     private readonly AnalyzerAssemblyLoader _loader = new();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultAnalyzerService()
-    {
-    }
 
     public IAnalyzerAssemblyLoader GetLoader()
     {

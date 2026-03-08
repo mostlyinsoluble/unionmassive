@@ -11,18 +11,12 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.CodeAnalysis.BraceMatching;
 
-internal abstract class AbstractBraceMatcher : IBraceMatcher
+internal abstract class AbstractBraceMatcher(
+    BraceCharacterAndKind openBrace,
+    BraceCharacterAndKind closeBrace) : IBraceMatcher
 {
-    private readonly BraceCharacterAndKind _openBrace;
-    private readonly BraceCharacterAndKind _closeBrace;
-
-    protected AbstractBraceMatcher(
-        BraceCharacterAndKind openBrace,
-        BraceCharacterAndKind closeBrace)
-    {
-        _openBrace = openBrace;
-        _closeBrace = closeBrace;
-    }
+    private readonly BraceCharacterAndKind _openBrace = openBrace;
+    private readonly BraceCharacterAndKind _closeBrace = closeBrace;
 
     private bool TryFindMatchingToken(SyntaxToken token, out SyntaxToken match)
     {

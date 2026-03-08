@@ -16,21 +16,15 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Rebuild
 {
-    public abstract class CompilationFactory
+    public abstract class CompilationFactory(string assemblyFileName, CompilationOptionsReader optionsReader)
     {
-        public string AssemblyFileName { get; }
-        public CompilationOptionsReader OptionsReader { get; }
+        public string AssemblyFileName { get; } = assemblyFileName;
+        public CompilationOptionsReader OptionsReader { get; } = optionsReader;
         public ParseOptions ParseOptions => CommonParseOptions;
         public CompilationOptions CompilationOptions => CommonCompilationOptions;
 
         protected abstract ParseOptions CommonParseOptions { get; }
         protected abstract CompilationOptions CommonCompilationOptions { get; }
-
-        protected CompilationFactory(string assemblyFileName, CompilationOptionsReader optionsReader)
-        {
-            AssemblyFileName = assemblyFileName;
-            OptionsReader = optionsReader;
-        }
 
         public static CompilationFactory Create(string assemblyFileName, CompilationOptionsReader optionsReader)
             => optionsReader.GetLanguageName() switch

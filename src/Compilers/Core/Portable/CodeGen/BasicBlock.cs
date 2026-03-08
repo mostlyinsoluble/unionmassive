@@ -63,10 +63,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
             {
             }
 
-            internal BasicBlock(ILBuilder builder)
-            {
-                Initialize(builder);
-            }
+            internal BasicBlock(ILBuilder builder) => Initialize(builder);
 
             internal void Initialize(ILBuilder builder)
             {
@@ -672,29 +669,17 @@ namespace Microsoft.CodeAnalysis.CodeGen
             }
         }
 
-        internal class BasicBlockWithHandlerScope : BasicBlock
+        internal class BasicBlockWithHandlerScope(ILBuilder builder, ILBuilder.ExceptionHandlerScope enclosingHandler) : BasicBlock(builder)
         {
             //nearest enclosing exception handler if any
-            public readonly ExceptionHandlerScope enclosingHandler;
-
-            public BasicBlockWithHandlerScope(ILBuilder builder, ExceptionHandlerScope enclosingHandler)
-                : base(builder)
-            {
-                this.enclosingHandler = enclosingHandler;
-            }
+            public readonly ExceptionHandlerScope enclosingHandler = enclosingHandler;
 
             public override ExceptionHandlerScope EnclosingHandler => enclosingHandler;
         }
 
-        internal sealed class ExceptionHandlerLeaderBlock : BasicBlockWithHandlerScope
+        internal sealed class ExceptionHandlerLeaderBlock(ILBuilder builder, ILBuilder.ExceptionHandlerScope enclosingHandler, ILBuilder.BlockType type) : BasicBlockWithHandlerScope(builder, enclosingHandler)
         {
-            private readonly BlockType _type;
-
-            public ExceptionHandlerLeaderBlock(ILBuilder builder, ExceptionHandlerScope enclosingHandler, BlockType type) :
-                base(builder, enclosingHandler)
-            {
-                _type = type;
-            }
+            private readonly BlockType _type = type;
 
             // The next exception handler clause (catch or finally)
             // in the same exception handler.
@@ -713,10 +698,7 @@ namespace Microsoft.CodeAnalysis.CodeGen
         internal sealed class SwitchBlock : BasicBlockWithHandlerScope
         {
             public SwitchBlock(ILBuilder builder, ExceptionHandlerScope enclosingHandler) :
-                base(builder, enclosingHandler)
-            {
-                this.SetBranchCode(ILOpCode.Switch);
-            }
+                base(builder, enclosingHandler) => this.SetBranchCode(ILOpCode.Switch);
 
             public override BlockType Type => BlockType.Switch;
 

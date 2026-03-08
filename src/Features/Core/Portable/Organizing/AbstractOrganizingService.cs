@@ -14,11 +14,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Organizing;
 
-internal abstract class AbstractOrganizingService : IOrganizingService
+internal abstract class AbstractOrganizingService(IEnumerable<ISyntaxOrganizer> organizers) : IOrganizingService
 {
-    private readonly IEnumerable<ISyntaxOrganizer> _organizers;
-    protected AbstractOrganizingService(IEnumerable<ISyntaxOrganizer> organizers)
-        => _organizers = organizers.ToImmutableArrayOrEmpty();
+    private readonly IEnumerable<ISyntaxOrganizer> _organizers = organizers.ToImmutableArrayOrEmpty();
 
     public IEnumerable<ISyntaxOrganizer> GetDefaultOrganizers()
         => _organizers;

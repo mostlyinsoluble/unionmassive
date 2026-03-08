@@ -13,15 +13,9 @@ using Microsoft.VisualStudio.Language.CallHierarchy;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.CallHierarchy.Finders;
 
-internal sealed class InterfaceImplementationCallFinder : AbstractCallFinder
+internal sealed class InterfaceImplementationCallFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider) : AbstractCallFinder(symbol, projectId, asyncListener, provider)
 {
-    private readonly string _text;
-
-    public InterfaceImplementationCallFinder(ISymbol symbol, ProjectId projectId, IAsynchronousOperationListener asyncListener, CallHierarchyProvider provider)
-        : base(symbol, projectId, asyncListener, provider)
-    {
-        _text = string.Format(EditorFeaturesResources.Calls_To_Interface_Implementation_0, symbol.ToDisplayString());
-    }
+    private readonly string _text = string.Format(EditorFeaturesResources.Calls_To_Interface_Implementation_0, symbol.ToDisplayString());
 
     public override string DisplayName => _text;
 

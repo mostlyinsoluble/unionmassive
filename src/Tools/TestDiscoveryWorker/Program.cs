@@ -112,10 +112,7 @@ file class Sink : IMessageSink
 {
     public bool AnyWriteFailures { get; private set; }
 
-    public Sink()
-    {
-        _channel = Channel.CreateUnbounded<string>();
-    }
+    public Sink() => _channel = Channel.CreateUnbounded<string>();
 
     private readonly Channel<string> _channel;
 

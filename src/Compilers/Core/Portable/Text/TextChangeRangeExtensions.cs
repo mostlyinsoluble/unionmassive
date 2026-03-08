@@ -261,7 +261,7 @@ namespace Roslyn.Utilities
                         oldChange = new TextChangeRange(oldChange.Span, oldChange.NewLength - newChange.SpanLength);
 
                         // the new change deletion is equal to the subset of the old change insertion that we are consuming this iteration
-                        oldDelta = oldDelta + newChange.SpanLength;
+                        oldDelta += newChange.SpanLength;
 
                         // since the new change insertion occurs before the old change, consume it now
                         newChange = new UnadjustedNewChange(newChange.SpanEnd, spanLength: 0, newChange.NewLength);
@@ -411,20 +411,13 @@ namespace Roslyn.Utilities
         /// resulting in a temporary unadjusted new change whose <see cref="SpanStart"/> is negative (not valid) until it is adjusted.
         /// This tends to happen when we need to merge an old change deletion into a new change near the beginning of the text. (see TextChangeTests.Fuzz_4)
         /// </remarks>
-        private readonly struct UnadjustedNewChange
+        private readonly struct UnadjustedNewChange(int spanStart, int spanLength, int newLength)
         {
-            public readonly int SpanStart { get; }
-            public readonly int SpanLength { get; }
-            public readonly int NewLength { get; }
+            public readonly int SpanStart { get; } = spanStart;
+            public readonly int SpanLength { get; } = spanLength;
+            public readonly int NewLength { get; } = newLength;
 
             public int SpanEnd => SpanStart + SpanLength;
-
-            public UnadjustedNewChange(int spanStart, int spanLength, int newLength)
-            {
-                SpanStart = spanStart;
-                SpanLength = spanLength;
-                NewLength = newLength;
-            }
 
             public UnadjustedNewChange(TextChangeRange range)
                 : this(range.Span.Start, range.Span.Length, range.NewLength)

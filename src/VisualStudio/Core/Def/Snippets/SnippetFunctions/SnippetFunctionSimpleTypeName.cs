@@ -14,22 +14,15 @@ using VsTextSpan = Microsoft.VisualStudio.TextManager.Interop.TextSpan;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.Snippets;
 
-internal sealed class SnippetFunctionSimpleTypeName : AbstractSnippetFunction
+internal sealed class SnippetFunctionSimpleTypeName(
+    SnippetExpansionClient snippetExpansionClient,
+    ITextBuffer subjectBuffer,
+    string fieldName,
+    string fullyQualifiedName,
+    IThreadingContext threadingContext) : AbstractSnippetFunction(snippetExpansionClient, subjectBuffer, threadingContext)
 {
-    private readonly string _fieldName;
-    private readonly string _fullyQualifiedName;
-
-    public SnippetFunctionSimpleTypeName(
-        SnippetExpansionClient snippetExpansionClient,
-        ITextBuffer subjectBuffer,
-        string fieldName,
-        string fullyQualifiedName,
-        IThreadingContext threadingContext)
-        : base(snippetExpansionClient, subjectBuffer, threadingContext)
-    {
-        _fieldName = fieldName;
-        _fullyQualifiedName = fullyQualifiedName;
-    }
+    private readonly string _fieldName = fieldName;
+    private readonly string _fullyQualifiedName = fullyQualifiedName;
 
     protected override async Task<(int ExitCode, string Value, int HasDefaultValue)> GetDefaultValueAsync(CancellationToken cancellationToken)
     {

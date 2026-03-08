@@ -9,10 +9,10 @@ namespace Microsoft.CodeAnalysis
 {
     // very simple cache with a specified size.
     // expiration policy is "new entry wins over old entry if hashed into the same bucket"
-    internal sealed class ConcurrentCache<TKey, TValue> : CachingBase<ConcurrentCache<TKey, TValue>.Entry>
+    internal sealed class ConcurrentCache<TKey, TValue>(int size, IEqualityComparer<TKey> keyComparer) : CachingBase<ConcurrentCache<TKey, TValue>.Entry>(size, createBackingArray: false)
         where TKey : notnull
     {
-        private readonly IEqualityComparer<TKey> _keyComparer;
+        private readonly IEqualityComparer<TKey> _keyComparer = keyComparer;
 
         // class, to ensure atomic updates.
         internal class Entry
@@ -27,16 +27,6 @@ namespace Microsoft.CodeAnalysis
                 this.key = key;
                 this.value = value;
             }
-        }
-
-        public ConcurrentCache(int size, IEqualityComparer<TKey> keyComparer)
-            // Defer creating the backing array until it is actually needed.  This saves on expensive allocations for
-            // short-lived compilations that do not end up using the cache.  As the cache is simple best-effort, it's
-            // fine if multiple threads end up creating the backing array at the same time.  One thread will be last and
-            // will win, and the others will just end up creating a small piece of garbage that will be collected.
-            : base(size, createBackingArray: false)
-        {
-            _keyComparer = keyComparer;
         }
 
         public ConcurrentCache(int size)

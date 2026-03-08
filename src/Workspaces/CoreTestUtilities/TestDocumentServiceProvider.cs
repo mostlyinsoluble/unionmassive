@@ -53,14 +53,9 @@ internal sealed class TestDocumentServiceProvider : IDocumentServiceProvider
         public bool SupportDiagnostics { get; set; }
     }
 
-    private sealed class TestSpanMappingService : ISpanMappingService
+    private sealed class TestSpanMappingService(bool supportsMappingImportDirectives) : ISpanMappingService
     {
-        public TestSpanMappingService(bool supportsMappingImportDirectives)
-        {
-            SupportsMappingImportDirectives = supportsMappingImportDirectives;
-        }
-
-        public bool SupportsMappingImportDirectives { get; }
+        public bool SupportsMappingImportDirectives { get; } = supportsMappingImportDirectives;
 
         public Task<ImmutableArray<(string mappedFilePath, TextChange mappedTextChange)>> GetMappedTextChangesAsync(
             Document oldDocument,

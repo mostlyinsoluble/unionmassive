@@ -20,17 +20,13 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation;
 using Workspace = Microsoft.CodeAnalysis.Workspace;
 
 [Export(typeof(IRefactorNotifyService))]
-internal sealed class ContainedLanguageRefactorNotifyService : IRefactorNotifyService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ContainedLanguageRefactorNotifyService() : IRefactorNotifyService
 {
     private static readonly SymbolDisplayFormat s_qualifiedDisplayFormat = new(
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ContainedLanguageRefactorNotifyService()
-    {
-    }
 
     public bool TryOnBeforeGlobalSymbolRenamed(Workspace workspace, IEnumerable<DocumentId> changedDocumentIDs, ISymbol symbol, string newName, bool throwOnFailure)
         => true;

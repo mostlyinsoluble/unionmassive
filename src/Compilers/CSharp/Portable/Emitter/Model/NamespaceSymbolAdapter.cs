@@ -51,10 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class NamespaceSymbolAdapter
     {
-        internal NamespaceSymbolAdapter(NamespaceSymbol underlyingNamespaceSymbol)
-        {
-            AdaptedNamespaceSymbol = underlyingNamespaceSymbol;
-        }
+        internal NamespaceSymbolAdapter(NamespaceSymbol underlyingNamespaceSymbol) => AdaptedNamespaceSymbol = underlyingNamespaceSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedNamespaceSymbol;
         internal NamespaceSymbol AdaptedNamespaceSymbol { get; }

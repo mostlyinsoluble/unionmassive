@@ -51,16 +51,11 @@ internal static class FSharpHighlightSpanKindHelpers
 
 [Shared]
 [ExportLanguageService(typeof(IDocumentHighlightsService), LanguageNames.FSharp)]
-internal class FSharpDocumentHighlightsService : IDocumentHighlightsService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpDocumentHighlightsService(IFSharpDocumentHighlightsService service) : IDocumentHighlightsService
 {
-    private readonly IFSharpDocumentHighlightsService _service;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpDocumentHighlightsService(IFSharpDocumentHighlightsService service)
-    {
-        _service = service;
-    }
+    private readonly IFSharpDocumentHighlightsService _service = service;
 
     private static ImmutableArray<HighlightSpan> MapHighlightSpans(ImmutableArray<FSharpHighlightSpan> highlightSpans)
     {

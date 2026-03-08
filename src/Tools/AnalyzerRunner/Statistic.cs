@@ -6,20 +6,13 @@
 
 namespace AnalyzerRunner
 {
-    internal readonly struct Statistic
+    internal readonly struct Statistic(int numberOfNodes, int numberOfTokens, int numberOfTrivia)
     {
-        public Statistic(int numberOfNodes, int numberOfTokens, int numberOfTrivia)
-        {
-            this.NumberofNodes = numberOfNodes;
-            this.NumberOfTokens = numberOfTokens;
-            this.NumberOfTrivia = numberOfTrivia;
-        }
+        public int NumberofNodes { get; } = numberOfNodes;
 
-        public int NumberofNodes { get; }
+        public int NumberOfTokens { get; } = numberOfTokens;
 
-        public int NumberOfTokens { get; }
-
-        public int NumberOfTrivia { get; }
+        public int NumberOfTrivia { get; } = numberOfTrivia;
 
         public static Statistic operator +(Statistic statistic1, Statistic statistic2)
         {

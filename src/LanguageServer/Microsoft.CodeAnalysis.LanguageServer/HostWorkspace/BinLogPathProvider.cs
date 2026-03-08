@@ -11,7 +11,9 @@ using Microsoft.VisualStudio.Composition;
 namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 
 [Export(typeof(IBinLogPathProvider)), Shared]
-internal sealed class BinLogPathProvider : IBinLogPathProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class BinLogPathProvider(IGlobalOptionService globalOptionService, ILoggerFactory loggerFactory) : IBinLogPathProvider
 {
     /// <summary>
     /// The suffix to use for the binary log name; incremented each time we have a new build. Should be incremented with <see cref="Interlocked.Increment(ref int)"/>.
@@ -23,16 +25,8 @@ internal sealed class BinLogPathProvider : IBinLogPathProvider
     /// </summary>
     private readonly Guid _binaryLogGuidSuffix = Guid.NewGuid();
 
-    private readonly IGlobalOptionService _globalOptionService;
-    private readonly ILogger _logger;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public BinLogPathProvider(IGlobalOptionService globalOptionService, ILoggerFactory loggerFactory)
-    {
-        _globalOptionService = globalOptionService;
-        _logger = loggerFactory.CreateLogger<BinLogPathProvider>();
-    }
+    private readonly IGlobalOptionService _globalOptionService = globalOptionService;
+    private readonly ILogger _logger = loggerFactory.CreateLogger<BinLogPathProvider>();
 
     public string? GetNewLogPath()
     {

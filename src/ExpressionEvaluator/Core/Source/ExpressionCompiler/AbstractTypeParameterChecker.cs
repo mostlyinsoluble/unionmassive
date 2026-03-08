@@ -14,14 +14,9 @@ namespace Microsoft.CodeAnalysis.ExpressionEvaluator
     /// Shared <see cref="SymbolVisitor"/> that looks for instances of <see cref="ITypeParameterSymbol"/>
     /// that are not in a provided allow list.
     /// </summary>
-    internal abstract class AbstractTypeParameterChecker : SymbolVisitor
+    internal abstract class AbstractTypeParameterChecker(ImmutableArray<ITypeParameterSymbol> acceptableTypeParameters) : SymbolVisitor
     {
-        private readonly HashSet<ITypeParameterSymbol> _acceptableTypeParameters;
-
-        protected AbstractTypeParameterChecker(ImmutableArray<ITypeParameterSymbol> acceptableTypeParameters)
-        {
-            _acceptableTypeParameters = [.. acceptableTypeParameters];
-        }
+        private readonly HashSet<ITypeParameterSymbol> _acceptableTypeParameters = [.. acceptableTypeParameters];
 
         public abstract IParameterSymbol GetThisParameter(IMethodSymbol method);
 

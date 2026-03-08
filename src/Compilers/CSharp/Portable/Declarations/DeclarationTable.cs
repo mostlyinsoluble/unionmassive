@@ -112,10 +112,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             private readonly CSharpCompilation _compilation;
 
-            internal RootNamespaceLocationComparer(CSharpCompilation compilation)
-            {
-                _compilation = compilation;
-            }
+            internal RootNamespaceLocationComparer(CSharpCompilation compilation) => _compilation = compilation;
 
             [PerformanceSensitive(
                 "https://github.com/dotnet/roslyn/issues/23582",

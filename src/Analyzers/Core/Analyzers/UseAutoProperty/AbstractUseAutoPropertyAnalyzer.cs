@@ -78,10 +78,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
     protected abstract TSyntaxKind PropertyDeclarationKind { get; }
 
     protected abstract bool CanExplicitInterfaceImplementationsBeFixed { get; }
-    protected abstract bool SupportsFieldAttributesOnProperties { get; }
-
-    protected abstract bool SupportsReadOnlyProperties(Compilation compilation);
-    protected abstract bool SupportsPropertyInitializer(Compilation compilation);
 
     protected abstract TExpression? GetFieldInitializer(TVariableDeclarator variable, CancellationToken cancellationToken);
     protected abstract TExpression? GetGetterExpression(IMethodSymbol getMethod, CancellationToken cancellationToken);
@@ -262,9 +258,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
         if (trivialFieldExpression != null)
             return new(CheckFieldAccessExpression(semanticModel, trivialFieldExpression, fieldNames, cancellationToken));
 
-        if (!this.SyntaxFacts.SupportsFieldExpression(semanticModel.SyntaxTree.Options))
-            return AccessedFields.Empty;
-
         using var _ = PooledHashSet<IFieldSymbol>.GetInstance(out var set);
         AddAccessedFields(semanticModel, getMethod, fieldNames, set, cancellationToken);
 
@@ -277,9 +270,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
         var trivialFieldExpression = GetSetterExpression(semanticModel, setMethod, cancellationToken);
         if (trivialFieldExpression != null)
             return new(CheckFieldAccessExpression(semanticModel, trivialFieldExpression, fieldNames, cancellationToken));
-
-        if (!this.SyntaxFacts.SupportsFieldExpression(semanticModel.SyntaxTree.Options))
-            return AccessedFields.Empty;
 
         using var _ = PooledHashSet<IFieldSymbol>.GetInstance(out var set);
         AddAccessedFields(semanticModel, setMethod, fieldNames, set, cancellationToken);
@@ -401,11 +391,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
                 if (getterField.IsConst || getterField.IsVolatile)
                     return false;
 
-                // If the user made the field readonly, we only want to convert it to a property if we
-                // can keep it readonly.
-                if (getterField.IsReadOnly && !@this.SupportsReadOnlyProperties(compilation))
-                    return false;
-
                 // Mutable value type fields are mutable unless they are marked read-only
                 if (!getterField.IsReadOnly && getterField.Type.IsMutableValueType() != false)
                     return false;
@@ -423,10 +408,6 @@ internal abstract partial class AbstractUseAutoPropertyAnalyzer<
                     return false;
 
                 if (!TryGetSyntax(getterField, out _, out var variableDeclarator, cancellationToken))
-                    return false;
-
-                var initializer = @this.GetFieldInitializer(variableDeclarator, cancellationToken);
-                if (initializer != null && !@this.SupportsPropertyInitializer(compilation))
                     return false;
 
                 if (!@this.CanConvert(property))

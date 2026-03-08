@@ -15,9 +15,6 @@ namespace Microsoft.VisualStudio.Debugger.Clr
     {
         public string Name { get; }
 
-        internal DkmClrLocalVariable(string name)
-        {
-            Name = name;
-        }
+        internal DkmClrLocalVariable(string name) => Name = name;
     }
 }

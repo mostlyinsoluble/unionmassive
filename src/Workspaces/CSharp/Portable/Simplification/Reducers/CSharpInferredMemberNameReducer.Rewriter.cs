@@ -19,16 +19,13 @@ internal sealed partial class CSharpInferredMemberNameReducer
     private sealed class Rewriter : AbstractReductionRewriter
     {
         public Rewriter(ObjectPool<IReductionRewriter> pool)
-            : base(pool)
-        {
-            s_simplifyTupleName = SimplifyTupleName;
-        }
+            : base(pool) => s_simplifyTupleName = SimplifyTupleName;
 
         private readonly Func<ArgumentSyntax, SemanticModel, SimplifierOptions, CancellationToken, ArgumentSyntax> s_simplifyTupleName;
 
         private ArgumentSyntax SimplifyTupleName(ArgumentSyntax node, SemanticModel semanticModel, SimplifierOptions options, CancellationToken cancellationToken)
         {
-            if (CanSimplifyTupleElementName(node, this.ParseOptions))
+            if (CanSimplifyTupleElementName(node))
             {
                 return node.WithNameColon(null).WithTriviaFrom(node);
             }

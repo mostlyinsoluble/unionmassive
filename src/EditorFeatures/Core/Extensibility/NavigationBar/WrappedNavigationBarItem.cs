@@ -29,10 +29,7 @@ internal sealed class WrappedNavigationBarItem : NavigationBarItem, IEquatable<W
               underlyingItem.ChildItems.SelectAsArray(static (v, textVersion) => (NavigationBarItem)new WrappedNavigationBarItem(textVersion, v), textVersion),
               underlyingItem.Indent,
               underlyingItem.Bolded,
-              underlyingItem.Grayed)
-    {
-        UnderlyingItem = underlyingItem;
-    }
+              underlyingItem.Grayed) => UnderlyingItem = underlyingItem;
 
     private static ImmutableArray<TextSpan> GetSpans(RoslynNavigationBarItem underlyingItem)
     {

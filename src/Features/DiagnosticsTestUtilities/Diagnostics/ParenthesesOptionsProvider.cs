@@ -12,14 +12,9 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.CodeActions;
 
-public sealed class ParenthesesOptionsProvider
+public sealed class ParenthesesOptionsProvider(string language)
 {
-    private readonly string _language;
-    public ParenthesesOptionsProvider(string language)
-    {
-        _language = language;
-    }
-
+    private readonly string _language = language;
     private static readonly CodeStyleOption2<ParenthesesPreference> IgnorePreference =
         new(ParenthesesPreference.AlwaysForClarity, NotificationOption2.None);
 

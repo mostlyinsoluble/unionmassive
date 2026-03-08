@@ -18,16 +18,11 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal.Diagnostics;
 
 [Shared]
 [ExportLanguageService(typeof(FSharpSimplifyNameDiagnosticAnalyzerService), LanguageNames.FSharp)]
-internal class FSharpSimplifyNameDiagnosticAnalyzerService : ILanguageService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal class FSharpSimplifyNameDiagnosticAnalyzerService(IFSharpSimplifyNameDiagnosticAnalyzer analyzer) : ILanguageService
 {
-    private readonly IFSharpSimplifyNameDiagnosticAnalyzer _analyzer;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public FSharpSimplifyNameDiagnosticAnalyzerService(IFSharpSimplifyNameDiagnosticAnalyzer analyzer)
-    {
-        _analyzer = analyzer;
-    }
+    private readonly IFSharpSimplifyNameDiagnosticAnalyzer _analyzer = analyzer;
 
     public Task<ImmutableArray<Diagnostic>> AnalyzeSemanticsAsync(DiagnosticDescriptor descriptor, Document document, CancellationToken cancellationToken)
     {

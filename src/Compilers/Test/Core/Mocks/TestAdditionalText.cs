@@ -9,22 +9,16 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.Test.Utilities
 {
-    public sealed class TestAdditionalText : AdditionalText
+    public sealed class TestAdditionalText(string path, SourceText? text) : AdditionalText
     {
-        private readonly SourceText? _text;
-
-        public TestAdditionalText(string path, SourceText? text)
-        {
-            Path = path;
-            _text = text;
-        }
+        private readonly SourceText? _text = text;
 
         public TestAdditionalText(string text = "", Encoding? encoding = null, string path = "dummy", SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithm.Sha1)
             : this(path, new StringText(text, encoding, checksumAlgorithm: checksumAlgorithm))
         {
         }
 
-        public override string Path { get; }
+        public override string Path { get; } = path;
 
         public override SourceText? GetText(CancellationToken cancellationToken = default) => _text;
     }

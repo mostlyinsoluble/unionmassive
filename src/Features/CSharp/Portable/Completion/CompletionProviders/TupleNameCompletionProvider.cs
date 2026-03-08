@@ -25,15 +25,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(TupleNameCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(XmlDocCommentCompletionProvider))]
 [Shared]
-internal sealed class TupleNameCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TupleNameCompletionProvider() : LSPCompletionProvider
 {
     private const string ColonString = ":";
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TupleNameCompletionProvider()
-    {
-    }
 
     internal override string Language => LanguageNames.CSharp;
 

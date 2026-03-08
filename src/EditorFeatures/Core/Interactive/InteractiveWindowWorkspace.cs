@@ -7,12 +7,7 @@ using Microsoft.VisualStudio.InteractiveWindow;
 
 namespace Microsoft.CodeAnalysis.Interactive;
 
-internal sealed class InteractiveWindowWorkspace : InteractiveWorkspace
+internal sealed class InteractiveWindowWorkspace(HostServices hostServices) : InteractiveWorkspace(hostServices)
 {
     public IInteractiveWindow? Window { get; set; }
-
-    public InteractiveWindowWorkspace(HostServices hostServices)
-        : base(hostServices)
-    {
-    }
 }

@@ -14,10 +14,7 @@ namespace BuildBoss
     {
         private readonly string _targetDir;
 
-        internal TargetsCheckerUtil(string targetDir)
-        {
-            _targetDir = targetDir;
-        }
+        internal TargetsCheckerUtil(string targetDir) => _targetDir = targetDir;
 
         public bool Check(TextWriter textWriter)
         {

@@ -13,13 +13,8 @@ using Microsoft.VisualStudio.Utilities.ServiceBroker;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.BrokeredServices;
 
-internal sealed class BrokeredServiceContainer : GlobalBrokeredServiceContainer
+internal sealed class BrokeredServiceContainer(TraceSource traceSource) : GlobalBrokeredServiceContainer(ImmutableDictionary<ServiceMoniker, ServiceRegistration>.Empty, isClientOfExclusiveServer: false, joinableTaskFactory: null, traceSource)
 {
-    public BrokeredServiceContainer(TraceSource traceSource)
-        : base(ImmutableDictionary<ServiceMoniker, ServiceRegistration>.Empty, isClientOfExclusiveServer: false, joinableTaskFactory: null, traceSource)
-    {
-    }
-
     public override IReadOnlyDictionary<string, string> LocalUserCredentials
         => ImmutableDictionary<string, string>.Empty;
 

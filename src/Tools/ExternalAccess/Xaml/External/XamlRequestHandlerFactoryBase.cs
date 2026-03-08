@@ -8,14 +8,9 @@ using Microsoft.CodeAnalysis.LanguageServer.Handler;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.Xaml;
 
-internal abstract class XamlRequestHandlerFactoryBase<TRequest, TResponse> : ILspServiceFactory
+internal abstract class XamlRequestHandlerFactoryBase<TRequest, TResponse>(IXamlRequestHandler<TRequest, TResponse>? xamlRequestHandler) : ILspServiceFactory
 {
-    private readonly IXamlRequestHandler<TRequest, TResponse>? _xamlRequestHandler;
-
-    public XamlRequestHandlerFactoryBase(IXamlRequestHandler<TRequest, TResponse>? xamlRequestHandler)
-    {
-        _xamlRequestHandler = xamlRequestHandler;
-    }
+    private readonly IXamlRequestHandler<TRequest, TResponse>? _xamlRequestHandler = xamlRequestHandler;
 
     public abstract XamlRequestHandlerBase<TRequest, TResponse> CreateHandler(IXamlRequestHandler<TRequest, TResponse>? xamlRequestHandler, IResolveCachedDataService resolveDataService);
 
@@ -27,14 +22,9 @@ internal abstract class XamlRequestHandlerFactoryBase<TRequest, TResponse> : ILs
         return CreateHandler(_xamlRequestHandler, resolveDataService);
     }
 
-    private sealed class ResolveCachedDataService : IResolveCachedDataService
+    private sealed class ResolveCachedDataService(ResolveDataCache resolveDataCache) : IResolveCachedDataService
     {
-        private readonly ResolveDataCache _resolveDataCache;
-
-        public ResolveCachedDataService(ResolveDataCache resolveDataCache)
-        {
-            _resolveDataCache = resolveDataCache ?? throw new ArgumentNullException(nameof(resolveDataCache));
-        }
+        private readonly ResolveDataCache _resolveDataCache = resolveDataCache ?? throw new ArgumentNullException(nameof(resolveDataCache));
 
         public object ToResolveData(object data, Uri uri)
             => ResolveDataConversions.ToCachedResolveData(data, uri, _resolveDataCache);

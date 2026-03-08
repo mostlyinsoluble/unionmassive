@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Interactive
 {
-    internal sealed class RemoteInitializationResult
+    internal sealed class RemoteInitializationResult(string? initializationScript, ImmutableArray<string> metadataReferencePaths, ImmutableArray<string> imports)
     {
         internal sealed class Data
         {
@@ -24,18 +24,11 @@ namespace Microsoft.CodeAnalysis.Interactive
         /// <summary>
         /// Full path to the initialization script that has been executed as part of initialization process.
         /// </summary>
-        public readonly string? ScriptPath;
+        public readonly string? ScriptPath = initializationScript;
 
-        public readonly ImmutableArray<string> MetadataReferencePaths;
+        public readonly ImmutableArray<string> MetadataReferencePaths = metadataReferencePaths;
 
-        public readonly ImmutableArray<string> Imports;
-
-        public RemoteInitializationResult(string? initializationScript, ImmutableArray<string> metadataReferencePaths, ImmutableArray<string> imports)
-        {
-            ScriptPath = initializationScript;
-            MetadataReferencePaths = metadataReferencePaths;
-            Imports = imports;
-        }
+        public readonly ImmutableArray<string> Imports = imports;
 
         public Data Serialize()
             => new Data()

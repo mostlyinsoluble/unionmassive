@@ -20,14 +20,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers;
 [ExportCompletionProvider(nameof(SpeculativeTCompletionProvider), LanguageNames.CSharp)]
 [ExtensionOrder(After = nameof(AwaitCompletionProvider))]
 [Shared]
-internal sealed class SpeculativeTCompletionProvider : LSPCompletionProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SpeculativeTCompletionProvider() : LSPCompletionProvider
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SpeculativeTCompletionProvider()
-    {
-    }
-
     internal override string Language => LanguageNames.CSharp;
 
     public override bool IsInsertionTrigger(SourceText text, int characterPosition, CompletionOptions options)

@@ -9,12 +9,9 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Peek;
 
-internal abstract class PeekableItem : IPeekableItem
+internal abstract class PeekableItem(IPeekResultFactory peekResultFactory) : IPeekableItem
 {
-    protected readonly IPeekResultFactory PeekResultFactory;
-
-    protected PeekableItem(IPeekResultFactory peekResultFactory)
-        => this.PeekResultFactory = peekResultFactory;
+    protected readonly IPeekResultFactory PeekResultFactory = peekResultFactory;
 
     public string DisplayName
             // This is unused, and was supposed to have been removed from IPeekableItem.

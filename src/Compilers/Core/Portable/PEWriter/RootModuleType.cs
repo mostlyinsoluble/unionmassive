@@ -17,15 +17,10 @@ namespace Microsoft.Cci
     /// <summary>
     /// Special type &lt;Module&gt;
     /// </summary>
-    internal class RootModuleType : INamespaceTypeDefinition
+    internal class RootModuleType(IUnit unit) : INamespaceTypeDefinition
     {
-        private readonly IUnit _unit;
+        private readonly IUnit _unit = unit;
         private IReadOnlyList<IMethodDefinition>? _methods;
-
-        public RootModuleType(IUnit unit)
-        {
-            _unit = unit;
-        }
 
         public void SetStaticConstructorBody(ImmutableArray<byte> il)
         {

@@ -108,14 +108,10 @@ internal abstract class AbstractLspClientServiceFactory : ICollaborationServiceF
                             Role = ServiceRole.LocalService,
                             Features = "LspServices",
                             CreationPriority = (int)ServiceRole.LocalService + 2000)]
-internal sealed class CSharpLspClientServiceFactory : AbstractLspClientServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CSharpLspClientServiceFactory() : AbstractLspClientServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CSharpLspClientServiceFactory()
-    {
-    }
-
     protected override string LanguageSpecificProviderName => StringConstants.CSharpProviderName;
 
     protected override RoslynLSPClientLifeTimeService LspClientLifeTimeService => new CSharpLSPClientLifeTimeService();
@@ -131,14 +127,10 @@ internal sealed class CSharpLspClientServiceFactory : AbstractLspClientServiceFa
                             Role = ServiceRole.LocalService,
                             Features = "LspServices",
                             CreationPriority = (int)ServiceRole.LocalService + 2000)]
-internal sealed class VisualBasicLspClientServiceFactory : AbstractLspClientServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class VisualBasicLspClientServiceFactory() : AbstractLspClientServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public VisualBasicLspClientServiceFactory()
-    {
-    }
-
     protected override string LanguageSpecificProviderName => StringConstants.VisualBasicProviderName;
 
     protected override RoslynLSPClientLifeTimeService LspClientLifeTimeService => new VisualBasicLSPClientLifeTimeService();
@@ -154,14 +146,10 @@ internal sealed class VisualBasicLspClientServiceFactory : AbstractLspClientServ
                             Role = ServiceRole.LocalService,
                             Features = "LspServices",
                             CreationPriority = (int)ServiceRole.LocalService + 2000)]
-internal sealed class TypeScriptLspClientServiceFactory : AbstractLspClientServiceFactory
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TypeScriptLspClientServiceFactory() : AbstractLspClientServiceFactory
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TypeScriptLspClientServiceFactory()
-    {
-    }
-
     protected override string LanguageSpecificProviderName => StringConstants.TypeScriptProviderName;
 
     protected override RoslynLSPClientLifeTimeService LspClientLifeTimeService => new TypeScriptLSPClientLifeTimeService();

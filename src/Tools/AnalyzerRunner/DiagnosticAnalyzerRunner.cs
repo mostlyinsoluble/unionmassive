@@ -476,16 +476,10 @@ namespace AnalyzerRunner
             WriteLine($"{analyzerName}:{padding} {telemetry.ExecutionTime.TotalMilliseconds,7:0}", ConsoleColor.White);
         }
 
-        private readonly struct DocumentAnalyzerPerformance
+        private readonly struct DocumentAnalyzerPerformance(double editsPerSecond, long allocatedBytesPerEdit)
         {
-            public DocumentAnalyzerPerformance(double editsPerSecond, long allocatedBytesPerEdit)
-            {
-                EditsPerSecond = editsPerSecond;
-                AllocatedBytesPerEdit = allocatedBytesPerEdit;
-            }
-
-            public double EditsPerSecond { get; }
-            public long AllocatedBytesPerEdit { get; }
+            public double EditsPerSecond { get; } = editsPerSecond;
+            public long AllocatedBytesPerEdit { get; } = allocatedBytesPerEdit;
         }
     }
 }

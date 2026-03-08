@@ -11,33 +11,22 @@ using Xunit;
 
 namespace Roslyn.Test.Utilities.PDB
 {
-    internal readonly struct MetadataReferenceInfo
+    internal readonly struct MetadataReferenceInfo(
+        int timestamp,
+        int imageSize,
+        string name,
+        Guid mvid,
+        ImmutableArray<string> externAliases,
+        MetadataImageKind kind,
+        bool embedInteropTypes)
     {
-        public readonly int Timestamp;
-        public readonly int ImageSize;
-        public readonly string Name;
-        public readonly Guid Mvid;
-        public readonly ImmutableArray<string> ExternAliases;
-        public readonly MetadataImageKind Kind;
-        public readonly bool EmbedInteropTypes;
-
-        public MetadataReferenceInfo(
-            int timestamp,
-            int imageSize,
-            string name,
-            Guid mvid,
-            ImmutableArray<string> externAliases,
-            MetadataImageKind kind,
-            bool embedInteropTypes)
-        {
-            Timestamp = timestamp;
-            ImageSize = imageSize;
-            Name = name;
-            Mvid = mvid;
-            ExternAliases = externAliases;
-            Kind = kind;
-            EmbedInteropTypes = embedInteropTypes;
-        }
+        public readonly int Timestamp = timestamp;
+        public readonly int ImageSize = imageSize;
+        public readonly string Name = name;
+        public readonly Guid Mvid = mvid;
+        public readonly ImmutableArray<string> ExternAliases = externAliases;
+        public readonly MetadataImageKind Kind = kind;
+        public readonly bool EmbedInteropTypes = embedInteropTypes;
 
         internal void AssertEqual(MetadataReferenceInfo other)
         {

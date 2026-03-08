@@ -29,34 +29,25 @@ using Roslyn.Utilities;
 namespace Microsoft.VisualStudio.LanguageServices.Implementation.UnusedReferences;
 
 [Export(typeof(RemoveUnusedReferencesCommandHandler)), Shared]
-internal sealed class RemoveUnusedReferencesCommandHandler
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class RemoveUnusedReferencesCommandHandler(
+    IThreadingContext threadingContext,
+    RemoveUnusedReferencesDialogProvider unusedReferenceDialogProvider,
+    IUIThreadOperationExecutor threadOperationExecutor,
+    VisualStudioWorkspace workspace,
+    IGlobalOptionService globalOptions)
 {
     private const string ProjectAssetsFilePropertyName = "ProjectAssetsFile";
-    private readonly IThreadingContext _threadingContext;
-    private readonly RemoveUnusedReferencesDialogProvider _unusedReferenceDialogProvider;
-    private readonly VisualStudioWorkspace _workspace;
-    private readonly IGlobalOptionService _globalOptions;
-    private readonly IUIThreadOperationExecutor _threadOperationExecutor;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly RemoveUnusedReferencesDialogProvider _unusedReferenceDialogProvider = unusedReferenceDialogProvider;
+    private readonly VisualStudioWorkspace _workspace = workspace;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
+    private readonly IUIThreadOperationExecutor _threadOperationExecutor = threadOperationExecutor;
     private IServiceProvider? _serviceProvider;
 
     private IReferenceCleanupService ReferenceCleanupService
         => _workspace.Services.GetRequiredService<IReferenceCleanupService>();
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public RemoveUnusedReferencesCommandHandler(
-        IThreadingContext threadingContext,
-        RemoveUnusedReferencesDialogProvider unusedReferenceDialogProvider,
-        IUIThreadOperationExecutor threadOperationExecutor,
-        VisualStudioWorkspace workspace,
-        IGlobalOptionService globalOptions)
-    {
-        _threadingContext = threadingContext;
-        _unusedReferenceDialogProvider = unusedReferenceDialogProvider;
-        _threadOperationExecutor = threadOperationExecutor;
-        _workspace = workspace;
-        _globalOptions = globalOptions;
-    }
 
     public async Task InitializeAsync(IAsyncServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

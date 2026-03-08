@@ -21,19 +21,13 @@ namespace Roslyn.Test.Utilities
     /// call the <see cref="SetSucceeded"/> method. Otherwise if the test fails an exception is generated,
     /// the call is skipped and in <see cref="Dispose"/> we prepare the artifacts for upload.
     /// </summary>
-    public sealed class ArtifactUploadUtil : IDisposable
+    public sealed class ArtifactUploadUtil(ITestOutputHelper testOutputHelper, string? baseDirectoryName = null) : IDisposable
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-        private readonly string _baseDirectoryName;
+        private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
+        private readonly string _baseDirectoryName = baseDirectoryName ?? Guid.NewGuid().ToString();
         private readonly List<string> _filePaths = new List<string>();
         private readonly List<string> _directoryPaths = new List<string>();
         private bool _success = false;
-
-        public ArtifactUploadUtil(ITestOutputHelper testOutputHelper, string? baseDirectoryName = null)
-        {
-            _testOutputHelper = testOutputHelper;
-            _baseDirectoryName = baseDirectoryName ?? Guid.NewGuid().ToString();
-        }
 
         public void AddFile(string filePath)
         {

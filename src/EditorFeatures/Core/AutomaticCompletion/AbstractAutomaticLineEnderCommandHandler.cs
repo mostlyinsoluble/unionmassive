@@ -19,25 +19,18 @@ using Microsoft.VisualStudio.Text.Operations;
 
 namespace Microsoft.CodeAnalysis.AutomaticCompletion;
 
-internal abstract class AbstractAutomaticLineEnderCommandHandler :
+internal abstract class AbstractAutomaticLineEnderCommandHandler(
+    ITextUndoHistoryRegistry undoRegistry,
+    IEditorOperationsFactoryService editorOperationsFactoryService,
+    EditorOptionsService editorOptionsService) :
     IChainedCommandHandler<AutomaticLineEnderCommandArgs>
 {
-    private readonly ITextUndoHistoryRegistry _undoRegistry;
-    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService;
+    private readonly ITextUndoHistoryRegistry _undoRegistry = undoRegistry;
+    private readonly IEditorOperationsFactoryService _editorOperationsFactoryService = editorOperationsFactoryService;
 
-    public readonly EditorOptionsService EditorOptionsService;
+    public readonly EditorOptionsService EditorOptionsService = editorOptionsService;
 
     public string DisplayName => EditorFeaturesResources.Automatic_Line_Ender;
-
-    protected AbstractAutomaticLineEnderCommandHandler(
-        ITextUndoHistoryRegistry undoRegistry,
-        IEditorOperationsFactoryService editorOperationsFactoryService,
-        EditorOptionsService editorOptionsService)
-    {
-        _undoRegistry = undoRegistry;
-        _editorOperationsFactoryService = editorOperationsFactoryService;
-        EditorOptionsService = editorOptionsService;
-    }
 
     /// <summary>
     /// get ending string if there is one

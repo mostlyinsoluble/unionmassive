@@ -10,19 +10,14 @@ namespace Microsoft.CodeAnalysis.Diagnostics
     /// <summary>
     /// Provides custom values associated with <see cref="AdditionalText"/> instances using the given computeValue delegate.
     /// </summary>
-    public sealed class AdditionalTextValueProvider<TValue>
+    /// <remarks>
+    /// Provides custom values associated with <see cref="AdditionalText"/> instances using the given <paramref name="computeValue"/>.
+    /// </remarks>
+    /// <param name="computeValue">Delegate to compute the value associated with a given <see cref="AdditionalText"/> instance.</param>
+    /// <param name="additionalTextComparer">Optional equality comparer to determine equivalent <see cref="AdditionalText"/> instances that have the same value.
+    /// If no comparer is provided, then <see cref="EqualityComparer{T}.Default"/> is used by default.</param>
+    public sealed class AdditionalTextValueProvider<TValue>(Func<AdditionalText, TValue> computeValue, IEqualityComparer<AdditionalText>? additionalTextComparer = null)
     {
-        internal readonly AnalysisValueProvider<AdditionalText, TValue> CoreValueProvider;
-
-        /// <summary>
-        /// Provides custom values associated with <see cref="AdditionalText"/> instances using the given <paramref name="computeValue"/>.
-        /// </summary>
-        /// <param name="computeValue">Delegate to compute the value associated with a given <see cref="AdditionalText"/> instance.</param>
-        /// <param name="additionalTextComparer">Optional equality comparer to determine equivalent <see cref="AdditionalText"/> instances that have the same value.
-        /// If no comparer is provided, then <see cref="EqualityComparer{T}.Default"/> is used by default.</param>
-        public AdditionalTextValueProvider(Func<AdditionalText, TValue> computeValue, IEqualityComparer<AdditionalText>? additionalTextComparer = null)
-        {
-            CoreValueProvider = new AnalysisValueProvider<AdditionalText, TValue>(computeValue, additionalTextComparer ?? EqualityComparer<AdditionalText>.Default);
-        }
+        internal readonly AnalysisValueProvider<AdditionalText, TValue> CoreValueProvider = new AnalysisValueProvider<AdditionalText, TValue>(computeValue, additionalTextComparer ?? EqualityComparer<AdditionalText>.Default);
     }
 }

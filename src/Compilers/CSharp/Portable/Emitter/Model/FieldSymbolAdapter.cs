@@ -343,10 +343,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
     internal partial class FieldSymbolAdapter
     {
-        internal FieldSymbolAdapter(FieldSymbol underlyingFieldSymbol)
-        {
-            AdaptedFieldSymbol = underlyingFieldSymbol;
-        }
+        internal FieldSymbolAdapter(FieldSymbol underlyingFieldSymbol) => AdaptedFieldSymbol = underlyingFieldSymbol;
 
         internal sealed override Symbol AdaptedSymbol => AdaptedFieldSymbol;
         internal FieldSymbol AdaptedFieldSymbol { get; }

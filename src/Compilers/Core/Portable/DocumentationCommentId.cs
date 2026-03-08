@@ -325,18 +325,12 @@ namespace Microsoft.CodeAnalysis
         /// <para/> Once used, an instance of this visitor should be discarded.  Specifically it is stateful, and will
         /// stay in the failed state once it transitions there.
         /// </remarks>
-        private sealed class PrefixAndDeclarationGenerator : SymbolVisitor
+        private sealed class PrefixAndDeclarationGenerator(StringBuilder builder) : SymbolVisitor
         {
-            private readonly StringBuilder _builder;
-            private readonly DeclarationGenerator _generator;
+            private readonly StringBuilder _builder = builder;
+            private readonly DeclarationGenerator _generator = new DeclarationGenerator(builder);
 
             private bool _failed;
-
-            public PrefixAndDeclarationGenerator(StringBuilder builder)
-            {
-                _builder = builder;
-                _generator = new DeclarationGenerator(builder);
-            }
 
             /// <summary>
             /// If we hit anything we don't know about, indicate failure.
@@ -390,17 +384,12 @@ namespace Microsoft.CodeAnalysis
                 }
             }
 
-            private sealed class DeclarationGenerator : SymbolVisitor<bool>
+            private sealed class DeclarationGenerator(StringBuilder builder) : SymbolVisitor<bool>
             {
-                private readonly StringBuilder _builder;
+                private readonly StringBuilder _builder = builder;
                 private ReferenceGenerator? _referenceGenerator;
 
                 public bool Failed;
-
-                public DeclarationGenerator(StringBuilder builder)
-                {
-                    _builder = builder;
-                }
 
                 private ReferenceGenerator GetReferenceGenerator(ISymbol typeParameterContext)
                 {
@@ -544,16 +533,10 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
-        private class ReferenceGenerator : SymbolVisitor<bool>
+        private class ReferenceGenerator(StringBuilder builder, ISymbol? typeParameterContext) : SymbolVisitor<bool>
         {
-            private readonly StringBuilder _builder;
-            private readonly ISymbol? _typeParameterContext;
-
-            public ReferenceGenerator(StringBuilder builder, ISymbol? typeParameterContext)
-            {
-                _builder = builder;
-                _typeParameterContext = typeParameterContext;
-            }
+            private readonly StringBuilder _builder = builder;
+            private readonly ISymbol? _typeParameterContext = typeParameterContext;
 
             public ISymbol? TypeParameterContext
             {
@@ -1495,16 +1478,10 @@ namespace Microsoft.CodeAnalysis
             }
 
             [StructLayout(LayoutKind.Auto)]
-            private readonly struct ParameterInfo
+            private readonly struct ParameterInfo(ITypeSymbol type, bool isRefOrOut)
             {
-                internal readonly ITypeSymbol Type;
-                internal readonly bool IsRefOrOut;
-
-                public ParameterInfo(ITypeSymbol type, bool isRefOrOut)
-                {
-                    this.Type = type;
-                    this.IsRefOrOut = isRefOrOut;
-                }
+                internal readonly ITypeSymbol Type = type;
+                internal readonly bool IsRefOrOut = isRefOrOut;
             }
 
             private static readonly ListPool<ParameterInfo> s_parameterListPool = new ListPool<ParameterInfo>();

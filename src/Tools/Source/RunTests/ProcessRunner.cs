@@ -12,36 +12,21 @@ using System.Threading.Tasks;
 
 namespace RunTests
 {
-    public readonly struct ProcessResult
+    public readonly struct ProcessResult(Process process, int exitCode, ReadOnlyCollection<string> outputLines, ReadOnlyCollection<string> errorLines)
     {
-        public Process Process { get; }
-        public int ExitCode { get; }
-        public ReadOnlyCollection<string> OutputLines { get; }
-        public ReadOnlyCollection<string> ErrorLines { get; }
-
-        public ProcessResult(Process process, int exitCode, ReadOnlyCollection<string> outputLines, ReadOnlyCollection<string> errorLines)
-        {
-            Process = process;
-            ExitCode = exitCode;
-            OutputLines = outputLines;
-            ErrorLines = errorLines;
-        }
+        public Process Process { get; } = process;
+        public int ExitCode { get; } = exitCode;
+        public ReadOnlyCollection<string> OutputLines { get; } = outputLines;
+        public ReadOnlyCollection<string> ErrorLines { get; } = errorLines;
     }
 
-    public readonly struct ProcessInfo
+    public readonly struct ProcessInfo(Process process, ProcessStartInfo startInfo, Task<ProcessResult> result)
     {
-        public Process Process { get; }
-        public ProcessStartInfo StartInfo { get; }
-        public Task<ProcessResult> Result { get; }
+        public Process Process { get; } = process;
+        public ProcessStartInfo StartInfo { get; } = startInfo;
+        public Task<ProcessResult> Result { get; } = result;
 
         public int Id => Process.Id;
-
-        public ProcessInfo(Process process, ProcessStartInfo startInfo, Task<ProcessResult> result)
-        {
-            Process = process;
-            StartInfo = startInfo;
-            Result = result;
-        }
     }
 
     public static class ProcessRunner

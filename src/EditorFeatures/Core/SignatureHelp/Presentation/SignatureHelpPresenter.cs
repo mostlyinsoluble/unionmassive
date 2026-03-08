@@ -20,19 +20,13 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHel
 [Export(typeof(IIntelliSensePresenter<ISignatureHelpPresenterSession, ISignatureHelpSession>))]
 [Name(PredefinedSignatureHelpPresenterNames.RoslynSignatureHelpPresenter)]
 [ContentType(ContentTypeNames.RoslynContentType)]
-internal sealed partial class SignatureHelpPresenter : IIntelliSensePresenter<ISignatureHelpPresenterSession, ISignatureHelpSession>, ISignatureHelpSourceProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed partial class SignatureHelpPresenter(IThreadingContext threadingContext, ISignatureHelpBroker sigHelpBroker) : IIntelliSensePresenter<ISignatureHelpPresenterSession, ISignatureHelpSession>, ISignatureHelpSourceProvider
 {
     private static readonly object s_augmentSessionKey = new();
-    private readonly IThreadingContext _threadingContext;
-    private readonly ISignatureHelpBroker _sigHelpBroker;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SignatureHelpPresenter(IThreadingContext threadingContext, ISignatureHelpBroker sigHelpBroker)
-    {
-        _threadingContext = threadingContext;
-        _sigHelpBroker = sigHelpBroker;
-    }
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly ISignatureHelpBroker _sigHelpBroker = sigHelpBroker;
 
     ISignatureHelpPresenterSession IIntelliSensePresenter<ISignatureHelpPresenterSession, ISignatureHelpSession>.CreateSession(ITextView textView, ITextBuffer subjectBuffer, ISignatureHelpSession sessionOpt)
     {

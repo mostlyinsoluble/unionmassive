@@ -10,16 +10,12 @@ using Microsoft.CodeAnalysis.StackTraceExplorer;
 
 namespace Microsoft.CodeAnalysis.Remote;
 
-internal sealed class RemoteStackTraceExplorerService : BrokeredServiceBase, IRemoteStackTraceExplorerService
+internal sealed class RemoteStackTraceExplorerService(in BrokeredServiceBase.ServiceConstructionArguments arguments) : BrokeredServiceBase(arguments), IRemoteStackTraceExplorerService
 {
     internal sealed class Factory : FactoryBase<IRemoteStackTraceExplorerService>
     {
         protected override IRemoteStackTraceExplorerService CreateService(in ServiceConstructionArguments arguments)
             => new RemoteStackTraceExplorerService(arguments);
-    }
-
-    public RemoteStackTraceExplorerService(in ServiceConstructionArguments arguments) : base(arguments)
-    {
     }
 
     public ValueTask<SerializableDefinitionItem?> TryFindDefinitionAsync(Checksum solutionChecksum, string frameString, StackFrameSymbolPart symbolPart, CancellationToken cancellationToken)

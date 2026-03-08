@@ -19,18 +19,14 @@ internal interface ISolutionSnapshotRegistry
 [Shared]
 [Export(typeof(SolutionSnapshotRegistry))]
 [Export(typeof(ISolutionSnapshotRegistry))]
-internal sealed class SolutionSnapshotRegistry : ISolutionSnapshotRegistry
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SolutionSnapshotRegistry() : ISolutionSnapshotRegistry
 {
     private static int s_solutionSnapshotId;
 
     // lock on access
     private readonly Dictionary<SolutionSnapshotId, Solution> _pendingSolutionSnapshots = [];
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SolutionSnapshotRegistry()
-    {
-    }
 
     /// <summary>
     /// Called from LSP server.

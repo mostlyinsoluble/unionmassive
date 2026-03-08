@@ -6,7 +6,12 @@ using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Interactive
 {
-    internal readonly struct RemoteExecutionResult
+    internal readonly struct RemoteExecutionResult(
+        bool success,
+        ImmutableArray<string> sourcePaths,
+        ImmutableArray<string> referencePaths,
+        string workingDirectory,
+        RemoteInitializationResult? initializationResult)
     {
         internal sealed class Data
         {
@@ -25,38 +30,24 @@ namespace Microsoft.CodeAnalysis.Interactive
                     InitializationResult?.Deserialize());
         }
 
-        public readonly bool Success;
+        public readonly bool Success = success;
 
         /// <summary>
         /// New value of source search paths after execution.
         /// </summary>
-        public readonly ImmutableArray<string> SourcePaths;
+        public readonly ImmutableArray<string> SourcePaths = sourcePaths;
 
         /// <summary>
         /// New value of reference search paths after execution.
         /// </summary>
-        public readonly ImmutableArray<string> ReferencePaths;
+        public readonly ImmutableArray<string> ReferencePaths = referencePaths;
 
         /// <summary>
         /// New value of working directory in the remote process after execution.
         /// </summary>
-        public readonly string WorkingDirectory;
+        public readonly string WorkingDirectory = workingDirectory;
 
-        public readonly RemoteInitializationResult? InitializationResult;
-
-        public RemoteExecutionResult(
-            bool success,
-            ImmutableArray<string> sourcePaths,
-            ImmutableArray<string> referencePaths,
-            string workingDirectory,
-            RemoteInitializationResult? initializationResult)
-        {
-            Success = success;
-            SourcePaths = sourcePaths;
-            ReferencePaths = referencePaths;
-            WorkingDirectory = workingDirectory;
-            InitializationResult = initializationResult;
-        }
+        public readonly RemoteInitializationResult? InitializationResult = initializationResult;
 
         public Data Serialize()
             => new Data()

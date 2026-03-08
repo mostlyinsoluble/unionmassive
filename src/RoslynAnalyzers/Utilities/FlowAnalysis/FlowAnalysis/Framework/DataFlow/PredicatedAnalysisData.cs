@@ -27,10 +27,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     {
         private DictionaryAnalysisData<AnalysisEntity, PerEntityPredicatedAnalysisData>? _lazyPredicateDataMap;
 
-        protected PredicatedAnalysisData()
-        {
-            IsReachableBlockData = true;
-        }
+        protected PredicatedAnalysisData() => IsReachableBlockData = true;
 
         protected PredicatedAnalysisData(PredicatedAnalysisData<TKey, TValue> fromData)
         {

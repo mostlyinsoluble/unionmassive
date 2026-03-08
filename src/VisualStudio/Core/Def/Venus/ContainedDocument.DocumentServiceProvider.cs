@@ -27,16 +27,10 @@ internal sealed partial class ContainedDocument
 {
     // this is to support old venus/razor case before dev16. 
     // all new razor (asp.NET core after dev16) should use their own implementation not ours
-    public sealed class DocumentServiceProvider : IDocumentServiceProvider
+    public sealed class DocumentServiceProvider(ITextBuffer primaryBuffer) : IDocumentServiceProvider
     {
-        private readonly SpanMapper _spanMapper;
-        private readonly DocumentExcerpter _excerpter;
-
-        public DocumentServiceProvider(ITextBuffer primaryBuffer)
-        {
-            _spanMapper = new SpanMapper(primaryBuffer);
-            _excerpter = new DocumentExcerpter(primaryBuffer);
-        }
+        private readonly SpanMapper _spanMapper = new SpanMapper(primaryBuffer);
+        private readonly DocumentExcerpter _excerpter = new DocumentExcerpter(primaryBuffer);
 
         public TService GetService<TService>() where TService : class, IDocumentService
         {
@@ -57,12 +51,9 @@ internal sealed partial class ContainedDocument
         private static ITextSnapshot GetRoslynSnapshot(SourceText sourceText)
             => sourceText.FindCorrespondingEditorTextSnapshot();
 
-        private sealed class SpanMapper : AbstractSpanMappingService
+        private sealed class SpanMapper(ITextBuffer primaryBuffer) : AbstractSpanMappingService
         {
-            private readonly ITextBuffer _primaryBuffer;
-
-            public SpanMapper(ITextBuffer primaryBuffer)
-                => _primaryBuffer = primaryBuffer;
+            private readonly ITextBuffer _primaryBuffer = primaryBuffer;
 
             /// <summary>
             /// Legacy venus does not support us adding import directives and them mapping them to their own concepts.
@@ -125,12 +116,9 @@ internal sealed partial class ContainedDocument
             }
         }
 
-        private sealed class DocumentExcerpter : IDocumentExcerptService
+        private sealed class DocumentExcerpter(ITextBuffer primaryBuffer) : IDocumentExcerptService
         {
-            private readonly ITextBuffer _primaryBuffer;
-
-            public DocumentExcerpter(ITextBuffer primaryBuffer)
-                => _primaryBuffer = primaryBuffer;
+            private readonly ITextBuffer _primaryBuffer = primaryBuffer;
 
             public async Task<ExcerptResult?> TryExcerptAsync(Document document, TextSpan span, ExcerptMode mode, ClassificationOptions classificationOptions, CancellationToken cancellationToken)
             {

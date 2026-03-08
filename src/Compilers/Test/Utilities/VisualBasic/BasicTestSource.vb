@@ -20,7 +20,7 @@ Public Structure BasicTestSource
                                  Optional checksumAlgorithm As SourceHashAlgorithm = SourceHashAlgorithms.Default) As SyntaxTree
 
         Dim sourceTest = SourceText.From(text, If(encoding, Encoding.UTF8), checksumAlgorithm)
-        Dim tree = SyntaxFactory.ParseSyntaxTree(sourceTest, If(options, TestOptions.RegularLatest), path)
+        Dim tree = SyntaxFactory.ParseSyntaxTree(sourceTest, If(options, TestOptions.Regular), path)
         Return tree
     End Function
 
@@ -45,7 +45,7 @@ Public Structure BasicTestSource
             {
                 VisualBasicSyntaxTree.ParseText(
                     SourceText.From(source, encoding:=Nothing, SourceHashAlgorithms.Default),
-                    If(parseOptions, TestOptions.RegularLatest))
+                    If(parseOptions, TestOptions.Regular))
             }
         End If
 

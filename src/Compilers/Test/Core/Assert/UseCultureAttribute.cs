@@ -23,11 +23,17 @@ namespace Roslyn.Test.Utilities
     /// The original code is (c) 2014 Outercurve Foundation and licensed under the Apache License,
     /// Version 2.0.
     /// </remarks>
+    /// <remarks>
+    /// Replaces the culture and UI culture of the current thread with
+    /// <paramref name="culture" /> and <paramref name="uiCulture" />
+    /// </remarks>
+    /// <param name="culture">The name of the culture.</param>
+    /// <param name="uiCulture">The name of the UI culture.</param>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class UseCultureAttribute : BeforeAfterTestAttribute
+    public class UseCultureAttribute(string culture, string uiCulture) : BeforeAfterTestAttribute
     {
-        private readonly Lazy<CultureInfo> _culture;
-        private readonly Lazy<CultureInfo> _uiCulture;
+        private readonly Lazy<CultureInfo> _culture = new Lazy<CultureInfo>(() => new CultureInfo(culture, useUserOverride: false));
+        private readonly Lazy<CultureInfo> _uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture, useUserOverride: false));
         private CultureInfo _originalCulture;
         private CultureInfo _originalUICulture;
 
@@ -45,18 +51,6 @@ namespace Roslyn.Test.Utilities
         public UseCultureAttribute(string culture)
             : this(culture, culture)
         {
-        }
-
-        /// <summary>
-        /// Replaces the culture and UI culture of the current thread with
-        /// <paramref name="culture" /> and <paramref name="uiCulture" />
-        /// </summary>
-        /// <param name="culture">The name of the culture.</param>
-        /// <param name="uiCulture">The name of the UI culture.</param>
-        public UseCultureAttribute(string culture, string uiCulture)
-        {
-            _culture = new Lazy<CultureInfo>(() => new CultureInfo(culture, useUserOverride: false));
-            _uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture, useUserOverride: false));
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Editor.EditorConfigSettings.Data;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle.ViewModel;
 
-internal sealed class CodeStyleSeverityViewModel
+internal sealed class CodeStyleSeverityViewModel(CodeStyleSetting setting)
 {
     // NOTE: 'ServicesVSResources.Disabled' severity is not supported for code style settings.
     //       Code styles can instead be disabled by setting the option value that turns off the style.
@@ -23,8 +23,15 @@ internal sealed class CodeStyleSeverityViewModel
         WorkspacesResources.Error
     ];
 
-    private readonly int _selectedSeverityIndex;
-    private readonly CodeStyleSetting _setting;
+    private readonly int _selectedSeverityIndex = setting.GetSeverity() switch
+    {
+        ReportDiagnostic.Hidden => 0,
+        ReportDiagnostic.Info => 1,
+        ReportDiagnostic.Warn => 2,
+        ReportDiagnostic.Error => 3,
+        _ => throw new InvalidOperationException(),
+    };
+    private readonly CodeStyleSetting _setting = setting;
 
     public string[] Severities => s_severities;
 
@@ -42,20 +49,6 @@ internal sealed class CodeStyleSeverityViewModel
     public string ToolTip => ServicesVSResources.Severity;
 
     public static string AutomationName => ServicesVSResources.Severity;
-
-    public CodeStyleSeverityViewModel(CodeStyleSetting setting)
-    {
-        _selectedSeverityIndex = setting.GetSeverity() switch
-        {
-            ReportDiagnostic.Hidden => 0,
-            ReportDiagnostic.Info => 1,
-            ReportDiagnostic.Warn => 2,
-            ReportDiagnostic.Error => 3,
-            _ => throw new InvalidOperationException(),
-        };
-
-        _setting = setting;
-    }
 
     public void SelectionChanged(int selectedIndex)
     {

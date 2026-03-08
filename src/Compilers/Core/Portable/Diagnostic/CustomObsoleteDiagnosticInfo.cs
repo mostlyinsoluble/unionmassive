@@ -13,16 +13,10 @@ namespace Microsoft.CodeAnalysis
         internal ObsoleteAttributeData Data { get; }
 
         internal CustomObsoleteDiagnosticInfo(CommonMessageProvider messageProvider, int errorCode, ObsoleteAttributeData data, params object[] arguments)
-            : base(messageProvider, errorCode, arguments)
-        {
-            Data = data;
-        }
+            : base(messageProvider, errorCode, arguments) => Data = data;
 
         private CustomObsoleteDiagnosticInfo(CustomObsoleteDiagnosticInfo baseInfo, DiagnosticSeverity effectiveSeverity)
-            : base(baseInfo, effectiveSeverity)
-        {
-            Data = baseInfo.Data;
-        }
+            : base(baseInfo, effectiveSeverity) => Data = baseInfo.Data;
 
         public override string MessageIdentifier
         {

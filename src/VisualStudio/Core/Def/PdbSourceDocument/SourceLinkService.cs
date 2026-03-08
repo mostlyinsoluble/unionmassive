@@ -14,23 +14,16 @@ using Microsoft.VisualStudio.Debugger.Contracts.SymbolLocator;
 namespace Microsoft.VisualStudio.LanguageServices.PdbSourceDocument;
 
 [Export(typeof(ISourceLinkService)), Shared]
-internal sealed class SourceLinkService : AbstractSourceLinkService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class SourceLinkService(
+    IDebuggerSymbolLocatorService debuggerSymbolLocatorService,
+    IDebuggerSourceLinkService debuggerSourceLinkService,
+    [Import(AllowDefault = true)] IPdbSourceDocumentLogger? logger) : AbstractSourceLinkService
 {
-    private readonly IDebuggerSymbolLocatorService _debuggerSymbolLocatorService;
-    private readonly IDebuggerSourceLinkService _debuggerSourceLinkService;
-    private readonly IPdbSourceDocumentLogger? _logger;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public SourceLinkService(
-        IDebuggerSymbolLocatorService debuggerSymbolLocatorService,
-        IDebuggerSourceLinkService debuggerSourceLinkService,
-        [Import(AllowDefault = true)] IPdbSourceDocumentLogger? logger)
-    {
-        _debuggerSymbolLocatorService = debuggerSymbolLocatorService;
-        _debuggerSourceLinkService = debuggerSourceLinkService;
-        _logger = logger;
-    }
+    private readonly IDebuggerSymbolLocatorService _debuggerSymbolLocatorService = debuggerSymbolLocatorService;
+    private readonly IDebuggerSourceLinkService _debuggerSourceLinkService = debuggerSourceLinkService;
+    private readonly IPdbSourceDocumentLogger? _logger = logger;
 
     protected override async Task<SymbolLocatorResult?> LocateSymbolFileAsync(SymbolLocatorPdbInfo pdbInfo, SymbolLocatorSearchFlags flags, CancellationToken cancellationToken)
     {

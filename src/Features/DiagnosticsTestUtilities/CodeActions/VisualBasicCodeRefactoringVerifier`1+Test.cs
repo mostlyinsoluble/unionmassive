@@ -46,16 +46,7 @@ public static partial class VisualBasicCodeRefactoringVerifier<TCodeRefactoring>
 #pragma warning restore SYSLIB0014 // 'ServicePointManager' is obsolete
         }
 
-        public Test()
-        {
-            _sharedState = new SharedVerifierState(this, DefaultFileExt);
-        }
-
-        /// <summary>
-        /// Gets or sets the language version to use for the test. The default value is
-        /// <see cref="LanguageVersion.VisualBasic16"/>.
-        /// </summary>
-        public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.VisualBasic16;
+        public Test() => _sharedState = new SharedVerifierState(this, DefaultFileExt);
 
         /// <inheritdoc cref="SharedVerifierState.Options"/>
         internal OptionsCollection Options => _sharedState.Options;
@@ -89,12 +80,6 @@ public static partial class VisualBasicCodeRefactoringVerifier<TCodeRefactoring>
             }
 
             return result;
-        }
-
-        protected override ParseOptions CreateParseOptions()
-        {
-            var parseOptions = (VisualBasicParseOptions)base.CreateParseOptions();
-            return parseOptions.WithLanguageVersion(LanguageVersion);
         }
 
 #if !CODE_STYLE

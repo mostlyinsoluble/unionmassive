@@ -14,17 +14,12 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal abstract class SourceOrdinaryMethodOrUserDefinedOperatorSymbol : SourceMemberMethodSymbol
+    internal abstract class SourceOrdinaryMethodOrUserDefinedOperatorSymbol(NamedTypeSymbol containingType, SyntaxReference syntaxReferenceOpt, Location location, bool isIterator, (DeclarationModifiers declarationModifiers, SourceMemberMethodSymbol.Flags flags) modifiersAndFlags) : SourceMemberMethodSymbol(containingType, syntaxReferenceOpt, location, isIterator, modifiersAndFlags)
     {
         private ImmutableArray<MethodSymbol> _lazyExplicitInterfaceImplementations;
         private ImmutableArray<CustomModifier> _lazyRefCustomModifiers;
         private ImmutableArray<ParameterSymbol> _lazyParameters;
         private TypeWithAnnotations _lazyReturnType;
-
-        protected SourceOrdinaryMethodOrUserDefinedOperatorSymbol(NamedTypeSymbol containingType, SyntaxReference syntaxReferenceOpt, Location location, bool isIterator, (DeclarationModifiers declarationModifiers, Flags flags) modifiersAndFlags)
-            : base(containingType, syntaxReferenceOpt, location, isIterator, modifiersAndFlags)
-        {
-        }
 
         protected abstract Location ReturnTypeLocation { get; }
 

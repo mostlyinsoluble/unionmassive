@@ -79,18 +79,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         }
     }
 
-    internal sealed class ArgListParameterTypeInformation : Cci.IParameterTypeInformation
+    internal sealed class ArgListParameterTypeInformation(int ordinal, bool isByRef, Cci.ITypeReference type) : Cci.IParameterTypeInformation
     {
-        private readonly ushort _ordinal;
-        private readonly bool _isByRef;
-        private readonly Cci.ITypeReference _type;
-
-        public ArgListParameterTypeInformation(int ordinal, bool isByRef, Cci.ITypeReference type)
-        {
-            _ordinal = (ushort)ordinal;
-            _isByRef = isByRef;
-            _type = type;
-        }
+        private readonly ushort _ordinal = (ushort)ordinal;
+        private readonly bool _isByRef = isByRef;
+        private readonly Cci.ITypeReference _type = type;
 
         ImmutableArray<Cci.ICustomModifier> Cci.IParameterTypeInformation.CustomModifiers
         {

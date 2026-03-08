@@ -11,42 +11,28 @@ internal interface IOmniSharpExtractClassOptionsService
     OmniSharpExtractClassOptions? GetExtractClassOptions(Document document, INamedTypeSymbol originalType, ImmutableArray<ISymbol> selectedMembers);
 }
 
-internal sealed class OmniSharpExtractClassOptions
+internal sealed class OmniSharpExtractClassOptions(
+    string fileName,
+    string typeName,
+    bool sameFile,
+    ImmutableArray<OmniSharpExtractClassMemberAnalysisResult> memberAnalysisResults)
 {
-    public string FileName { get; }
-    public string TypeName { get; }
-    public bool SameFile { get; }
-    public ImmutableArray<OmniSharpExtractClassMemberAnalysisResult> MemberAnalysisResults { get; }
-
-    public OmniSharpExtractClassOptions(
-        string fileName,
-        string typeName,
-        bool sameFile,
-        ImmutableArray<OmniSharpExtractClassMemberAnalysisResult> memberAnalysisResults)
-    {
-        FileName = fileName;
-        TypeName = typeName;
-        SameFile = sameFile;
-        MemberAnalysisResults = memberAnalysisResults;
-    }
+    public string FileName { get; } = fileName;
+    public string TypeName { get; } = typeName;
+    public bool SameFile { get; } = sameFile;
+    public ImmutableArray<OmniSharpExtractClassMemberAnalysisResult> MemberAnalysisResults { get; } = memberAnalysisResults;
 }
-internal sealed class OmniSharpExtractClassMemberAnalysisResult
+internal sealed class OmniSharpExtractClassMemberAnalysisResult(
+    ISymbol member,
+    bool makeAbstract)
 {
     /// <summary>
     /// The member needs to be pulled up.
     /// </summary>
-    public ISymbol Member { get; }
+    public ISymbol Member { get; } = member;
 
     /// <summary>
     /// Whether to make the member abstract when added to the new class
     /// </summary>
-    public bool MakeAbstract { get; }
-
-    public OmniSharpExtractClassMemberAnalysisResult(
-        ISymbol member,
-        bool makeAbstract)
-    {
-        Member = member;
-        MakeAbstract = makeAbstract;
-    }
+    public bool MakeAbstract { get; } = makeAbstract;
 }

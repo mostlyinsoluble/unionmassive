@@ -6,18 +6,11 @@ using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
-    internal sealed class CollectionBuilderAttributeData
+    internal sealed class CollectionBuilderAttributeData(TypeSymbol? builderType, string? methodName)
     {
         public static readonly CollectionBuilderAttributeData Uninitialized = new CollectionBuilderAttributeData(null, null);
-
-        public CollectionBuilderAttributeData(TypeSymbol? builderType, string? methodName)
-        {
-            BuilderType = builderType;
-            MethodName = methodName;
-        }
-
-        public readonly TypeSymbol? BuilderType;
-        public readonly string? MethodName;
+        public readonly TypeSymbol? BuilderType = builderType;
+        public readonly string? MethodName = methodName;
     }
 
     /// <summary>

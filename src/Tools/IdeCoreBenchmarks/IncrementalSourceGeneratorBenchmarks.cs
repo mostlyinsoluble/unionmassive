@@ -181,10 +181,7 @@ namespace IdeCoreBenchmarks
     {
         private readonly Action<IncrementalGeneratorInitializationContext> _registerPipelineCallback;
 
-        public PipelineCallbackGenerator(Action<IncrementalGeneratorInitializationContext> registerPipelineCallback)
-        {
-            _registerPipelineCallback = registerPipelineCallback;
-        }
+        public PipelineCallbackGenerator(Action<IncrementalGeneratorInitializationContext> registerPipelineCallback) => _registerPipelineCallback = registerPipelineCallback;
 
         public void Initialize(IncrementalGeneratorInitializationContext context) => _registerPipelineCallback(context);
     }

@@ -15,25 +15,18 @@ namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle
 [Export(typeof(IDefaultColumnGroup))]
 [Name(nameof(CodeStyleCategoryGroupingSet))]    // Required, name of the default group
 [GroupColumns(Category)] // Required, the names of the columns in the grouping
-internal sealed class CodeStyleCategoryGroupingSet : IDefaultColumnGroup
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleCategoryGroupingSet() : IDefaultColumnGroup
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleCategoryGroupingSet()
-    {
-    }
 }
 
 [Export(typeof(ITableColumnDefinition))]
 [Name(Category)]
-internal sealed class CodeStyleCategoryColumnDefinition : TableColumnDefinitionBase
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class CodeStyleCategoryColumnDefinition() : TableColumnDefinitionBase
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public CodeStyleCategoryColumnDefinition()
-    {
-    }
-
     public override string Name => Category;
     public override string DisplayName => ServicesVSResources.Category;
     public override double MinWidth => 80;

@@ -15,21 +15,15 @@ namespace Microsoft.CodeAnalysis.Features.EmbeddedLanguages.RegularExpressions.L
 /// <summary>
 /// Analyzer that reports diagnostics in strings that we know are regex text.
 /// </summary>
-internal abstract class AbstractRegexDiagnosticAnalyzer : AbstractBuiltInCodeStyleDiagnosticAnalyzer
+internal abstract class AbstractRegexDiagnosticAnalyzer(EmbeddedLanguageInfo info) : AbstractBuiltInCodeStyleDiagnosticAnalyzer(DiagnosticId,
+           EnforceOnBuildValues.Regex,
+           option: null,
+           new LocalizableResourceString(nameof(FeaturesResources.Invalid_regex_pattern), FeaturesResources.ResourceManager, typeof(FeaturesResources)),
+           new LocalizableResourceString(nameof(FeaturesResources.Regex_issue_0), FeaturesResources.ResourceManager, typeof(FeaturesResources)))
 {
     public const string DiagnosticId = "RE0001";
 
-    private readonly EmbeddedLanguageInfo _info;
-
-    protected AbstractRegexDiagnosticAnalyzer(EmbeddedLanguageInfo info)
-        : base(DiagnosticId,
-               EnforceOnBuildValues.Regex,
-               option: null,
-               new LocalizableResourceString(nameof(FeaturesResources.Invalid_regex_pattern), FeaturesResources.ResourceManager, typeof(FeaturesResources)),
-               new LocalizableResourceString(nameof(FeaturesResources.Regex_issue_0), FeaturesResources.ResourceManager, typeof(FeaturesResources)))
-    {
-        _info = info;
-    }
+    private readonly EmbeddedLanguageInfo _info = info;
 
     public override DiagnosticAnalyzerCategory GetAnalyzerCategory()
         => DiagnosticAnalyzerCategory.SemanticSpanAnalysis;

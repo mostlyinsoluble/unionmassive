@@ -8,14 +8,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 {
     internal static partial class ValueSetFactory
     {
-        private sealed class FloatingValueSetFactory<TFloating> : IValueSetFactory<TFloating>
+        private sealed class FloatingValueSetFactory<TFloating>(ValueSetFactory.FloatingTC<TFloating> tc) : IValueSetFactory<TFloating>
         {
-            private readonly FloatingTC<TFloating> _tc;
-
-            public FloatingValueSetFactory(FloatingTC<TFloating> tc)
-            {
-                _tc = tc;
-            }
+            private readonly FloatingTC<TFloating> _tc = tc;
 
             IValueSet IValueSetFactory.AllValues => FloatingValueSet<TFloating>.AllValues(_tc);
 

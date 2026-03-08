@@ -18,7 +18,9 @@ using static SyntaxFactory;
 
 [ExtensionOrder(After = PredefinedCodeRefactoringProviderNames.IntroduceVariable)]
 [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = PredefinedCodeRefactoringProviderNames.UseNamedArguments), Shared]
-internal sealed class CSharpUseNamedArgumentsCodeRefactoringProvider : AbstractUseNamedArgumentsCodeRefactoringProvider
+[method: ImportingConstructor]
+[method: SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
+internal sealed class CSharpUseNamedArgumentsCodeRefactoringProvider() : AbstractUseNamedArgumentsCodeRefactoringProvider(new ArgumentAnalyzer(), new AttributeArgumentAnalyzer())
 {
     private abstract class BaseAnalyzer<TSyntax, TSyntaxList> : Analyzer<TSyntax, TSyntax, TSyntaxList>
         where TSyntax : SyntaxNode
@@ -95,12 +97,5 @@ internal sealed class CSharpUseNamedArgumentsCodeRefactoringProvider : AbstractU
 
         protected override ExpressionSyntax GetArgumentExpression(AttributeArgumentSyntax argumentSyntax)
             => argumentSyntax.Expression;
-    }
-
-    [ImportingConstructor]
-    [SuppressMessage("RoslynDiagnosticsReliability", "RS0033:Importing constructor should be [Obsolete]", Justification = "Used in test code: https://github.com/dotnet/roslyn/issues/42814")]
-    public CSharpUseNamedArgumentsCodeRefactoringProvider()
-        : base(new ArgumentAnalyzer(), new AttributeArgumentAnalyzer())
-    {
     }
 }

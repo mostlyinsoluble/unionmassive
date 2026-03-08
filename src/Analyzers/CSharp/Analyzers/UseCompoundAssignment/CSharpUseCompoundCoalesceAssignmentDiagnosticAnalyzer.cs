@@ -38,9 +38,6 @@ internal sealed class CSharpUseCompoundCoalesceAssignmentDiagnosticAnalyzer()
     {
         context.RegisterCompilationStartAction(context =>
         {
-            if (context.Compilation.LanguageVersion() < LanguageVersion.CSharp8)
-                return;
-
             context.RegisterSyntaxNodeAction(AnalyzeCoalesceExpression, SyntaxKind.CoalesceExpression);
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         });

@@ -268,10 +268,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             this.CannotSchedule = true;
         }
 
-        private LocalDefUseInfo(ObjectPool<LocalDefUseInfo> pool)
-        {
-            _pool = pool;
-        }
+        private LocalDefUseInfo(ObjectPool<LocalDefUseInfo> pool) => _pool = pool;
 
         public void Free()
         {
@@ -807,10 +804,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             private bool _found;
 
             internal LocalUsedWalker(LocalSymbol local, int recursionDepth)
-                : base(recursionDepth)
-            {
-                _local = local;
-            }
+                : base(recursionDepth) => _local = local;
 
             public bool IsLocalUsedIn(BoundNode node)
             {
@@ -2085,10 +2079,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         private int _nodeCounter;
         private readonly Dictionary<LocalSymbol, LocalDefUseInfo> _info;
 
-        private StackOptimizerPass2(Dictionary<LocalSymbol, LocalDefUseInfo> info)
-        {
-            _info = info;
-        }
+        private StackOptimizerPass2(Dictionary<LocalSymbol, LocalDefUseInfo> info) => _info = info;
 
         public static BoundStatement Rewrite(BoundStatement src, Dictionary<LocalSymbol, LocalDefUseInfo> info)
         {

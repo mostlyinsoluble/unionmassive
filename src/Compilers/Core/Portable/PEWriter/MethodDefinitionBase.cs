@@ -14,20 +14,14 @@ using Roslyn.Utilities;
 
 namespace Microsoft.Cci;
 
-internal abstract class MethodDefinitionBase : IMethodDefinition, IMethodBody
+internal abstract class MethodDefinitionBase(ITypeDefinition containingTypeDefinition, ushort maxStack, ImmutableArray<byte> il) : IMethodDefinition, IMethodBody
 {
-    public MethodDefinitionBase(ITypeDefinition containingTypeDefinition, ushort maxStack, ImmutableArray<byte> il)
-    {
-        ContainingTypeDefinition = containingTypeDefinition;
-        MaxStack = maxStack;
-        IL = il;
-    }
 
     // IMethodDefinition implementation
 
     bool IDefinition.IsEncDeleted => false;
 
-    public ITypeDefinition ContainingTypeDefinition { get; }
+    public ITypeDefinition ContainingTypeDefinition { get; } = containingTypeDefinition;
 
     public abstract string Name { get; }
 
@@ -124,9 +118,9 @@ internal abstract class MethodDefinitionBase : IMethodDefinition, IMethodBody
 
     // IMethodBody implementation
 
-    public ushort MaxStack { get; }
+    public ushort MaxStack { get; } = maxStack;
 
-    public ImmutableArray<byte> IL { get; }
+    public ImmutableArray<byte> IL { get; } = il;
 
     public IMethodDefinition MethodDefinition => this;
 

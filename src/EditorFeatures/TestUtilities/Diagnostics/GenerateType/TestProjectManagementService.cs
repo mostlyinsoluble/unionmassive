@@ -13,15 +13,11 @@ using Microsoft.CodeAnalysis.ProjectManagement;
 namespace Microsoft.CodeAnalysis.Editor.UnitTests.Diagnostics.GenerateType;
 
 [ExportWorkspaceService(typeof(IProjectManagementService), ServiceLayer.Default), Shared]
-internal sealed class TestProjectManagementService : IProjectManagementService
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class TestProjectManagementService() : IProjectManagementService
 {
     private string _defaultNamespace;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public TestProjectManagementService()
-    {
-    }
 
     public IList<string> GetFolders(ProjectId projectId, Workspace workspace)
         => null;

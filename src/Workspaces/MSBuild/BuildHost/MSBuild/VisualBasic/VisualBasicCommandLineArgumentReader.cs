@@ -9,13 +9,8 @@ using MSB = Microsoft.Build;
 
 namespace Microsoft.CodeAnalysis.MSBuild;
 
-internal sealed class VisualBasicCommandLineArgumentReader : CommandLineArgumentReader
+internal sealed class VisualBasicCommandLineArgumentReader(MSB.Execution.ProjectInstance project) : CommandLineArgumentReader(project)
 {
-    public VisualBasicCommandLineArgumentReader(MSB.Execution.ProjectInstance project)
-        : base(project)
-    {
-    }
-
     public static ImmutableArray<string> Read(MSB.Execution.ProjectInstance project)
     {
         return new VisualBasicCommandLineArgumentReader(project).Read();

@@ -19,14 +19,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.CSharp.KeywordHighlighting.KeywordHighlighters;
 
 [ExportHighlighter(LanguageNames.CSharp), Shared]
-internal sealed class ReturnStatementHighlighter : AbstractKeywordHighlighter<ReturnStatementSyntax>
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class ReturnStatementHighlighter() : AbstractKeywordHighlighter<ReturnStatementSyntax>
 {
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public ReturnStatementHighlighter()
-    {
-    }
-
     protected override void AddHighlights(
         ReturnStatementSyntax returnStatement, List<TextSpan> spans, CancellationToken cancellationToken)
     {

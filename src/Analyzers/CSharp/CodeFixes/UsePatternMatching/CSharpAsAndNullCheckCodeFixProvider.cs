@@ -157,7 +157,6 @@ internal sealed partial class CSharpAsAndNullCheckCodeFixProvider() : SyntaxEdit
     }
 
     private static ExpressionSyntax GetCondition(
-        LanguageVersion languageVersion,
         ExpressionSyntax comparison,
         BinaryExpressionSyntax asExpression,
         DeclarationPatternSyntax declarationPattern)
@@ -168,14 +167,6 @@ internal sealed partial class CSharpAsAndNullCheckCodeFixProvider() : SyntaxEdit
         if (comparison.Kind() is not (SyntaxKind.EqualsExpression or SyntaxKind.IsPatternExpression))
             return isPatternExpression;
 
-        if (languageVersion >= LanguageVersion.CSharp9)
-        {
-            // In C# 9 and higher, convert to `x is not string s`.
-            return isPatternExpression.WithPattern(
-                UnaryPattern(NotKeyword, isPatternExpression.Pattern));
-        }
-
-        // In C# 8 and lower, convert to `!(x is string s)`
-        return PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, isPatternExpression.Parenthesize());
+        return isPatternExpression.WithPattern(UnaryPattern(NotKeyword, isPatternExpression.Pattern));
     }
 }

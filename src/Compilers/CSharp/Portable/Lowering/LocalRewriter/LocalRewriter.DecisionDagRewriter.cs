@@ -23,7 +23,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// A common base class for lowering a decision dag.
         /// </summary>
-        private abstract partial class DecisionDagRewriter : PatternLocalRewriter
+        private abstract partial class DecisionDagRewriter(
+            SyntaxNode node,
+            LocalRewriter localRewriter,
+            bool generateInstrumentation) : PatternLocalRewriter(node, localRewriter, generateInstrumentation)
         {
             /// <summary>
             /// Get the builder for code in the given section of the switch.
@@ -49,15 +52,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             // labels depending on the `when` node we came from. To achieve that, each `when` node
             // gets an identifier and sets a local before jumping into the shared `when` expression.
             internal LocalSymbol? _whenNodeIdentifierLocal;
-#nullable disable
-
-            protected DecisionDagRewriter(
-                SyntaxNode node,
-                LocalRewriter localRewriter,
-                bool generateInstrumentation)
-                : base(node, localRewriter, generateInstrumentation)
-            {
-            }
 
             private void ComputeLabelSet(BoundDecisionDag decisionDag)
             {

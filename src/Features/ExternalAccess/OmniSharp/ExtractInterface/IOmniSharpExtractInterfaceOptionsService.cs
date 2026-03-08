@@ -15,7 +15,7 @@ internal interface IOmniSharpExtractInterfaceOptionsService
         string defaultInterfaceName);
 }
 
-internal class OmniSharpExtractInterfaceOptionsResult
+internal class OmniSharpExtractInterfaceOptionsResult(bool isCancelled, ImmutableArray<ISymbol> includedMembers, string interfaceName, string fileName, OmniSharpExtractInterfaceOptionsResult.OmniSharpExtractLocation location)
 {
     public enum OmniSharpExtractLocation
     {
@@ -23,18 +23,9 @@ internal class OmniSharpExtractInterfaceOptionsResult
         NewFile
     }
 
-    public bool IsCancelled { get; }
-    public ImmutableArray<ISymbol> IncludedMembers { get; }
-    public string InterfaceName { get; }
-    public string FileName { get; }
-    public OmniSharpExtractLocation Location { get; }
-
-    public OmniSharpExtractInterfaceOptionsResult(bool isCancelled, ImmutableArray<ISymbol> includedMembers, string interfaceName, string fileName, OmniSharpExtractLocation location)
-    {
-        IsCancelled = isCancelled;
-        IncludedMembers = includedMembers;
-        InterfaceName = interfaceName;
-        Location = location;
-        FileName = fileName;
-    }
+    public bool IsCancelled { get; } = isCancelled;
+    public ImmutableArray<ISymbol> IncludedMembers { get; } = includedMembers;
+    public string InterfaceName { get; } = interfaceName;
+    public string FileName { get; } = fileName;
+    public OmniSharpExtractLocation Location { get; } = location;
 }

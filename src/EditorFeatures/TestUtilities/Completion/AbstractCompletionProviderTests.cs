@@ -50,10 +50,7 @@ public abstract class AbstractCompletionProviderTests<TWorkspaceFixture> : TestB
     protected bool? ShowNewSnippetExperience { get; set; }
     protected bool? TriggerOnDeletion { get; set; }
 
-    protected AbstractCompletionProviderTests()
-    {
-        MockCompletionSession = new Mock<ICompletionSession>(MockBehavior.Strict);
-    }
+    protected AbstractCompletionProviderTests() => MockCompletionSession = new Mock<ICompletionSession>(MockBehavior.Strict);
 
     internal virtual OptionsCollection NonCompletionOptions
         => null;

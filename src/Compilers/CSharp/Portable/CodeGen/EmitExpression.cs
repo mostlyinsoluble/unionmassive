@@ -604,10 +604,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             private readonly BoundLoweredConditionalAccess _conditionalAccess;
             private bool? _result;
 
-            private IsConditionalConstrainedCallThatMustUseTempForReferenceTypeReceiverWalker(BoundLoweredConditionalAccess conditionalAccess)
-            {
-                _conditionalAccess = conditionalAccess;
-            }
+            private IsConditionalConstrainedCallThatMustUseTempForReferenceTypeReceiverWalker(BoundLoweredConditionalAccess conditionalAccess) => _conditionalAccess = conditionalAccess;
 
             public static bool Analyze(BoundLoweredConditionalAccess conditionalAccess)
             {

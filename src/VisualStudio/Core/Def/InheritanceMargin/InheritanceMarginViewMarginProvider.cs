@@ -27,44 +27,30 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.InheritanceMarg
 [MarginContainer(PredefinedMarginNames.LeftSelection)]
 [Order(After = DefaultOrderings.Lowest)]
 [TextViewRole(PredefinedTextViewRoles.Document)]
-internal sealed class InheritanceMarginViewMarginProvider : IWpfTextViewMarginProvider
+[method: ImportingConstructor]
+[method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
+internal sealed class InheritanceMarginViewMarginProvider(
+    VisualStudioWorkspace workspace,
+    IThreadingContext threadingContext,
+    IStreamingFindUsagesPresenter streamingFindUsagesPresenter,
+    ClassificationTypeMap classificationTypeMap,
+    IClassificationFormatMapService classificationFormatMapService,
+    IUIThreadOperationExecutor operationExecutor,
+    IViewTagAggregatorFactoryService tagAggregatorFactoryService,
+    IEditorFormatMapService editorFormatMapService,
+    IGlobalOptionService globalOptions,
+    IAsynchronousOperationListenerProvider listenerProvider) : IWpfTextViewMarginProvider
 {
-    private readonly Workspace _workspace;
-    private readonly IViewTagAggregatorFactoryService _tagAggregatorFactoryService;
-    private readonly IThreadingContext _threadingContext;
-    private readonly IStreamingFindUsagesPresenter _streamingFindUsagesPresenter;
-    private readonly IClassificationFormatMapService _classificationFormatMapService;
-    private readonly ClassificationTypeMap _classificationTypeMap;
-    private readonly IUIThreadOperationExecutor _operationExecutor;
-    private readonly IEditorFormatMapService _editorFormatMapService;
-    private readonly IAsynchronousOperationListenerProvider _listenerProvider;
-    private readonly IGlobalOptionService _globalOptions;
-
-    [ImportingConstructor]
-    [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public InheritanceMarginViewMarginProvider(
-        VisualStudioWorkspace workspace,
-        IThreadingContext threadingContext,
-        IStreamingFindUsagesPresenter streamingFindUsagesPresenter,
-        ClassificationTypeMap classificationTypeMap,
-        IClassificationFormatMapService classificationFormatMapService,
-        IUIThreadOperationExecutor operationExecutor,
-        IViewTagAggregatorFactoryService tagAggregatorFactoryService,
-        IEditorFormatMapService editorFormatMapService,
-        IGlobalOptionService globalOptions,
-        IAsynchronousOperationListenerProvider listenerProvider)
-    {
-        _workspace = workspace;
-        _threadingContext = threadingContext;
-        _streamingFindUsagesPresenter = streamingFindUsagesPresenter;
-        _classificationTypeMap = classificationTypeMap;
-        _classificationFormatMapService = classificationFormatMapService;
-        _operationExecutor = operationExecutor;
-        _tagAggregatorFactoryService = tagAggregatorFactoryService;
-        _editorFormatMapService = editorFormatMapService;
-        _globalOptions = globalOptions;
-        _listenerProvider = listenerProvider;
-    }
+    private readonly Workspace _workspace = workspace;
+    private readonly IViewTagAggregatorFactoryService _tagAggregatorFactoryService = tagAggregatorFactoryService;
+    private readonly IThreadingContext _threadingContext = threadingContext;
+    private readonly IStreamingFindUsagesPresenter _streamingFindUsagesPresenter = streamingFindUsagesPresenter;
+    private readonly IClassificationFormatMapService _classificationFormatMapService = classificationFormatMapService;
+    private readonly ClassificationTypeMap _classificationTypeMap = classificationTypeMap;
+    private readonly IUIThreadOperationExecutor _operationExecutor = operationExecutor;
+    private readonly IEditorFormatMapService _editorFormatMapService = editorFormatMapService;
+    private readonly IAsynchronousOperationListenerProvider _listenerProvider = listenerProvider;
+    private readonly IGlobalOptionService _globalOptions = globalOptions;
 
     public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
     {

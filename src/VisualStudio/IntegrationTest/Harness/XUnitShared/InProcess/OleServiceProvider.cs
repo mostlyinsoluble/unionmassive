@@ -8,16 +8,11 @@ namespace Xunit.InProcess
     using System.Runtime.InteropServices;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
-    internal sealed class OleServiceProvider : IServiceProvider
+    internal sealed class OleServiceProvider(IOleServiceProvider serviceProvider) : IServiceProvider
     {
         private static readonly Guid IUnknownGuid = new Guid("00000000-0000-0000-C000-000000000046");
 
-        private readonly IOleServiceProvider _serviceProvider;
-
-        public OleServiceProvider(IOleServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        }
+        private readonly IOleServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
         public OleServiceProvider(EnvDTE.DTE dte)
             : this((IOleServiceProvider)dte)

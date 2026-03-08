@@ -12,17 +12,13 @@ using Microsoft.VisualStudio.Shell.TableManager;
 
 namespace Microsoft.VisualStudio.LanguageServices.EditorConfigSettings.CodeStyle.ViewModel;
 
-internal sealed partial class CodeStyleSettingsViewModel : SettingsViewModelBase<
+internal sealed partial class CodeStyleSettingsViewModel(ISettingsProvider<CodeStyleSetting> data,
+                                  IWpfTableControlProvider controlProvider,
+                                  ITableManagerProvider tableMangerProvider) : SettingsViewModelBase<
     CodeStyleSetting,
     CodeStyleSettingsViewModel.SettingsSnapshotFactory,
-    CodeStyleSettingsViewModel.SettingsEntriesSnapshot>
+    CodeStyleSettingsViewModel.SettingsEntriesSnapshot>(data, controlProvider, tableMangerProvider)
 {
-    public CodeStyleSettingsViewModel(ISettingsProvider<CodeStyleSetting> data,
-                                      IWpfTableControlProvider controlProvider,
-                                      ITableManagerProvider tableMangerProvider)
-        : base(data, controlProvider, tableMangerProvider)
-    { }
-
     public override string Identifier => "CodeStyleSettings";
 
     protected override SettingsSnapshotFactory CreateSnapshotFactory(ISettingsProvider<CodeStyleSetting> data)

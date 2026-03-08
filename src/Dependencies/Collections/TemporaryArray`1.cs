@@ -82,13 +82,12 @@ namespace Microsoft.CodeAnalysis.Collections
         /// </remarks>
         private ArrayBuilder<T>? _builder;
 
-        private TemporaryArray(in TemporaryArray<T> array)
-        {
+        private TemporaryArray(in TemporaryArray<T> array) =>
             // Intentional copy used for creating an enumerator
 #pragma warning disable RS0042 // Do not copy value
             this = array;
 #pragma warning restore RS0042 // Do not copy value
-        }
+
 
         public static TemporaryArray<T> GetInstance(int capacity)
         {
@@ -443,20 +442,12 @@ namespace Microsoft.CodeAnalysis.Collections
             => throw new IndexOutOfRangeException();
 
         [NonCopyable]
-        public struct Enumerator
+        public struct Enumerator(in TemporaryArray<T> array)
         {
-            private readonly TemporaryArray<T> _array;
+            private readonly TemporaryArray<T> _array = new TemporaryArray<T>(in array);
 
-            private T _current;
-            private int _nextIndex;
-
-            public Enumerator(in TemporaryArray<T> array)
-            {
-                // Enumerate a copy of the original
-                _array = new TemporaryArray<T>(in array);
-                _current = default!;
-                _nextIndex = 0;
-            }
+            private T _current = default!;
+            private int _nextIndex = 0;
 
             public T Current => _current;
 

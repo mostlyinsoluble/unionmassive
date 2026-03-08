@@ -62,12 +62,11 @@ public abstract class HostWorkspaceServices : IDisposable
     /// </summary>
     public abstract TWorkspaceService? GetService<TWorkspaceService>() where TWorkspaceService : IWorkspaceService;
 
-    protected HostWorkspaceServices()
-    {
+    protected HostWorkspaceServices() =>
 #pragma warning disable 618 // 'HostProjectServices.HostSolutionServices(HostLanguageServices)' is obsolete: 'Do not call directly.
         SolutionServices = new SolutionServices(this);
 #pragma warning restore
-    }
+
 
     [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "Derived types are not allowed to include a finalizer for this pattern.")]
     public virtual void Dispose()

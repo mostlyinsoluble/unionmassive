@@ -8,16 +8,10 @@ using System.Windows;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Adornments;
 
-internal sealed class GraphicsResult : IDisposable
+internal sealed class GraphicsResult(UIElement visualElement, Action? dispose) : IDisposable
 {
-    public UIElement VisualElement { get; }
-    private Action? _dispose;
-
-    public GraphicsResult(UIElement visualElement, Action? dispose)
-    {
-        VisualElement = visualElement;
-        _dispose = dispose;
-    }
+    public UIElement VisualElement { get; } = visualElement;
+    private Action? _dispose = dispose;
 
     public void Dispose()
         => Interlocked.Exchange(ref _dispose, null)?.Invoke();

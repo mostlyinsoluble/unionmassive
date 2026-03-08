@@ -15,14 +15,9 @@ namespace Microsoft.Cci
     /// <summary>
     /// A visitor base class that traverses the object model in depth first, left to right order.
     /// </summary>
-    internal abstract class MetadataVisitor
+    internal abstract class MetadataVisitor(EmitContext context)
     {
-        public readonly EmitContext Context;
-
-        public MetadataVisitor(EmitContext context)
-        {
-            this.Context = context;
-        }
+        public readonly EmitContext Context = context;
 
         public virtual void Visit(IArrayTypeReference arrayTypeReference)
         {

@@ -420,10 +420,7 @@ internal sealed class PdbSourceDocumentMetadataAsSourceFileProvider(
     {
         private readonly PdbSourceDocumentMetadataAsSourceFileProvider _instance;
 
-        internal TestAccessor(PdbSourceDocumentMetadataAsSourceFileProvider instance)
-        {
-            _instance = instance;
-        }
+        internal TestAccessor(PdbSourceDocumentMetadataAsSourceFileProvider instance) => _instance = instance;
 
         public ImmutableDictionary<string, SourceDocumentInfo> Documents => _instance._fileToDocumentInfoMap.ToImmutableDictionary();
     }
